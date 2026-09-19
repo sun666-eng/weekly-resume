@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>中文技术岗简历示例</title>
+		<style>
+			@page {
+				size: A4;
+				margin: 0;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				margin: 0;
+				background: #e8e8e8;
+				color: #101010;
+				font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+			}
+
+			.page {
+				width: 210mm;
+				height: 297mm;
+				margin: 0 auto;
+				padding: 14mm 13mm 11mm;
+				background: #fff;
+				font-size: 9.8pt;
+				line-height: 1.48;
+			}
+
+			.header {
+				margin-bottom: 9mm;
+				text-align: center;
+			}
+
+			.header h1 {
+				margin: 0;
+				font-size: 20pt;
+				line-height: 1.25;
+				letter-spacing: 0.04em;
+			}
+
+			.header .target {
+				margin: 1.7mm 0 0;
+				font-size: 9.5pt;
+			}
+
+			.header .contact {
+				margin: 1.7mm 0 0;
+				font-size: 9.4pt;
+			}
+
+			.header .divider {
+				padding: 0 2.1mm;
+				color: #6b6b6b;
+			}
+
+			section {
+				margin-top: 4mm;
+			}
+
+			section:first-of-type {
+				margin-top: 0;
+			}
+
+			h2 {
+				margin: 0 0 1.7mm;
+				padding: 0 0 0.9mm;
+				border-bottom: 1.2pt solid #111;
+				font-size: 11.5pt;
+				line-height: 1.2;
+			}
+
+			.item + .item {
+				margin-top: 2.3mm;
+			}
+
+			.item-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 8mm;
+				font-size: 10pt;
+				line-height: 1.35;
+			}
+
+			.item-head strong {
+				font-weight: 700;
+			}
+
+			.date {
+				flex: 0 0 auto;
+				font-variant-numeric: tabular-nums;
+			}
+
+			.subline {
+				margin: 0.5mm 0 0;
+			}
+
+			ul {
+				margin: 0.7mm 0 0;
+				padding-left: 5mm;
+			}
+
+			li {
+				margin: 0.65mm 0;
+				padding-left: 0.6mm;
+			}
+
+			strong.keyword {
+				font-weight: 700;
+			}
+
+			.skills li {
+				margin: 0.5mm 0;
+			}
+
+			@media print {
+				html,
+				body {
+					background: #fff;
+				}
+
+				.page {
+					margin: 0;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="page">
+			<header class="header">
+				<h1>林知远</h1>
+				<p class="target">求职方向：Java 后端开发</p>
+				<p class="contact">
+					138 0000 0000<span class="divider">|</span>lin.zhiyuan@example.com<span class="divider">|</span>杭州
+				</p>
+			</header>
+
+			<section>
+				<h2>教育经历</h2>
+				<div class="item">
+					<div class="item-head">
+						<strong>江城理工大学 · 软件工程（本科）</strong>
+						<span class="date">2022.09 — 2026.06</span>
+					</div>
+					<ul>
+						<li><strong class="keyword">GPA：</strong>3.7 / 4.0（专业前 15%）；<strong class="keyword">语言：</strong>CET-6（518）</li>
+						<li><strong class="keyword">荣誉：</strong>校级一等奖学金（2024）；<strong class="keyword">主修：</strong>数据结构、操作系统、计算机网络、数据库系统</li>
+					</ul>
+				</div>
+			</section>
+
+			<section>
+				<h2>实习经历</h2>
+				<div class="item">
+					<div class="item-head">
+						<strong>星澜科技有限公司 · Java 后端开发实习生</strong>
+						<span class="date">2025.03 — 2025.08</span>
+					</div>
+					<ul>
+						<li>负责订单列表接口优化，使用 <strong class="keyword">EXPLAIN</strong> 定位回表与排序开销，重构联合索引和分页方式；在 50 万条测试数据、300 QPS 压测下，将 <strong class="keyword">P95 响应时间从 420 ms 降至 168 ms</strong>。</li>
+						<li>针对支付回调重复触发问题，设计 <strong class="keyword">Redis 幂等键 + Lua 原子校验 + 数据库唯一约束</strong>的三层保护，连续 20 万次回放测试未产生重复订单。</li>
+						<li>使用 <strong class="keyword">RocketMQ 延迟消息</strong>替代高频轮询关闭超时订单，并补充重试与死信处理；测试环境数据库扫描量下降约 <strong class="keyword">72%</strong>。</li>
+						<li>统一错误码、Trace ID 与结构化日志，补齐 38 个核心接口测试用例，将同类问题平均定位时间由约 40 分钟缩短至 15 分钟。</li>
+						<li>参与需求评审与代码审查，针对事务边界、空值处理和消息重复消费提出修改建议，上线前累计关闭 17 个边界问题。</li>
+					</ul>
+				</div>
+			</section>
+
+			<section>
+				<h2>项目经历</h2>
+				<div class="item">
+					<div class="item-head">
+						<strong>FlashOrder 高并发订单系统</strong>
+						<span class="date">2024.09 — 2025.02</span>
+					</div>
+					<ul>
+						<li><strong class="keyword">项目概述：</strong>面向课程秒杀场景的订单服务，技术栈为 Spring Boot、MySQL、Redis、RocketMQ。</li>
+						<li>将库存预热至 Redis，使用 <strong class="keyword">Lua 脚本</strong>完成资格、库存与限购校验，并通过消息队列异步创建订单，削峰后核心接口可稳定处理 <strong class="keyword">1,200 QPS</strong>。</li>
+						<li>采用数据库乐观锁与消费端幂等保证库存一致性；设计补偿任务处理异常消息，压测中未出现超卖，订单最终一致率达到 100%。</li>
+						<li>使用 JMeter 建立可重复的压测基线，记录吞吐量、P95 和错误率，针对连接池与慢 SQL 完成两轮优化。</li>
+						<li>为热点接口增加限流与降级策略，并用统一异常处理返回可追踪错误码，避免依赖抖动扩散到下单链路。</li>
+					</ul>
+				</div>
+				<div class="item">
+					<div class="item-head">
+						<strong>MiniKV 轻量级存储引擎</strong>
+						<span class="date">2024.04 — 2024.08</span>
+					</div>
+					<ul>
+						<li>基于 <strong class="keyword">LSM Tree</strong> 实现 Put、Get、Delete 与范围查询，使用跳表维护 MemTable，并通过不可变表与后台 Compaction 控制读放大。</li>
+						<li>实现 <strong class="keyword">WAL 预写日志、CRC 校验与故障恢复</strong>，在随机终止进程测试中可完整恢复已确认写入。</li>
+						<li>使用 JMH 对写入、随机读取和范围扫描进行基准测试，依据结果优化 Bloom Filter 与块缓存参数。</li>
+						<li>为 MemTable 并发读写引入读写锁，补充 46 个单元与故障注入用例，覆盖恢复、合并和边界键场景。</li>
+					</ul>
+				</div>
+			</section>
+
+			<section class="skills">
+				<h2>专业技能</h2>
+				<ul>
+					<li><strong class="keyword">Java 基础：</strong>熟悉集合、异常、反射与并发编程；理解 JVM 内存模型、类加载和常用 GC 思路。</li>
+					<li><strong class="keyword">开发框架：</strong>熟悉 Spring Boot、MyBatis；理解 IOC、AOP 与常用 Web 开发模式。</li>
+					<li><strong class="keyword">数据组件：</strong>熟悉 MySQL 索引、事务与 MVCC；掌握 Redis 缓存策略、持久化与常见问题处理。</li>
+					<li><strong class="keyword">工程实践：</strong>了解 RocketMQ 消息可靠性；能够使用 Linux、Git、Docker、JUnit 与 JMeter。</li>
+					<li><strong class="keyword">计算机基础：</strong>掌握常见数据结构与算法，理解 TCP/IP、HTTP、进程线程和文件系统基础。</li>
+				</ul>
+			</section>
+		</main>
+	</body>
+</html>

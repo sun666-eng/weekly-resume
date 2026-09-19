@@ -1,0 +1,92 @@
+import type { Template } from "@reactive-resume/schema/templates";
+
+const chineseTemplateNames: Record<Template, string> = {
+	azurill: "清新",
+	bronzor: "雅致",
+	chikorita: "青禾",
+	ditgar: "墨序",
+	ditto: "简约",
+	gengar: "暗夜",
+	glalie: "清朗",
+	kakuna: "经典",
+	lapras: "海蓝",
+	leafish: "自然",
+	meowth: "灵动",
+	onyx: "商务",
+	pikachu: "明快",
+	rhyhorn: "稳重",
+	scizor: "锐意",
+};
+
+const chineseTemplateTags: Record<string, string> = {
+	"Two-column": "双栏布局",
+	Creative: "创意",
+	Tech: "技术岗",
+	"Visual flair": "视觉突出",
+	Clean: "简洁",
+	Professional: "专业",
+	Corporate: "企业",
+	Finance: "金融",
+	Consulting: "咨询",
+	"Soft accent": "柔和点缀",
+	Marketing: "市场营销",
+	HR: "人力资源",
+	"Client-facing": "客户岗位",
+	Modern: "现代",
+	Developer: "开发岗位",
+	"Data science": "数据科学",
+	"Technical PM": "技术产品",
+	"Dark sidebar": "深色侧栏",
+	"ATS friendly": "ATS 友好",
+	Minimal: "极简",
+	"Text-dense": "信息紧凑",
+	Traditional: "传统行业",
+	"No decoration": "无装饰",
+	"Accent colors": "强调色",
+	"Clean typography": "清晰排版",
+	"Business analyst": "商业分析",
+	Operations: "运营",
+	Legal: "法务",
+	Executive: "管理岗位",
+	Understated: "沉稳",
+	"Single-column": "单栏布局",
+	Compact: "紧凑",
+	Efficient: "高效",
+	"Entry level": "校招",
+	Internship: "实习",
+	"Magenta accent": "品红点缀",
+	Polished: "精致",
+	Senior: "资深岗位",
+	Enterprise: "大型企业",
+	"Muted sidebar": "低饱和侧栏",
+	Earthy: "自然色调",
+	Calm: "舒缓",
+	Sustainability: "可持续发展",
+	Healthcare: "医疗健康",
+	Nonprofit: "公益组织",
+	"Inline header": "行内标题",
+	"Asian style": "亚洲风格",
+	"CN/JP/KR": "中日韩",
+	Sidebar: "侧栏",
+	"Grid layout": "网格布局",
+	Versatile: "通用",
+	Technical: "技术岗位",
+	Simple: "简约",
+	Editorial: "编辑出版",
+	Junior: "初级岗位",
+	Designer: "设计岗位",
+	"Content creator": "内容创作",
+	Whitespace: "留白",
+	"Uppercase headings": "醒目标题",
+	Startup: "创业公司",
+};
+
+export function getTemplateDisplayName(template: Template, locale: string, fallback?: string): string {
+	if (locale === "zh-CN") return chineseTemplateNames[template];
+	return fallback ?? template[0].toUpperCase() + template.slice(1);
+}
+
+export function getTemplateTagLabel(tag: string, locale: string): string {
+	if (locale === "zh-CN") return chineseTemplateTags[tag] ?? tag;
+	return tag;
+}

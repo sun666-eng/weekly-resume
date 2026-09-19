@@ -1,0 +1,62 @@
+{
+	"name": "Weekly Resume",
+	"short_name": "Weekly Resume",
+	"description": "免费开源的简历制作工具",
+	"id": "/?source=pwa",
+	"start_url": "/?source=pwa",
+	"scope": "/",
+	"lang": "zh-CN",
+	"display": "standalone",
+	"orientation": "portrait",
+	"theme_color": "#09090B",
+	"background_color": "#09090B",
+	"icons": [
+		{
+			"src": "favicon.ico",
+			"sizes": "128x128",
+			"type": "image/x-icon"
+		},
+		{
+			"src": "pwa-64x64.png",
+			"sizes": "64x64",
+			"type": "image/png"
+		},
+		{
+			"src": "pwa-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "pwa-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "maskable-icon-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	],
+	"categories": [
+		"ai",
+		"builder",
+		"business",
+		"career",
+		"cv",
+		"editor",
+		"free",
+		"generator",
+		"job-search",
+		"multilingual",
+		"open-source",
+		"privacy",
+		"productivity",
+		"resume",
+		"self-hosted",
+		"templates",
+		"utilities",
+		"writing"
+	]
+}
