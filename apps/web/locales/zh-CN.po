@@ -425,7 +425,7 @@ msgstr "添加条目，或使用项目和志愿者工作来展示同等的历史
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Add and test a provider before starting an agent thread."
-msgstr "在启动代理会话之前，请先添加并测试提供商。"
+msgstr "在启动 Agent 会话之前，请先添加并测试提供商。"
 
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -521,31 +521,31 @@ msgstr "对照职位描述"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Agent"
-msgstr "代理人"
+msgstr "Agent"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Agent ready"
-msgstr "代理已准备就绪"
+msgstr "Agent 已就绪"
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Agents"
-msgstr "代理人"
+msgstr "Agent"
 
 #: src/dialogs/resume/import.tsx
 msgid "AI"
-msgstr "AI（人工智能）"
+msgstr "AI"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "AI agent setup is unavailable right now. Please try again in a moment."
-msgstr "目前无法设置人工智能代理，请稍后再试。"
+msgstr "目前无法设置 AI Agent，请稍后再试。"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
-msgstr "在配置 REDIS_URL 和 ENCRYPTION_SECRET 之前，AI 代理设置不可用。"
+msgstr "在配置 REDIS_URL 和 ENCRYPTION_SECRET 之前，AI Agent 设置不可用。"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "AI assistant"
-msgstr "人工智能助手"
+msgstr "AI 助手"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI provider"
@@ -561,7 +561,7 @@ msgstr "AI提供商管理功能不可用。请稍后再试。"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI Providers"
-msgstr "人工智能提供商"
+msgstr "AI 提供商"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
@@ -738,7 +738,7 @@ msgstr "批准"
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Approved, waiting for the agent…"
-msgstr "已批准，正在等待代理…"
+msgstr "已批准，正在等待 Agent…"
 
 #: src/libs/locale.ts
 msgid "Arabic"
@@ -800,7 +800,7 @@ msgstr "学习领域"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Artificial Intelligence"
-msgstr "人工智能"
+msgstr "AI"
 
 #: src/features/homepage/community-stats.tsx
 msgid "As of <0>{formattedDate}</0>."
@@ -1466,7 +1466,7 @@ msgstr "无法为打印准备你的简历。请重试。"
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
 msgid "Could not reach the AI provider. Please try again."
-msgstr "无法联系人工智能提供商。请重试。"
+msgstr "无法连接 AI 提供商。请重试。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
@@ -1861,7 +1861,7 @@ msgstr "删除提供商"
 #: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Delete this agent thread?"
-msgstr "删除此代理会话？"
+msgstr "删除此 Agent 会话？"
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -1900,7 +1900,7 @@ msgstr "正在删除你的简历…"
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Denied, waiting for the agent…"
-msgstr "已拒绝，正在等待代理…"
+msgstr "已拒绝，正在等待 Agent…"
 
 #: src/features/auth/pages/consent.tsx
 #: src/routes/agent/-components/patch-approval-card.tsx
@@ -2487,7 +2487,7 @@ msgstr "无法评审这份简历。"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Failed to save AI provider."
-msgstr "保存人工智能提供商失败。"
+msgstr "保存 AI 提供商失败。"
 
 #. Fallback toast when requesting password reset email fails without backend message
 #: src/features/auth/pages/forgot-password.tsx
@@ -2508,7 +2508,7 @@ msgstr "退出登录失败。请重试。"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
-msgstr "启动代理会话失败。"
+msgstr "启动 Agent 会话失败。"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "Failed to start the AI assistant."
@@ -3338,7 +3338,7 @@ msgstr "留空则将标题重置为原始值。"
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
-msgstr "离开去建立人工智能提供商吗？"
+msgstr "要离开当前页面并设置 AI 提供商吗？"
 
 #: src/components/input/rich-input.tsx
 msgid "Left Align"
@@ -3437,7 +3437,7 @@ msgstr "立陶宛语"
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
-msgstr "正在加载人工智能提供商。请稍后再试。"
+msgstr "正在加载 AI 提供商，请稍后再试。"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading applications…"
@@ -3785,7 +3785,7 @@ msgstr "未找到求职信。请新建一封，或导入已有的求职信。"
 #. Error shown when AI import endpoint returns no parsed resume data
 #: src/dialogs/resume/import.tsx
 msgid "No data was returned from the AI provider."
-msgstr "人工智能提供商没有返回任何数据。"
+msgstr "AI 提供商没有返回任何数据。"
 
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
@@ -3985,7 +3985,7 @@ msgstr "打开"
 
 #: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Open AI agent"
-msgstr "打开 AI 代理"
+msgstr "打开 AI Agent"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "Open AI assistant"
@@ -4034,11 +4034,11 @@ msgstr "在新标签页中打开"
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Optional note for the agent"
-msgstr "给代理的备注（可选）"
+msgstr "给 Agent 的备注（可选）"
 
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Optional note for the agent…"
-msgstr "给代理的备注（可选）…"
+msgstr "给 Agent 的备注（可选）…"
 
 #: src/routes/_home/ats-checker.tsx
 msgid "Optionally, which terms from a job posting already appear."
@@ -5102,11 +5102,11 @@ msgstr "全选"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select an agent model"
-msgstr "选择代理模型"
+msgstr "选择 Agent 模型"
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
-msgstr "选择一家人工智能提供商"
+msgstr "选择 AI 提供商"
 
 #: src/components/ui/combobox.tsx
 msgid "Select..."
@@ -5190,11 +5190,11 @@ msgstr "建立服务提供商"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "Set up an AI provider"
-msgstr "建立人工智能提供商"
+msgstr "设置 AI 提供商"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Set up an AI provider before starting a thread."
-msgstr "在开始会话之前，请先设置好人工智能提供商。"
+msgstr "在开始会话之前，请先设置 AI 提供商。"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Set up an AI provider first."
@@ -5202,7 +5202,7 @@ msgstr "请先设置一个 AI 提供商。"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "Set up an AI provider to chat about this resume and apply edits automatically."
-msgstr "设置人工智能服务提供商，使其能够就这份简历进行交流并自动进行修改。"
+msgstr "设置 AI 提供商，以便讨论这份简历并自动应用修改。"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
@@ -6012,7 +6012,7 @@ msgstr "此条目将被永久删除。此操作无法撤销。"
 
 #: src/dialogs/resume/import.tsx
 msgid "This feature requires a connected AI provider. Please set one up in the settings."
-msgstr "此功能需要连接人工智能服务提供商。请在设置中进行设置。"
+msgstr "此功能需要连接 AI 提供商，请前往设置完成配置。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This file contains form fields."
@@ -6162,7 +6162,7 @@ msgstr "这份简历受密码保护"
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
-msgstr "这份简历由人工智能代理更新。"
+msgstr "这份简历已由 AI Agent 更新。"
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume's sharing settings changed elsewhere."
@@ -6206,7 +6206,7 @@ msgstr "此会话为只读"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
-msgstr "由于正在处理的简历或人工智能提供商不可用，此会话为只读。"
+msgstr "由于工作简历或 AI 提供商不可用，此会话为只读。"
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "This will remove all items from this section."
@@ -6798,7 +6798,7 @@ msgstr "与前 30 天相比"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Waiting for the agent…"
-msgstr "正在等待代理…"
+msgstr "正在等待 Agent…"
 
 #: src/features/ats-checker/ai-review/locked-card.tsx
 msgid "Want a second opinion on the writing?"
