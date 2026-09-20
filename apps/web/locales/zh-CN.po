@@ -256,11 +256,11 @@ msgstr "一份真实的示例 PDF"
 
 #: src/routes/_home/-sections/footer.tsx
 msgid "A resume builder that makes it easy to create, update, and share your resume."
-msgstr ""
+msgstr "简历制作工具，让你轻松创建、更新和分享简历。"
 
 #: src/features/homepage/site-footer.tsx
 msgid "A resume builder. Yours to keep, yours to export."
-msgstr ""
+msgstr "属于你的简历制作工具，数据由你保留，随时可以导出。"
 
 #: src/features/ats-checker/parse-preview.tsx
 msgid "A resume laid out for a human reader, with a photo, headings and columns"
@@ -288,7 +288,7 @@ msgstr "关于我"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "About this builder"
-msgstr ""
+msgstr "关于此编辑器"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading and changing your resumes and job applications."
@@ -1338,7 +1338,7 @@ msgstr "从上次中断的地方继续"
 
 #: src/dialogs/resume/import.tsx
 msgid "Continue where you left off by importing a resume from PDF, Microsoft Word, or JSON."
-msgstr ""
+msgstr "导入 PDF、Microsoft Word 或 JSON 简历，从上次中断的位置继续。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Conversation copied."
@@ -2782,7 +2782,7 @@ msgstr "转到仪表板"
 
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to homepage"
-msgstr ""
+msgstr "返回首页"
 
 #. Accessible label for button navigating from builder to resumes dashboard
 #: src/routes/builder/$resumeId/-components/header.tsx
@@ -3175,7 +3175,7 @@ msgstr "卡纳达语"
 
 #: src/features/homepage/export-playground.tsx
 msgid "Keep a backup of your content and settings. Import it later."
-msgstr ""
+msgstr "备份你的内容和设置，以便日后导入恢复。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
@@ -3366,7 +3366,7 @@ msgstr "5 级中的第 {level} 级"
 #: src/components/ui/copyright.tsx
 #: src/features/homepage/site-footer.tsx
 msgid "Licensed under MIT."
-msgstr ""
+msgstr "基于 MIT 许可证发布。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Ligatures can drop letters out of words such as \"workflow\"."
@@ -3394,7 +3394,7 @@ msgstr "行高"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume (recommended)"
-msgstr ""
+msgstr "关联一份简历（推荐）"
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
@@ -3402,11 +3402,11 @@ msgstr "关联一份简历并粘贴职位描述（编辑），即可评估匹配
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
-msgstr ""
+msgstr "关联一份简历，以使用 AI 匹配评分和优化功能。"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Linked resume"
-msgstr ""
+msgstr "已关联的简历"
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -3507,7 +3507,7 @@ msgstr "低影响"
 
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Made with Weekly Resume"
-msgstr ""
+msgstr "使用 Weekly Resume 制作"
 
 #. Layout editor column label for the primary content area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -3906,7 +3906,7 @@ msgstr "未评分"
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Not sure what to write? Use the editor comments as a starting point."
-msgstr ""
+msgstr "不知道写什么？可以从编辑器中的建议开始。"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Note"
@@ -3944,7 +3944,7 @@ msgstr "录用"
 
 #: src/components/ui/donation-toast.tsx
 msgid "OK"
-msgstr ""
+msgstr "确定"
 
 #: src/features/settings/pages/api-keys.tsx
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
@@ -5988,7 +5988,7 @@ msgstr "这封求职信在别处被修改过。你的编辑仍然保留。请先
 
 #: src/dialogs/api-key/create.tsx
 msgid "This creates a new API key, which lets other programs read and change your resume data through the Weekly Resume API."
-msgstr ""
+msgstr "这会创建一个新的 API 密钥，其他程序可以通过 Weekly Resume API 读取和修改你的简历数据。"
 
 #: src/libs/resume/ats.ts
 msgid "This date will not be read correctly."
@@ -6138,7 +6138,7 @@ msgstr "这个时期从未来开始。"
 
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
-msgstr ""
+msgstr "此简历制作工具可免费使用。"
 
 #: src/features/cover-letters/library.tsx
 msgid "This resume has no embedded cover letters."
@@ -6325,7 +6325,7 @@ msgstr "跟踪你的简历被查看和下载的次数"
 #: src/features/homepage/languages-showcase.tsx
 #: src/features/settings/pages/preferences.tsx
 msgid "Translations are contributed by the community."
-msgstr ""
+msgstr "翻译由社区共同贡献。"
 
 #: src/components/layout/error-screen.tsx
 #: src/features/homepage/ats-playground.tsx
@@ -6670,7 +6670,7 @@ msgstr "使用示例"
 
 #: src/features/settings/pages/api-keys.tsx
 msgid "Use the API to connect this resume builder to your own applications. It covers the endpoints, the request format, and authentication."
-msgstr ""
+msgstr "使用 API 将此简历制作工具连接到你自己的应用程序。文档包含接口、请求格式和身份验证方式。"
 
 #: src/features/homepage/languages-showcase.tsx
 msgid "Use the app in a language you’re comfortable with. Try a few of the translations made by the community."
@@ -6982,7 +6982,7 @@ msgstr "文案"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "You are using {APP_NAME}. Your resumes stay on this instance and are not shared with the original upstream project."
-msgstr ""
+msgstr "你正在使用 {APP_NAME}。你的简历仅保存在此服务中，不会与原始上游项目共享。"
 
 #: src/features/auth/pages/login.tsx
 msgid "You can also sign in with your username."
@@ -7223,4 +7223,4 @@ msgstr "祖鲁语"
 
 #: src/features/auth/pages/register.tsx
 msgid "登录授权失败，请重试。"
-msgstr ""
+msgstr "登录授权失败，请重试。"
