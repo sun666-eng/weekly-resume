@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://weekly-resume.local/schemas/china-job-rules.json",
+  "title": "Weekly Resume 中国岗位规则库",
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "category",
+        "section",
+        "audiences",
+        "rule",
+        "reason",
+        "severity",
+        "hardConstraint",
+        "evidenceLevel",
+        "sourceIds",
+        "tags",
+        "lastReviewed"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^cn-[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 2 },
+        "category": {
+          "enum": ["truthfulness", "privacy", "targeting", "content", "evidence", "layout", "delivery", "campus", "career_change"]
+        },
+        "section": {
+          "enum": ["all", "basics", "summary", "education", "experience", "projects", "skills", "awards", "delivery"]
+        },
+        "audiences": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["all", "campus", "intern", "experienced", "career_switcher"] }
+        },
+        "rule": { "type": "string", "minLength": 8 },
+        "reason": { "type": "string", "minLength": 8 },
+        "check": { "type": "string" },
+        "badExample": { "type": "string" },
+        "goodExample": { "type": "string" },
+        "severity": { "enum": ["blocker", "high", "medium", "low"] },
+        "hardConstraint": { "type": "boolean" },
+        "evidenceLevel": { "enum": ["official_guidance", "official_law", "official_standard", "curated_practice"] },
+        "sourceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "tags": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "lastReviewed": { "type": "string", "format": "date" }
+      }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "aliases",
+        "audiences",
+        "sectionPriority",
+        "keywordGroups",
+        "evidencePreferences",
+        "strongSignals",
+        "weakSignals",
+        "jdChecklist",
+        "evidenceLevel",
+        "sourceIds",
+        "lastReviewed"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^role-[a-z0-9-]+$" },
+        "name": { "type": "string" },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "audiences": { "type": "array", "items": { "type": "string" } },
+        "sectionPriority": { "type": "array", "items": { "type": "string" } },
+        "keywordGroups": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "evidencePreferences": { "type": "array", "items": { "type": "string" } },
+        "strongSignals": { "type": "array", "items": { "type": "string" } },
+        "weakSignals": { "type": "array", "items": { "type": "string" } },
+        "jdChecklist": { "type": "array", "items": { "type": "string" } },
+        "evidenceLevel": { "enum": ["official_standard", "curated_practice"] },
+        "sourceIds": { "type": "array", "items": { "type": "string" } },
+        "lastReviewed": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

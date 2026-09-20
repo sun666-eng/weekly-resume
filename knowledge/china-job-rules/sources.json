@@ -1,0 +1,85 @@
+{
+  "version": "0.1.0",
+  "lastReviewed": "2026-09-20",
+  "sources": [
+    {
+      "id": "ncss-resume-quality-2026",
+      "title": "怎样提高简历质量？求职小伙伴速收藏",
+      "publisher": "国家大学生就业服务平台",
+      "publishedAt": "2026-04-22",
+      "url": "https://24365.ncss.cn/ncss/zd/jl/202604/20260422/2293468517.html",
+      "type": "official_guidance",
+      "use": "转述岗位定制、隐私最小化、STAR、量化、版式与配色规则",
+      "contentPolicy": "只保存结构化转述和来源链接，不镜像全文"
+    },
+    {
+      "id": "ncss-custom-resume-2026",
+      "title": "求职简历应该是“通用版”还是“定制版”",
+      "publisher": "国家大学生就业服务平台",
+      "publishedAt": "2026-04-22",
+      "url": "https://24365.ncss.cn/ncss/zd/jl/202604/20260422/2293468461.html",
+      "type": "official_guidance",
+      "use": "转述 JD 关键词排序、匹配度处理、转岗表达与禁止造假规则",
+      "contentPolicy": "只保存结构化转述和来源链接，不镜像全文"
+    },
+    {
+      "id": "ncss-resume-guide-2024",
+      "title": "找工作，简历如何准备？攻略收好",
+      "publisher": "国家大学生就业服务平台",
+      "publishedAt": "2024-11-18",
+      "url": "https://24365.ncss.cn/ncss/zd/jl/202411/20241118/2293345457.html",
+      "type": "official_guidance",
+      "use": "转述内容聚焦、STAR、投递邮件、PDF 文件名与网申一致性规则",
+      "contentPolicy": "只保存结构化转述和来源链接，不镜像全文"
+    },
+    {
+      "id": "ncss-common-problems-2023",
+      "title": "简历制作的常见问题",
+      "publisher": "国家大学生就业服务平台",
+      "publishedAt": "2023-03-22",
+      "url": "https://24365.ncss.cn/ncss/zd/jl/202303/20230322/2267594333.html",
+      "type": "official_guidance",
+      "use": "转述避免经历堆砌、篇幅失控、内容过薄、万能简历和转岗错位规则",
+      "contentPolicy": "只保存结构化转述和来源链接，不镜像全文"
+    },
+    {
+      "id": "mohrss-occupation-classification-2022",
+      "title": "中华人民共和国职业分类大典（2022年版）相关说明",
+      "publisher": "中华人民共和国人力资源和社会保障部",
+      "publishedAt": "2022-10-28",
+      "url": "https://www.mohrss.gov.cn/wap/xw/rsxw/202210/t20221028_489104.html",
+      "type": "official_standard",
+      "use": "作为岗位名称、职业分类和数字职业标签的上位参考",
+      "contentPolicy": "保存职业分类标识和结构化摘要"
+    },
+    {
+      "id": "public-recruitment-china",
+      "title": "中国公共招聘网",
+      "publisher": "中华人民共和国人力资源和社会保障部",
+      "url": "https://job.mohrss.gov.cn/",
+      "type": "official_public_data",
+      "use": "后续经网站规则复核后用于岗位名称、地区、学历、经验和技能需求统计",
+      "contentPolicy": "当前版本仅登记来源，未批量抓取岗位正文"
+    },
+    {
+      "id": "pipl-2021",
+      "title": "中华人民共和国个人信息保护法",
+      "publisher": "中华人民共和国工业和信息化部",
+      "publishedAt": "2021-08-20",
+      "url": "https://www.miit.gov.cn/jgsj/zfs/fl/art/2022/art_515a4b20c12f430eab54bb4f56d89f56.html",
+      "type": "official_law",
+      "use": "个人信息最小必要、告知、同意、公开信息合理使用和安全保护依据",
+      "contentPolicy": "保存合规摘要和条款定位"
+    },
+    {
+      "id": "data-security-law-2021",
+      "title": "中华人民共和国数据安全法",
+      "publisher": "中国人大网",
+      "publishedAt": "2021-06-10",
+      "url": "https://www.npc.gov.cn/npc/c2/c30834/202106/t20210610_311888.html",
+      "type": "official_law",
+      "use": "合法正当收集、数据分类分级和安全管理依据",
+      "contentPolicy": "保存合规摘要和条款定位"
+    }
+  ]
+}

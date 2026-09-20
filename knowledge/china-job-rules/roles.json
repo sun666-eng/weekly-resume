@@ -1,0 +1,217 @@
+{
+  "version": "0.1.0",
+  "lastReviewed": "2026-09-20",
+  "methodology": "岗位画像为中国大陆招聘场景的初始人工整理基线，不是平台统计结论。实际优化必须以用户提供的目标 JD 为最高岗位依据。",
+  "roles": [
+    {
+      "id": "role-java-backend",
+      "name": "Java 后端开发",
+      "aliases": ["Java 开发工程师", "后端开发工程师", "Java 后端实习生"],
+      "audiences": ["campus", "intern", "experienced"],
+      "sectionPriority": ["basics", "skills", "experience", "projects", "education"],
+      "keywordGroups": {
+        "language": ["Java", "JVM", "集合", "并发编程"],
+        "framework": ["Spring", "Spring Boot", "MyBatis", "MyBatis-Plus"],
+        "data": ["MySQL", "Redis", "SQL", "事务", "索引"],
+        "engineering": ["REST API", "Maven", "Git", "单元测试", "日志", "Linux"],
+        "advanced": ["消息队列", "微服务", "分布式", "缓存一致性", "性能优化"]
+      },
+      "evidencePreferences": ["接口或模块的个人职责", "数据库表和索引设计依据", "并发、缓存或事务问题的解决过程", "性能与稳定性指标口径", "测试、部署和故障排查证据"],
+      "strongSignals": ["能说明问题、方案、权衡与结果", "技术栈在项目要点中有实际使用证据", "性能数据包含测试环境和比较口径"],
+      "weakSignals": ["大段背诵八股知识", "只列 CRUD 功能", "无依据地写高并发、分布式或百万用户", "精通多项技术但项目中没有出现"],
+      "jdChecklist": ["确认业务方向与 Java 版本", "提取必需框架与数据库", "区分实习生基础要求和社招工程经验", "确认是否要求微服务、消息队列、云平台或容器", "把最相关项目移到前面"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-frontend",
+      "name": "前端开发",
+      "aliases": ["Web 前端开发工程师", "前端实习生", "React 开发工程师", "Vue 开发工程师"],
+      "audiences": ["campus", "intern", "experienced"],
+      "sectionPriority": ["basics", "skills", "projects", "experience", "education"],
+      "keywordGroups": {
+        "foundation": ["HTML", "CSS", "JavaScript", "TypeScript", "浏览器"],
+        "framework": ["React", "Vue", "路由", "状态管理"],
+        "engineering": ["Vite", "Webpack", "ESLint", "测试", "Git", "CI/CD"],
+        "quality": ["性能优化", "可访问性", "响应式布局", "兼容性", "组件化"],
+        "integration": ["REST API", "WebSocket", "权限控制", "错误处理"]
+      },
+      "evidencePreferences": ["组件或页面的个人职责", "状态和数据流设计", "性能优化前后数据", "跨端或浏览器兼容处理", "设计还原、可访问性和测试证据"],
+      "strongSignals": ["提供可访问作品或演示", "说明复杂交互和状态管理方案", "性能指标注明测量工具与场景"],
+      "weakSignals": ["只写完成页面开发", "只罗列组件库", "把团队产品全部写成个人成果", "作品链接失效"],
+      "jdChecklist": ["确认 React 或 Vue 技术路线", "提取 TypeScript、工程化和测试要求", "确认移动端、桌面端或小程序场景", "确认性能、可访问性和设计协作要求", "匹配作品链接与目标岗位"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-test-development",
+      "name": "测试开发",
+      "aliases": ["测试开发工程师", "软件测试工程师", "自动化测试工程师", "测试实习生"],
+      "audiences": ["campus", "intern", "experienced"],
+      "sectionPriority": ["basics", "skills", "experience", "projects", "education"],
+      "keywordGroups": {
+        "foundation": ["测试用例", "缺陷管理", "测试计划", "质量风险"],
+        "automation": ["Python", "Java", "接口自动化", "UI 自动化", "pytest", "JUnit"],
+        "tools": ["Postman", "JMeter", "Selenium", "Playwright", "Git"],
+        "systems": ["Linux", "SQL", "日志分析", "网络协议"],
+        "quality": ["持续集成", "覆盖率", "性能测试", "稳定性", "质量门禁"]
+      },
+      "evidencePreferences": ["测试对象与风险范围", "用例设计方法", "自动化覆盖与执行效率", "发现的关键缺陷及定位过程", "质量指标和发布保障结果"],
+      "strongSignals": ["能说明为什么设计某类测试", "自动化项目包含维护性和失败诊断", "质量结果有清晰口径"],
+      "weakSignals": ["只写执行测试用例", "工具清单没有项目", "缺陷数量没有严重度或范围", "把开发修复成果写成测试个人成果"],
+      "jdChecklist": ["确认功能、接口、性能或客户端测试方向", "提取编程语言与自动化框架", "确认 CI/CD 和环境要求", "匹配业务质量风险", "突出定位问题与跨团队协作"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-python-backend",
+      "name": "Python 开发",
+      "aliases": ["Python 开发工程师", "Python 后端工程师", "Python 实习生"],
+      "audiences": ["campus", "intern", "experienced"],
+      "sectionPriority": ["basics", "skills", "experience", "projects", "education"],
+      "keywordGroups": {
+        "language": ["Python", "数据结构", "异步编程", "类型标注"],
+        "framework": ["FastAPI", "Django", "Flask"],
+        "data": ["MySQL", "PostgreSQL", "Redis", "ORM", "SQL"],
+        "engineering": ["REST API", "pytest", "Git", "Linux", "Docker"],
+        "tasks": ["任务队列", "数据处理", "接口开发", "脚本自动化"]
+      },
+      "evidencePreferences": ["服务或脚本解决的具体问题", "接口和数据模型设计", "异步任务或性能优化", "测试覆盖和部署方式", "异常处理和可观测性"],
+      "strongSignals": ["代码结构和工程质量可解释", "项目不局限于单文件脚本", "性能或效率改进有测量依据"],
+      "weakSignals": ["只写会爬虫但不说明合规边界", "将调用库等同于算法能力", "只列语法基础", "项目没有输入输出和使用场景"],
+      "jdChecklist": ["确认后端、自动化、数据或 AI 工程方向", "提取框架和数据库要求", "确认并发、任务队列与部署要求", "检查是否涉及数据合规", "选择同方向项目"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-data-analyst",
+      "name": "数据分析",
+      "aliases": ["数据分析师", "商业分析师", "数据运营", "数据分析实习生"],
+      "audiences": ["campus", "intern", "experienced", "career_switcher"],
+      "sectionPriority": ["basics", "summary", "skills", "projects", "experience", "education"],
+      "keywordGroups": {
+        "tools": ["Excel", "SQL", "Python", "Pandas", "Tableau", "Power BI"],
+        "methods": ["指标体系", "漏斗分析", "留存分析", "分群", "A/B 测试"],
+        "statistics": ["描述统计", "假设检验", "回归", "抽样"],
+        "business": ["业务理解", "问题拆解", "数据口径", "洞察", "建议"],
+        "quality": ["数据清洗", "异常检测", "数据验证", "可视化"]
+      },
+      "evidencePreferences": ["业务问题与决策对象", "数据来源和口径", "分析方法及选择理由", "发现的洞察", "建议被采用后的结果"],
+      "strongSignals": ["从问题到数据再到行动形成闭环", "能解释指标定义与局限", "图表服务于明确结论"],
+      "weakSignals": ["只展示工具课程", "只有可视化没有结论", "相关性被写成因果", "敏感业务数据未经脱敏"],
+      "jdChecklist": ["确认业务域和分析对象", "提取 SQL、Excel、Python 与 BI 工具要求", "确认统计方法深度", "匹配行业指标与业务案例", "检查结论是否能支持行动"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-algorithm-engineer",
+      "name": "算法工程师",
+      "aliases": ["机器学习工程师", "算法实习生", "NLP 算法工程师", "计算机视觉算法工程师"],
+      "audiences": ["campus", "intern", "experienced"],
+      "sectionPriority": ["basics", "education", "skills", "projects", "research", "experience"],
+      "keywordGroups": {
+        "foundation": ["机器学习", "深度学习", "概率统计", "线性代数", "优化"],
+        "language": ["Python", "C++", "SQL"],
+        "framework": ["PyTorch", "TensorFlow", "scikit-learn"],
+        "directions": ["NLP", "计算机视觉", "推荐系统", "大模型"],
+        "engineering": ["数据处理", "训练", "评估", "推理优化", "部署", "实验管理"]
+      },
+      "evidencePreferences": ["任务定义与数据集", "基线模型与评价指标", "个人提出的改进", "消融或对照实验", "推理效率、部署或线上效果"],
+      "strongSignals": ["实验可复现且指标口径清楚", "区分研究贡献与工程实现", "能解释模型选择与失败实验"],
+      "weakSignals": ["只调用现成 API", "只写准确率不写数据集和基线", "论文或竞赛名次不可核验", "把团队模型全部写成个人成果"],
+      "jdChecklist": ["确认具体算法方向", "提取学历、论文和竞赛要求", "区分研究型与工程型岗位", "确认框架、部署与硬件要求", "选择相同评价指标的项目"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-product-manager",
+      "name": "产品经理",
+      "aliases": ["互联网产品经理", "产品实习生", "B 端产品经理", "C 端产品经理"],
+      "audiences": ["campus", "intern", "experienced", "career_switcher"],
+      "sectionPriority": ["basics", "summary", "experience", "projects", "skills", "education"],
+      "keywordGroups": {
+        "discovery": ["用户研究", "需求分析", "竞品分析", "场景", "痛点"],
+        "design": ["产品方案", "原型", "流程", "PRD", "信息架构"],
+        "delivery": ["项目推进", "跨团队协作", "验收", "上线"],
+        "growth": ["数据分析", "转化率", "留存", "活跃", "A/B 测试"],
+        "tools": ["Figma", "Axure", "墨刀", "SQL", "Excel"]
+      },
+      "evidencePreferences": ["目标用户和业务问题", "需求优先级依据", "方案与关键取舍", "推动研发设计运营的过程", "上线指标与后续迭代"],
+      "strongSignals": ["形成问题、方案、交付、验证闭环", "能说明指标和决策关系", "个人在协作中的责任明确"],
+      "weakSignals": ["只写输出 PRD 和画原型", "把参与会议当成果", "没有用户或业务背景", "指标增长没有说明个人贡献"],
+      "jdChecklist": ["确认 B 端、C 端、商业化或增长方向", "提取行业和用户类型", "确认数据、原型和项目推进要求", "选择最相关产品案例", "补充作品集但避免泄露商业机密"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-ui-ux-designer",
+      "name": "UI/UX 设计",
+      "aliases": ["UI 设计师", "UX 设计师", "交互设计师", "产品设计师"],
+      "audiences": ["campus", "intern", "experienced", "career_switcher"],
+      "sectionPriority": ["basics", "portfolio", "experience", "projects", "skills", "education"],
+      "keywordGroups": {
+        "research": ["用户研究", "可用性测试", "用户旅程", "信息架构"],
+        "design": ["交互设计", "视觉设计", "原型", "设计系统", "响应式设计"],
+        "tools": ["Figma", "Sketch", "Adobe Illustrator", "Adobe Photoshop"],
+        "delivery": ["设计规范", "开发协作", "走查", "验收"],
+        "quality": ["可访问性", "一致性", "易用性", "转化率"]
+      },
+      "evidencePreferences": ["用户问题与设计目标", "研究或数据依据", "关键方案与迭代", "与产品和研发协作", "可用性或业务结果"],
+      "strongSignals": ["作品集展示完整设计过程", "视觉作品与目标岗位方向一致", "能说明约束和取舍"],
+      "weakSignals": ["只有最终效果图", "作品链接需要未说明的权限", "使用模板但未说明个人工作", "没有移动端或桌面端场景信息"],
+      "jdChecklist": ["确认视觉、交互、体验或产品设计方向", "提取行业和终端类型", "确认作品集格式与数量", "匹配研究和数据要求", "检查作品脱敏与授权"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-content-operations",
+      "name": "内容/用户运营",
+      "aliases": ["内容运营", "用户运营", "新媒体运营", "社区运营", "运营实习生"],
+      "audiences": ["campus", "intern", "experienced", "career_switcher"],
+      "sectionPriority": ["basics", "summary", "experience", "projects", "skills", "education"],
+      "keywordGroups": {
+        "content": ["选题", "内容策划", "编辑", "分发", "内容矩阵"],
+        "user": ["用户分层", "社群", "活动运营", "召回", "留存"],
+        "data": ["阅读量", "互动率", "转化率", "新增", "留存", "复盘"],
+        "channels": ["公众号", "短视频", "社区", "私域", "搜索"],
+        "tools": ["Excel", "数据看板", "排版工具", "剪辑工具"]
+      },
+      "evidencePreferences": ["目标用户和渠道", "内容或活动策略", "执行规模与个人职责", "指标变化和口径", "复盘后的迭代动作"],
+      "strongSignals": ["内容质量与业务指标同时说明", "区分自然增长、投放和活动贡献", "作品可访问且已脱敏"],
+      "weakSignals": ["只写运营账号", "只报总阅读量不写周期和内容数量", "团队账号增长全部归因个人", "堆砌热点词"],
+      "jdChecklist": ["确认内容、用户、活动或增长方向", "提取平台和用户类型", "确认核心指标", "选择相同渠道的案例", "检查作品版权和个人信息"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    },
+    {
+      "id": "role-finance-accounting",
+      "name": "财务/会计",
+      "aliases": ["会计", "财务专员", "审计助理", "财务实习生"],
+      "audiences": ["campus", "intern", "experienced", "career_switcher"],
+      "sectionPriority": ["basics", "education", "certifications", "experience", "skills", "projects"],
+      "keywordGroups": {
+        "accounting": ["会计核算", "凭证", "结账", "报表", "对账"],
+        "tax": ["税务申报", "发票", "税务合规"],
+        "analysis": ["预算", "成本分析", "差异分析", "经营分析"],
+        "controls": ["内部控制", "审计", "风险", "合规"],
+        "tools": ["Excel", "ERP", "SAP", "用友", "金蝶"]
+      },
+      "evidencePreferences": ["负责主体、账套或业务范围", "月结、对账或报表周期", "准确性和时效性", "流程优化和风险控制", "证书状态与取得时间"],
+      "strongSignals": ["数据范围和责任边界明确", "改进能说明效率或风险结果", "证书和系统经验可核验"],
+      "weakSignals": ["泄露前公司敏感财务数据", "只写熟悉所有财务流程", "把团队报表写成个人决策成果", "证书状态含糊"],
+      "jdChecklist": ["确认核算、税务、审计、FP&A 或资金方向", "提取行业与准则要求", "确认证书和系统要求", "匹配业务规模但做好脱敏", "突出准确性、时效性和合规"],
+      "evidenceLevel": "curated_practice",
+      "sourceIds": ["mohrss-occupation-classification-2022", "public-recruitment-china"],
+      "lastReviewed": "2026-09-20"
+    }
+  ]
+}
