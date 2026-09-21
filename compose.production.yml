@@ -1,0 +1,93 @@
+name: weekly_resume
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    mem_limit: 384m
+    shm_size: 128mb
+    networks:
+      - data_network
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-weekly_resume}
+      POSTGRES_USER: ${POSTGRES_USER:-weekly_resume}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - max_connections=50
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      start_period: 15s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    mem_limit: 192m
+    networks:
+      - data_network
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  weekly_resume:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 896m
+    networks:
+      - data_network
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - path: .env.production
+        required: true
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-weekly_resume}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-weekly_resume}
+      REDIS_URL: redis://redis:6379
+      LOCAL_STORAGE_PATH: /app/data
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then((r) => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));
+      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  data_network:

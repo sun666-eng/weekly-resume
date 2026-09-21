@@ -83,6 +83,16 @@ pnpm dev
 
 生产部署建议：Linux 服务器 + Docker Compose + HTTPS 反向代理。部署前务必：修改全部 `change-me` 占位密钥、为数据库和对象存储配置持久卷与备份、将 `APP_URL` 设为正式域名。详细的阿里云部署文档后续补充。
 
+2 核 2 GiB 的轻量服务器可使用精简编排，移除 SeaweedFS 并限制基础服务内存：
+
+```bash
+cp deploy.env.example .env.production
+# 编辑 .env.production，至少替换数据库密码及两个随机密钥
+docker compose --env-file .env.production -f compose.production.yml up -d --build
+```
+
+该编排仅将应用绑定到服务器的 `127.0.0.1:3000`，应通过 SSH 隧道测试，正式上线时再配置 HTTPS 反向代理。生产环境文件 `.env.production` 已被 `.gitignore` 排除，禁止提交。
+
 ## 许可证与来源
 
 - 本项目遵循 [MIT License](./LICENSE)；原项目版权声明依法保留。

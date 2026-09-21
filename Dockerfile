@@ -1,14 +1,18 @@
 # syntax=docker/dockerfile:1.7
 
-# Base image only; pnpm self-manages to the `packageManager` version in package.json.
-ARG PNPM_VERSION=11.21.0
+# Keep the build on Docker Hub so mainland deployments can use a registry mirror.
+ARG PNPM_VERSION=12.4.2
 ARG NODE_VERSION=24
 
-FROM ghcr.io/pnpm/pnpm:${PNPM_VERSION} AS base
+FROM node:${NODE_VERSION}-slim AS base
 
+ARG PNPM_VERSION
 ARG NODE_VERSION
 
-RUN pnpm runtime set node ${NODE_VERSION} -g --config.store-dir=/pnpm/runtime-store
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
