@@ -3,8 +3,9 @@
 # Keep the build on Docker Hub so mainland deployments can use a registry mirror.
 ARG PNPM_VERSION=12.4.2
 ARG NODE_VERSION=24
+ARG DOCKER_REGISTRY=docker.io/library
 
-FROM node:${NODE_VERSION}-slim AS base
+FROM ${DOCKER_REGISTRY}/node:${NODE_VERSION}-slim AS base
 
 ARG PNPM_VERSION
 ARG NODE_VERSION
@@ -43,7 +44,7 @@ COPY --from=runtime-pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --prod --frozen-lockfile
 
-FROM node:${NODE_VERSION}-slim AS runtime
+FROM ${DOCKER_REGISTRY}/node:${NODE_VERSION}-slim AS runtime
 
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.title="Weekly Resume"
