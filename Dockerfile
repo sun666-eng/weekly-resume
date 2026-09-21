@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 # Keep the build on Docker Hub so mainland deployments can use a registry mirror.
 ARG PNPM_VERSION=12.4.2
 ARG NODE_VERSION=24
