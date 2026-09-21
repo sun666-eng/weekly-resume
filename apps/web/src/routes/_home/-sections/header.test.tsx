@@ -4,6 +4,7 @@ import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { WEEKLY_RESUME_REPOSITORY_URL } from "@/components/input/github-stars-button";
 
 type LinkProps = React.PropsWithChildren<{
 	to: string;
@@ -55,6 +56,15 @@ describe("Header", () => {
 	it("includes ThemeToggleButton in the navigation", () => {
 		const { getByTestId } = renderHeader();
 		expect(getByTestId("theme-toggle")).toBeInTheDocument();
+	});
+
+	it("links the Stars button to the Weekly Resume repository", () => {
+		const { container } = renderHeader();
+		const stars = Array.from(container.querySelectorAll("a")).find(
+			(a) => a.getAttribute("href") === WEEKLY_RESUME_REPOSITORY_URL,
+		);
+		expect(stars).toBeDefined();
+		expect(stars?.getAttribute("target")).toBe("_blank");
 	});
 
 	it("labels the navigation landmark", () => {

@@ -1,17 +1,26 @@
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import { slugify } from "@reactive-resume/utils/string";
 
-const AI_DRAFT_SUFFIX = " - AI Draft";
+const AI_DRAFT_NAME = "AI 草稿";
+const AI_DRAFT_SUFFIX = " - AI 草稿";
+const LEGACY_AI_DRAFT_NAME = "AI Draft";
+const LEGACY_AI_DRAFT_SUFFIX = " - AI Draft";
 
 export function buildAgentDraftResumeName(sourceName: string) {
-	const normalized = sourceName.trim() || "Resume";
+	const normalized = sourceName.trim() || "简历";
+	if (normalized === AI_DRAFT_NAME) return normalized;
+	if (normalized === LEGACY_AI_DRAFT_NAME) return AI_DRAFT_NAME;
+	if (normalized.endsWith(LEGACY_AI_DRAFT_SUFFIX)) {
+		return `${normalized.slice(0, -LEGACY_AI_DRAFT_SUFFIX.length)}${AI_DRAFT_SUFFIX}`;
+	}
 	if (normalized.endsWith(AI_DRAFT_SUFFIX)) return normalized;
 
 	return `${normalized}${AI_DRAFT_SUFFIX}`;
 }
 
 export function buildUniqueAgentDraftSlug(sourceName: string, existingSlugs: Set<string>) {
-	const base = slugify(buildAgentDraftResumeName(sourceName));
+	const generatedSlug = slugify(buildAgentDraftResumeName(sourceName));
+	const base = generatedSlug === "ai" ? "ai-draft" : generatedSlug;
 	if (!existingSlugs.has(base)) return base;
 
 	let index = 2;

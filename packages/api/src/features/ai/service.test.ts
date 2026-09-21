@@ -14,7 +14,12 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
-function stubOpenAICompatibleResponse(response?: { content?: string; finishReason?: string }) {
+function stubOpenAICompatibleResponse(response?: {
+	content?: string;
+	finishReason?: string;
+	role?: "assistant" | "";
+	contentType?: string;
+}) {
 	let requestBody: unknown;
 
 	const fetchMock = vi.fn((_input: unknown, init?: { body?: unknown }) => {
@@ -31,13 +36,16 @@ function stubOpenAICompatibleResponse(response?: { content?: string; finishReaso
 				choices: [
 					{
 						index: 0,
-						message: { role: "assistant", content: response?.content ?? (hasEnoughOutputTokens ? "1" : "") },
+						message: {
+							role: response?.role ?? "assistant",
+							content: response?.content ?? (hasEnoughOutputTokens ? "1" : ""),
+						},
 						finish_reason: response?.finishReason ?? (hasEnoughOutputTokens ? "stop" : "length"),
 					},
 				],
 				usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
 			}),
-			{ headers: { "Content-Type": "application/json" } },
+			{ headers: { "Content-Type": response?.contentType ?? "application/json" } },
 		);
 	});
 
@@ -154,6 +162,12 @@ describe("AI provider connection test", () => {
 
 		expect(result.ok).toBe(false);
 		if (!result.ok) expect(result.message).not.toContain("sk-secret-value-123");
+	});
+
+	it("accepts a relay that labels plain JSON as an event stream and leaves the assistant role empty", async () => {
+		stubOpenAICompatibleResponse({ role: "", contentType: "text/event-stream" });
+
+		await expect(testConnection(testInput())).resolves.toEqual({ ok: true });
 	});
 
 	// The credentials schema accepts a single character, so short keys must be redacted too.

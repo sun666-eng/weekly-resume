@@ -107,13 +107,9 @@ describe("toUsername", () => {
 });
 
 describe("generateRandomName", () => {
-	it("returns a string with three capitalized words", () => {
+	it("returns a readable Chinese resume name", () => {
 		const name = generateRandomName();
-		const words = name.split(" ");
-		expect(words).toHaveLength(3);
-		for (const word of words) {
-			expect(word[0]).toBe(word[0]?.toUpperCase());
-		}
+		expect(name).toMatch(/^求职简历 \d{4}-\d{4}-\d{2}$/);
 	});
 
 	it("produces varying values", () => {

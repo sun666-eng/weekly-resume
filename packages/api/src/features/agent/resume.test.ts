@@ -2,16 +2,16 @@ import { describe, expect, it } from "vitest";
 import { buildAgentDraftResumeName, buildUniqueAgentDraftSlug, normalizeAgentResumePatchOperations } from "./resume";
 
 describe("agent resume setup helpers", () => {
-	it("names duplicated resumes as AI drafts", () => {
-		expect(buildAgentDraftResumeName("Senior Product Designer")).toBe("Senior Product Designer - AI Draft");
-		expect(buildAgentDraftResumeName("Senior Product Designer - AI Draft")).toBe("Senior Product Designer - AI Draft");
+	it("names duplicated resumes as Chinese AI drafts", () => {
+		expect(buildAgentDraftResumeName("产品经理简历")).toBe("产品经理简历 - AI 草稿");
+		expect(buildAgentDraftResumeName("产品经理简历 - AI 草稿")).toBe("产品经理简历 - AI 草稿");
+		expect(buildAgentDraftResumeName("产品经理简历 - AI Draft")).toBe("产品经理简历 - AI 草稿");
+		expect(buildAgentDraftResumeName("AI Draft")).toBe("AI 草稿");
 	});
 
 	it("generates unique AI draft slugs", () => {
-		expect(buildUniqueAgentDraftSlug("Senior Product Designer", new Set())).toBe("senior-product-designer-ai-draft");
-		expect(buildUniqueAgentDraftSlug("Senior Product Designer", new Set(["senior-product-designer-ai-draft"]))).toBe(
-			"senior-product-designer-ai-draft-2",
-		);
+		expect(buildUniqueAgentDraftSlug("产品经理简历", new Set())).toBe("ai-draft");
+		expect(buildUniqueAgentDraftSlug("产品经理简历", new Set(["ai-draft"]))).toBe("ai-draft-2");
 	});
 });
 

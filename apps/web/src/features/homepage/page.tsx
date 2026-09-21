@@ -10,6 +10,7 @@ import { useInView } from "motion/react";
 import { lazy, Suspense, useRef, useState } from "react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
+import { GithubStarsButton } from "@/components/input/github-stars-button";
 import { section, sectionHeading, sectionText, sectionTitle, textLink, wrap } from "./classes";
 import { CommunityStats } from "./community-stats";
 import { FeatureExplorer } from "./feature-explorer";
@@ -81,6 +82,8 @@ export function Homepage() {
 					className="ml-auto flex items-center gap-[30px] text-(--home-muted) text-[14px] max-[1100px]:gap-5"
 					aria-label={t`Main navigation`}
 				>
+					<GithubStarsButton className="h-[38px] rounded-[4px] border-[#3d444d] bg-[#161b22] px-[11px] text-[#f0f6fc] text-[13px] shadow-[inset_0_1px_0_#ffffff0d,0_3px_0_#09090966] hover:border-[#6e7681] hover:bg-[#21262d] hover:text-[#f0f6fc] max-[540px]:gap-1 max-[540px]:px-2 max-[540px]:text-[11px]" />
+
 					<Link to="/dashboard" className="inline-flex min-h-[38px] items-center hover:text-(--home-ink)">
 						<Trans>Get Started</Trans>
 					</Link>

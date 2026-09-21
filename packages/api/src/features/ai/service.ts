@@ -69,6 +69,68 @@ type GetModelInput = {
 	baseURL?: string;
 };
 
+function isNonStreamingJsonRequest(init?: RequestInit) {
+	if (typeof init?.body !== "string") return false;
+
+	try {
+		const body = JSON.parse(init.body) as { stream?: unknown };
+		return body.stream !== true;
+	} catch {
+		return false;
+	}
+}
+
+function normalizeOpenAICompatiblePayload(payload: unknown) {
+	if (typeof payload !== "object" || payload === null || !("choices" in payload)) return payload;
+
+	const choices = (payload as { choices?: unknown }).choices;
+	if (!Array.isArray(choices)) return payload;
+
+	for (const choice of choices) {
+		if (typeof choice !== "object" || choice === null || !("message" in choice)) continue;
+
+		const message = (choice as { message?: unknown }).message;
+		if (typeof message !== "object" || message === null) continue;
+
+		// A few OpenAI-compatible relays return an empty role for otherwise valid non-streaming
+		// chat completions. The OpenAI schema requires "assistant", while their streaming endpoint
+		// already sends the correct role. Normalise only this known compatibility defect.
+		if ((message as { role?: unknown }).role === "") {
+			(message as { role: string }).role = "assistant";
+		}
+	}
+
+	return payload;
+}
+
+const openAICompatibleFetch: typeof fetch = async (input, init) => {
+	const response = await fetch(input, init);
+	if (!response.ok || !isNonStreamingJsonRequest(init)) return response;
+
+	const text = await response.text();
+
+	try {
+		const payload = normalizeOpenAICompatiblePayload(JSON.parse(text));
+		const headers = new Headers(response.headers);
+		headers.set("content-type", "application/json; charset=utf-8");
+		headers.delete("content-length");
+		headers.delete("content-encoding");
+
+		return new Response(JSON.stringify(payload), {
+			status: response.status,
+			statusText: response.statusText,
+			headers,
+		});
+	} catch {
+		// Preserve the original response body so the SDK can report the provider's real parse error.
+		return new Response(text, {
+			status: response.status,
+			statusText: response.statusText,
+			headers: response.headers,
+		});
+	}
+};
+
 const MAX_AI_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_AI_FILE_BASE64_CHARS = Math.ceil((MAX_AI_FILE_BYTES * 4) / 3) + 4;
 const TEST_CONNECTION_MAX_OUTPUT_TOKENS = 128;
@@ -112,7 +174,12 @@ export function getModel(input: GetModelInput) {
 		.with("cerebras", () => createCerebras({ apiKey, baseURL }).languageModel(model))
 		.with("perplexity", () => createPerplexity({ apiKey, baseURL }).languageModel(model))
 		.with("openai-compatible", () =>
-			createOpenAICompatible({ name: "openai-compatible", apiKey, baseURL }).languageModel(model),
+			createOpenAICompatible({
+				name: "openai-compatible",
+				apiKey,
+				baseURL,
+				fetch: openAICompatibleFetch,
+			}).languageModel(model),
 		)
 		.with("ollama", () => {
 			const ollama = createOllama({

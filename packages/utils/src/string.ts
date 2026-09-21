@@ -1,5 +1,4 @@
 import _slugify from "@sindresorhus/slugify";
-import { adjectives, animals, colors, uniqueNamesGenerator } from "unique-names-generator";
 import { v7 as uuidv7 } from "uuid";
 
 /**
@@ -49,16 +48,16 @@ export function toUsername(value: string) {
 }
 
 /**
- * Generates a random name using the unique-names-generator library.
+ * Generates a readable Chinese name for a new resume.
  * @returns The random name.
  */
 export function generateRandomName() {
-	return uniqueNamesGenerator({
-		dictionaries: [adjectives, colors, animals],
-		style: "capital",
-		separator: " ",
-		length: 3,
-	});
+	const now = new Date();
+	const pad = (value: number) => value.toString().padStart(2, "0");
+	const timestamp = `${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+	const suffix = Math.floor(10 + Math.random() * 90);
+
+	return `求职简历 ${timestamp}-${suffix}`;
 }
 
 /**

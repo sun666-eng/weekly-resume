@@ -426,7 +426,7 @@ async function createWorkingResume(input: CreateThreadInput) {
 	}
 
 	const existingSlugs = await getExistingResumeSlugs(input.userId);
-	const name = "AI Draft";
+	const name = "AI 草稿";
 	const id = await resumeService.create({
 		userId: input.userId,
 		name,
