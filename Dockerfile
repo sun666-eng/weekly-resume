@@ -23,6 +23,8 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm dlx turbo@2.9.12 prune web server --docker
 
 FROM base AS builder
+ENV NODE_OPTIONS="--max-old-space-size=1024"
+
 COPY --from=pruner /app/out/json/ ./
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
@@ -37,6 +39,9 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm dlx turbo@2.9.12 prune server --docker
 
 FROM base AS runtime-deps
+# Force the memory-heavy web build to finish before installing production
+# dependencies. This keeps production builds reliable on 2 GiB servers.
+COPY --from=builder /app/apps/server/dist /tmp/weekly-resume-builder-ready
 COPY --from=runtime-pruner /app/out/json/ ./
 COPY --from=runtime-pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
