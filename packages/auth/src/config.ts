@@ -16,7 +16,7 @@ import { username } from "better-auth/plugins/username";
 import { createElement } from "react";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { ResetPasswordEmail, VerifyEmail, VerifyEmailChange } from "@reactive-resume/email/templates/auth";
+import { VerifyEmailChange } from "@reactive-resume/email/templates/auth";
 import { sendEmail } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
 import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
@@ -201,8 +201,8 @@ const getAuthConfig = () => {
 			sendResetPassword: async ({ user, url }) => {
 				await sendEmail({
 					to: user.email,
-					subject: "Reset your password",
-					react: createElement(ResetPasswordEmail, { url }),
+					subject: "Weekly Resume password reset",
+					text: `Open this link to reset your Weekly Resume password: ${url}`,
 				});
 			},
 			password: {
@@ -217,8 +217,8 @@ const getAuthConfig = () => {
 			sendVerificationEmail: async ({ user, url }) => {
 				await sendEmail({
 					to: user.email,
-					subject: "Verify your email",
-					react: createElement(VerifyEmail, { url }),
+					subject: "Weekly Resume email verification",
+					text: `Open this link to verify your Weekly Resume email: ${url}`,
 				});
 			},
 		},
