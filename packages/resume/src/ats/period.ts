@@ -137,6 +137,9 @@ function parseEndpoint(raw: string, months: ReadonlyMap<string, number>): Endpoi
 	const iso = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/.exec(value);
 	if (iso?.[1] && iso[2]) return toEndpoint(Number(iso[1]), Number(iso[2]));
 
+	const yearMonth = /^(\d{4})[/.](\d{1,2})$/.exec(value);
+	if (yearMonth?.[1] && yearMonth[2]) return toEndpoint(Number(yearMonth[1]), Number(yearMonth[2]));
+
 	const monthYear = /^(\d{1,2})[/.](\d{4})$/.exec(value);
 	if (monthYear?.[1] && monthYear[2]) return toEndpoint(Number(monthYear[2]), Number(monthYear[1]));
 

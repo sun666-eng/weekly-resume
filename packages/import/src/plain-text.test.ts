@@ -115,6 +115,45 @@ describe("parseResumeText", () => {
 	});
 });
 
+describe("parseResumeText Chinese headings", () => {
+	it("imports common Chinese resume sections and year-month periods", () => {
+		const data = parseResumeText(
+			[
+				"林志远",
+				"后端开发工程师",
+				"lin@example.com | 13800000000",
+				"",
+				"教育背景",
+				"示例大学",
+				"本科",
+				"2020.09 - 2024.06",
+				"",
+				"实习经历",
+				"示例科技有限公司",
+				"后端开发实习生",
+				"2023.06 - 2023.08",
+				"负责接口开发与联调测试",
+				"",
+				"项目经历",
+				"简历平台",
+				"2024.01 - 2024.05",
+				"实现简历导入和模板预览",
+				"",
+				"专业技能",
+				"TypeScript, Java, PostgreSQL",
+			].join("\n"),
+		);
+
+		expect(data.basics).toMatchObject({ name: "林志远", email: "lin@example.com" });
+		expect(data.sections.education.items).toHaveLength(1);
+		expect(data.sections.education.items[0]).toMatchObject({ school: "示例大学", period: "2020.09 - 2024.06" });
+		expect(data.sections.experience.items).toHaveLength(1);
+		expect(data.sections.projects.items).toHaveLength(1);
+		expect(data.sections.skills.items.map((item) => item.name)).toEqual(["TypeScript", "Java", "PostgreSQL"]);
+		expect(data.metadata.layout.pages[0]?.main).toEqual(["education", "experience", "projects", "skills"]);
+	});
+});
+
 describe("parseResumeText edge cases", () => {
 	it("returns usable data for empty input", () => {
 		const data = parseResumeText("");

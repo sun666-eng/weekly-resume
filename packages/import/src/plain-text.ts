@@ -80,6 +80,45 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	profiles: "profiles",
 	links: "profiles",
 	"social profiles": "profiles",
+	// Common Chinese resume headings (PDF/text imports).
+	个人简介: "summary",
+	个人资料: "summary",
+	个人信息: "summary",
+	求职目标: "summary",
+	求职意向: "summary",
+	自我评价: "summary",
+	教育背景: "education",
+	教育经历: "education",
+	学习经历: "education",
+	工作经历: "experience",
+	工作经验: "experience",
+	实习经历: "experience",
+	职业经历: "experience",
+	项目经历: "projects",
+	项目经验: "projects",
+	个人项目: "projects",
+	专业技能: "skills",
+	技能特长: "skills",
+	技能: "skills",
+	语言能力: "languages",
+	兴趣爱好: "interests",
+	业余爱好: "interests",
+	获奖情况: "awards",
+	获奖经历: "awards",
+	荣誉奖项: "awards",
+	奖项: "awards",
+	证书: "certifications",
+	资格证书: "certifications",
+	技能证书: "certifications",
+	科研经历: "publications",
+	科研成果: "publications",
+	发表论文: "publications",
+	社会实践: "volunteer",
+	志愿经历: "volunteer",
+	志愿者经历: "volunteer",
+	校园经历: "volunteer",
+	社团经历: "volunteer",
+	社交账号: "profiles",
 };
 
 const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;
@@ -90,7 +129,7 @@ const URL_TEST = /\b(?:https?:\/\/|www\.)\S+/i;
 const HEADER_SCAN_LINES = 6;
 const ENTRY_PREAMBLE_LOOKAHEAD = 4;
 const PERIOD_CANDIDATE =
-	/(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}\s*(?:[-–—~]|to|until|through)\s*(?:(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}|\p{L}+)/giu;
+	/(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}))\s*(?:[-–—~]|to|until|through)\s*(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4})|\p{L}+)/giu;
 const STRONG_SEPARATOR = /\s*[|•·]\s*|\s{2,}|\s+[–—]\s+/;
 const SENTENCE_END = /[.!?]$/;
 const TRAILING_DATES = [/(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?(?:19|20)\d{2}$/u, /(?:\d{1,2}[/.])?(?:19|20)\d{2}$/];
