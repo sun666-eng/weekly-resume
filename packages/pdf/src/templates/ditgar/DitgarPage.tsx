@@ -145,8 +145,9 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 };
 
 const Header = ({ styles, colors }: DitgarHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
+	const contactIconColor = metadata.page.locale === "zh-CN" ? colors.primary : colors.background;
 
 	return (
 		<SemanticHeaderView style={styles.header}>
@@ -164,26 +165,26 @@ const Header = ({ styles, colors }: DitgarHeaderProps) => {
 					email={basics.email}
 					style={styles.contactItem}
 					textStyle={styles.headerText}
-					iconColor={colors.background}
+					iconColor={contactIconColor}
 					iconName="at"
 				/>
 				<PhoneContactItem
 					phone={basics.phone}
 					style={styles.contactItem}
 					textStyle={styles.headerText}
-					iconColor={colors.background}
+					iconColor={contactIconColor}
 				/>
 				<LocationContactItem
 					location={basics.location}
 					style={styles.contactItem}
 					textStyle={styles.headerText}
-					iconColor={colors.background}
+					iconColor={contactIconColor}
 				/>
 				<WebsiteContactItem
 					website={basics.website}
 					style={styles.contactItem}
 					textStyle={styles.headerText}
-					iconColor={colors.background}
+					iconColor={contactIconColor}
 				/>
 				{basics.customFields.map((field) => (
 					<CustomFieldContactItem
@@ -191,7 +192,7 @@ const Header = ({ styles, colors }: DitgarHeaderProps) => {
 						field={field}
 						style={styles.contactItem}
 						textStyle={styles.headerText}
-						iconColor={colors.background}
+						iconColor={contactIconColor}
 					/>
 				))}
 			</SemanticContactListView>
@@ -204,6 +205,7 @@ const useDitgarTemplate = (): DitgarTemplate => {
 
 	return useMemo(() => {
 		const primaryTint = getPrimaryTint(metadata.design.colors.primary, 0.2);
+		const chinese = metadata.page.locale === "zh-CN";
 		const colors: TemplateColorRoles = {
 			foreground,
 			background,
@@ -262,8 +264,8 @@ const useDitgarTemplate = (): DitgarTemplate => {
 				paddingVertical: metrics.page.paddingVertical,
 			},
 			header: {
-				backgroundColor: primary,
-				color: background,
+				backgroundColor: chinese ? primaryTint : primary,
+				color: chinese ? foreground : background,
 				paddingHorizontal: metrics.page.paddingHorizontal,
 				paddingVertical: metrics.page.paddingVertical,
 				rowGap: metrics.gapY(0.5),
@@ -276,10 +278,10 @@ const useDitgarTemplate = (): DitgarTemplate => {
 			headerName: {
 				fontSize: metadata.typography.heading.fontSize * 1.5,
 				lineHeight: headerNameLineHeight,
-				color: background,
+				color: chinese ? primary : background,
 			},
 			headerText: {
-				color: background,
+				color: chinese ? foreground : background,
 			},
 			contactList: {
 				rowGap: metrics.gapY(0.125),

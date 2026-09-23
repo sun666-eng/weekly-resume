@@ -7,7 +7,7 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowDownIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { useId, useMemo, useState } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { sampleResumeDataZhCn } from "@reactive-resume/schema/resume/sample-zh-cn";
+import { createChineseTemplateSample } from "@reactive-resume/schema/resume/sample-zh-cn";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
 import { resolveLocale } from "@/libs/locale";
@@ -25,8 +25,8 @@ type ExportPlaygroundProps = {
 
 export function buildExportSample({ name, accent, typeface, template }: ExportPlaygroundProps, locale = i18n.locale) {
 	if (resolveLocale(locale) === "zh-CN") {
-		const data = structuredClone(sampleResumeDataZhCn);
-		data.basics.name = name.trim() || "林知远";
+		const data = createChineseTemplateSample(template);
+		data.basics.name = name.trim() || "林志远";
 		data.metadata.template = template;
 		data.metadata.design.colors.primary = accent;
 		data.metadata.typography.body.fontFamily = typeface === "sans" ? "Noto Sans SC" : "Noto Serif SC";

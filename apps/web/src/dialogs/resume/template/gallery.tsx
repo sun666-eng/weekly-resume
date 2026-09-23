@@ -15,7 +15,7 @@ import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { templatePreviewImage } from "@/libs/template-assets";
 import { templates } from "./data";
-import { getTemplateDisplayName, getTemplateTagLabel } from "./labels";
+import { getTemplateDisplayName, getTemplateOrder, getTemplateTagLabel, getTemplateTags } from "./labels";
 
 export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">) {
 	const { i18n } = useLingui();
@@ -64,11 +64,11 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 
 			<ScrollArea className="max-h-[85svh] pb-8">
 				<div className="grid grid-cols-2 gap-6 p-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-					{Object.entries(templates).map(([template, metadata]) => (
+					{getTemplateOrder(i18n.locale).map((template) => (
 						<TemplateCard
 							key={template}
-							metadata={metadata}
-							id={template as Template}
+							metadata={templates[template]}
+							id={template}
 							isActive={template === selectedTemplate}
 							onSelect={onSelectTemplate}
 						/>
@@ -109,7 +109,7 @@ function TemplateCard({ id, metadata, isActive, onSelect }: TemplateCardProps) {
 
 			{metadata.tags.length > 0 && (
 				<div className="flex flex-wrap justify-center gap-1 px-1 pb-1">
-					{metadata.tags
+					{getTemplateTags(id, i18n.locale, metadata.tags)
 						.sort((a, b) => a.localeCompare(b))
 						.map((tag) => (
 							<Badge key={tag} variant="secondary" className="text-xs">

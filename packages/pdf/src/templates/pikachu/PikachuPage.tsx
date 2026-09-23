@@ -180,6 +180,7 @@ const usePikachuTemplate = (): PikachuTemplate => {
 	const { picture, metadata, r, foreground, background, primary, metrics, base } = useTemplateBase();
 
 	return useMemo(() => {
+		const chinese = metadata.page.locale === "zh-CN";
 		const colors: TemplateColorRoles = { foreground, background, primary };
 
 		const baseStyles = StyleSheet.create({
@@ -194,8 +195,18 @@ const usePikachuTemplate = (): PikachuTemplate => {
 				rowGap: metrics.gapY(0.25),
 			},
 			sectionHeading: {
-				borderBottomWidth: 1,
+				borderBottomWidth: chinese ? 0 : 1,
 				borderBottomColor: primary,
+				...(chinese
+					? {
+							alignSelf: "flex-start",
+							backgroundColor: primary,
+							color: background,
+							borderRadius: 12,
+							paddingHorizontal: metrics.gapX(1),
+							paddingVertical: metrics.gapY(0.25),
+						}
+					: {}),
 			},
 			item: {
 				rowGap: metrics.gapY(0.125),
@@ -223,7 +234,7 @@ const usePikachuTemplate = (): PikachuTemplate => {
 				flex: 1,
 			},
 			headerRow: {
-				flexDirection: r.row,
+				flexDirection: chinese ? "row-reverse" : r.row,
 				alignItems: "center",
 				columnGap: metrics.gapX(1),
 			},
@@ -282,7 +293,10 @@ const usePikachuTemplate = (): PikachuTemplate => {
 				text: (context) => ({ ...base.text, color: foregroundFor(context) }),
 				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
 				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				sectionHeading: (context) => ({ ...baseStyles.sectionHeading, color: accentFor(context) }),
+				sectionHeading: (context) => ({
+					...baseStyles.sectionHeading,
+					color: chinese && context.placement === "main" ? background : accentFor(context),
+				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),
 				icon: createIconSlot({ metadata, accentFor }),

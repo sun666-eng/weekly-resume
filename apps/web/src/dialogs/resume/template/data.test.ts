@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { templates } from "./data";
+import { getHomepageTemplateOrder, getTemplateOrder } from "./labels";
 
 describe("templates metadata", () => {
 	const entries = Object.entries(templates);
@@ -54,5 +55,25 @@ describe("templates metadata", () => {
 			expect(id).toBe(id.toLowerCase());
 			expect(meta.name.toLowerCase()).toBe(id);
 		}
+	});
+
+	it("features four styles on the homepage and eleven references in the gallery", () => {
+		const order = getTemplateOrder("zh-CN");
+		expect(order.slice(0, 11)).toEqual([
+			"ditgar",
+			"meowth",
+			"scizor",
+			"rhyhorn",
+			"azurill",
+			"pikachu",
+			"onyx",
+			"gengar",
+			"lapras",
+			"kakuna",
+			"chikorita",
+		]);
+		expect(new Set(order)).toEqual(new Set(Object.keys(templates)));
+		expect(getHomepageTemplateOrder("zh-CN")).toEqual(["meowth", "scizor", "onyx", "kakuna"]);
+		expect(getHomepageTemplateOrder("en")).toHaveLength(order.length);
 	});
 });

@@ -75,19 +75,23 @@ export const OnyxPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageN
 	);
 };
 
-const Header = ({ styles }: OnyxHeaderProps) => (
-	<TemplateHeader
-		styles={{
-			header: styles.header,
-			picture: styles.picture,
-			title: styles.headerTitle,
-			identity: styles.headerIdentity,
-			name: styles.headerName,
-			contactList: styles.contactList,
-			contactItem: styles.contactItem,
-		}}
-	/>
-);
+const Header = ({ styles }: OnyxHeaderProps) => {
+	const { metadata } = useRender();
+	return (
+		<TemplateHeader
+			picturePosition={metadata.page.locale === "zh-CN" ? "end" : "start"}
+			styles={{
+				header: styles.header,
+				picture: styles.picture,
+				title: styles.headerTitle,
+				identity: styles.headerIdentity,
+				name: styles.headerName,
+				contactList: styles.contactList,
+				contactItem: styles.contactItem,
+			}}
+		/>
+	);
+};
 
 const useOnyxTemplate = (): OnyxTemplate => {
 	const { metadata, r, foreground, background, primary, metrics, base } = useTemplateBase();

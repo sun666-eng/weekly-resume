@@ -1,22 +1,68 @@
 import type { Template } from "@reactive-resume/schema/templates";
+import { templateSchema } from "@reactive-resume/schema/templates";
 
 const chineseTemplateNames: Record<Template, string> = {
-	azurill: "清新",
+	azurill: "经典",
 	bronzor: "雅致",
-	chikorita: "青禾",
-	ditgar: "墨序",
+	chikorita: "青蓝",
+	ditgar: "学术",
 	ditto: "简约",
-	gengar: "暗夜",
+	gengar: "目标",
 	glalie: "清朗",
-	kakuna: "经典",
-	lapras: "海蓝",
+	kakuna: "视觉",
+	lapras: "标准",
 	leafish: "自然",
-	meowth: "灵动",
+	meowth: "校园",
 	onyx: "商务",
-	pikachu: "明快",
-	rhyhorn: "稳重",
-	scizor: "锐意",
+	pikachu: "清爽",
+	rhyhorn: "极简",
+	scizor: "技术",
 };
+
+const chineseFeaturedTemplates: Template[] = ["meowth", "scizor", "onyx", "kakuna"];
+const chineseReferenceTemplates: Template[] = [
+	"ditgar",
+	"meowth",
+	"scizor",
+	"rhyhorn",
+	"azurill",
+	"pikachu",
+	"onyx",
+	"gengar",
+	"lapras",
+	"kakuna",
+	"chikorita",
+];
+
+export function getTemplateOrder(locale: string): Template[] {
+	if (locale !== "zh-CN") return [...templateSchema.options];
+	return [
+		...chineseReferenceTemplates,
+		...templateSchema.options.filter((template) => !chineseReferenceTemplates.includes(template)),
+	];
+}
+
+export function getHomepageTemplateOrder(locale: string): Template[] {
+	return locale === "zh-CN" ? [...chineseFeaturedTemplates] : getTemplateOrder(locale);
+}
+
+const chineseReferenceTags: Partial<Record<Template, string[]>> = {
+	ditgar: ["学术", "双栏布局", "浅色侧栏"],
+	meowth: ["校园", "单栏布局", "照片"],
+	scizor: ["技术岗位", "单栏布局", "极简"],
+	rhyhorn: ["极简", "单栏布局", "紫色点缀"],
+	azurill: ["时间轴", "单栏布局", "照片"],
+	pikachu: ["蓝色横幅", "胶囊标题", "照片"],
+	onyx: ["商务", "单栏布局", "照片"],
+	gengar: ["深色侧栏", "双栏布局", "照片"],
+	lapras: ["分区卡片", "单栏布局", "照片"],
+	kakuna: ["视觉突出", "横幅标题", "照片"],
+	chikorita: ["青蓝点缀", "标签标题", "照片"],
+};
+
+export function getTemplateTags(template: Template, locale: string, fallback: readonly string[]): string[] {
+	return locale === "zh-CN" ? (chineseReferenceTags[template] ?? [...fallback]) : [...fallback];
+}
 
 const chineseTemplateTags: Record<string, string> = {
 	"Two-column": "双栏布局",

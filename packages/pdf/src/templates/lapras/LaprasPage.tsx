@@ -75,25 +75,30 @@ export const LaprasPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 	);
 };
 
-const Header = ({ styles }: LaprasHeaderProps) => (
-	<TemplateHeader
-		styles={{
-			header: styles.header,
-			picture: styles.picture,
-			title: styles.headerTitle,
-			identity: styles.headerIdentity,
-			name: styles.headerName,
-			contactList: styles.contactList,
-			contactItem: styles.contactItem,
-		}}
-	/>
-);
+const Header = ({ styles }: LaprasHeaderProps) => {
+	const { metadata } = useRender();
+	return (
+		<TemplateHeader
+			styles={{
+				header: styles.header,
+				picture: styles.picture,
+				title: styles.headerTitle,
+				identity: styles.headerIdentity,
+				name: styles.headerName,
+				contactList: styles.contactList,
+				contactItem: styles.contactItem,
+			}}
+			picturePosition={metadata.page.locale === "zh-CN" ? "end" : "start"}
+		/>
+	);
+};
 
 const useLaprasTemplate = (): LaprasTemplate => {
 	const { picture, metadata, r, foreground, background, primary, metrics, base } = useTemplateBase();
 
 	return useMemo(() => {
-		const borderColor = "#CCCCCC";
+		const chinese = metadata.page.locale === "zh-CN";
+		const borderColor = chinese ? primary : "#CCCCCC";
 		const pictureBorderRadius = Math.min(picture.borderRadius, 30);
 		const headingNegativeMargin = metadata.typography.heading.fontSize + 6;
 		const colors: TemplateColorRoles = { foreground, background, primary };
@@ -119,8 +124,10 @@ const useLaprasTemplate = (): LaprasTemplate => {
 			sectionHeading: {
 				alignSelf: "flex-start",
 				marginTop: -headingNegativeMargin,
-				backgroundColor: background,
+				backgroundColor: chinese ? primary : background,
+				color: chinese ? background : foreground,
 				paddingHorizontal: metrics.gapX(1),
+				paddingVertical: chinese ? metrics.gapY(0.125) : 0,
 			},
 			item: {
 				rowGap: metrics.gapY(0.125),
@@ -145,6 +152,7 @@ const useLaprasTemplate = (): LaprasTemplate => {
 				padding: metrics.gapX(1),
 			},
 			headerTitle: {
+				flex: 1,
 				rowGap: metrics.gapY(0.5),
 			},
 			headerIdentity: {

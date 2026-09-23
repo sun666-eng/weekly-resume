@@ -51,10 +51,10 @@ function DeferredDemo({ children }: DeferredDemoProps) {
 export function Homepage() {
 	const { i18n } = useLingui();
 	const chinese = i18n.locale === "zh-CN";
-	const [name, setName] = useState(() => (chinese ? "林知远" : "Alex Morgan"));
+	const [name, setName] = useState(() => (chinese ? "林志远" : "Alex Morgan"));
 	const [accent, setAccent] = useState(() => (chinese ? "#27343d" : "#735c9a"));
 	const [typeface, setTypeface] = useState<"sans" | "serif">("sans");
-	const [template, setTemplate] = useState<Template>(() => (chinese ? "kakuna" : "ditgar"));
+	const [template, setTemplate] = useState<Template>(() => (chinese ? "meowth" : "ditgar"));
 	const [heroTemplate, setHeroTemplate] = useState<SculptureTemplate>(() => (chinese ? "bronzor" : "ditgar"));
 	return (
 		<div className="homepage scheme-dark relative isolate overflow-clip bg-(--home-bg) font-[IBM_Plex_Sans_Variable,IBM_Plex_Sans,sans-serif] text-(--home-ink) text-[16px] leading-[1.5] [--home-accent:#c4a68c] [--home-bg:#101011] [--home-ink:#f1f0eb] [--home-line:#323235] [--home-muted:#a5a5ab] [--home-panel:#19191b] selection:bg-[#d5c2df] selection:text-[#101011]">

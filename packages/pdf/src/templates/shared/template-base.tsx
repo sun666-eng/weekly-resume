@@ -60,9 +60,11 @@ type TemplateHeaderStyles = {
 export const TemplateHeader = ({
 	styles,
 	contactListOutsideTitle = false,
+	picturePosition = "start",
 }: {
 	styles: TemplateHeaderStyles;
 	contactListOutsideTitle?: boolean;
+	picturePosition?: "start" | "end";
 }) => {
 	const { basics, picture } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
@@ -80,7 +82,7 @@ export const TemplateHeader = ({
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && picturePosition === "start" && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
 
 			<View style={styles.title}>
 				<View style={styles.identity}>
@@ -91,6 +93,7 @@ export const TemplateHeader = ({
 			</View>
 
 			{contactListOutsideTitle && contactList}
+			{hasPicture && picturePosition === "end" && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
 		</SemanticHeaderView>
 	);
 };

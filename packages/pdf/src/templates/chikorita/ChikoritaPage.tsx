@@ -162,6 +162,7 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 	const { metadata, r, foreground, background, primary, metrics, base } = useTemplateBase();
 
 	return useMemo(() => {
+		const chinese = metadata.page.locale === "zh-CN";
 		const colors: TemplateColorRoles = {
 			foreground,
 			background,
@@ -204,7 +205,7 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 				backgroundColor: primary,
 			},
 			header: {
-				flexDirection: r.row,
+				flexDirection: chinese ? "row-reverse" : r.row,
 				alignItems: "flex-start",
 				columnGap: metrics.gapX(0.5),
 			},
@@ -271,8 +272,16 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 				}),
 				sectionHeading: (context) => ({
 					...baseStyles.sectionHeading,
-					color: accentFor(context),
-					borderBottomColor: accentFor(context),
+					...(chinese && context.placement === "main"
+						? {
+								alignSelf: "flex-start",
+								backgroundColor: primary,
+								borderBottomWidth: 0,
+								color: background,
+								paddingHorizontal: metrics.gapX(0.75),
+								paddingVertical: metrics.gapY(0.25),
+							}
+						: { color: accentFor(context), borderBottomColor: accentFor(context) }),
 				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),

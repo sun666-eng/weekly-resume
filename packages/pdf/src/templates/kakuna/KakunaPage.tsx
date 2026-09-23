@@ -96,12 +96,13 @@ export const KakunaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 };
 
 const Header = ({ styles }: KakunaHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
+	const chinese = metadata.page.locale === "zh-CN";
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && !chinese && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
 
 			<View style={styles.headerTitle}>
 				<View style={styles.headerCopy}>
@@ -119,6 +120,7 @@ const Header = ({ styles }: KakunaHeaderProps) => {
 					))}
 				</SemanticContactListView>
 			</View>
+			{hasPicture && chinese && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
 		</SemanticHeaderView>
 	);
 };
@@ -141,14 +143,25 @@ const useKakunaTemplate = (): KakunaTemplate => {
 			section: {
 				flexDirection: "column",
 				rowGap: metrics.gapY(chinese ? 0.42 : 0.25),
+				...(chinese ? { borderTopWidth: 1, borderTopColor: primary } : {}),
 			},
 			sectionHeading: {
-				color: primary,
+				color: chinese ? background : primary,
 				textAlign: chinese ? "left" : "center",
-				borderBottomWidth: 1,
+				borderBottomWidth: chinese ? 0 : 1,
 				borderBottomColor: primary,
-				paddingBottom: metrics.gapY(chinese ? 0.18 : 0.125),
-				...(chinese ? { width: "100%", fontSize: metadata.typography.heading.fontSize } : {}),
+				paddingBottom: metrics.gapY(chinese ? 0.32 : 0.125),
+				...(chinese
+					? {
+							alignSelf: "flex-start",
+							width: "34%",
+							backgroundColor: primary,
+							paddingTop: metrics.gapY(0.32),
+							paddingLeft: metrics.gapX(0.8),
+							marginTop: -1,
+							fontSize: metadata.typography.heading.fontSize,
+						}
+					: {}),
 			},
 			item: {
 				rowGap: metrics.gapY(chinese ? 0.22 : 0.125),
@@ -166,18 +179,19 @@ const useKakunaTemplate = (): KakunaTemplate => {
 			},
 			header: {
 				width: "100%",
-				alignItems: "center",
+				alignItems: chinese ? "flex-start" : "center",
+				...(chinese ? { flexDirection: r.row, columnGap: metrics.gapX(1) } : {}),
 				rowGap: metrics.gapY(chinese ? 0.35 : 0.5),
 			},
 			headerTitle: {
-				width: "100%",
-				textAlign: "center",
-				alignItems: "center",
+				...(chinese ? { flex: 1 } : { width: "100%" }),
+				textAlign: chinese ? "left" : "center",
+				alignItems: chinese ? "flex-start" : "center",
 				rowGap: metrics.gapY(chinese ? 0.35 : 0.5),
 			},
 			headerCopy: {
-				alignItems: "center",
-				textAlign: "center",
+				alignItems: chinese ? "flex-start" : "center",
+				textAlign: chinese ? "left" : "center",
 				width: "100%",
 				rowGap: metrics.gapY(chinese ? 0.22 : 0.35),
 			},
@@ -185,17 +199,17 @@ const useKakunaTemplate = (): KakunaTemplate => {
 				width: "100%",
 				fontSize: metadata.typography.heading.fontSize * (chinese ? 1.65 : 1.5),
 				lineHeight: headerNameLineHeight,
-				textAlign: "center",
+				textAlign: chinese ? "left" : "center",
 			},
 			headerText: {
 				width: "100%",
-				textAlign: "center",
+				textAlign: chinese ? "left" : "center",
 			},
 			contactList: {
 				width: "100%",
 				flexDirection: r.row,
 				flexWrap: "wrap",
-				justifyContent: "center",
+				justifyContent: chinese ? "flex-start" : "center",
 				rowGap: metrics.gapY(chinese ? 0.2 : 0.125),
 				columnGap: metrics.gapX(0.75),
 			},
@@ -215,8 +229,9 @@ const useKakunaTemplate = (): KakunaTemplate => {
 				...baseStyles,
 				sectionHeading: (context) => ({
 					...baseStyles.sectionHeading,
-					color: accentFor(context),
+					color: chinese ? background : accentFor(context),
 					borderBottomColor: accentFor(context),
+					...(chinese ? { backgroundColor: accentFor(context) } : {}),
 				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),

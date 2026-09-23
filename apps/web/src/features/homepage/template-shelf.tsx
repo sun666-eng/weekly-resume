@@ -5,18 +5,17 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { templateSchema } from "@reactive-resume/schema/templates";
-import { getTemplateDisplayName } from "@/dialogs/resume/template/labels";
+import { getHomepageTemplateOrder, getTemplateDisplayName } from "@/dialogs/resume/template/labels";
 import { templatePreviewImage, templatePreviewPdf } from "@/libs/template-assets";
 import { textLink } from "./classes";
 
 type TemplateShelfProps = { template: Template; onChange: (template: Template) => void };
-const templates = templateSchema.options;
 const roundLinkClass =
 	"inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border border-[#444447] bg-transparent text-(--home-ink) [transition:background-color_150ms_ease,transform_150ms_cubic-bezier(0.23,1,0.32,1)] hover:bg-[#2c2c2f] active:transform-[scale(0.97)] max-[540px]:size-11";
 
 export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 	const { i18n } = useLingui();
+	const templates = getHomepageTemplateOrder(i18n.locale);
 	const index = templates.indexOf(template);
 	const [instant, setInstant] = useState(false);
 	const select = (next: Template, keyboard: boolean) => {
@@ -33,7 +32,8 @@ export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 				aria-label={t`Resume templates`}
 			>
 				{templates.map((item, itemIndex) => {
-					const offset = ((itemIndex - index + templates.length + 7) % templates.length) - 7;
+					const midpoint = Math.floor(templates.length / 2);
+					const offset = ((itemIndex - index + templates.length + midpoint) % templates.length) - midpoint;
 					return (
 						<button
 							key={item}

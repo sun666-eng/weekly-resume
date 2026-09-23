@@ -1,3 +1,4 @@
+import type { Template } from "../templates";
 import type { ResumeData } from "./data";
 import { sampleResumeData } from "./sample";
 
@@ -26,7 +27,7 @@ data.metadata.typography.heading.fontSize = 11.2;
 data.metadata.typography.heading.lineHeight = 1.3;
 
 data.picture.hidden = true;
-data.basics.name = "林知远";
+data.basics.name = "林志远";
 data.basics.headline = "求职方向：Java 后端开发";
 data.basics.email = "lin.zhiyuan@example.com";
 data.basics.phone = "138 0000 0000";
@@ -101,3 +102,56 @@ for (const [index, [name, description]] of skillContent.entries()) {
 }
 
 export const sampleResumeDataZhCn: ResumeData = data;
+
+/** Gallery presets are fictional examples. They never change a user's resume settings. */
+export function createChineseTemplateSample(template: Template): ResumeData {
+	const sample = structuredClone(sampleResumeDataZhCn);
+	sample.metadata.template = template;
+
+	const presets: Partial<Record<Template, { accent: string; photo: boolean; layout?: "sidebar" }>> = {
+		ditgar: { accent: "#385B84", photo: true, layout: "sidebar" },
+		meowth: { accent: "#356B9D", photo: true },
+		scizor: { accent: "#343E57", photo: false },
+		rhyhorn: { accent: "#544381", photo: false },
+		azurill: { accent: "#56748B", photo: true },
+		pikachu: { accent: "#607C9F", photo: true },
+		onyx: { accent: "#334D5F", photo: true },
+		gengar: { accent: "#344457", photo: true, layout: "sidebar" },
+		lapras: { accent: "#5C73A7", photo: true },
+		kakuna: { accent: "#57768C", photo: true },
+		chikorita: { accent: "#67A8B5", photo: true },
+	};
+	const preset = presets[template];
+	if (!preset) return sample;
+
+	sample.metadata.design.colors.primary = preset.accent;
+	sample.picture.hidden = !preset.photo;
+	if (preset.photo) sample.picture.url = "/photos/sample-picture-zh-cn.png";
+	sample.picture.size = 72;
+	sample.picture.aspectRatio = 0.82;
+	sample.metadata.page.hideIcons = template === "scizor";
+	sample.metadata.page.hideSectionIcons = template === "scizor";
+	if (preset.layout === "sidebar") {
+		sample.metadata.layout.pages = [
+			{ fullWidth: false, main: ["education", "experience", "projects"], sidebar: ["skills"] },
+		];
+		sample.metadata.layout.sidebarWidth = 30;
+		sample.metadata.page.marginX = 22;
+		sample.metadata.typography.body.fontSize = 8.4;
+		sample.sections.skills.layout = "default";
+		sample.sections.skills.keywordLayout = "inline";
+		const sidebarSkills = [
+			["开发语言", "Java、SQL、Python"],
+			["后端框架", "Spring Boot、MyBatis"],
+			["数据系统", "MySQL、Redis、RocketMQ"],
+			["工程工具", "Linux、Git、Docker"],
+		] as const;
+		for (const [index, [name, keywords]] of sidebarSkills.entries()) {
+			const skill = sample.sections.skills.items[index];
+			if (!skill) continue;
+			skill.name = name;
+			skill.keywords = [keywords];
+		}
+	}
+	return sample;
+}
