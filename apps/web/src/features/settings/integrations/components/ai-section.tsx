@@ -26,7 +26,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type SavedProvider = RouterOutput["aiProviders"]["list"][number];
@@ -268,7 +268,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 				onError: (error) =>
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to update provider.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to update provider.`),
 					}),
 			},
 		);
@@ -333,7 +333,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 									onError: (error) =>
 										toast.add({
 											type: "error",
-											description: getOrpcErrorMessage(error, { fallback: t`Failed to update provider.` }),
+											description: getLocalizedErrorMessage(error, t`Failed to update provider.`),
 										}),
 								},
 							)
@@ -363,7 +363,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 								onError: (error) => {
 									toast.add({
 										type: "error",
-										description: getOrpcErrorMessage(error, { fallback: t`Could not verify provider connection.` }),
+										description: getLocalizedErrorMessage(error, t`Could not verify provider connection.`),
 									});
 									void invalidate();
 								},
@@ -402,7 +402,7 @@ function ProviderRow({ provider }: ProviderRowProps) {
 								onError: (error) =>
 									toast.add({
 										type: "error",
-										description: getOrpcErrorMessage(error, { fallback: t`Failed to delete provider.` }),
+										description: getLocalizedErrorMessage(error, t`Failed to delete provider.`),
 									}),
 							},
 						)
@@ -476,12 +476,9 @@ function CreateProviderForm() {
 		} catch (error) {
 			setResult({
 				ok: false,
-				message: getOrpcErrorMessage(error, {
-					byCode: {
-						PRECONDITION_FAILED: t`AI providers require REDIS_URL and ENCRYPTION_SECRET to be configured.`,
-						BAD_REQUEST: t`Invalid AI provider configuration.`,
-					},
-					fallback: t`Failed to save AI provider.`,
+				message: getLocalizedErrorMessage(error, t`Failed to save AI provider.`, {
+					// The AI provider routes share the agent middleware's environment gate.
+					AGENT_ENVIRONMENT_UNAVAILABLE: t`AI providers require REDIS_URL and ENCRYPTION_SECRET to be configured.`,
 				}),
 			});
 		} finally {

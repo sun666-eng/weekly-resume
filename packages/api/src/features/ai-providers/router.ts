@@ -27,7 +27,7 @@ export const aiProvidersRouter = {
 		})
 		.output(type<AiProviderResponse[]>())
 		.errors({
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
 		.handler(({ context }) => aiProvidersService.list({ userId: context.user.id })),
 
@@ -44,7 +44,7 @@ export const aiProvidersRouter = {
 		.output(type<AiProviderResponse>())
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
 		.handler(async ({ context, input }) => {
 			try {
@@ -77,7 +77,7 @@ export const aiProvidersRouter = {
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
 			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
 		.handler(async ({ context, input }) => {
 			try {
@@ -109,7 +109,7 @@ export const aiProvidersRouter = {
 		.input(z.object({ id: z.string() }))
 		.output(z.void())
 		.errors({
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
 		.handler(({ context, input }) => aiProvidersService.delete({ id: input.id, userId: context.user.id })),
 
@@ -129,7 +129,7 @@ export const aiProvidersRouter = {
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
 			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
 			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
-			PRECONDITION_FAILED: { message: "AI agent workspace is not configured.", status: 412 },
+			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
 		.handler(async ({ context, input }) => {
 			try {

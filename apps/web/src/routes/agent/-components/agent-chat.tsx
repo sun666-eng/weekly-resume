@@ -79,7 +79,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { useConfirm } from "@/hooks/use-confirm";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { client, orpc, streamClient } from "@/libs/orpc/client";
 import { attachmentIdsFromTransportBody, buildAgentChatSubmission } from "../-helpers/chat-attachments";
 import { OperationRow, PatchApprovalCard } from "./patch-approval-card";
@@ -834,7 +834,7 @@ export function AgentChat({
 				onError: (error) => {
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to archive thread.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to archive thread.`),
 					});
 				},
 			},
@@ -860,7 +860,7 @@ export function AgentChat({
 				onError: (error) => {
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to delete thread.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to delete thread.`),
 					});
 				},
 			},
@@ -989,7 +989,7 @@ export function AgentChat({
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getOrpcErrorMessage(error, { fallback: t`Failed to upload attachment.` }),
+				description: getLocalizedErrorMessage(error, t`Failed to upload attachment.`),
 			});
 		} finally {
 			setIsUploading(false);
@@ -1049,7 +1049,7 @@ export function AgentChat({
 				onError: (error) =>
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to update thread settings.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to update thread settings.`),
 					}),
 			},
 		);
@@ -1082,7 +1082,7 @@ export function AgentChat({
 						onError: (error) =>
 							toast.add({
 								type: "error",
-								description: getOrpcErrorMessage(error, { fallback: t`Could not restore this patch.` }),
+								description: getLocalizedErrorMessage(error, t`Could not restore this patch.`),
 							}),
 					},
 				);

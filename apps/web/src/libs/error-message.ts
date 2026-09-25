@@ -150,6 +150,9 @@ const businessErrorMessages: Record<string, MessageDescriptor> = {
 	AGENT_ATTACHMENTS_INVALID: msg`The selected attachments are invalid. Please review your selection.`,
 	AGENT_ATTACHMENTS_TOO_MANY: msg`Too many attachments for one message.`,
 	AGENT_ATTACHMENTS_UNAVAILABLE: msg`One or more attachments are unavailable or already linked to a message.`,
+	AGENT_ATTACHMENT_TOO_LARGE: msg`That file is too large. The limit is 25MB per attachment.`,
+	AGENT_THREAD_STORAGE_FULL: msg`This conversation's attachment storage is full. Delete some attachments first.`,
+	AGENT_ENVIRONMENT_UNAVAILABLE: msg`The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured.`,
 	AGENT_QUESTION_NOT_FOUND: msg`The question to answer could not be found.`,
 	AGENT_RESPONSE_ALREADY_HANDLED: msg`This response was already handled.`,
 	AGENT_REVIEW_LOCKED: msg`Review settings cannot change while a task is active.`,
@@ -179,23 +182,32 @@ const businessErrorMessages: Record<string, MessageDescriptor> = {
 };
 
 // Server-side zod schemas carry custom English messages; exact-match the user-facing ones so they
-// localize too. Unmatched issues keep their original text (and get logged) instead of collapsing
-// into a generic message.
+// localize too. Unmatched issues are logged only — the UI shows a localized validation fallback.
 const zodIssueMessages: Record<string, MessageDescriptor> = {
 	"File size must be less than 10MB": msg`File size must be less than 10MB`,
 };
 
 const attachmentUnreadableFallback = msg`An attachment could not be read.`;
+const validationFallback = msg`Some entries failed validation. Please review and try again.`;
 
 /**
  * User-facing error copy that follows the interface language.
  *
- * Resolution order: API business code → known zod issue text → Better Auth code → localized
- * fallback. The raw error is always logged for troubleshooting; its server message is never
- * shown verbatim.
+ * Resolution order: call-site `byCode` overrides → API business code → known zod issue text →
+ * Better Auth code → localized fallback. The raw error is always logged for troubleshooting; its
+ * server message is never shown verbatim.
  */
-export function getLocalizedErrorMessage(error: unknown, fallback: string | MessageDescriptor): string {
+export function getLocalizedErrorMessage(
+	error: unknown,
+	fallback: string | MessageDescriptor,
+	byCode?: Record<string, string | MessageDescriptor>,
+): string {
 	if (error instanceof ORPCError) {
+		const override = byCode?.[error.code];
+		// t`…` values arrive as already-resolved strings (evaluated when the handler runs); msg`
+		// …` descriptors resolve here against the active locale.
+		if (override) return typeof override === "string" ? override : i18n._(override);
+
 		const business = businessErrorMessages[error.code];
 		if (business) return i18n._(business);
 
@@ -210,9 +222,13 @@ export function getLocalizedErrorMessage(error: unknown, fallback: string | Mess
 		if (error.code === "BAD_REQUEST") {
 			const issues = getBadRequestIssues(error);
 			if (issues) {
+				// Matched issues render through the catalog; unmatched ones stay in the log only so
+				// raw server-side English never reaches the UI.
 				const unmatched = issues.filter((issue) => !zodIssueMessages[issue]);
 				if (unmatched.length > 0) console.warn("Unlocalized validation issues:", unmatched);
-				return issues.map((issue) => (zodIssueMessages[issue] ? i18n._(zodIssueMessages[issue]) : issue)).join(" ");
+				const matched = issues.filter((issue) => zodIssueMessages[issue]);
+				if (matched.length > 0) return matched.map((issue) => i18n._(zodIssueMessages[issue])).join(" ");
+				return i18n._(validationFallback);
 			}
 		}
 	}

@@ -27,7 +27,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
@@ -236,22 +236,23 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				toast.add({
 					type: "error",
 					title: null,
-					description: getOrpcErrorMessage(error, {
-						byCode: {
-							BAD_REQUEST: t({
+					description: getLocalizedErrorMessage(
+						error,
+						t({
+							comment: "Fallback toast when importing a resume fails for an unknown reason",
+							message: "An unknown error occurred while importing your resume.",
+						}),
+						{
+							AI_REQUEST_INVALID: t({
 								comment: "Error shown when AI parsing returns invalid resume structure during import",
 								message: "The imported file could not be parsed into a valid resume.",
 							}),
-							BAD_GATEWAY: t({
+							AI_PROVIDER_UNREACHABLE: t({
 								comment: "Error shown when AI provider is unreachable during PDF/DOCX resume import",
 								message: "Could not reach the AI provider. Please try again.",
 							}),
 						},
-						fallback: t({
-							comment: "Fallback toast when importing a resume fails for an unknown reason",
-							message: "An unknown error occurred while importing your resume.",
-						}),
-					}),
+					),
 					id: toastId,
 				});
 			} finally {

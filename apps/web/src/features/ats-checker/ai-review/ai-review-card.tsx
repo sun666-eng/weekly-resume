@@ -13,7 +13,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { getPdfFindingMessage } from "../messages";
 import { AiReviewResults } from "./ai-review-results";
@@ -47,13 +47,10 @@ export function AiReviewCard({ report, fullText, jobDescription }: AiReviewCardP
 		onError: (error) => {
 			toast.add({
 				type: "error",
-				description: getOrpcErrorMessage(error, {
-					byCode: {
-						BAD_GATEWAY: t`Your AI provider could not be reached. Check its settings and try again.`,
-						BAD_REQUEST: t`The provider returned a review that could not be read. Try again.`,
-						PRECONDITION_FAILED: t`AI providers are unavailable until ENCRYPTION_SECRET is configured.`,
-					},
-					fallback: t`Failed to review this resume.`,
+				description: getLocalizedErrorMessage(error, t`Failed to review this resume.`, {
+					AI_PROVIDER_UNREACHABLE: t`Your AI provider could not be reached. Check its settings and try again.`,
+					AI_RESPONSE_INVALID: t`The provider returned a review that could not be read. Try again.`,
+					AI_ENCRYPTION_UNAVAILABLE: t`AI providers are unavailable until ENCRYPTION_SECRET is configured.`,
 				}),
 			});
 		},

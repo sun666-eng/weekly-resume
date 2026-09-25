@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { msg } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import {
 	getLocalizedErrorMessage,
@@ -183,20 +184,45 @@ describe("getLocalizedErrorMessage", () => {
 		);
 	});
 
-	it("localizes known zod issue messages and keeps unmatched ones verbatim", () => {
+	it("localizes known zod issue messages and logs unmatched ones", () => {
 		const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		try {
 			const error = new ORPCError("BAD_REQUEST", {
 				message: "Input validation failed",
 				data: { issues: [{ message: "File size must be less than 10MB" }, { message: "Too small: expected string" }] },
 			});
+			expect(getLocalizedErrorMessage(error, "fallback")).toBe("File size must be less than 10MB");
+			expect(consoleWarn).toHaveBeenCalledOnce();
+		} finally {
+			consoleWarn.mockRestore();
+		}
+	});
+
+	it("shows a localized validation fallback when no zod issue matches", () => {
+		const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		try {
+			const error = new ORPCError("BAD_REQUEST", {
+				message: "Input validation failed",
+				data: { issues: [{ message: "Invalid input: expected string, received number" }] },
+			});
 			expect(getLocalizedErrorMessage(error, "fallback")).toBe(
-				"File size must be less than 10MB Too small: expected string",
+				"Some entries failed validation. Please review and try again.",
 			);
 			expect(consoleWarn).toHaveBeenCalledOnce();
 		} finally {
 			consoleWarn.mockRestore();
 		}
+	});
+
+	it("lets call sites override business-code copy through byCode", () => {
+		const error = new ORPCError("AI_PROVIDER_UNREACHABLE");
+		expect(
+			getLocalizedErrorMessage(error, "fallback", {
+				AI_PROVIDER_UNREACHABLE: msg`Your AI provider could not be reached. Check its settings and try again.`,
+			}),
+		).toBe("Your AI provider could not be reached. Check its settings and try again.");
+		// Without an override the shared business table applies.
+		expect(getLocalizedErrorMessage(error, "fallback")).toBe("Could not reach the AI provider.");
 	});
 
 	it("maps Better Auth codes through the shared auth table", () => {

@@ -25,7 +25,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { isDefaultThreadTitle } from "@/features/agent/thread-title";
 import { useConfirm } from "@/hooks/use-confirm";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
 import { orpc } from "@/libs/orpc/client";
 
@@ -66,7 +66,7 @@ function ThreadActions({ thread, activeThreadId }: ThreadActionsProps) {
 				onError: (error) =>
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to archive thread.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to archive thread.`),
 					}),
 			},
 		);
@@ -89,7 +89,7 @@ function ThreadActions({ thread, activeThreadId }: ThreadActionsProps) {
 				onError: (error) =>
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(error, { fallback: t`Failed to delete thread.` }),
+						description: getLocalizedErrorMessage(error, t`Failed to delete thread.`),
 					}),
 			},
 		);

@@ -13,7 +13,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
 import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type NewThreadSetupProps = {
@@ -167,12 +167,9 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 									onError: (error) =>
 										toast.add({
 											type: "error",
-											description: getOrpcErrorMessage(error, {
-												byCode: {
-													PRECONDITION_FAILED: t`AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured.`,
-													BAD_REQUEST: t`Set up an AI provider before starting a thread.`,
-												},
-												fallback: t`Failed to start agent thread.`,
+											description: getLocalizedErrorMessage(error, t`Failed to start agent thread.`, {
+												AGENT_ENVIRONMENT_UNAVAILABLE: t`AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured.`,
+												AI_PROVIDER_UNAVAILABLE: t`Set up an AI provider before starting a thread.`,
 											}),
 										}),
 								},

@@ -325,14 +325,14 @@ async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: st
 		);
 
 	if (attachments.length !== ids.length) {
-		throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 409 });
+		throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 400 });
 	}
 
 	const attachmentsById = new Map(attachments.map((attachment) => [attachment.id, attachment]));
 	return ids.map((id) => {
 		const attachment = attachmentsById.get(id);
 		if (!attachment) {
-			throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 409 });
+			throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 400 });
 		}
 
 		return attachment;
@@ -1424,10 +1424,12 @@ export const agentService = {
 					and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
 				);
 
-			if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
-			if (input.data.byteLength > MAX_ATTACHMENT_BYTES) throw new ORPCError("BAD_REQUEST");
+			if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE)
+				throw new ORPCError("AGENT_ATTACHMENTS_TOO_MANY", { status: 400 });
+			if (input.data.byteLength > MAX_ATTACHMENT_BYTES)
+				throw new ORPCError("AGENT_ATTACHMENT_TOO_LARGE", { status: 400 });
 			if ((stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
-				throw new ORPCError("BAD_REQUEST");
+				throw new ORPCError("AGENT_THREAD_STORAGE_FULL", { status: 400 });
 			}
 
 			const mediaType = input.mediaType || inferContentType(input.filename);

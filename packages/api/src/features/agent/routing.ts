@@ -7,9 +7,7 @@ function isAgentEnvironmentUnavailable(error: unknown) {
 }
 
 function throwUnavailable(): never {
-	throw new ORPCError("PRECONDITION_FAILED", {
-		message: "AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured.",
-	});
+	throw new ORPCError("AGENT_ENVIRONMENT_UNAVAILABLE", { status: 412 });
 }
 
 export function isUiMessage(value: unknown): value is UIMessage {

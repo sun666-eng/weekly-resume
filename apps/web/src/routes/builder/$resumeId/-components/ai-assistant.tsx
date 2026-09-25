@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
-import { getOrpcErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { AgentChat } from "@/routes/agent/-components/agent-chat";
 
@@ -109,7 +109,7 @@ function AiAssistantPanel({ resumeId, onClose }: BuilderAiAssistantProps & { onC
 					setSetupFailed(true);
 					toast.add({
 						type: "error",
-						description: getOrpcErrorMessage(mutationError, { fallback: t`Failed to start the AI assistant.` }),
+						description: getLocalizedErrorMessage(mutationError, t`Failed to start the AI assistant.`),
 					});
 				},
 			},
