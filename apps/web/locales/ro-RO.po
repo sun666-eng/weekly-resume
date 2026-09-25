@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} din {totalRules} verificări trecute"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr ""
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "Un CV formatat pentru un cititor uman, cu fotografie, titluri și coloane"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr ""
 
@@ -315,6 +317,10 @@ msgstr "Cont"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "Meniul Cont"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "Gestionarea furnizorilor de inteligență artificială nu este disponibi
 msgid "AI Providers"
 msgstr "Furnizori de inteligență artificială"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "Furnizorii de IA sunt indisponibili până când ENCRYPTION_SECRET este configurat."
@@ -635,6 +645,10 @@ msgstr "Ai deja un cont? <0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Amharică"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "Data depunerii cererii până la"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "Candidatura a fost ștearsă."
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "Întreabă orice despre acest CV"
 msgid "Aspect Ratio"
 msgstr "Raport de aspect"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "Verificare ATS"
@@ -869,6 +892,11 @@ msgstr "Atașează PDF"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "Atașament"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "Listă cu marcatori"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "Comprimați sau eliminați imaginile mari pentru a menține încărcări
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "Confirmă"
@@ -1501,6 +1531,10 @@ msgstr "Nu s-a putut pregăti exemplul. Încearcă din nou."
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "Nu s-a putut pregăti CV-ul dumneavoastră pentru tipărire. Vă rugăm să încercați din nou."
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr ""
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "Parolă curentă"
 msgid "Current stage"
 msgstr "Etapa curentă"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "Disponibil în prezent pentru CV-urile în limba germană. Utilizează limba setată în pagina „Page”."
@@ -1836,6 +1874,10 @@ msgstr "Dată"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "Data candidaturii"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "Adresă de e-mail"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "Livrarea e-mailurilor nu este configurată pe această instanță, așadar verificarea este dezactivată."
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "Încorporați toate fonturile la exportare, astfel încât caracterele să fie mapate așa cum ați intenționat."
@@ -2500,6 +2546,7 @@ msgstr "A eșuat crearea cheii API. Vă rugăm să încercați din nou."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "Nu ați reușit să vă creați contul. Vă rugăm să încercați din nou."
 
@@ -2597,6 +2644,10 @@ msgstr "Autentificarea a eșuat. Vă rugăm să încercați din nou."
 msgid "Failed to sign out. Please try again."
 msgstr "Nu ați reușit să vă deconectați. Vă rugăm să încercați din nou."
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr ""
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "Nu s-a putut porni firul de discuție al agentului."
@@ -2617,6 +2668,10 @@ msgstr "Nu s-a putut actualiza furnizorul."
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "Nu s-au putut actualiza setările firului de execuție."
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr ""
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,7 +2738,12 @@ msgid "File must be a Microsoft Word document"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3271,19 +3331,23 @@ msgstr ""
 msgid "Include resume header"
 msgstr "Include antetul CV-ului"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr ""
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr ""
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "Configurație furnizor AI nevalidă."
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr ""
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr ""
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "Asociați un CV și lipiți descrierea postului (Editare) pentru a evalua potrivirea și a personaliza o copie."
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "Numele vă ajută să deosebiți passkey-urile între ele, dacă înregistrați mai multe."
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr ""
 
@@ -4062,13 +4137,17 @@ msgstr "Următor"
 msgid "Next template"
 msgstr "Șablonul următor"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "Niciun furnizor AI conectat"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "Nu există date sursă încă."
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "Nu s-au putut extrage termeni specifici din acea descriere a postului, deci este posibil să fie în mare parte generică. Lipiți secțiunea de cerințe pentru o comparație mai utilă."
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "Niciun furnizor testat"
@@ -4271,6 +4354,10 @@ msgstr ""
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "După ștergere, cheia nu mai poate accesa datele dumneavoastră. Această acțiune nu poate fi anulată."
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "Permite accesul doar aplicațiilor în care ai încredere. Această aplicație va putea:"
@@ -4283,6 +4370,10 @@ msgstr "Se aplică numai atunci când secțiunea încape pe o singură pagină."
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "A fost găsit doar un singur titlu de secțiune recognoscibil."
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr ""
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "Parolă"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr ""
 
@@ -4528,6 +4620,10 @@ msgstr "Lipește rânduri sau încarcă un fișier .csv. Mapăm coloane precum C
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "Lipiți aici descrierea completă a postului…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "Reîncercați"
 msgid "Review edits"
 msgstr "Revizuiește editările"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "Verifică CV-ul față de o descriere a postului și întreabă-mă înainte să schimbi ceva de care nu ești sigur."
@@ -5746,6 +5846,7 @@ msgstr "Înregistrare"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr ""
 
@@ -5908,6 +6009,7 @@ msgstr "A apărut o problemă la conectare. Încearcă din nou."
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "Ceva nu a funcționat. Vă rugăm să încercați din nou."
@@ -6252,6 +6354,10 @@ msgstr "Acel furnizor de conectare nu mai este disponibil pe acest server."
 msgid "The agent needs your input."
 msgstr "Agentul are nevoie de contribuția dumneavoastră."
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr ""
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "Cheia API a fost ștearsă."
@@ -6268,7 +6374,11 @@ msgstr "Verificările de mai sus sunt mecanice. Aceasta întreabă un model de l
 msgid "The deep check could not finish. Please try again."
 msgstr "Verificarea aprofundată nu a putut fi finalizată. Încercați din nou."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr ""
 
@@ -6297,6 +6407,10 @@ msgstr "Paginile sunt imagini, fără niciun text în spatele lor."
 msgid "The password you entered is incorrect"
 msgstr "Parola introdusă este incorectă"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr ""
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF-ul este citit de cod care rulează în această filă. Nimic nu este încărcat, nimic nu este stocat și nu este necesar niciun cont. Deschideți fila de rețea a browserului dvs. și urmăriți, dacă doriți."
@@ -6321,9 +6435,17 @@ msgstr "Furnizorul a returnat o analiză care nu a putut fi citită. Încercați
 msgid "The provider's response could not be verified. Please start again."
 msgstr "Răspunsul furnizorului nu a putut fi verificat. Începe din nou."
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr ""
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "Și restul căutării tale<0/>de locuri de muncă."
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "Același rând se repetă pe fiecare pagină."
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "Scorul este plafonat din cauza unei probleme blocante: {0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "Acest asistent nu a putut fi deschis."
 msgid "This connection request is invalid or has expired."
 msgstr "Această cerere de conectare este invalidă sau a expirat."
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "Această scrisoare de intenție a fost modificată în altă parte. Modificările tale sunt încă aici. Reîncarcă ultima versiune înainte de a salva din nou."
@@ -6434,11 +6584,11 @@ msgstr "Această solicitare de editare nu mai poate primi răspuns."
 msgid "This email address will not be recognized."
 msgstr "Această adresă de e-mail nu va fi recunoscută."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr ""
 
@@ -6530,11 +6680,11 @@ msgstr "Aceasta nu este o dimensiune de pagină obișnuită pentru un CV."
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "Această cheie este afișată o singură dată. Copiați-o înainte să închideți această fereastră."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr ""
 
@@ -6562,6 +6712,22 @@ msgstr "Această pagină este pe coloane, iar textul se extrage în afara ordini
 msgid "This page is very densely packed."
 msgstr "Această pagină este foarte dens încărcată."
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr ""
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "Această perioadă se încheie înainte de a începe."
 msgid "This period starts in the future."
 msgstr "Această perioadă începe în viitor."
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr ""
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "Acest CV este blocat și nu poate fi actualizat."
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr ""
 
@@ -6644,6 +6815,10 @@ msgstr "Această secțiune se află în bara laterală."
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "Această încercare de conectare a expirat sau a fost deja folosită. Începe din nou."
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr ""
@@ -6664,7 +6839,11 @@ msgstr "Acest fir de discuție este doar pentru citire"
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "Acest fir de discuție este doar pentru citire deoarece CV-ul funcțional sau furnizorul de inteligență artificială nu este disponibil."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr ""
 
@@ -6758,11 +6937,15 @@ msgstr "Tokeni: {total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "Tokeni: {total} ({cached} în cache)"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr ""
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "Instrumente"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr ""
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "Ucraineană"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr ""
 
@@ -7574,7 +7759,7 @@ msgstr "Adresa dvs. de e-mail este fragmentată în mai multe bucăți de text."
 msgid "Your email address isn't verified with the provider."
 msgstr "Adresa ta de e-mail nu este verificată la furnizor."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr ""
 
@@ -7696,7 +7881,7 @@ msgstr "Scrisoarea ta de intenție salvată va rămâne neschimbată."
 msgid "Your selected file"
 msgstr "Fișierul tău selectat"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr ""
 

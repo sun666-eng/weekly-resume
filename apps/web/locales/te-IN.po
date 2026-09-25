@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} {totalRules} చెక్కులు ఆమోదించబడ్డాయి"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr ""
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "ఫోటో, శీర్షికలు మరియు కాలమ్‌లతో మనిషి చదవడానికి రూపొందించిన రెజ్యూమ్"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr ""
 
@@ -315,6 +317,10 @@ msgstr "ఖాతా"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "ఖాతా మెనూ"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "AI ప్రొవైడర్ నిర్వహణ అందుబా�
 msgid "AI Providers"
 msgstr "AI ప్రొవైడర్లు"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "ENCRYPTION_SECRET కాన్ఫిగర్ చేయబడే వరకు AI ప్రొవైడర్‌లు అందుబాటులో ఉండవు."
@@ -635,6 +645,10 @@ msgstr "ఇప్పటికే ఖాతా ఉందా? <0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "అంహారిక్"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "దరఖాస్తు తేదీ వరకు"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "దరఖాస్తు తొలగించబడింది."
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "ఈ రెజ్యూమె గురించి ఏమైనా అ�
 msgid "Aspect Ratio"
 msgstr "కారక నిష్పత్తి"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "ATS తనిఖీ"
@@ -869,6 +892,11 @@ msgstr "PDFని అటాచ్ చేయండి"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "జతచేయడం"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "బుల్లెట్ జాబితా"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "అప్‌లోడ్‌లను వేగంగా ఉంచడా�
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "నిర్ధారించండి"
@@ -1501,6 +1531,10 @@ msgstr "నమూనాను సిద్ధం చేయలేకపోయా�
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "ప్రింటింగ్ కోసం మీ రెజ్యూమ్‌ను సిద్ధం చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి."
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr ""
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "ప్రస్తుత పాస్‌వర్డ్"
 msgid "Current stage"
 msgstr "ప్రస్తుత దశ"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "ప్రస్తుతం జర్మన్ రెస్యూమ్‌ల కోసం అందుబాటులో ఉంది. పేజీలో సెట్ చేసిన భాషను ఉపయోగిస్తుంది."
@@ -1836,6 +1874,10 @@ msgstr "తేదీ"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "దరఖాస్తు చేసిన తేదీ"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "ఇమెయిల్ చిరునామా"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "ఈ ఇన్స్టాన్స్‌లో ఇమెయిల్ డెలివరీ కాన్ఫిగర్ చేయబడలేదు, కాబట్టి ధృవీకరణ నిలిపివేయబడింది."
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "అక్షరాలు మీరు అనుకున్న విధంగా మ్యాప్ అవ్వడానికి, ఎగుమతి చేసేటప్పుడు అన్ని ఫాంట్‌లను ఎంబెడ్ చేయండి."
@@ -2500,6 +2546,7 @@ msgstr "API కీని సృష్టించడంలో విఫలమయ
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "మీ ఖాతాను సృష్టించడంలో విఫలమయ్యాము. దయచేసి మళ్ళీ ప్రయత్నించండి."
 
@@ -2597,6 +2644,10 @@ msgstr "సైన్ ఇన్ విఫలమైంది. దయచేసి �
 msgid "Failed to sign out. Please try again."
 msgstr "సైన్ అవుట్ చేయడంలో విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి."
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr ""
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "ఏజెంట్ థ్రెడ్‌ను ప్రారంభించడంలో విఫలమైంది."
@@ -2617,6 +2668,10 @@ msgstr "ప్రొవైడర్‌ను అప్‌డేట్ చేయ�
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "థ్రెడ్ సెట్టింగ్‌లను నవీకరించడంలో విఫలమైంది."
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr ""
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,7 +2738,12 @@ msgid "File must be a Microsoft Word document"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3271,19 +3331,23 @@ msgstr ""
 msgid "Include resume header"
 msgstr "రెజ్యూమే హెడర్‌ను చేర్చండి"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr ""
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr ""
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "చెల్లని AI ప్రొవైడర్ కాన్ఫిగరేషన్."
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr ""
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr ""
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "మీ సరిపోలికను స్కోర్ చేయడానికి మరియు అనుకూలీకరించిన కాపీని రూపొందించడానికి ఒక రెజ్యూమెను లింక్ చేసి ఉద్యోగ వివరణను అతికించండి (సవరించు)."
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "ఒకటి కంటే ఎక్కువ పాస్‌కీలు నమోదు చేస్తే, వాటిని వేరు చేసి గుర్తించడానికి పేర్లు సాయపడతాయి."
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr ""
 
@@ -4062,13 +4137,17 @@ msgstr "తదుపరి"
 msgid "Next template"
 msgstr "తదుపరి టెంప్లేట్"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "ఏ AI ప్రొవైడర్ కనెక్ట్ కాలేదు"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "ఇంకా మూల డేటా లేదు."
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "ఆ ఉద్యోగ వివరణ నుండి నిర్దిష్ట పదాలను వెలికితీయలేకపోయాం, కాబట్టి ఇది ఎక్కువగా బాయిలర్‌ప్లేట్ కావచ్చు. మరింత ఉపయోగకరమైన పోలిక కోసం రిక్వైర్‌మెంట్స్ విభాగాన్ని అతికించండి."
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "పరీక్షించిన ప్రొవైడర్ లేదు"
@@ -4271,6 +4354,10 @@ msgstr ""
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "తొలగించాక, ఆ కీ మీ డేటాను యాక్సెస్ చేయలేదు. దీన్ని వెనక్కి తీసుకోలేరు."
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "మీరు విశ్వసించే అప్లికేషన్‌లను మాత్రమే అనుమతించండి. ఈ అప్లికేషన్ వీటిని చేయగలదు:"
@@ -4283,6 +4370,10 @@ msgstr "విభాగం ఒకే పేజీలో సరిపోయిన
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "గుర్తించదగిన ఒకే ఒక విభాగ శీర్షిక కనుగొనబడింది."
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr ""
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "పాస్‌వర్డ్"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr ""
 
@@ -4528,6 +4620,10 @@ msgstr "అడ్డు వరుసలను అతికించండి ల
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "పూర్తి ఉద్యోగ వివరణను ఇక్కడ అతికించండి…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "మళ్ళీ ప్రయత్నించండి"
 msgid "Review edits"
 msgstr "సవరణలను సమీక్షించండి"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "ఉద్యోగ వివరణతో పోల్చి రెజ్యూమ్‌ను సమీక్షించండి; ఖచ్చితంగా తెలియని దేన్నైనా మార్చే ముందు నన్ను అడగండి."
@@ -5746,6 +5846,7 @@ msgstr "సైన్ అప్ చేయండి"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr ""
 
@@ -5908,6 +6009,7 @@ msgstr "మిమ్మల్ని సైన్ ఇన్ చేస్తున
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "ఏదో తప్పు జరిగింది. దయచేసి మళ్లీ ప్రయత్నించండి."
@@ -6252,6 +6354,10 @@ msgstr "ఆ సైన్-ఇన్ ప్రొవైడర్ ఈ సర్వ�
 msgid "The agent needs your input."
 msgstr "ఏజెంట్‌కు మీ సమాచారం అవసరం."
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr ""
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "API కీ తొలగించబడింది."
@@ -6268,7 +6374,11 @@ msgstr "పైన ఉన్న చెక్‌లు యాంత్రికమ
 msgid "The deep check could not finish. Please try again."
 msgstr "డీప్ చెక్ పూర్తి కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr ""
 
@@ -6297,6 +6407,10 @@ msgstr "పేజీలు చిత్రాలు, వాటి వెను�
 msgid "The password you entered is incorrect"
 msgstr "మీరు నమోదు చేసిన పాస్‌వర్డ్ సరియైనది కాదు"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr ""
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "ఈ ట్యాబ్‌లో నడుస్తున్న కోడ్ ద్వారా PDF చదవబడుతుంది. ఏదీ అప్‌లోడ్ చేయబడదు, ఏదీ నిల్వ చేయబడదు, ఖాతా కూడా అవసరం లేదు. మీకు నచ్చితే మీ బ్రౌజర్ నెట్‌వర్క్ ట్యాబ్‌ను తెరిచి చూడండి."
@@ -6321,9 +6435,17 @@ msgstr "ప్రొవైడర్ చదవలేని సమీక్షన�
 msgid "The provider's response could not be verified. Please start again."
 msgstr "ప్రొవైడర్ ప్రతిస్పందనను ధృవీకరించలేకపోయాము. దయచేసి మళ్లీ ప్రారంభించండి."
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr ""
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "మీ ఉద్యోగ అన్వేషణలో<0/>మిగతాదంతా కూడా."
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "అదే లైన్ ప్రతి పేజీలో పునర�
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "బ్లాకింగ్ సమస్య కారణంగా స్కోర్ పరిమితం చేయబడింది: {0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "ఈ సహాయకుడిని తెరవలేకపోయిం�
 msgid "This connection request is invalid or has expired."
 msgstr "ఈ కనెక్షన్ అభ్యర్థన చెల్లనిది లేదా గడువు ముగిసింది."
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "ఈ కవర్ లెటర్ ఇక్కడ కాకుండా వేరే చోట మార్చబడింది. మీ సవరణలు ఇంకా ఇక్కడే ఉన్నాయి. మళ్ళీ సేవ్ చేసే ముందు తాజా వెర్షన్‌ను రీలోడ్ చేయండి."
@@ -6434,11 +6584,11 @@ msgstr "ఈ సవరణ అభ్యర్థనకు ఇకపై సమా�
 msgid "This email address will not be recognized."
 msgstr "ఈ ఇమెయిల్ చిరునామా గుర్తించబడదు."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr ""
 
@@ -6530,11 +6680,11 @@ msgstr "ఇది సాధారణ రెజ్యూమ్ పేజీ స�
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "ఈ కీ ఒక్కసారి మాత్రమే చూపబడుతుంది. ఈ డైలాగ్ మూసే ముందు దాన్ని కాపీ చేసుకోండి."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr ""
 
@@ -6562,6 +6712,22 @@ msgstr "ఈ పేజీ కాలమ్‌లలో ఉంది, మరియ�
 msgid "This page is very densely packed."
 msgstr "ఈ పేజీ చాలా దట్టంగా నింపబడింది."
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr ""
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "ఈ వ్యవధి ప్రారంభం కావడానిక
 msgid "This period starts in the future."
 msgstr "ఈ కాలం భవిష్యత్తులో ప్రారంభమవుతుంది."
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr ""
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "ఈ రెజ్యూమ్ లాక్ చేయబడింది మరియు నవీకరించలేరు."
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr ""
 
@@ -6644,6 +6815,10 @@ msgstr "ఈ విభాగం సైడ్‌బార్‌లో ఉంటు
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "ఈ సైన్-ఇన్ ప్రయత్నం గడువు ముగిసింది లేదా ఇప్పటికే ఉపయోగించబడింది. దయచేసి మళ్లీ ప్రారంభించండి."
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr ""
@@ -6664,7 +6839,11 @@ msgstr "ఈ థ్రెడ్ కేవలం చదవడానికి మ�
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "వర్కింగ్ రెస్యూమ్ లేదా AI ప్రొవైడర్ అందుబాటులో లేనందున ఈ థ్రెడ్ కేవలం చదవడానికి మాత్రమే అందుబాటులో ఉంది."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr ""
 
@@ -6758,11 +6937,15 @@ msgstr "టోకెన్లు: {total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "టోకెన్లు: {total} ({cached} కాష్ చేయబడినవి)"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr ""
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "టూల్స్"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr ""
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "యుక్రేనియన్"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr ""
 
@@ -7574,7 +7759,7 @@ msgstr "మీ ఇమెయిల్ చిరునామా టెక్స్
 msgid "Your email address isn't verified with the provider."
 msgstr "మీ ఇమెయిల్ చిరునామా ప్రొవైడర్ వద్ద ధృవీకరించబడలేదు."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr ""
 
@@ -7696,7 +7881,7 @@ msgstr "మీరు సేవ్ చేసిన కవర్ లెటర్ �
 msgid "Your selected file"
 msgstr "మీరు ఎంచుకున్న ఫైల్"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr ""
 

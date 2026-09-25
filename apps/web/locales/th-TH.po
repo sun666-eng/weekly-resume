@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "ผ่านการตรวจสอบ {passedRules} จาก {totalRules} รายการ"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr ""
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "เรซูเม่ที่จัดวางสำหรับผู้อ่านที่เป็นมนุษย์ มีรูปภาพ หัวข้อ และคอลัมน์"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr ""
 
@@ -315,6 +317,10 @@ msgstr "บัญชี"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "เมนูบัญชี"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "ไม่สามารถจัดการผู้ให้บริ
 msgid "AI Providers"
 msgstr "ผู้ให้บริการ AI"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "ผู้ให้บริการ AI จะใช้งานไม่ได้จนกว่าจะตั้งค่า ENCRYPTION_SECRET"
@@ -635,6 +645,10 @@ msgstr "มีบัญชีอยู่แล้ว? <0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "อัมฮาริค"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "วันที่สมัคร ถึง"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "ลบใบสมัครแล้ว"
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "สอบถามอะไรก็ได้เกี่ยวกับ
 msgid "Aspect Ratio"
 msgstr "อัตราส่วนภาพ"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "ตรวจสอบเอทีเอส"
@@ -869,6 +892,11 @@ msgstr "แนบ PDF"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "เอกสารแนบ"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "รายการหัวข้อย่อย"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "บีบอัดหรือลบรูปภาพขนาดให
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "ยืนยัน"
@@ -1501,6 +1531,10 @@ msgstr "ไม่สามารถเตรียมตัวอย่างไ
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "ไม่สามารถเตรียมเรซูเม่ของคุณสำหรับพิมพ์ได้ กรุณาลองอีกครั้ง"
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr ""
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "รหัสผ่านเดิม"
 msgid "Current stage"
 msgstr "ขั้นตอนปัจจุบัน"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "ปัจจุบันรองรับเรซูเม่ภาษาเยอรมัน ใช้ภาษาที่ตั้งค่าไว้ในหน้า"
@@ -1836,6 +1874,10 @@ msgstr "วันที่"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "วันที่สมัคร"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "ที่อยู่อีเมล"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "ระบบนี้ไม่ได้ตั้งค่าการส่งอีเมล ดังนั้นการตรวจสอบจึงถูกปิดใช้งาน"
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "ฝังฟอนต์ทั้งหมดเมื่อส่งออก เพื่อให้ตัวอักษรแสดงผลตรงตามที่ตั้งใจ"
@@ -2500,6 +2546,7 @@ msgstr "ไม่สามารถสร้างคีย์ API ได้ ก
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "ไม่สามารถสร้างบัญชีของคุณได้ กรุณาลองอีกครั้ง"
 
@@ -2597,6 +2644,10 @@ msgstr "เข้าสู่ระบบไม่สำเร็จ กรุ�
 msgid "Failed to sign out. Please try again."
 msgstr "ไม่สามารถลงชื่อออกได้ กรุณาลองอีกครั้ง"
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr ""
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "ไม่สามารถเริ่มต้นเธรดเอเจนต์ได้"
@@ -2617,6 +2668,10 @@ msgstr "ไม่สามารถอัปเดตผู้ให้บริ
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "ไม่สามารถอัปเดตการตั้งค่ากระทู้ได้"
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr ""
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,7 +2738,12 @@ msgid "File must be a Microsoft Word document"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3271,19 +3331,23 @@ msgstr ""
 msgid "Include resume header"
 msgstr "รวมส่วนหัวของเรซูเม่"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr ""
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr ""
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "การกำหนดค่าผู้ให้บริการ AI ไม่ถูกต้อง"
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr ""
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr ""
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "เชื่อมโยงเรซูเม่และวางคำอธิบายงาน (แก้ไข) เพื่อให้คะแนนความเหมาะสมและปรับแต่งสำเนา"
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "ชื่อช่วยให้คุณแยกพาสคีย์ออกจากกันได้ หากคุณลงทะเบียนไว้มากกว่าหนึ่งอัน"
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr ""
 
@@ -4062,13 +4137,17 @@ msgstr "ถัดไป"
 msgid "Next template"
 msgstr "เทมเพลตถัดไป"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "ยังไม่ได้เชื่อมต่อผู้ให้บริการ AI"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "ยังไม่มีข้อมูลแหล่งที่มา
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "ไม่สามารถดึงคำเฉพาะจากคำอธิบายงานนั้นได้ อาจเป็นเพราะเป็นข้อความสำเร็จรูปเป็นส่วนใหญ่ ลองวางส่วนข้อกำหนดคุณสมบัติเพื่อการเปรียบเทียบที่มีประโยชน์มากขึ้น"
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "ไม่มีผู้ให้บริการที่ผ่านการทดสอบ"
@@ -4271,6 +4354,10 @@ msgstr ""
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "เมื่อลบแล้ว คีย์นี้จะเข้าถึงข้อมูลของคุณไม่ได้อีก และไม่สามารถย้อนกลับได้"
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "อนุญาตเฉพาะแอปพลิเคชันที่คุณเชื่อถือเท่านั้น แอปพลิเคชันนี้จะสามารถ:"
@@ -4283,6 +4370,10 @@ msgstr "ใช้ได้เฉพาะเมื่อส่วนนั้น
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "พบหัวข้อส่วนที่จำแนกได้เพียงหัวข้อเดียว"
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr ""
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "รหัสผ่าน"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr ""
 
@@ -4528,6 +4620,10 @@ msgstr "วางแถวหรืออัปโหลด .csv เราจั
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "วางคำอธิบายงานทั้งหมดที่นี่…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "ลองใหม่อีกครั้ง"
 msgid "Review edits"
 msgstr "ตรวจสอบการแก้ไข"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "ตรวจทานเรซูเม่เทียบกับรายละเอียดงาน และถามฉันก่อนเปลี่ยนสิ่งที่คุณไม่แน่ใจ"
@@ -5746,6 +5846,7 @@ msgstr "ลงทะเบียน"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr ""
 
@@ -5908,6 +6009,7 @@ msgstr "เกิดข้อผิดพลาดขณะลงชื่อเ
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง"
@@ -6252,6 +6354,10 @@ msgstr "ผู้ให้บริการลงชื่อเข้าใช
 msgid "The agent needs your input."
 msgstr "ตัวแทนต้องการข้อมูลจากคุณ"
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr ""
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "ลบคีย์ API แล้ว"
@@ -6268,7 +6374,11 @@ msgstr "การตรวจสอบด้านบนเป็นแบบก
 msgid "The deep check could not finish. Please try again."
 msgstr "การตรวจสอบเชิงลึกทำงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr ""
 
@@ -6297,6 +6407,10 @@ msgstr "หน้าเหล่านี้เป็นรูปภาพ ไ�
 msgid "The password you entered is incorrect"
 msgstr "รหัสผ่านที่คุณกรอกไม่ถูกต้อง"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr ""
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF ถูกอ่านโดยโค้ดที่ทำงานอยู่ในแท็บนี้ ไม่มีการอัปโหลด ไม่มีการจัดเก็บ และไม่ต้องมีบัญชี คุณสามารถเปิดแท็บเครือข่ายของเบราว์เซอร์ดูได้หากต้องการ"
@@ -6321,9 +6435,17 @@ msgstr "ผู้ให้บริการส่งคืนรีวิวท
 msgid "The provider's response could not be verified. Please start again."
 msgstr "ไม่สามารถยืนยันการตอบกลับของผู้ให้บริการได้ กรุณาเริ่มใหม่"
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr ""
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "ครบทุกอย่างสำหรับ<0/>การหางานของคุณ"
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "บรรทัดเดียวกันซ้ำในทุกหน
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "คะแนนถูกจำกัดเนื่องจากปัญหาที่ขัดขวาง: {0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "ไม่สามารถเปิดผู้ช่วยนี้ไ
 msgid "This connection request is invalid or has expired."
 msgstr "คำขอเชื่อมต่อนี้ไม่ถูกต้องหรือหมดอายุแล้ว"
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "จดหมายปะหน้านี้เปลี่ยนไปที่อื่น การแก้ไขของคุณยังคงอยู่ที่นี่ โหลดเวอร์ชันล่าสุดซ้ำก่อนที่จะบันทึกอีกครั้ง"
@@ -6434,11 +6584,11 @@ msgstr "คำขอแก้ไขนี้ไม่สามารถตอบ
 msgid "This email address will not be recognized."
 msgstr "ที่อยู่อีเมลนี้จะไม่ถูกจดจำ"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr ""
 
@@ -6530,11 +6680,11 @@ msgstr "นี่ไม่ใช่ขนาดหน้ากระดาษท
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "คีย์นี้จะแสดงเพียงครั้งเดียว คัดลอกไว้ก่อนปิดหน้าต่างนี้"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr ""
 
@@ -6562,6 +6712,22 @@ msgstr "หน้านี้จัดเป็นคอลัมน์ แล�
 msgid "This page is very densely packed."
 msgstr "หน้านี้มีเนื้อหาแน่นมาก"
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr ""
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "ช่วงเวลานี้สิ้นสุดก่อนที
 msgid "This period starts in the future."
 msgstr "ช่วงนี้เริ่มในอนาคต"
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr ""
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "เรซูเม่นี้ถูกล็อกและไม่สามารถอัปเดตได้"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr ""
 
@@ -6644,6 +6815,10 @@ msgstr "ส่วนนี้อยู่ในแถบด้านข้าง
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "การพยายามลงชื่อเข้าใช้ครั้งนี้หมดอายุหรือถูกใช้ไปแล้ว กรุณาเริ่มใหม่"
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr ""
@@ -6664,7 +6839,11 @@ msgstr "กระทู้นี้อ่านได้อย่างเดี
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "กระทู้นี้อยู่ในโหมดอ่านอย่างเดียว เนื่องจากเรซูเม่ที่ใช้งานอยู่หรือผู้ให้บริการ AI ไม่พร้อมใช้งาน"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr ""
 
@@ -6758,11 +6937,15 @@ msgstr "โทเค็น: {total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "โทเค็น: {total} ({cached} จากแคช)"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr ""
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "เครื่องมือ"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr ""
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "ยูเครน"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr ""
 
@@ -7574,7 +7759,7 @@ msgstr "ที่อยู่อีเมลของคุณถูกแยก
 msgid "Your email address isn't verified with the provider."
 msgstr "ที่อยู่อีเมลของคุณยังไม่ได้รับการยืนยันกับผู้ให้บริการ"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr ""
 
@@ -7696,7 +7881,7 @@ msgstr "จดหมายปะหน้าที่คุณบันทึก
 msgid "Your selected file"
 msgstr "ไฟล์ที่คุณเลือก"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr ""
 

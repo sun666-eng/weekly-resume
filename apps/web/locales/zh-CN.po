@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} 项检查中，{totalRules} 项已通过"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr "已拒绝 {rejected} 家"
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "为人类读者设计的简历排版，带照片、标题和分栏"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr "已存在相同链接标识的简历。"
 
@@ -315,6 +317,10 @@ msgstr "账户"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "帐户菜单"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr "账号不存在，或未设置密码。"
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "AI提供商管理功能不可用。请稍后再试。"
 msgid "AI Providers"
 msgstr "AI 提供商"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr "未配置 ENCRYPTION_SECRET，AI 功能不可用。"
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "在配置 ENCRYPTION_SECRET 之前，AI 提供商将不可用。"
@@ -635,6 +645,10 @@ msgstr "已有账户？<0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "阿姆哈拉语"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr "附件无法读取。"
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "申请日期至"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "申请已删除。"
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr "投递附件必须是 PDF 文件。"
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr "投递时间线缺少当前阶段记录。"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "关于这份简历，有什么想问的吗？"
 msgid "Aspect Ratio"
 msgstr "宽高比"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "ATS检查"
@@ -869,6 +892,11 @@ msgstr "附加 PDF"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "依恋"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr "附件 {0} 无法读取。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "项目符号列表"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "压缩或移除较大的图片，以保持上传速度。"
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "确认"
@@ -1501,6 +1531,10 @@ msgstr "无法准备示例，请重试。"
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "无法为打印准备你的简历。请重试。"
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr "无法连接 AI 服务商。"
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "当前密码"
 msgid "Current stage"
 msgstr "当前阶段"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr "当前阶段日期不能早于其他阶段记录。"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "目前支持德语简历。使用“页面”中设置的语言。"
@@ -1836,6 +1874,10 @@ msgstr "日期"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "申请日期"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr "日期格式应为 YYYY-MM-DD。"
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "电子邮箱地址"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "此实例未配置电子邮件发送功能，因此验证功能已禁用。"
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr "本实例未启用邮箱验证。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "导出时嵌入所有字体，确保字符按你的预期显示。"
@@ -2500,6 +2546,7 @@ msgstr "创建 API 密钥失败。请重试。"
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "创建账户失败。请重试。"
 
@@ -2597,6 +2644,10 @@ msgstr "登录失败。请重试。"
 msgid "Failed to sign out. Please try again."
 msgstr "退出登录失败。请重试。"
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr "登录失败，请重试。"
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "启动 Agent 会话失败。"
@@ -2617,6 +2668,10 @@ msgstr "更新提供商失败。"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "更新会话设置失败。"
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr "更新账号信息失败，请重试。"
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,8 +2738,13 @@ msgid "File must be a Microsoft Word document"
 msgstr "文件必须是 Word 文档"
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
 msgstr "文件必须是 PDF"
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
+msgstr "文件大小不能超过 10MB"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -3271,19 +3331,23 @@ msgstr "当前视图内"
 msgid "Include resume header"
 msgstr "包含简历页眉"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr "备用验证码不正确，请重新输入。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr "邮箱、用户名或密码不正确。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr "密码不正确，请重新输入。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr "用户名或密码不正确。"
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr "验证码不正确，请重新输入。"
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr "面试及以后阶段"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr "面试数"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr "账号信息无效，请重新登录。"
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "AI提供商配置无效。"
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr "简历数据结构无效"
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr "关联一份简历（推荐）"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "关联一份简历并粘贴职位描述（编辑），即可评估匹配度并定制一份副本。"
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr "请先为该投递关联简历。"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "如果你注册了多个通行密钥，名称能帮你把它们区分开。"
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr "需要跟进"
 
@@ -4062,13 +4137,17 @@ msgstr "下一页"
 msgid "Next template"
 msgstr "下一个模板"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr "未找到该账号，请检查邮箱或用户名。"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "未连接 AI 提供商"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr "尚未配置 AI 服务商。请在「设置 → 集成」中添加后使用 AI 功能。"
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "还没有来源数据。"
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "无法从该职位描述中提取出具体的关键词，它可能大多是套话。请粘贴任职要求部分以获得更有用的比较结果。"
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr "没有可用的 AI 服务商，请检查配置后重试。"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "没有经过测试的提供商"
@@ -4271,6 +4354,10 @@ msgstr "确定"
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "删除后，该密钥将无法再访问你的数据。此操作无法撤销。"
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr "部分附件不可用，或已关联到其他消息。"
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "只允许你信任的应用。该应用将能够："
@@ -4283,6 +4370,10 @@ msgstr "仅适用于该部分内容能够完整显示在一页上的情况。"
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "只找到一个可识别的部分标题。"
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr "只有简历补丁操作可以撤销。"
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "密码"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr "密码长度不能少于 8 位。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr "密码长度不能超过 64 位。"
 
@@ -4528,6 +4620,10 @@ msgstr "粘贴表格行或上传 .csv 文件。我们会映射公司、职位、
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "在此粘贴完整的职位描述…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr "请先为该投递填写岗位描述。"
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "重试"
 msgid "Review edits"
 msgstr "审核编辑"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr "任务进行中无法修改审阅设置。"
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "对照职位描述审阅这份简历，遇到没把握的地方，改动前先问我。"
@@ -5746,6 +5846,7 @@ msgstr "注册"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr "登录授权失败，请重试。"
 
@@ -5908,6 +6009,7 @@ msgstr "登录时出错。请重试。"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "出现了一些问题。请重试。"
@@ -6252,6 +6354,10 @@ msgstr "该登录提供商在此服务器上已不可用。"
 msgid "The agent needs your input."
 msgstr "经纪人需要您的意见。"
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr "AI 返回内容无法解析。"
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "该 API 密钥已被删除。"
@@ -6268,7 +6374,11 @@ msgstr "以上检查都是机械化的规则判断。这项功能会询问语言
 msgid "The deep check could not finish. Please try again."
 msgstr "深度检查未能完成。请重试。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr "原简历已不存在。"
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr "邮箱格式不正确，请重新输入。"
 
@@ -6297,6 +6407,10 @@ msgstr "这些页面是图片，背后没有文字。"
 msgid "The password you entered is incorrect"
 msgstr "你输入的密码不正确"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr "补丁操作无效，或生成结果不合法。"
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF 是由运行在此标签页中的代码读取的。不会上传任何内容，不会存储任何内容，也不需要账号。如果你愿意，可以打开浏览器的网络标签页观察一下。"
@@ -6321,9 +6435,17 @@ msgstr "提供商返回的评审内容无法读取。请重试。"
 msgid "The provider's response could not be verified. Please start again."
 msgstr "无法验证提供商的响应。请重新开始。"
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr "找不到对应的待回答提问。"
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "求职的其余环节，<0/>也一并搞定。"
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr "简历已更新，此补丁已过期。"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "同一行文字在每一页都重复出现。"
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "由于一个阻断性问题，分数被封顶：{0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr "附件选择无效，请重新检查。"
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr "阶段时间线为自动生成，不能编辑或删除。"
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "此助手无法打开。"
 msgid "This connection request is invalid or has expired."
 msgstr "此连接请求无效或已过期。"
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr "该对话已有正在进行的任务。"
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr "该对话已归档。"
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr "该对话为只读。"
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr "该求职信已在别处被修改，请刷新后再删除。"
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr "该求职信已在别处被修改，请刷新后再保存。"
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "这封求职信在别处被修改过。你的编辑仍然保留。请先重新加载最新版本，再次保存。"
@@ -6434,11 +6584,11 @@ msgstr "此编辑请求已无法回应。"
 msgid "This email address will not be recognized."
 msgstr "该电子邮件地址将不会被识别。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr "该邮箱已注册，请直接登录或更换邮箱。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr "该邮箱已注册，请直接登录。"
 
@@ -6530,11 +6680,11 @@ msgstr "这不是简历常用的页面尺寸。"
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "该密钥只显示一次。关闭此对话框前请先复制。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr "验证链接已过期，请重新获取。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr "验证链接无效，请重新获取。"
 
@@ -6562,6 +6712,22 @@ msgstr "此页面采用分栏排版，提取出的文字顺序错乱。"
 msgid "This page is very densely packed."
 msgstr "此页面排得非常密集。"
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr "当前环境不允许注册此通行密钥。"
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr "该通行密钥已注册过。"
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr "该补丁没有可用的撤销快照。"
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr "该补丁当前未处于应用状态。"
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "这个时期在开始之前就结束了。"
 msgid "This period starts in the future."
 msgstr "这个时期从未来开始。"
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr "该回复已处理过。"
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr "此简历制作工具可免费使用。"
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "这份简历已被锁定，无法更新。"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr "该简历已锁定，请先解锁再修改。"
 
@@ -6644,6 +6815,10 @@ msgstr "此部分位于侧边栏中。"
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "此次登录尝试已过期或已被使用。请重新开始。"
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr "该第三方账号已绑定其他用户。"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr "详细住址和城市分开保存，留空时不显示。"
@@ -6664,7 +6839,11 @@ msgstr "此会话为只读"
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "由于工作简历或 AI 提供商不可用，此会话为只读。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr "用户名已被占用。"
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr "验证码已过期，请重新获取。"
 
@@ -6758,11 +6937,15 @@ msgstr "Token：{total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "Token：{total}（{cached} 已缓存）"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr "单条消息附件数量超限。"
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr "尝试次数过多，请重新获取验证码。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr "失败次数过多，账号已暂时锁定，请稍后再试。"
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "工具"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr "投递总数"
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "乌克兰语"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr "无法显示 PDF 预览。"
 
@@ -7574,7 +7759,7 @@ msgstr "你的电子邮件地址被拆分到了不同的文字片段中。"
 msgid "Your email address isn't verified with the provider."
 msgstr "您的电子邮件地址未在提供商处验证。"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr "邮箱尚未验证，请先完成邮箱验证。"
 
@@ -7696,7 +7881,7 @@ msgstr "您保存的求职信将保持不变。"
 msgid "Your selected file"
 msgstr "你选择的文件"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr "登录状态已过期，请重新登录。"
 

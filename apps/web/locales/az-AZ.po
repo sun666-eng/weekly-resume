@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} yoxlamadan {totalRules} keçdi"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr ""
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "İnsan üçün nəzərdə tutulmuş, şəkil, başlıqlar və sütunlarla tərtib edilmiş CV"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr ""
 
@@ -315,6 +317,10 @@ msgstr "Hesab"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "Hesab menyusu"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "Süni intellekt provayderinin idarə edilməsi mümkün deyil. Zəhmət 
 msgid "AI Providers"
 msgstr "Süni intellekt təminatçıları"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "ENCRYPTION_SECRET konfiqurasiya edilənə qədər AI provayderləri əlçatan deyil."
@@ -635,6 +645,10 @@ msgstr "Artıq hesabınız var? <0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "Amharca"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "Müraciət tarixi"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "Müraciət silindi."
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "Bu CV haqqında hər hansı bir sual verin"
 msgid "Aspect Ratio"
 msgstr "Propor­siya"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "ATS yoxlanışı"
@@ -869,6 +892,11 @@ msgstr "PDF əlavə edin"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "Əlavə"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "Markerli siyahı"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "Yükləmələri sürətli saxlamaq üçün böyük şəkilləri sıxın 
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "Təsdiqlə"
@@ -1501,6 +1531,10 @@ msgstr "Nümunə hazırlana bilmədi. Yenidən cəhd edin."
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "CV-niz çap üçün hazırlana bilmədi. Zəhmət olmasa, yenidən cəhd edin."
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr ""
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "Cari Parol"
 msgid "Current stage"
 msgstr "Cari mərhələ"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "Hazırda alman dilindəki CV-lər üçün mövcuddur. Səhifədə təyin olunmuş dili istifadə edir."
@@ -1836,6 +1874,10 @@ msgstr "Tarix"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "Müraciət tarixi"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "E‑poçt Ünvanı"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "E-poçt çatdırılması bu halda konfiqurasiya edilməyib, ona görə də doğrulama deaktiv edilib."
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "İxrac edərkən bütün şriftləri daxil edin ki, simvollar nəzərdə tutduğunuz kimi göstərilsin."
@@ -2500,6 +2546,7 @@ msgstr "API açarı yaradılmadı. Zəhmət olmasa yenidən cəhd edin."
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "Hesabınızı yaratmaq mümkün olmadı. Zəhmət olmasa yenidən cəhd edin."
 
@@ -2597,6 +2644,10 @@ msgstr "Daxil olmaq alınmadı. Zəhmət olmasa yenidən cəhd edin."
 msgid "Failed to sign out. Please try again."
 msgstr "Çıxış uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr ""
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "Agent mövzusuna başlamaq alınmadı."
@@ -2617,6 +2668,10 @@ msgstr "Provayderi yeniləmək alınmadı."
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "Mövzu parametrlərini yeniləmək mümkün olmadı."
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr ""
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,7 +2738,12 @@ msgid "File must be a Microsoft Word document"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3271,19 +3331,23 @@ msgstr ""
 msgid "Include resume header"
 msgstr "CV başlığını daxil et"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr ""
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr ""
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "Yanlış süni intellekt provayderi konfiqurasiyası."
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr ""
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr ""
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "Uyğunluğunuzu qiymətləndirmək və nüsxəni uyğunlaşdırmaq üçün CV bağlayın və iş təsvirini (Redaktə edin) yapışdırın."
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "Birdən çox keçid açarı qeydiyyatdan keçirsəniz, adlar onları ayırmağa kömək edir."
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr ""
 
@@ -4062,13 +4137,17 @@ msgstr "Sonrakı"
 msgid "Next template"
 msgstr "Növbəti şablon"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "Süni intellekt təminatçısı qoşulmayıb"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "Hələlik mənbə məlumatları yoxdur."
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "Bu iş təsvirindən konkret terminlər çıxarıla bilmədi, ona görə də əsasən şablon mətn ola bilər. Daha faydalı müqayisə üçün tələblər bölməsini yapışdırın."
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "Test edilmiş provayder yoxdur"
@@ -4271,6 +4354,10 @@ msgstr ""
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "Silindikdən sonra açar artıq məlumatlarınıza daxil ola bilməz. Bunu geri qaytarmaq mümkün deyil."
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "Yalnız etibar etdiyiniz tətbiqlərə icazə verin. Bu proqram aşağıdakıları edə biləcək:"
@@ -4283,6 +4370,10 @@ msgstr "Yalnız bölmə tək bir səhifəyə sığdıqda tətbiq olunur."
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "Yalnız bir tanına bilən bölmə başlığı tapıldı."
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr ""
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "Parol"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr ""
 
@@ -4528,6 +4620,10 @@ msgstr "Sətirləri yerləşdirin və ya .csv yükləyin. Şirkət, Rol, Mərhə
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "İş təsvirinin tam mətnini bura yapışdırın…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "Təkrar cəhd edin"
 msgid "Review edits"
 msgstr "Redaktələri nəzərdən keçir"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "CV-ni bir iş təsviri ilə tutuşdurub nəzərdən keçirin və əmin olmadığınız bir şeyi dəyişməzdən əvvəl məndən soruşun."
@@ -5746,6 +5846,7 @@ msgstr "Qeydiyyatdan keç"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr ""
 
@@ -5908,6 +6009,7 @@ msgstr "Sizi daxil edərkən nəsə səhv getdi. Zəhmət olmasa yenidən cəhd 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "Nəsə səhv getdi. Zəhmət olmasa, yenidən cəhd edin."
@@ -6252,6 +6354,10 @@ msgstr "Həmin giriş provayderi bu serverdə artıq mövcud deyil."
 msgid "The agent needs your input."
 msgstr "Agentin sizin fikrinizə ehtiyacı var."
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr ""
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "API açarı silindi."
@@ -6268,7 +6374,11 @@ msgstr "Yuxarıdakı yoxlamalar mexanikidir. Bu isə bir dil modelindən oxucunu
 msgid "The deep check could not finish. Please try again."
 msgstr "Dərin yoxlama tamamlana bilmədi. Zəhmət olmasa yenidən cəhd edin."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr ""
 
@@ -6297,6 +6407,10 @@ msgstr "Səhifələr şəkildir, arxasında mətn yoxdur."
 msgid "The password you entered is incorrect"
 msgstr "Daxil etdiyiniz parol yanlışdır"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr ""
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF bu vərəqdə işləyən kod tərəfindən oxunur. Heç nə yüklənmir, heç nə saxlanılmır və hesab tələb olunmur. İstəsəniz brauzerinizin şəbəkə vərəqini açıb izləyə bilərsiniz."
@@ -6321,9 +6435,17 @@ msgstr "Provayder oxuna bilməyən bir rəy qaytardı. Yenidən cəhd edin."
 msgid "The provider's response could not be verified. Please start again."
 msgstr "Provayderin cavabı doğrulana bilmədi. Zəhmət olmasa yenidən başlayın."
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr ""
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "İş axtarışınızın<0/>qalan hissəsi də."
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "Eyni sətir hər səhifədə təkrarlanır."
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "Əngəlləyici problem səbəbindən bal məhdudlaşdırılıb: {0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "Bu köməkçi açıla bilmədi."
 msgid "This connection request is invalid or has expired."
 msgstr "Bu əlaqə sorğusu etibarsızdır və ya vaxtı keçib."
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "Bu örtük məktubu başqa yerdə dəyişdirildi. Redaktələriniz hələ də buradadır. Yenidən yadda saxlamazdan əvvəl ən son versiyanı yenidən yükləyin."
@@ -6434,11 +6584,11 @@ msgstr "Bu redaktə sorğusuna artıq cavab vermək mümkün deyil."
 msgid "This email address will not be recognized."
 msgstr "Bu e-poçt ünvanı tanınmayacaq."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr ""
 
@@ -6530,11 +6680,11 @@ msgstr "Bu adi bir CV səhifə ölçüsü deyil."
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "Bu açar yalnız bir dəfə göstərilir. Bu pəncərəni bağlamazdan əvvəl onu kopyalayın."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr ""
 
@@ -6562,6 +6712,22 @@ msgstr "Bu səhifə sütunludur və mətn qeyri-ardıcıl çıxarılır."
 msgid "This page is very densely packed."
 msgstr "Bu səhifə çox sıx doldurulub."
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr ""
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "Bu müddət başlamazdan əvvəl bitir."
 msgid "This period starts in the future."
 msgstr "Bu dövr gələcəkdə başlayır."
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr ""
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "Bu özgeçmiş kilidlənib və yenilənə bilməz."
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr ""
 
@@ -6644,6 +6815,10 @@ msgstr "Bu bölmə yan paneldə yerləşir."
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "Bu giriş cəhdinin vaxtı bitib və ya artıq istifadə olunub. Zəhmət olmasa yenidən başlayın."
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr ""
@@ -6664,7 +6839,11 @@ msgstr "Bu mövzu yalnız oxunaqlıdır"
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "İşçi CV və ya süni intellekt provayderi mövcud olmadığı üçün bu mövzu yalnız oxunur."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr ""
 
@@ -6758,11 +6937,15 @@ msgstr "Tokenlər: {total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "Tokenlər: {total} ({cached} keşlənmiş)"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr ""
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "Alətlər"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr ""
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "Ukrayn"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr ""
 
@@ -7574,7 +7759,7 @@ msgstr "E-poçt ünvanınız mətn parçaları arasında bölünüb."
 msgid "Your email address isn't verified with the provider."
 msgstr "E-poçt ünvanınız provayder tərəfindən doğrulanmayıb."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr ""
 
@@ -7696,7 +7881,7 @@ msgstr "Saxlanılmış təqdimat məktubunuz dəyişməz qalacaq."
 msgid "Your selected file"
 msgstr "Seçdiyiniz fayl"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr ""
 

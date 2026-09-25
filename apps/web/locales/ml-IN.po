@@ -127,6 +127,7 @@ msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} ചെക്കുകളിൽ {totalRules} പാസായി"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "{rejected} rejected"
 msgstr ""
 
@@ -271,6 +272,7 @@ msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "ഫോട്ടോ, തലക്കെട്ടുകൾ, കോളങ്ങൾ എന്നിവയോടെ മനുഷ്യവായനക്കാരനായി രൂപകൽപ്പന ചെയ്ത റിസ്യൂം"
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "A resume with this slug already exists."
 msgstr ""
 
@@ -315,6 +317,10 @@ msgstr "അക്കൗണ്ട്"
 #: src/routes/builder/$resumeId/-sidebar/left/index.tsx
 msgid "Account menu"
 msgstr "അക്കൗണ്ട് മെനു"
+
+#: src/libs/error-message.ts
+msgid "Account not found, or it has no password set."
+msgstr ""
 
 #: src/features/applications/components/table-view.tsx
 msgid "Actions"
@@ -587,6 +593,10 @@ msgstr "AI ദാതാവിന്റെ മാനേജ്മെന്റ് �
 msgid "AI Providers"
 msgstr "AI ദാതാക്കൾ"
 
+#: src/libs/error-message.ts
+msgid "AI providers are unavailable because ENCRYPTION_SECRET is not configured."
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
 msgid "AI providers are unavailable until ENCRYPTION_SECRET is configured."
 msgstr "ENCRYPTION_SECRET കോൺഫിഗർ ചെയ്യുന്നത് വരെ AI ദാതാക്കൾ ലഭ്യമല്ല."
@@ -635,6 +645,10 @@ msgstr "ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ? <0/>"
 #: src/libs/locale.ts
 msgid "Amharic"
 msgstr "അംഹാരിക്"
+
+#: src/libs/error-message.ts
+msgid "An attachment could not be read."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "An embedded font could not be read."
@@ -723,6 +737,14 @@ msgstr "അപേക്ഷ തീയതി വരെ"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Application deleted."
 msgstr "അപ്ലിക്കേഷൻ ഇല്ലാതാക്കി."
+
+#: src/libs/error-message.ts
+msgid "Application documents must be PDF files."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "Application timeline is missing its current stage entry."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Application updated."
@@ -839,6 +861,7 @@ msgstr "ഈ റെസ്യൂമെയെക്കുറിച്ച് എന�
 msgid "Aspect Ratio"
 msgstr "ആസ്പെക്ട് റേഷ്യോ"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
 msgstr "എടിഎസ് പരിശോധന"
@@ -869,6 +892,11 @@ msgstr "PDF അറ്റാച്ചുചെയ്യുക"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment"
 msgstr "അറ്റാച്ച്മെന്റ്"
+
+#. placeholder {0}: data.filename
+#: src/libs/error-message.ts
+msgid "Attachment {0} could not be read."
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
@@ -1039,6 +1067,7 @@ msgstr "ബുള്ളറ്റ് ലിസ്റ്റ്"
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1299,6 +1328,7 @@ msgstr "അപ്‌ലോഡുകൾ വേഗത്തിലാക്കാ�
 #: src/features/settings/pages/account.tsx
 #: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
 msgstr "സ്ഥിരീകരിക്കുക"
@@ -1501,6 +1531,10 @@ msgstr "മാതൃക തയ്യാറാക്കാനായില്ല. 
 #: src/features/resume/export/use-resume-export.ts
 msgid "Could not prepare your resume for printing. Please try again."
 msgstr "പ്രിന്റിംഗിനായി നിങ്ങളുടെ റിസ്യൂം തയ്യാറാക്കാനായില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക."
+
+#: src/libs/error-message.ts
+msgid "Could not reach the AI provider."
+msgstr ""
 
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
@@ -1784,6 +1818,10 @@ msgstr "നിലവിലെ പാസ്‌വേഡ്"
 msgid "Current stage"
 msgstr "നിലവിലെ ഘട്ടം"
 
+#: src/libs/error-message.ts
+msgid "Current stage date cannot be older than another stage entry."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Currently available for German resumes. Uses the language set in Page."
 msgstr "നിലവിൽ ജർമ്മൻ റെസ്യൂമുകൾക്കായി ലഭ്യമാണ്. പേജിൽ സജ്ജീകരിച്ച ഭാഷയാണ് ഇത് ഉപയോഗിക്കുന്നത്."
@@ -1836,6 +1874,10 @@ msgstr "തീയതി"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Date applied"
 msgstr "അപേക്ഷിച്ച തീയതി"
+
+#: src/libs/error-message.ts
+msgid "Date must use YYYY-MM-DD format."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/ats-checker/parse-preview.tsx
@@ -2284,6 +2326,10 @@ msgstr "ഇമെയിൽ വിലാസം"
 msgid "Email delivery isn't configured on this instance, so verification is disabled."
 msgstr "ഈ സന്ദർഭത്തിൽ ഇമെയിൽ ഡെലിവറി കോൺഫിഗർ ചെയ്തിട്ടില്ല, അതിനാൽ പരിശോധന പ്രവർത്തനരഹിതമാക്കിയിരിക്കുന്നു."
 
+#: src/libs/error-message.ts
+msgid "Email verification is not enabled on this instance."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "എക്സ്പോർട്ട് ചെയ്യുമ്പോൾ എല്ലാ ഫോണ്ടുകളും എംബെഡ് ചെയ്യുക, അങ്ങനെ അക്ഷരങ്ങൾ നിങ്ങൾ ഉദ്ദേശിച്ച രീതിയിൽ ദൃശ്യമാകും."
@@ -2500,6 +2546,7 @@ msgstr "API കീ ഉണ്ടാക്കാൻ പരാജയപ്പെട
 
 #. Fallback toast when account registration fails without a server error message
 #: src/features/auth/pages/register.tsx
+#: src/libs/error-message.ts
 msgid "Failed to create your account. Please try again."
 msgstr "നിങ്ങളുടെ അക്കൗണ്ട് ഉണ്ടാക്കാൻ കഴിഞ്ഞില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക."
 
@@ -2597,6 +2644,10 @@ msgstr "സൈൻ ഇൻ പരാജയപ്പെട്ടു. ദയവാ�
 msgid "Failed to sign out. Please try again."
 msgstr "സൈൻ ഔട്ട് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
 
+#: src/libs/error-message.ts
+msgid "Failed to sign you in. Please try again."
+msgstr ""
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "ഏജന്റ് ത്രെഡ് ആരംഭിക്കുന്നതിൽ പരാജയപ്പെട്ടു."
@@ -2617,6 +2668,10 @@ msgstr "ദാതാവിനെ അപ്‌ഡേറ്റ് ചെയ്യ�
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to update thread settings."
 msgstr "ത്രെഡ് ക്രമീകരണങ്ങൾ അപ്ഡേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല."
+
+#: src/libs/error-message.ts
+msgid "Failed to update your account. Please try again."
+msgstr ""
 
 #. Fallback toast when changing account password fails
 #: src/dialogs/auth/change-password.tsx
@@ -2683,7 +2738,12 @@ msgid "File must be a Microsoft Word document"
 msgstr ""
 
 #: src/dialogs/resume/import.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "File must be a PDF"
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "File size must be less than 10MB"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3271,19 +3331,23 @@ msgstr ""
 msgid "Include resume header"
 msgstr "റെസ്യൂമിന്റെ ഹെഡർ ഉൾപ്പെടുത്തുക"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect backup code. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect email, username, or password."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Incorrect username or password."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Incorrect verification code. Please try again."
 msgstr ""
 
@@ -3355,16 +3419,22 @@ msgid "interview or beyond"
 msgstr ""
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Interviews"
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
 #: src/features/settings/integrations/components/ai-section.tsx
+#: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "അസാധുവായ AI ദാതാവിന്റെ കോൺഫിഗറേഷൻ."
+
+#: src/libs/error-message.ts
+msgid "Invalid resume data structure"
+msgstr ""
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
@@ -3676,6 +3746,10 @@ msgstr ""
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
 msgstr "നിങ്ങളുടെ യോജിപ്പ് സ്കോർ ചെയ്യാനും ക്രമീകരിച്ച പകർപ്പ് ഉണ്ടാക്കാനും ഒരു റിസ്യൂം ലിങ്ക് ചെയ്ത് ജോലി വിവരണം ഒട്ടിക്കുക (എഡിറ്റ്)."
+
+#: src/libs/error-message.ts
+msgid "Link a resume to this application first."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a resume to use AI match scoring and tailoring."
@@ -3993,6 +4067,7 @@ msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "ഒന്നിലധികം പാസ്‌കീകൾ രജിസ്റ്റർ ചെയ്താൽ, അവ തമ്മിൽ തിരിച്ചറിയാൻ പേരുകൾ സഹായിക്കും."
 
 #: src/features/applications/components/application-card.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Needs follow-up"
 msgstr ""
 
@@ -4062,13 +4137,17 @@ msgstr "അടുത്തത്"
 msgid "Next template"
 msgstr "അടുത്ത ടെംപ്ലേറ്റ്"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "No account found for this email or username."
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
 msgstr "AI ദാതാവ് ബന്ധിപ്പിച്ചിട്ടില്ല"
+
+#: src/libs/error-message.ts
+msgid "No AI provider is configured. Add one in Settings → Integrations to use AI features."
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "No AI provider is connected, so we will read the text out of the PDF here in your browser and fill in what we can recognize. Expect to tidy up the result."
@@ -4181,6 +4260,10 @@ msgstr "ഇതുവരെ ഉറവിട ഡാറ്റകളൊന്നു�
 msgid "No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the requirements section for a more useful comparison."
 msgstr "ആ ജോലി വിവരണത്തിൽ നിന്ന് പ്രത്യേക പദങ്ങളൊന്നും കണ്ടെത്താനായില്ല, അതിനാൽ ഇത് ഭൂരിഭാഗവും ബോയിലർപ്ലേറ്റ് ആയിരിക്കാം. കൂടുതൽ ഉപകാരപ്രദമായ താരതമ്യത്തിന് ആവശ്യകതകൾ വിഭാഗം പേസ്റ്റ് ചെയ്യുക."
 
+#: src/libs/error-message.ts
+msgid "No tested AI provider is available."
+msgstr ""
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
 msgstr "പരിശോധിച്ച ദാതാവില്ല."
@@ -4271,6 +4354,10 @@ msgstr ""
 msgid "Once deleted, the key can no longer access your data. This cannot be undone."
 msgstr "ഡിലീറ്റ് ചെയ്തുകഴിഞ്ഞാൽ, ആ കീക്ക് നിങ്ങളുടെ ഡാറ്റ ആക്സസ് ചെയ്യാനാവില്ല. ഇത് പഴയപടിയാക്കാൻ കഴിയില്ല."
 
+#: src/libs/error-message.ts
+msgid "One or more attachments are unavailable or already linked to a message."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Only allow applications you trust. This application will be able to:"
 msgstr "നിങ്ങൾ വിശ്വസിക്കുന്ന ആപ്ലിക്കേഷനുകൾ മാത്രം അനുവദിക്കുക. ഈ അപ്ലിക്കേഷന് ഇനിപ്പറയുന്നവ ചെയ്യാൻ കഴിയും:"
@@ -4283,6 +4370,10 @@ msgstr "വിഭാഗം ഒരു പേജിൽ മാത്രം യോ�
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognisable section heading was found."
 msgstr "തിരിച്ചറിയാവുന്ന ഒരു വിഭാഗ തലക്കെട്ട് മാത്രമേ കണ്ടെത്തിയുള്ളൂ."
+
+#: src/libs/error-message.ts
+msgid "Only resume patch actions can be rolled back."
+msgstr ""
 
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
@@ -4483,13 +4574,14 @@ msgid "Password"
 msgstr "പാസ്‌വേഡ്"
 
 #: src/dialogs/auth/change-password.tsx
-#: src/features/auth/error-message.ts
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
+#: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Password must be at least 8 characters."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Password must be at most 64 characters."
 msgstr ""
 
@@ -4528,6 +4620,10 @@ msgstr "വരികൾ ഒട്ടിക്കുക അല്ലെങ്ക�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "പൂർണ്ണമായ ജോലി വിവരണം ഇവിടെ ഒട്ടിക്കുക…"
+
+#: src/libs/error-message.ts
+msgid "Paste the job description into this application first."
+msgstr ""
 
 #: src/features/ats-checker/tool.tsx
 msgid "Paste the posting to see which of its terms already appear in your resume."
@@ -5207,6 +5303,10 @@ msgstr "വീണ്ടും ശ്രമിക്കുക"
 msgid "Review edits"
 msgstr "എഡിറ്റുകൾ അവലോകനം ചെയ്യുക"
 
+#: src/libs/error-message.ts
+msgid "Review settings cannot change while a task is active."
+msgstr ""
+
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description, and ask me before changing anything you're unsure about."
 msgstr "ഒരു ജോലി വിവരണവുമായി ഒത്തുനോക്കി റിസ്യൂം പരിശോധിക്കുക; ഉറപ്പില്ലാത്ത എന്തെങ്കിലും മാറ്റുന്നതിനു മുൻപ് എന്നോട് ചോദിക്കുക."
@@ -5746,6 +5846,7 @@ msgstr "സൈൻ അപ്"
 
 #. Fallback toast when the OAuth sign-in continuation fails
 #: src/features/auth/pages/register.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Sign-in authorization failed. Please try again."
 msgstr ""
 
@@ -5908,6 +6009,7 @@ msgstr "നിങ്ങളെ സൈൻ ഇൻ ചെയ്യുമ്പോൾ
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "എന്തോ പിശക് സംഭവിച്ചു. ദയവായി വീണ്ടും ശ്രമിക്കുക."
@@ -6252,6 +6354,10 @@ msgstr "ആ സൈൻ-ഇൻ ദാതാവ് ഈ സെർവറിൽ ഇന
 msgid "The agent needs your input."
 msgstr "ഏജന്റിന് നിങ്ങളുടെ അഭിപ്രായം ആവശ്യമാണ്."
 
+#: src/libs/error-message.ts
+msgid "The AI response could not be parsed."
+msgstr ""
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted."
 msgstr "API കീ ഡിലീറ്റ് ചെയ്തു."
@@ -6268,7 +6374,11 @@ msgstr "മുകളിലുള്ള പരിശോധനകൾ യാന്�
 msgid "The deep check could not finish. Please try again."
 msgstr "വിശദ പരിശോധന പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "The edited resume no longer exists."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "The email address is not valid."
 msgstr ""
 
@@ -6297,6 +6407,10 @@ msgstr "പേജുകൾ ചിത്രങ്ങളാണ്, പിന്ന
 msgid "The password you entered is incorrect"
 msgstr "നിങ്ങൾ നൽകിയ പാസ്‌വേഡ് തെറ്റാണ്"
 
+#: src/libs/error-message.ts
+msgid "The patch operations are invalid or produced an invalid resume."
+msgstr ""
+
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "ഈ ടാബിൽ പ്രവർത്തിക്കുന്ന കോഡ് വഴിയാണ് PDF വായിക്കുന്നത്. ഒന്നും അപ്‌ലോഡ് ചെയ്യുന്നില്ല, ഒന്നും സംഭരിക്കുന്നില്ല, അക്കൗണ്ടും ആവശ്യമില്ല. താൽപ്പര്യമുണ്ടെങ്കിൽ നിങ്ങളുടെ ബ്രൗസറിന്റെ നെറ്റ്‌വർക്ക് ടാബ് തുറന്ന് നിരീക്ഷിക്കാം."
@@ -6321,9 +6435,17 @@ msgstr "ദാതാവ് വായിക്കാൻ കഴിയാത്ത 
 msgid "The provider's response could not be verified. Please start again."
 msgstr "ദാതാവിന്റെ പ്രതികരണം പരിശോധിക്കാനായില്ല. ദയവായി വീണ്ടും ആരംഭിക്കുക."
 
+#: src/libs/error-message.ts
+msgid "The question to answer could not be found."
+msgstr ""
+
 #: src/features/homepage/page.tsx
 msgid "The rest of your<0/>job search, too."
 msgstr "നിങ്ങളുടെ ജോലി അന്വേഷണത്തിന്റെ<0/>ബാക്കി ഭാഗവും."
+
+#: src/libs/error-message.ts
+msgid "The resume changed after this patch was generated."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "The resume preview could not be updated. The last valid preview is still shown."
@@ -6337,6 +6459,14 @@ msgstr "ഒരേ വരി ഓരോ പേജിലും ആവർത്ത�
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
 msgstr "ഒരു തടസ്സപ്രശ്നം കാരണം സ്കോർ പരിമിതപ്പെടുത്തിയിരിക്കുന്നു: {0}"
+
+#: src/libs/error-message.ts
+msgid "The selected attachments are invalid. Please review your selection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The stage timeline is derived and cannot be edited or deleted."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The text comes out unreadable."
@@ -6414,6 +6544,26 @@ msgstr "ഈ അസിസ്റ്റന്റ് തുറക്കാൻ കഴ
 msgid "This connection request is invalid or has expired."
 msgstr "ഈ കണക്ഷൻ അഭ്യർത്ഥന അസാധുവാണ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ടു."
 
+#: src/libs/error-message.ts
+msgid "This conversation already has an active task."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is archived."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before deleting."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This cover letter changed elsewhere. Reload it before saving again."
+msgstr ""
+
 #: src/features/cover-letters/editor.tsx
 msgid "This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again."
 msgstr "ഈ കവർ ലെറ്റർ മറ്റെവിടെയോ മാറ്റി. നിങ്ങളുടെ എഡിറ്റുകൾ ഇപ്പോഴും ഇവിടെയുണ്ട്. വീണ്ടും സംരക്ഷിക്കുന്നതിന് മുമ്പ് ഏറ്റവും പുതിയ പതിപ്പ് വീണ്ടും ലോഡുചെയ്യുക."
@@ -6434,11 +6584,11 @@ msgstr "ഈ എഡിറ്റ് അഭ്യർത്ഥനയ്ക്ക് 
 msgid "This email address will not be recognized."
 msgstr "ഈ ഇമെയിൽ വിലാസം തിരിച്ചറിയപ്പെടില്ല."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in or use another email."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This email is already registered. Please sign in."
 msgstr ""
 
@@ -6530,11 +6680,11 @@ msgstr "ഇത് സാധാരണ റിസ്യൂം പേജ് വല�
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "ഈ കീ ഒരിക്കൽ മാത്രമേ കാണിക്കൂ. ഈ ഡയലോഗ് അടയ്ക്കുന്നതിനു മുൻപ് അത് പകർത്തിവയ്ക്കുക."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link has expired. Please request a new one."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "This link is invalid. Please request a new one."
 msgstr ""
 
@@ -6562,6 +6712,22 @@ msgstr "ഈ പേജ് കോളങ്ങളിലാണ്, ടെക്സ�
 msgid "This page is very densely packed."
 msgstr "ഈ പേജ് വളരെ സാന്ദ്രമായി നിറഞ്ഞിരിക്കുന്നു."
 
+#: src/libs/error-message.ts
+msgid "This passkey cannot be registered in this environment."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This passkey is already registered."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch does not have a rollback snapshot."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This patch is no longer applied."
+msgstr ""
+
 #. Error shown when a PDF has no extractable text layer during import
 #: src/dialogs/resume/import.tsx
 msgid "This PDF has no readable text. It is likely a scan, so there is nothing to import."
@@ -6584,6 +6750,10 @@ msgstr "ഈ കാലയളവ് ആരംഭിക്കുന്നതിന�
 msgid "This period starts in the future."
 msgstr "ഈ കാലയളവ് ഭാവിയിൽ ആരംഭിക്കുന്നു."
 
+#: src/libs/error-message.ts
+msgid "This response was already handled."
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 msgid "This resume builder is free to use."
 msgstr ""
@@ -6601,6 +6771,7 @@ msgid "This resume is locked and cannot be updated."
 msgstr "ഈ റിസ്യൂം ലോക്ക് ചെയ്തതിനാൽ ഇതിനെ അപ്‌ഡേറ്റ് ചെയ്യാനോ ഡിലീറ്റ് ചെയ്യാനോ കഴിയില്ല."
 
 #: src/libs/error-message.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "This resume is locked. Unlock it first to make changes."
 msgstr ""
 
@@ -6644,6 +6815,10 @@ msgstr "ഈ വിഭാഗം സൈഡ്‌ബാറിൽ ഇരിക്ക
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "ഈ സൈൻ-ഇൻ ശ്രമം കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു. ദയവായി വീണ്ടും ആരംഭിക്കുക."
 
+#: src/libs/error-message.ts
+msgid "This social account is already linked to another user."
+msgstr ""
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "This stays separate from the city and is hidden when empty."
 msgstr ""
@@ -6664,7 +6839,11 @@ msgstr "ഈ ത്രെഡ് വായിക്കാൻ മാത്രമു
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "വർക്കിംഗ് റെസ്യൂമെയോ AI ദാതാവോ ലഭ്യമല്ലാത്തതിനാൽ ഈ ത്രെഡ് വായിക്കാൻ മാത്രമുള്ളതാണ്."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "This username is already taken."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "This verification code has expired. Please request a new one."
 msgstr ""
 
@@ -6758,11 +6937,15 @@ msgstr "ടോക്കണുകൾ: {total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "ടോക്കണുകൾ: {total} ({cached} കാഷെ ചെയ്‌തത്)"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
+msgid "Too many attachments for one message."
+msgstr ""
+
+#: src/libs/error-message.ts
 msgid "Too many attempts. Please request a new code."
 msgstr ""
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
 msgstr ""
 
@@ -6771,6 +6954,7 @@ msgid "Tools"
 msgstr "ഉപകരണങ്ങൾ"
 
 #: src/features/applications/insights.ts
+#: src/libs/locale-catalogs.test.ts
 msgid "Total applications"
 msgstr ""
 
@@ -6906,6 +7090,7 @@ msgid "Ukrainian"
 msgstr "ഉക്രേനിയൻ"
 
 #: src/features/resume/public/pdf-viewer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Unable to display PDF preview."
 msgstr ""
 
@@ -7574,7 +7759,7 @@ msgstr "നിങ്ങളുടെ ഇമെയിൽ വിലാസം ടെ
 msgid "Your email address isn't verified with the provider."
 msgstr "നിങ്ങളുടെ ഇമെയിൽ വിലാസം ദാതാവിനൊപ്പം പരിശോധിച്ചുറപ്പിച്ചിട്ടില്ല."
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your email is not verified yet. Please verify it first."
 msgstr ""
 
@@ -7696,7 +7881,7 @@ msgstr "നിങ്ങളുടെ സംരക്ഷിച്ച കവർ ല
 msgid "Your selected file"
 msgstr "നിങ്ങൾ തിരഞ്ഞെടുത്ത ഫയൽ"
 
-#: src/features/auth/error-message.ts
+#: src/libs/error-message.ts
 msgid "Your session has expired. Please sign in again."
 msgstr ""
 
