@@ -146,8 +146,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<Input
-											min={3}
-											max={64}
+											minLength={3}
+											maxLength={64}
 											autoComplete="section-register name"
 											placeholder={t({
 												comment: "Example full name placeholder on registration form",
@@ -174,8 +174,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<Input
-											min={3}
-											max={64}
+											minLength={3}
+											maxLength={64}
 											autoComplete="section-register username"
 											placeholder={t({
 												comment: "Example username placeholder on registration form",
