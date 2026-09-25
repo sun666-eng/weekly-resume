@@ -771,7 +771,9 @@ msgstr "Aplikacje do eksportu"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "Złożono aplikację"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "Zamknij asystenta AI"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "Odrzucać"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "Projektowanie interakcji"
 msgid "Interests"
 msgstr "Zainteresowania"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "Rozmowa kwalifikacyjna"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "Litewski"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "Brak sugestii."
 msgid "Odia"
 msgstr "Odia"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "Oferta"
 
@@ -5105,6 +5114,11 @@ msgstr "Polecane przez…, rzeczy do podkreślenia itp."
 msgid "Register New Device"
 msgstr "Zarejestrować nowe urządzenie"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "Załaduj ponownie najnowszą wersję"
@@ -5487,6 +5501,8 @@ msgstr "Zapisz zmiany w CV przed skopiowaniem jego zawartości lub stylu."
 msgid "Save the file with every page upright."
 msgstr "Zapisz plik tak, aby każda strona była ustawiona pionowo."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "Zapisano"
@@ -5522,6 +5538,11 @@ msgstr "Oceń moje dopasowanie"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "Ocena dopasowania…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "Wyświetlanie {0} z {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "Pasek boczny"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "Dane dotyczące stylizacji i nadawcy odświeżone z wybranego CV."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "Przełączanie prawego paska bocznego"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

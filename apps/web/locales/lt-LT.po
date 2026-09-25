@@ -771,7 +771,9 @@ msgstr "Paraiškos eksportuoti"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "Pateikta"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "Uždaryti DI asistentą"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "Atmesti"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "Sąveikos dizainas"
 msgid "Interests"
 msgstr "Pomėgiai"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "Darbo pokalbis"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "Lietuvių"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "Pasiūlymų nėra."
 msgid "Odia"
 msgstr "Odijų"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "Pasiūlymas"
 
@@ -5105,6 +5114,11 @@ msgstr "Rekomendavo…, ką pabrėžti ir pan."
 msgid "Register New Device"
 msgstr "Naujo įrenginio registravimas"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "Iš naujo įkelti naujausią versiją"
@@ -5487,6 +5501,8 @@ msgstr "Išsaugokite atnaujinimo pakeitimus prieš nukopijuodami jo turinį ar s
 msgid "Save the file with every page upright."
 msgstr "Išsaugokite failą, kad visi puslapiai būtų tiesūs."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "Išsaugota"
@@ -5522,6 +5538,11 @@ msgstr "Įvertinti mano atitikimą"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "Vertinamas jūsų atitikimas…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "Rodoma {0} iš {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "Šoninė juosta"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "Stiliaus ir siuntėjo informacija atnaujinta iš pasirinkto gyvenimo aprašymo."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "Dešiniosios šoninės juostos perjungimas"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

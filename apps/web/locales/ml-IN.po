@@ -771,7 +771,9 @@ msgstr "കയറ്റുമതി ചെയ്യാനുള്ള അപേ�
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "അപേക്ഷിച്ചു"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "AI അസിസ്റ്റന്റ് അടയ്ക്കുക"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "നിരസിക്കുക"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "ഇന്ററാക്ഷൻ ഡിസൈൻ"
 msgid "Interests"
 msgstr "താൽപര്യങ്ങൾ"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "അഭിമുഖം"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "ലിത്വാനിയൻ"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "നിർദ്ദേശിക്കാൻ ഒന്നുമില്�
 msgid "Odia"
 msgstr "ഒഡിയ"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "ഓഫർ"
 
@@ -5105,6 +5114,11 @@ msgstr "പരാമർശിക്കുന്നത്..., ഊന്നിപ�
 msgid "Register New Device"
 msgstr "പുതിയ ഉപകരണം രജിസ്റ്റർ ചെയ്യുക"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "ഏറ്റവും പുതിയ പതിപ്പ് വീണ്ടും ലോഡുചെയ്യുക"
@@ -5487,6 +5501,8 @@ msgstr "അതിൻ്റെ ഉള്ളടക്കമോ സ്റ്റൈ�
 msgid "Save the file with every page upright."
 msgstr "എല്ലാ പേജും നിവർന്ന നിലയിൽ ഫയൽ സേവ് ചെയ്യുക."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "സംരക്ഷിച്ചു"
@@ -5522,6 +5538,11 @@ msgstr "എൻ്റെ ഫിറ്റ് സ്കോർ"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "നിങ്ങളുടെ ഫിറ്റ് സ്കോർ ചെയ്യുന്നു..."
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "{0}-ൻ്റെ {1} കാണിക്കുന്നു"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "സൈഡ്ബാർ"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "തിരഞ്ഞെടുത്ത റെസ്യൂമിൽ നിന്ന് സ്റ്റൈലിംഗും അയച്ചയാളുടെ വിശദാംശങ്ങളും പുതുക്കി."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "വലത് സൈഡ്ബാർ ഓൺ/ഓഫ് ചെയ്യുക"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

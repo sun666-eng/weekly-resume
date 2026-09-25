@@ -771,7 +771,9 @@ msgstr "ወደ ውጭ የሚላኩ መተግበሪያዎች"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "ማመልከቻ ቀርቧል"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "የ AI ረዳትን ዝጋ"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "አሰናብት"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "የመስተጋብር ንድፍ"
 msgid "Interests"
 msgstr "ፍላጎቶች"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "ቃለ መጠይቅ"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "ሊቱዌንያንኛ"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "ምንም የሚጠቆም የለም።"
 msgid "Odia"
 msgstr "ኦዲያ"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "የሥራ ቅናሽ"
 
@@ -5105,6 +5114,11 @@ msgstr "በ…የተጠቀሰ፣ አጽንዖት ሊሰጣቸው የሚገቡ �
 msgid "Register New Device"
 msgstr "አዲስ መሣሪያ መመዝገብ"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "የቅርብ ጊዜውን ስሪት እንደገና ጫን"
@@ -5487,6 +5501,8 @@ msgstr "ይዘቱን ወይም አጻጻፉን ከመቅዳትዎ በፊት ከ�
 msgid "Save the file with every page upright."
 msgstr "እያንዳንዱ ገጽ ቀጥ ብሎ ባለበት ፋይሉን ያስቀምጡ።"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "ተቀምጧል"
@@ -5522,6 +5538,11 @@ msgstr "ተስማሚነቴን አስል"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "የእርስዎን ተስማሚነት ማስላት…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "{0} ን ከ {1} በማሳየት ላይ"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "የጎን አሞሌ"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "የቅጥ እና የላኪ ዝርዝሮች ከተመረጠው ከቆመበት ቀጥል ታደሱ።"
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "የቀኝ የጎን አሞሌን ቀያይር"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

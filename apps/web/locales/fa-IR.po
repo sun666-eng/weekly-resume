@@ -771,7 +771,9 @@ msgstr "برنامه های کاربردی برای صادرات"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "ارسال‌شده"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "دستیار هوش مصنوعی را ببندید"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "رد کردن"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "طراحی تعامل"
 msgid "Interests"
 msgstr "علاقه‌مندی‌ها"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "مصاحبه"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "لیتوانیایی"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "پیشنهادی وجود ندارد."
 msgid "Odia"
 msgstr "اودیایی"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "پیشنهاد"
 
@@ -5105,6 +5114,11 @@ msgstr "معرفی‌شده توسط…، نکات قابل تأکید و غیر
 msgid "Register New Device"
 msgstr "ثبت دستگاه جدید"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "آخرین نسخه را بارگیری مجدد کنید"
@@ -5487,6 +5501,8 @@ msgstr "تغییرات رزومه را قبل از کپی کردن محتوا ی
 msgid "Save the file with every page upright."
 msgstr "فایل را طوری ذخیره کنید که همهٔ صفحات درست و ایستاده باشند."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "ذخیره شده"
@@ -5522,6 +5538,11 @@ msgstr "امتیازدهی تناسب من"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "در حال امتیازدهی تناسب شما…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "نمایش {0} از {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "نوار کناری"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "استایل و جزئیات فرستنده از رزومه انتخابی به روز شد."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "گوشه‌ای کردن نوار کناری راست"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

@@ -771,7 +771,9 @@ msgstr "ఎగుమతి చేయడానికి అప్లికేష�
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "దరఖాస్తు చేశారు"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "AI సహాయకుడిని మూసివేయండి"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "కొట్టివేయండి"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "ఇంటరాక్షన్ డిజైన్"
 msgid "Interests"
 msgstr "అభిరుచులు"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "ఇంటర్వ్యూ"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "లిథువేనియన్"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "సూచించాల్సింది ఏమీ లేదు."
 msgid "Odia"
 msgstr "ఒడియా"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "ఆఫర్"
 
@@ -5105,6 +5114,11 @@ msgstr "సూచించిన వారు…, హైలైట్ చేయ�
 msgid "Register New Device"
 msgstr "కొత్త పరికరాన్ని నమోదు చేయండి"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "తాజా సంస్కరణను మళ్లీ లోడ్ చేయండి"
@@ -5487,6 +5501,8 @@ msgstr "దాని కంటెంట్ లేదా స్టైలింగ
 msgid "Save the file with every page upright."
 msgstr "ప్రతి పేజీ నిటారుగా ఉండేలా ఫైల్‌ను సేవ్ చేయండి."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "సేవ్ చేయబడింది"
@@ -5522,6 +5538,11 @@ msgstr "నా సరిపోలికను స్కోర్ చేయండ
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "మీ సరిపోలికను స్కోర్ చేస్తోంది…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "{0}లో {1} చూపిస్తున్నాం"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "సైడ్‌బార్"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "ఎంచుకున్న రెస్యూమ్ నుండి స్టైలింగ్ మరియు పంపినవారి వివరాలు నవీకరించబడ్డాయి."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "కుడి వైపు పక్క పట్టీని టోగుల్ చేయండి"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

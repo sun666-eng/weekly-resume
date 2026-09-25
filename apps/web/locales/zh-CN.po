@@ -771,7 +771,9 @@ msgstr "待导出的申请"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "已申请"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "关闭 AI 助手"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr "关闭通知"
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "忽略"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr "显示移动端侧边栏。"
 
@@ -3418,7 +3422,9 @@ msgstr "交互设计"
 msgid "Interests"
 msgstr "兴趣爱好"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "面试"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "立陶宛语"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr "加载中"
 
@@ -4349,7 +4356,9 @@ msgstr "没有可提供的建议。"
 msgid "Odia"
 msgstr "奥里亚语"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "录用"
 
@@ -5105,6 +5114,11 @@ msgstr "推荐人…、需要强调的内容等"
 msgid "Register New Device"
 msgstr "注册新设备"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr "已拒绝"
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "重新加载最新版本"
@@ -5487,6 +5501,8 @@ msgstr "复制简历内容或样式前，请先保存简历的更改。"
 msgid "Save the file with every page upright."
 msgstr "保存文件时确保每一页都是正向的。"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "已保存"
@@ -5522,6 +5538,11 @@ msgstr "评估我的匹配度"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "正在评估你的匹配度…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr "筛选中"
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "显示 {0} / {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "侧边栏"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "已从所选简历刷新样式和发件人信息。"
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr "提交"
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "切换右侧边栏"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr "切换侧边栏"
 

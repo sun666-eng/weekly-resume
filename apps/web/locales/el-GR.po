@@ -771,7 +771,9 @@ msgstr "Εφαρμογές για εξαγωγή"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "Υποβλήθηκε"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "Κλείσιμο βοηθού τεχνητής νοημοσύνης"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "Απολύω"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "Σχεδιασμός διάδρασης"
 msgid "Interests"
 msgstr "Ενδιαφέροντα"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "Συνέντευξη"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "Λιθουανικά"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "Καμία πρόταση."
 msgid "Odia"
 msgstr "Οντιά"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "Προσφορά"
 
@@ -5105,6 +5114,11 @@ msgstr "Σύσταση από…, σημεία προς έμφαση κ.λπ."
 msgid "Register New Device"
 msgstr "Εγγραφή νέας συσκευής"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "Επαναλάβετε τη φόρτωση της τελευταίας έκδοσης"
@@ -5487,6 +5501,8 @@ msgstr "Αποθηκεύστε τις αλλαγές του βιογραφικο
 msgid "Save the file with every page upright."
 msgstr "Αποθηκεύστε το αρχείο με κάθε σελίδα σε όρθια θέση."
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "Αποθηκεύτηκε"
@@ -5522,6 +5538,11 @@ msgstr "Βαθμολόγηση καταλληλότητας"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "Βαθμολογείται η καταλληλότητά σας…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "Εμφάνιση {0} από {1}"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "Πλαϊνή μπάρα"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "Το στυλ και τα στοιχεία αποστολέα ανανεώθηκαν από το επιλεγμένο βιογραφικό."
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "Εναλλαγή δεξιάς πλευρικής γραμμής"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

@@ -771,7 +771,9 @@ msgstr "កម្មវិធីដើម្បីនាំចេញ"
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "បានដាក់ពាក្យ"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "បិទជំនួយការ AI"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "បដិសេធ"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "ការរចនាអន្តរកម្ម"
 msgid "Interests"
 msgstr "ចំណាប់អារម្មណ៍"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "សម្ភាសន៍"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "Lithuanian"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "គ្មានអ្វីត្រូវផ្តល់អនុសា
 msgid "Odia"
 msgstr "Odia"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "ផ្តល់ការងារ"
 
@@ -5105,6 +5114,11 @@ msgstr "បានណែនាំដោយ… អ្វីដែលត្រូ�
 msgid "Register New Device"
 msgstr "ចុះឈ្មោះឧបករណ៍ថ្មី"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "ផ្ទុកកំណែចុងក្រោយបំផុតឡើងវិញ"
@@ -5487,6 +5501,8 @@ msgstr "រក្សាទុកការផ្លាស់ប្តូរបន
 msgid "Save the file with every page upright."
 msgstr "រក្សាទុកឯកសារជាមួយគ្រប់ទំព័រទាំងអស់ត្រង់ត្រូវ។"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "បានរក្សាទុក"
@@ -5522,6 +5538,11 @@ msgstr "ដាក់ពិន្ទុភាពសមស្របរបស់ខ
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "កំពុងដាក់ពិន្ទុភាពសមស្របរបស់អ្នក…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "កំពុងបង្ហាញ {0} ក្នុងចំណោម {1}
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "របារ​បាត"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "ការកំណត់រចនាប័ទ្ម និងព័ត៌មានលម្អិតអំពីអ្នកផ្ញើត្រូវបានផ្ទុកឡើងវិញពីប្រវត្តិរូបសង្ខេបដែលបានជ្រើសរើស។"
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "បិទបើករបារចំហៀងខាងស្តាំ"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 

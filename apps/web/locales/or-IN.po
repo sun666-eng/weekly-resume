@@ -771,7 +771,9 @@ msgstr "ରପ୍ତାନି ପାଇଁ ପ୍ରୟୋଗଗୁଡ଼ିକ 
 
 #: src/features/applications/components/table-view.tsx
 #: src/features/applications/insights.ts
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Applied"
 msgstr "ଆବେଦନ କରାଯାଇଛି"
 
@@ -1270,6 +1272,7 @@ msgid "Close AI assistant"
 msgstr "AI ଆସିଷ୍ଟାଣ୍ଟ ବନ୍ଦ କରନ୍ତୁ"
 
 #: ../../packages/ui/src/components/toast.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Close toast"
 msgstr ""
 
@@ -2096,6 +2099,7 @@ msgid "Dismiss"
 msgstr "ଖାରଜ କରନ୍ତୁ"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Displays the mobile sidebar."
 msgstr ""
 
@@ -3418,7 +3422,9 @@ msgstr "ଇଣ୍ଟରାକ୍ସନ୍ ଡିଜାଇନ୍"
 msgid "Interests"
 msgstr "ରୁଚିଗୁଡିକ"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Interview"
 msgstr "ସାକ୍ଷାତକାର"
 
@@ -3794,6 +3800,7 @@ msgid "Lithuanian"
 msgstr "ଲିଥୁଆନିଆନ୍"
 
 #: ../../packages/ui/src/components/spinner.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Loading"
 msgstr ""
 
@@ -4349,7 +4356,9 @@ msgstr "ପରାମର୍ଶ ଦେବାକୁ କିଛି ନାହିଁ।
 msgid "Odia"
 msgstr "ଓଡ଼ିଆ"
 
+#: src/features/applications/stage-labels.ts
 #: src/features/homepage/feature-explorer.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Offer"
 msgstr "ଅଫର୍"
 
@@ -5105,6 +5114,11 @@ msgstr "ଦ୍ fer ାରା ସୂଚିତ, ଜୋର ଦେବା ପାଇ�
 msgid "Register New Device"
 msgstr "ନୂତନ ଡିଭାଇସ୍ ରେଜିଷ୍ଟର କରନ୍ତୁ"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Rejected"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Reload latest version"
 msgstr "ସର୍ବଶେଷ ସଂସ୍କରଣ ପୁନ elo ଲୋଡ୍ କରନ୍ତୁ |"
@@ -5487,6 +5501,8 @@ msgstr "ଏହାର ବିଷୟବସ୍ତୁ କପି କରିବା କ�
 msgid "Save the file with every page upright."
 msgstr "ପ୍ରତ୍ୟେକ ପୃଷ୍ଠା ସିଧା ରଖି ଫାଇଲ୍ ସେଭ୍ କରନ୍ତୁ।"
 
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "ସେଭ୍‍ କରାଯାଇଛି"
@@ -5522,6 +5538,11 @@ msgstr "ମୋର ଫିଟ୍ ସ୍କୋର କରନ୍ତୁ |"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Scoring your fit…"
 msgstr "ତୁମର ଫିଟ୍ ସ୍କୋର୍ କରିବା…"
+
+#: src/features/applications/stage-labels.ts
+#: src/libs/locale-catalogs.test.ts
+msgid "Screening"
+msgstr ""
 
 #: src/routes/dashboard/-components/sidebar.tsx
 msgid "Search"
@@ -5816,6 +5837,7 @@ msgstr "{0} ର {1} ଦେଖାଉଛି |"
 
 #. Layout editor column label for the secondary sidebar area
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "ସାଇଡବାର୍"
@@ -6209,6 +6231,7 @@ msgid "Styling and sender details refreshed from the selected resume."
 msgstr "ମନୋନୀତ ରିଜ୍ୟୁମରୁ ଷ୍ଟାଇଲିଂ ଏବଂ ପ୍ରେରକ ବିବରଣୀ ସତେଜ |"
 
 #: ../../packages/ui/src/components/questionnaire.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Submit"
 msgstr ""
 
@@ -6954,6 +6977,7 @@ msgid "Toggle right sidebar"
 msgstr "ଡାହାଣ ସାଇଡବାର୍ ଟୋଗଲ୍ କରନ୍ତୁ"
 
 #: ../../packages/ui/src/components/sidebar.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "Toggle Sidebar"
 msgstr ""
 
