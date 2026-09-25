@@ -1269,6 +1269,10 @@ msgstr "关闭"
 msgid "Close AI assistant"
 msgstr "关闭 AI 助手"
 
+#: ../../packages/ui/src/components/toast.tsx
+msgid "Close toast"
+msgstr "关闭通知"
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Color"
 msgstr "颜色"
@@ -2090,6 +2094,10 @@ msgstr "断开连接"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "忽略"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr "显示移动端侧边栏。"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -3427,7 +3435,6 @@ msgstr "面试数"
 msgid "Invalid account. Please sign in again."
 msgstr "账号信息无效，请重新登录。"
 
-#: src/features/settings/integrations/components/ai-section.tsx
 #: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "AI提供商配置无效。"
@@ -3785,6 +3792,10 @@ msgstr "列出你使用的工具和技术。招聘人员搜索技能的频率高
 #: src/libs/locale.ts
 msgid "Lithuanian"
 msgstr "立陶宛语"
+
+#: ../../packages/ui/src/components/spinner.tsx
+msgid "Loading"
+msgstr "加载中"
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
@@ -5804,6 +5815,7 @@ msgid "Showing {0} of {1}"
 msgstr "显示 {0} / {1}"
 
 #. Layout editor column label for the secondary sidebar area
+#: ../../packages/ui/src/components/sidebar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "侧边栏"
@@ -5956,6 +5968,10 @@ msgstr "有些字符会变成问号。"
 #: src/features/ats-checker/report/score-header.tsx
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "有些检查需要这个文件没有携带的信息：无法查看的页面内容，或者这些检查未覆盖的语言的文字。它们既不算通过，也不算失败。"
+
+#: src/libs/error-message.ts
+msgid "Some entries failed validation. Please review and try again."
+msgstr "部分内容未通过校验，请检查后重试。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -6192,6 +6208,10 @@ msgstr "样式和发件人信息已复制。之后对简历的修改，只有在
 msgid "Styling and sender details refreshed from the selected resume."
 msgstr "已从所选简历刷新样式和发件人信息。"
 
+#: ../../packages/ui/src/components/questionnaire.tsx
+msgid "Submit"
+msgstr "提交"
+
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
 msgstr "建议"
@@ -6338,6 +6358,10 @@ msgstr "该文件不是 PDF。请将你的简历导出为 PDF 后重试。"
 msgid "That file is too large to check in the browser."
 msgstr "该文件太大，无法在浏览器中检查。"
 
+#: src/libs/error-message.ts
+msgid "That file is too large. The limit is 25MB per attachment."
+msgstr "文件过大，单个附件上限为 25MB。"
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "该提供商账户已关联到其他用户。"
@@ -6353,6 +6377,10 @@ msgstr "该登录提供商在此服务器上已不可用。"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "经纪人需要您的意见。"
+
+#: src/libs/error-message.ts
+msgid "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
+msgstr "未配置 REDIS_URL 或 ENCRYPTION_SECRET，AI Agent 工作区不可用。"
 
 #: src/libs/error-message.ts
 msgid "The AI response could not be parsed."
@@ -6555,6 +6583,10 @@ msgstr "该对话已归档。"
 #: src/libs/error-message.ts
 msgid "This conversation is read-only."
 msgstr "该对话为只读。"
+
+#: src/libs/error-message.ts
+msgid "This conversation's attachment storage is full. Delete some attachments first."
+msgstr "该对话的附件存储空间已达上限，请先删除部分附件。"
 
 #: src/libs/error-message.ts
 msgid "This cover letter changed elsewhere. Reload it before deleting."
@@ -6920,6 +6952,10 @@ msgstr "切换简历预览"
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Toggle right sidebar"
 msgstr "切换右侧边栏"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr "切换侧边栏"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -7707,6 +7743,7 @@ msgid "Your AI app"
 msgstr "你的 AI 应用"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
+#: src/libs/error-message.test.ts
 msgid "Your AI provider could not be reached. Check its settings and try again."
 msgstr "无法连接到你的 AI 提供商。请检查其设置后重试。"
 

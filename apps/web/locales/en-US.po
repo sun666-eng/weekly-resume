@@ -1269,6 +1269,10 @@ msgstr "Close"
 msgid "Close AI assistant"
 msgstr "Close AI assistant"
 
+#: ../../packages/ui/src/components/toast.tsx
+msgid "Close toast"
+msgstr "Close toast"
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Color"
 msgstr "Color"
@@ -2090,6 +2094,10 @@ msgstr "Disconnect"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "Dismiss"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr "Displays the mobile sidebar."
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -3427,7 +3435,6 @@ msgstr "Interviews"
 msgid "Invalid account. Please sign in again."
 msgstr "Invalid account. Please sign in again."
 
-#: src/features/settings/integrations/components/ai-section.tsx
 #: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "Invalid AI provider configuration."
@@ -3785,6 +3792,10 @@ msgstr "List the tools and technologies you use. Recruiters search skills more t
 #: src/libs/locale.ts
 msgid "Lithuanian"
 msgstr "Lithuanian"
+
+#: ../../packages/ui/src/components/spinner.tsx
+msgid "Loading"
+msgstr "Loading"
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
@@ -5804,6 +5815,7 @@ msgid "Showing {0} of {1}"
 msgstr "Showing {0} of {1}"
 
 #. Layout editor column label for the secondary sidebar area
+#: ../../packages/ui/src/components/sidebar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "Sidebar"
@@ -5956,6 +5968,10 @@ msgstr "Some characters come out as question marks."
 #: src/features/ats-checker/report/score-header.tsx
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
+
+#: src/libs/error-message.ts
+msgid "Some entries failed validation. Please review and try again."
+msgstr "Some entries failed validation. Please review and try again."
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -6192,6 +6208,10 @@ msgstr "Styling and sender details are copied. Future resume edits apply only wh
 msgid "Styling and sender details refreshed from the selected resume."
 msgstr "Styling and sender details refreshed from the selected resume."
 
+#: ../../packages/ui/src/components/questionnaire.tsx
+msgid "Submit"
+msgstr "Submit"
+
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
 msgstr "Suggestions"
@@ -6338,6 +6358,10 @@ msgstr "That file is not a PDF. Export your resume as a PDF and try again."
 msgid "That file is too large to check in the browser."
 msgstr "That file is too large to check in the browser."
 
+#: src/libs/error-message.ts
+msgid "That file is too large. The limit is 25MB per attachment."
+msgstr "That file is too large. The limit is 25MB per attachment."
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "That provider account is already linked to a different user."
@@ -6353,6 +6377,10 @@ msgstr "That sign-in provider is no longer available on this server."
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "The agent needs your input."
+
+#: src/libs/error-message.ts
+msgid "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
+msgstr "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
 
 #: src/libs/error-message.ts
 msgid "The AI response could not be parsed."
@@ -6555,6 +6583,10 @@ msgstr "This conversation is archived."
 #: src/libs/error-message.ts
 msgid "This conversation is read-only."
 msgstr "This conversation is read-only."
+
+#: src/libs/error-message.ts
+msgid "This conversation's attachment storage is full. Delete some attachments first."
+msgstr "This conversation's attachment storage is full. Delete some attachments first."
 
 #: src/libs/error-message.ts
 msgid "This cover letter changed elsewhere. Reload it before deleting."
@@ -6920,6 +6952,10 @@ msgstr "Toggle resume preview"
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Toggle right sidebar"
 msgstr "Toggle right sidebar"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr "Toggle Sidebar"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -7707,6 +7743,7 @@ msgid "Your AI app"
 msgstr "Your AI app"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
+#: src/libs/error-message.test.ts
 msgid "Your AI provider could not be reached. Check its settings and try again."
 msgstr "Your AI provider could not be reached. Check its settings and try again."
 

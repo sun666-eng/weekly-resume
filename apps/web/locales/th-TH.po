@@ -1269,6 +1269,10 @@ msgstr "ปิด"
 msgid "Close AI assistant"
 msgstr "ปิดผู้ช่วย AI"
 
+#: ../../packages/ui/src/components/toast.tsx
+msgid "Close toast"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Color"
 msgstr "สี"
@@ -2090,6 +2094,10 @@ msgstr "ตัดการเชื่อมต่อ"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "อนุญาตให้ออกไป"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -3427,7 +3435,6 @@ msgstr ""
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
-#: src/features/settings/integrations/components/ai-section.tsx
 #: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "การกำหนดค่าผู้ให้บริการ AI ไม่ถูกต้อง"
@@ -3785,6 +3792,10 @@ msgstr "ระบุเครื่องมือและเทคโนโล
 #: src/libs/locale.ts
 msgid "Lithuanian"
 msgstr "ลิทัวเนีย"
+
+#: ../../packages/ui/src/components/spinner.tsx
+msgid "Loading"
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
@@ -5804,6 +5815,7 @@ msgid "Showing {0} of {1}"
 msgstr "แสดง {0} จาก {1}"
 
 #. Layout editor column label for the secondary sidebar area
+#: ../../packages/ui/src/components/sidebar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "แถบด้านข้าง"
@@ -5956,6 +5968,10 @@ msgstr "ตัวอักษรบางตัวออกมาเป็นเ
 #: src/features/ats-checker/report/score-header.tsx
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "การตรวจสอบบางอย่างต้องใช้ข้อมูลที่ไฟล์นี้ไม่มี เช่น เนื้อหาหน้าที่ตรวจสอบไม่ได้ หรือข้อความในภาษาที่การตรวจสอบเหล่านี้ไม่ครอบคลุม จึงไม่นับว่าผ่านหรือไม่ผ่าน"
+
+#: src/libs/error-message.ts
+msgid "Some entries failed validation. Please review and try again."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -6192,6 +6208,10 @@ msgstr "คัดลอกรายละเอียดการจัดรู
 msgid "Styling and sender details refreshed from the selected resume."
 msgstr "รีเฟรชรายละเอียดการจัดรูปแบบและผู้ส่งจากเรซูเม่ที่เลือก"
 
+#: ../../packages/ui/src/components/questionnaire.tsx
+msgid "Submit"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
 msgstr "ข้อเสนอแนะ"
@@ -6338,6 +6358,10 @@ msgstr "ไฟล์นั้นไม่ใช่ PDF โปรดส่งอ�
 msgid "That file is too large to check in the browser."
 msgstr "ไฟล์นั้นมีขนาดใหญ่เกินกว่าจะตรวจสอบในเบราว์เซอร์ได้"
 
+#: src/libs/error-message.ts
+msgid "That file is too large. The limit is 25MB per attachment."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "บัญชีผู้ให้บริการนั้นเชื่อมโยงกับผู้ใช้รายอื่นอยู่แล้ว"
@@ -6353,6 +6377,10 @@ msgstr "ผู้ให้บริการลงชื่อเข้าใช
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "ตัวแทนต้องการข้อมูลจากคุณ"
+
+#: src/libs/error-message.ts
+msgid "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The AI response could not be parsed."
@@ -6554,6 +6582,10 @@ msgstr ""
 
 #: src/libs/error-message.ts
 msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation's attachment storage is full. Delete some attachments first."
 msgstr ""
 
 #: src/libs/error-message.ts
@@ -6920,6 +6952,10 @@ msgstr "สลับการแสดงตัวอย่างเรซูเ
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Toggle right sidebar"
 msgstr "สลับแถบด้านขวา"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -7707,6 +7743,7 @@ msgid "Your AI app"
 msgstr "แอป AI ของคุณ"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
+#: src/libs/error-message.test.ts
 msgid "Your AI provider could not be reached. Check its settings and try again."
 msgstr "ไม่สามารถเชื่อมต่อผู้ให้บริการ AI ของคุณได้ ตรวจสอบการตั้งค่าแล้วลองใหม่"
 

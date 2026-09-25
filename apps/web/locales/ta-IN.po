@@ -1269,6 +1269,10 @@ msgstr "மூடு"
 msgid "Close AI assistant"
 msgstr "AI உதவியாளரை மூடு"
 
+#: ../../packages/ui/src/components/toast.tsx
+msgid "Close toast"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Color"
 msgstr "நிறம்"
@@ -2090,6 +2094,10 @@ msgstr "துண்டிக்கவும்"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "நிராகரி"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -3427,7 +3435,6 @@ msgstr ""
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
-#: src/features/settings/integrations/components/ai-section.tsx
 #: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "தவறான AI வழங்குநர் உள்ளமைவு."
@@ -3785,6 +3792,10 @@ msgstr "நீங்கள் பயன்படுத்தும் கரு�
 #: src/libs/locale.ts
 msgid "Lithuanian"
 msgstr "லிதுவேனியன்"
+
+#: ../../packages/ui/src/components/spinner.tsx
+msgid "Loading"
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
@@ -5804,6 +5815,7 @@ msgid "Showing {0} of {1}"
 msgstr "{0} இல் {1} ஐக் காட்டுகிறது"
 
 #. Layout editor column label for the secondary sidebar area
+#: ../../packages/ui/src/components/sidebar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "சைட்பார்"
@@ -5956,6 +5968,10 @@ msgstr "சில எழுத்துக்கள் கேள்விக்�
 #: src/features/ats-checker/report/score-header.tsx
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "சில சோதனைகளுக்கு இந்தக் கோப்பில் இல்லாத தகவல்கள் தேவைப்படுகின்றன: ஆய்வு செய்ய முடியாத பக்க உள்ளடக்கம், அல்லது இந்தச் சோதனைகள் உள்ளடக்காத மொழியில் உள்ள உரை. அவை தேர்ச்சியாகவும் கருதப்படுவதில்லை, தோல்வியாகவும் கருதப்படுவதில்லை."
+
+#: src/libs/error-message.ts
+msgid "Some entries failed validation. Please review and try again."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -6192,6 +6208,10 @@ msgstr "பாணி மற்றும் அனுப்பியவர் வ
 msgid "Styling and sender details refreshed from the selected resume."
 msgstr "தேர்ந்தெடுக்கப்பட்ட ரெஸ்யூமிலிருந்து ஸ்டைலிங் மற்றும் அனுப்பியவர் விவரங்கள் புதுப்பிக்கப்பட்டன."
 
+#: ../../packages/ui/src/components/questionnaire.tsx
+msgid "Submit"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
 msgstr "முன்மொழிவுகள்"
@@ -6338,6 +6358,10 @@ msgstr "அந்தக் கோப்பு PDF அல்ல. உங்கள�
 msgid "That file is too large to check in the browser."
 msgstr "அந்தக் கோப்பு உலாவியில் சரிபார்க்க முடியாத அளவு பெரியது."
 
+#: src/libs/error-message.ts
+msgid "That file is too large. The limit is 25MB per attachment."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "அந்த வழங்குநர் கணக்கு ஏற்கனவே வேறொரு பயனருடன் இணைக்கப்பட்டுள்ளது."
@@ -6353,6 +6377,10 @@ msgstr "அந்த உள்நுழைவு வழங்குநர் இ
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "முகவருக்கு உங்கள் கருத்து தேவைப்படுகிறது."
+
+#: src/libs/error-message.ts
+msgid "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The AI response could not be parsed."
@@ -6554,6 +6582,10 @@ msgstr ""
 
 #: src/libs/error-message.ts
 msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation's attachment storage is full. Delete some attachments first."
 msgstr ""
 
 #: src/libs/error-message.ts
@@ -6920,6 +6952,10 @@ msgstr "மறுதொடக்க முன்னோட்டத்தை ம�
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Toggle right sidebar"
 msgstr "வலது பக்கப் பட்டை மாற்று"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -7707,6 +7743,7 @@ msgid "Your AI app"
 msgstr "உங்கள் AI செயலி"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
+#: src/libs/error-message.test.ts
 msgid "Your AI provider could not be reached. Check its settings and try again."
 msgstr "உங்கள் AI வழங்குநரைத் தொடர்பு கொள்ள முடியவில்லை. அதன் அமைப்புகளைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
 

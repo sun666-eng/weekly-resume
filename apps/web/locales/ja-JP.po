@@ -1269,6 +1269,10 @@ msgstr "閉じる"
 msgid "Close AI assistant"
 msgstr "AIアシスタントを閉じる"
 
+#: ../../packages/ui/src/components/toast.tsx
+msgid "Close toast"
+msgstr ""
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Color"
 msgstr "カラー"
@@ -2090,6 +2094,10 @@ msgstr "切断"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "閉じる"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Displays the mobile sidebar."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Documents sent"
@@ -3427,7 +3435,6 @@ msgstr ""
 msgid "Invalid account. Please sign in again."
 msgstr ""
 
-#: src/features/settings/integrations/components/ai-section.tsx
 #: src/libs/error-message.ts
 msgid "Invalid AI provider configuration."
 msgstr "無効なAIプロバイダー設定です。"
@@ -3785,6 +3792,10 @@ msgstr "使用しているツールや技術を記載してください。採用
 #: src/libs/locale.ts
 msgid "Lithuanian"
 msgstr "リトアニア語"
+
+#: ../../packages/ui/src/components/spinner.tsx
+msgid "Loading"
+msgstr ""
 
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
@@ -5804,6 +5815,7 @@ msgid "Showing {0} of {1}"
 msgstr "{0} 件中 {1} 件を表示"
 
 #. Layout editor column label for the secondary sidebar area
+#: ../../packages/ui/src/components/sidebar.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
 msgstr "サイドバー"
@@ -5956,6 +5968,10 @@ msgstr "一部の文字が疑問符として出力されます。"
 #: src/features/ats-checker/report/score-header.tsx
 msgid "Some checks need information this file does not carry: page contents that could not be inspected, or text in a language these checks do not cover. They count as neither a pass nor a fail."
 msgstr "一部のチェックには、このファイルに含まれていない情報が必要です。内容を確認できないページや、これらのチェックが対応していない言語のテキストなどです。これらは合格にも不合格にも数えません。"
+
+#: src/libs/error-message.ts
+msgid "Some entries failed validation. Please review and try again."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Some glyphs have no meaning outside this file."
@@ -6192,6 +6208,10 @@ msgstr "スタイルと差出人情報がコピーされます。以降の履歴
 msgid "Styling and sender details refreshed from the selected resume."
 msgstr "選択した履歴書からスタイルと差出人情報を更新しました。"
 
+#: ../../packages/ui/src/components/questionnaire.tsx
+msgid "Submit"
+msgstr ""
+
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Suggestions"
 msgstr "提案"
@@ -6338,6 +6358,10 @@ msgstr "そのファイルはPDFではありません。履歴書をPDFとして
 msgid "That file is too large to check in the browser."
 msgstr "そのファイルは大きすぎてブラウザ内でチェックできません。"
 
+#: src/libs/error-message.ts
+msgid "That file is too large. The limit is 25MB per attachment."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to a different user."
 msgstr "そのプロバイダーのアカウントは、すでに別のユーザーにリンクされています。"
@@ -6353,6 +6377,10 @@ msgstr "そのサインインプロバイダーは、このサーバーでは利
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "エージェントが入力を待っています。"
+
+#: src/libs/error-message.ts
+msgid "The AI agent workspace is unavailable because REDIS_URL or ENCRYPTION_SECRET is not configured."
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The AI response could not be parsed."
@@ -6554,6 +6582,10 @@ msgstr ""
 
 #: src/libs/error-message.ts
 msgid "This conversation is read-only."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This conversation's attachment storage is full. Delete some attachments first."
 msgstr ""
 
 #: src/libs/error-message.ts
@@ -6920,6 +6952,10 @@ msgstr "プレビューの切り替え"
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Toggle right sidebar"
 msgstr "右サイドバーの切り替え"
+
+#: ../../packages/ui/src/components/sidebar.tsx
+msgid "Toggle Sidebar"
+msgstr ""
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
@@ -7707,6 +7743,7 @@ msgid "Your AI app"
 msgstr "お使いのAIアプリ"
 
 #: src/features/ats-checker/ai-review/ai-review-card.tsx
+#: src/libs/error-message.test.ts
 msgid "Your AI provider could not be reached. Check its settings and try again."
 msgstr "AIプロバイダーに接続できませんでした。設定を確認してもう一度お試しください。"
 
