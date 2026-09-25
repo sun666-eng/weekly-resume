@@ -129,7 +129,10 @@ it("characterizes stable heading, hidden-content, contact, and reading-order beh
 
 	expect(screen.getByRole("heading", { level: 1, name: data.basics.name })).toBeInTheDocument();
 	expect(screen.getByRole("heading", { level: 2, name: "Experience" })).toBeInTheDocument();
-	expect(screen.getByRole("link", { name: "davidkowalski.games" })).toHaveAttribute("href", data.basics.website.url);
+	// Link rendering normalizes the URL (WHATWG URLs gain a trailing slash for an empty path), so
+	// compare destinations rather than raw strings.
+	const renderedLink = screen.getByRole("link", { name: "davidkowalski.games" });
+	expect(new URL(renderedLink.getAttribute("href") ?? "").toString()).toBe(new URL(data.basics.website.url).toString());
 	expect(screen.queryByText("Performance Optimization")).not.toBeInTheDocument();
 	expect(screen.queryByText("Hidden Custom Item")).not.toBeInTheDocument();
 	expect(screen.getByText("Unplaced Item")).toBeInTheDocument();

@@ -1,4 +1,5 @@
 import type { Application } from "../types";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { FileTextIcon, MapPinIcon } from "@phosphor-icons/react";
 import { getInitials } from "@reactive-resume/utils/string";
@@ -58,7 +59,7 @@ export function ApplicationCard({ application, onClick, onEdit, className, dragg
 				</div>
 				{followUp && (
 					<span
-						title="Needs follow-up"
+						title={t`Needs follow-up`}
 						className={cn("mt-1 size-2 shrink-0 rounded-full bg-amber-500 ring-2 ring-amber-500/25", onEdit && "me-6")}
 					/>
 				)}

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/client";
 import { getOrpcErrorMessage, getReadableErrorMessage, getResumeErrorMessage } from "./error-message";
 
@@ -139,12 +139,23 @@ describe("getResumeErrorMessage", () => {
 		expect(getResumeErrorMessage(error)).toBe("Something went wrong. Please try again.");
 	});
 
-	it("returns fallback for plain Error (delegates to getOrpcErrorMessage)", () => {
-		// Plain Error gets readable message
-		expect(getResumeErrorMessage(new Error("boom"))).toBe("boom");
+	it("returns the localized fallback for a plain Error, keeping the raw error in the console", () => {
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			expect(getResumeErrorMessage(new Error("boom"))).toBe("Something went wrong. Please try again.");
+			expect(consoleError).toHaveBeenCalledOnce();
+		} finally {
+			consoleError.mockRestore();
+		}
 	});
 
-	it("returns fallback for unknown shape", () => {
-		expect(getResumeErrorMessage(null)).toBe("Something went wrong. Please try again.");
+	it("returns the localized fallback for unknown shape, keeping the raw error in the console", () => {
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			expect(getResumeErrorMessage(null)).toBe("Something went wrong. Please try again.");
+			expect(consoleError).toHaveBeenCalledOnce();
+		} finally {
+			consoleError.mockRestore();
+		}
 	});
 });

@@ -13,7 +13,10 @@ import { useAppForm } from "@/libs/tanstack-form";
 import { getAuthErrorMessage } from "../error-message";
 
 const formSchema = z.object({
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(8, { error: () => t`Password must be at least 8 characters.` })
+		.max(64),
 });
 
 type Props = {
@@ -87,8 +90,8 @@ export function ResetPasswordPage({ token }: Props) {
 								<FormControl
 									render={
 										<Input
-											min={6}
-											max={64}
+											minLength={8}
+											maxLength={64}
 											type={showPassword ? "text" : "password"}
 											autoComplete="new-password"
 											name={field.name}

@@ -24,11 +24,18 @@ import { useDialogStore } from "../store";
 
 const formSchema = z
 	.object({
-		currentPassword: z.string().min(6).max(64),
-		newPassword: z.string().min(6).max(64),
+		currentPassword: z
+			.string()
+			.min(8, { error: () => t`Password must be at least 8 characters.` })
+			.max(64),
+		newPassword: z
+			.string()
+			.min(8, { error: () => t`Password must be at least 8 characters.` })
+			.max(64),
 	})
 	.refine((data) => data.newPassword !== data.currentPassword, {
-		message: "New password cannot be the same as the current password.",
+		// Resolved lazily at validation time so the active locale is used.
+		error: () => t`New password cannot be the same as the current password.`,
 		path: ["newPassword"],
 	});
 
@@ -108,8 +115,8 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 								<FormControl
 									render={
 										<Input
-											min={6}
-											max={64}
+											minLength={8}
+											maxLength={64}
 											type={showCurrentPassword ? "text" : "password"}
 											autoComplete="current-password"
 											name={field.name}
@@ -150,8 +157,8 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 								<FormControl
 									render={
 										<Input
-											min={6}
-											max={64}
+											minLength={8}
+											maxLength={64}
 											type={showNewPassword ? "text" : "password"}
 											autoComplete="new-password"
 											name={field.name}

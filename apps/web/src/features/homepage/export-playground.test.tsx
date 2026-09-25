@@ -31,6 +31,8 @@ describe("landing page export sample", () => {
 		expect(data.metadata.layout.pages).toEqual([
 			{ fullWidth: true, main: ["education", "experience", "projects", "skills"], sidebar: [] },
 		]);
-		expect(data.picture.hidden).toBe(true);
+		// The kakuna preset ships a sample photo (see createChineseTemplateSample presets).
+		expect(data.picture.hidden).toBe(false);
+		expect(data.picture.url).toBe("/photos/sample-picture-zh-cn.png");
 	});
 });

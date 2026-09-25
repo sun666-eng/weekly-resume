@@ -1,3 +1,6 @@
+import type { MessageDescriptor } from "@lingui/core";
+import { i18n } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 
 export function getReadableErrorMessage(error: unknown, fallback: string): string {
@@ -44,12 +47,25 @@ export function getOrpcErrorMessage(
 	return options.fallback;
 }
 
+// Descriptors resolve through i18n at call time, so mapped and fallback copy both follow the
+// active locale. Server messages are intentionally not surfaced here; Batch 2 (error protocol)
+// adds per-error business codes for precise copy.
+const resumeErrorMessages = {
+	RESUME_SLUG_ALREADY_EXISTS: msg`A resume with this slug already exists.`,
+	RESUME_LOCKED: msg`This resume is locked. Unlock it first to make changes.`,
+} satisfies Record<string, MessageDescriptor>;
+
+const resumeFallbackMessage = msg`Something went wrong. Please try again.`;
+
 export function getResumeErrorMessage(error: unknown): string {
-	return getOrpcErrorMessage(error, {
-		byCode: {
-			RESUME_SLUG_ALREADY_EXISTS: "A resume with this slug already exists.",
-			RESUME_LOCKED: "This resume is locked. Unlock it first to make changes.",
-		},
-		fallback: "Something went wrong. Please try again.",
-	});
+	if (error instanceof ORPCError) {
+		const code = error.code;
+		if (typeof code === "string" && Object.hasOwn(resumeErrorMessages, code)) {
+			return i18n._(resumeErrorMessages[code as keyof typeof resumeErrorMessages]);
+		}
+	} else {
+		// Raw detail stays in the console; the toast keeps the localized generic message.
+		console.error("Resume operation failed:", error);
+	}
+	return i18n._(resumeFallbackMessage);
 }

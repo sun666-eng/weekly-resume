@@ -1,27 +1,33 @@
+import type { MessageDescriptor } from "@lingui/core";
+import { i18n } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
+
 type AuthError = {
 	code?: unknown;
 	message?: unknown;
 };
 
-const authErrorMessages: Record<string, string> = {
-	USER_NOT_FOUND: "未找到该账号，请检查邮箱或用户名。",
-	INVALID_EMAIL: "邮箱格式不正确，请重新输入。",
-	INVALID_PASSWORD: "密码不正确，请重新输入。",
-	INVALID_EMAIL_OR_PASSWORD: "邮箱、用户名或密码不正确。",
-	INVALID_USER: "账号信息无效，请重新登录。",
-	EMAIL_NOT_VERIFIED: "邮箱尚未验证，请先完成邮箱验证。",
-	PASSWORD_TOO_SHORT: "密码长度不能少于 6 位。",
-	PASSWORD_TOO_LONG: "密码长度不能超过 64 位。",
-	USER_ALREADY_EXISTS: "该邮箱已注册，请直接登录。",
-	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: "该邮箱已注册，请直接登录或更换邮箱。",
-	INVALID_TOKEN: "验证链接无效，请重新获取。",
-	TOKEN_EXPIRED: "验证链接已过期，请重新获取。",
-	SESSION_EXPIRED: "登录状态已过期，请重新登录。",
-	INVALID_CODE: "验证码不正确，请重新输入。",
-	INVALID_BACKUP_CODE: "备用验证码不正确，请重新输入。",
-	OTP_HAS_EXPIRED: "验证码已过期，请重新获取。",
-	TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE: "尝试次数过多，请重新获取验证码。",
-	ACCOUNT_TEMPORARILY_LOCKED: "失败次数过多，账号已暂时锁定，请稍后再试。",
+// Descriptors resolve through i18n at call time, so this module-scope map still follows the
+// active locale instead of freezing the source-locale string at import.
+const authErrorMessages: Record<string, MessageDescriptor> = {
+	USER_NOT_FOUND: msg`No account found for this email or username.`,
+	INVALID_EMAIL: msg`The email address is not valid.`,
+	INVALID_PASSWORD: msg`Incorrect password. Please try again.`,
+	INVALID_EMAIL_OR_PASSWORD: msg`Incorrect email, username, or password.`,
+	INVALID_USER: msg`Invalid account. Please sign in again.`,
+	EMAIL_NOT_VERIFIED: msg`Your email is not verified yet. Please verify it first.`,
+	PASSWORD_TOO_SHORT: msg`Password must be at least 8 characters.`,
+	PASSWORD_TOO_LONG: msg`Password must be at most 64 characters.`,
+	USER_ALREADY_EXISTS: msg`This email is already registered. Please sign in.`,
+	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: msg`This email is already registered. Please sign in or use another email.`,
+	INVALID_TOKEN: msg`This link is invalid. Please request a new one.`,
+	TOKEN_EXPIRED: msg`This link has expired. Please request a new one.`,
+	SESSION_EXPIRED: msg`Your session has expired. Please sign in again.`,
+	INVALID_CODE: msg`Incorrect verification code. Please try again.`,
+	INVALID_BACKUP_CODE: msg`Incorrect backup code. Please try again.`,
+	OTP_HAS_EXPIRED: msg`This verification code has expired. Please request a new one.`,
+	TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE: msg`Too many attempts. Please request a new code.`,
+	ACCOUNT_TEMPORARILY_LOCKED: msg`Too many failed attempts. Your account is temporarily locked. Please try again later.`,
 };
 
 const authMessageCodes: Record<string, string> = {
@@ -40,11 +46,11 @@ export function getAuthErrorMessage(error: unknown, fallback: string): string {
 	if (typeof error !== "object" || error === null) return fallback;
 
 	const { code, message } = error as AuthError;
-	if (typeof code === "string" && authErrorMessages[code]) return authErrorMessages[code];
+	if (typeof code === "string" && authErrorMessages[code]) return i18n._(authErrorMessages[code]);
 
 	if (typeof message === "string") {
 		const mappedCode = authMessageCodes[message];
-		if (mappedCode) return authErrorMessages[mappedCode] ?? fallback;
+		if (mappedCode && authErrorMessages[mappedCode]) return i18n._(authErrorMessages[mappedCode]);
 	}
 
 	return fallback;

@@ -1,5 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { t } from "@lingui/core/macro";
 import { AnnotationMode, GlobalWorkerOptions, getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
 import { useEffect, useReducer, useRef } from "react";
@@ -238,7 +239,7 @@ export function PdfViewer({ className, data, publicResume, includeCoverLetterHea
 
 			{error ? (
 				<div className="absolute inset-0 flex items-center justify-center bg-background px-6 text-center text-muted-foreground text-sm">
-					Unable to display PDF preview.
+					{t`Unable to display PDF preview.`}
 				</div>
 			) : isReady ? null : (
 				<div className="absolute inset-0 flex items-center justify-center bg-background">

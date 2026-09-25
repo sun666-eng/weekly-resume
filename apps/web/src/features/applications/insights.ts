@@ -1,4 +1,5 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import { t } from "@lingui/core/macro";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 
 export type StageCount = { status: ApplicationStatus; count: number };
@@ -45,11 +46,11 @@ export function computeInsights(byStage: StageCount[]): Insights {
 	const responseRate = appliedOn > 0 ? Math.round(((reached[2] ?? 0) / appliedOn) * 100) : 0;
 
 	const tiles = [
-		{ label: "Total applications", value: String(total), sub: "in this view" },
-		{ label: "Applied", value: String(appliedOn), sub: "past saved" },
-		{ label: "Response rate", value: `${responseRate}%`, sub: "reached screening" },
-		{ label: "Interviews", value: String(interviews), sub: "interview or beyond" },
-		{ label: "Offers", value: String(offers), sub: rejected > 0 ? `${rejected} rejected` : "so far" },
+		{ label: t`Total applications`, value: String(total), sub: t`in this view` },
+		{ label: t`Applied`, value: String(appliedOn), sub: t`past saved` },
+		{ label: t`Response rate`, value: `${responseRate}%`, sub: t`reached screening` },
+		{ label: t`Interviews`, value: String(interviews), sub: t`interview or beyond` },
+		{ label: t`Offers`, value: String(offers), sub: rejected > 0 ? t`${rejected} rejected` : t`so far` },
 	];
 
 	return { total, tiles, funnel, rejected };

@@ -25,10 +25,14 @@ const formSchema = z.object({
 		.trim()
 		.toLowerCase()
 		.regex(/^[a-z0-9._-]+$/, {
-			message: "Username can only contain lowercase letters, numbers, dots, hyphens and underscores.",
+			// Resolved lazily at validation time so the active locale is used.
+			error: () => t`Username can only contain lowercase letters, numbers, dots, hyphens and underscores.`,
 		}),
 	email: z.email().toLowerCase(),
-	password: z.string().min(6).max(64),
+	password: z
+		.string()
+		.min(8, { error: () => t`Password must be at least 8 characters.` })
+		.max(64),
 });
 
 type Props = {
@@ -79,7 +83,13 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 				if (continuation.error) {
 					toast.add({
 						type: "error",
-						description: getAuthErrorMessage(continuation.error, t`登录授权失败，请重试。`),
+						description: getAuthErrorMessage(
+							continuation.error,
+							t({
+								comment: "Fallback toast when the OAuth sign-in continuation fails",
+								message: "Sign-in authorization failed. Please try again.",
+							}),
+						),
 						id: toastId,
 					});
 					return;
@@ -219,8 +229,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 									<FormControl
 										render={
 											<Input
-												min={6}
-												max={64}
+												minLength={8}
+												maxLength={64}
 												type={showPassword ? "text" : "password"}
 												autoComplete="section-register new-password"
 												name={field.name}

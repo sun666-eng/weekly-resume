@@ -1,5 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 import type { VitestEnvironment } from "vitest/node";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
@@ -11,6 +12,8 @@ type VitestProjectOptions = {
 	dirname: string;
 	environment?: VitestEnvironment;
 	plugins?: ViteUserConfig["plugins"];
+	/** Project-specific setup files, resolved from `dirname` and run after the root setup. */
+	extraSetupFiles?: string[];
 };
 
 export const createVitestProjectConfig = ({
@@ -18,6 +21,7 @@ export const createVitestProjectConfig = ({
 	dirname,
 	environment = "node",
 	plugins = [],
+	extraSetupFiles = [],
 }: VitestProjectOptions) =>
 	defineConfig({
 		root: dirname,
@@ -40,7 +44,7 @@ export const createVitestProjectConfig = ({
 					},
 				},
 			},
-			setupFiles: [setupFile],
+			setupFiles: [setupFile, ...extraSetupFiles.map((file) => join(dirname, file))],
 			include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
 			exclude: ["node_modules", "dist", ".output", "coverage", "reports"],
 			pool: "threads",
