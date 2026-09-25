@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/client";
-import { getOrpcErrorMessage, getReadableErrorMessage, getResumeErrorMessage } from "./error-message";
+import {
+	getLocalizedErrorMessage,
+	getOrpcErrorMessage,
+	getReadableErrorMessage,
+	getResumeErrorMessage,
+} from "./error-message";
 
 describe("getReadableErrorMessage", () => {
 	it("shows the upload size validation message instead of the generic oRPC error", () => {
@@ -153,6 +158,56 @@ describe("getResumeErrorMessage", () => {
 		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 		try {
 			expect(getResumeErrorMessage(null)).toBe("Something went wrong. Please try again.");
+			expect(consoleError).toHaveBeenCalledOnce();
+		} finally {
+			consoleError.mockRestore();
+		}
+	});
+});
+
+describe("getLocalizedErrorMessage", () => {
+	it("maps API business codes to localized copy", () => {
+		expect(getLocalizedErrorMessage(new ORPCError("COVER_LETTER_SAVE_CONFLICT"), "fallback")).toBe(
+			"This cover letter changed elsewhere. Reload it before saving again.",
+		);
+	});
+
+	it("interpolates attachment filenames from error data", () => {
+		const error = new ORPCError("AGENT_ATTACHMENT_UNREADABLE", { data: { filename: "a.pdf" } });
+		expect(getLocalizedErrorMessage(error, "fallback")).toBe("Attachment a.pdf could not be read.");
+	});
+
+	it("falls back when the unreadable attachment carries no filename", () => {
+		expect(getLocalizedErrorMessage(new ORPCError("AGENT_ATTACHMENT_UNREADABLE"), "fallback")).toBe(
+			"An attachment could not be read.",
+		);
+	});
+
+	it("localizes known zod issue messages and keeps unmatched ones verbatim", () => {
+		const consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		try {
+			const error = new ORPCError("BAD_REQUEST", {
+				message: "Input validation failed",
+				data: { issues: [{ message: "File size must be less than 10MB" }, { message: "Too small: expected string" }] },
+			});
+			expect(getLocalizedErrorMessage(error, "fallback")).toBe(
+				"File size must be less than 10MB Too small: expected string",
+			);
+			expect(consoleWarn).toHaveBeenCalledOnce();
+		} finally {
+			consoleWarn.mockRestore();
+		}
+	});
+
+	it("maps Better Auth codes through the shared auth table", () => {
+		const error = { code: "USERNAME_IS_ALREADY_TAKEN", message: "Username is already taken" };
+		expect(getLocalizedErrorMessage(error, "fallback")).toBe("This username is already taken.");
+	});
+
+	it("returns the localized fallback and logs raw errors", () => {
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			expect(getLocalizedErrorMessage(new Error("boom"), "Something went wrong.")).toBe("Something went wrong.");
 			expect(consoleError).toHaveBeenCalledOnce();
 		} finally {
 			consoleError.mockRestore();

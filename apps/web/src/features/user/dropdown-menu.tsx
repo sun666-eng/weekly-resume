@@ -21,7 +21,7 @@ import {
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { changeLocale, localeMap } from "@/libs/locale";
 import { isTheme } from "@/libs/theme";
 
@@ -53,7 +53,7 @@ export function UserDropdownMenu({ children }: Props) {
 				onError: ({ error }) => {
 					toast.add({
 						type: "error",
-						description: getReadableErrorMessage(
+						description: getLocalizedErrorMessage(
 							error,
 							t({
 								comment: "Fallback toast when signing out fails",

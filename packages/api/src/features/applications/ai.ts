@@ -19,9 +19,7 @@ const MAX_PASTED_JOB_DESCRIPTION_CHARS = 20_000;
 async function resolveModel(userId: string) {
 	const provider = await aiProvidersService.getDefaultRunnable({ userId });
 	if (!provider) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "No AI provider is configured. Add one in Settings → Integrations to use AI features.",
-		});
+		throw new ORPCError("AI_PROVIDER_NOT_CONFIGURED", { status: 400 });
 	}
 	return getModel({
 		provider: provider.provider,
@@ -46,7 +44,7 @@ function isAiProviderGatewayError(error: unknown): boolean {
 
 /** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
 function throwAiProviderGatewayError(cause?: unknown): never {
-	throw new ORPCError("BAD_GATEWAY", { message: "Could not reach the AI provider.", cause });
+	throw new ORPCError("AI_PROVIDER_UNREACHABLE", { status: 502, cause });
 }
 
 /**
@@ -147,10 +145,9 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			if (!application.resumeId)
-				throw new ORPCError("BAD_REQUEST", { message: "Link a resume to this application first." });
+			if (!application.resumeId) throw new ORPCError("APPLICATION_AI_NO_RESUME", { status: 400 });
 			if (!application.jobDescription) {
-				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
+				throw new ORPCError("APPLICATION_AI_NO_JD", { status: 400 });
 			}
 
 			const [model, resume] = await Promise.all([
@@ -228,10 +225,9 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			if (!application.resumeId)
-				throw new ORPCError("BAD_REQUEST", { message: "Link a resume to this application first." });
+			if (!application.resumeId) throw new ORPCError("APPLICATION_AI_NO_RESUME", { status: 400 });
 			if (!application.jobDescription) {
-				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
+				throw new ORPCError("APPLICATION_AI_NO_JD", { status: 400 });
 			}
 
 			const [model, resume] = await Promise.all([

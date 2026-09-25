@@ -14,7 +14,7 @@ import { useCallback } from "react";
 import { match } from "ts-pattern";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 /**
@@ -115,7 +115,7 @@ export function useAuthProviderActions() {
 		if (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(
+				description: getLocalizedErrorMessage(
 					error,
 					t({
 						comment: "Fallback toast when linking a social authentication provider fails",
@@ -142,7 +142,7 @@ export function useAuthProviderActions() {
 		if (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(
+				description: getLocalizedErrorMessage(
 					error,
 					t({
 						comment: "Fallback toast when unlinking a social authentication provider fails",

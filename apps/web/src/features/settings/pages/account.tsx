@@ -11,7 +11,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 const CONFIRMATION_TEXT = "delete";
@@ -34,7 +34,7 @@ export function AccountSettingsPage() {
 			onError: (error) => {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when data export fails",
@@ -72,7 +72,7 @@ export function AccountSettingsPage() {
 			onError: (error) => {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when account deletion fails",

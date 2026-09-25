@@ -24,7 +24,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 
@@ -70,7 +70,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when enabling two-factor authentication fails",
@@ -104,7 +104,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when verifying two-factor setup code fails",

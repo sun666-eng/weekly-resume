@@ -8,7 +8,7 @@ import { Separator } from "@reactive-resume/ui/components/separator";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { usePrompt } from "@/hooks/use-prompt";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 
 export function PasskeysSection() {
 	const queryClient = useQueryClient();
@@ -26,7 +26,7 @@ export function PasskeysSection() {
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when passkey registration fails",
@@ -58,7 +58,7 @@ export function PasskeysSection() {
 			if (renameError) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						renameError,
 						t({
 							comment: "Fallback toast when renaming a passkey fails",
@@ -82,7 +82,7 @@ export function PasskeysSection() {
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when deleting a passkey fails",

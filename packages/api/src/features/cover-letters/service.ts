@@ -94,7 +94,7 @@ async function updateRevision(
 		.returning();
 	if (row) return coverLetterSchema.parse(row);
 	await getById(input);
-	throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before saving again." });
+	throw new ORPCError("COVER_LETTER_SAVE_CONFLICT", { status: 409 });
 }
 
 export const coverLetterService = {
@@ -168,7 +168,7 @@ export const coverLetterService = {
 			.returning({ id: schema.coverLetter.id });
 		if (rows.length) return;
 		await getById(input);
-		throw new ORPCError("CONFLICT", { message: "This cover letter changed elsewhere. Reload it before deleting." });
+		throw new ORPCError("COVER_LETTER_DELETE_CONFLICT", { status: 409 });
 	},
 	copyEmbedded: async (input: {
 		userId: string;

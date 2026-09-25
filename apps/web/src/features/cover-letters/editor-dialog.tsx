@@ -22,7 +22,7 @@ import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/fil
 import { Combobox } from "@/components/ui/combobox";
 import { templates } from "@/dialogs/resume/template/data";
 import { useConfirm } from "@/hooks/use-confirm";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { CoverLetterEditor } from "./editor";
 
@@ -82,7 +82,7 @@ export function CoverLetterEditorDialog({
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Could not complete this action. Please try again.`),
+				description: getLocalizedErrorMessage(error, t`Could not complete this action. Please try again.`),
 			});
 		} finally {
 			running.current = false;
@@ -117,7 +117,7 @@ export function CoverLetterEditorDialog({
 					<Spinner />
 				) : query.error ? (
 					<div className="space-y-3">
-						<p role="alert">{getReadableErrorMessage(query.error, t`Could not load this cover letter.`)}</p>
+						<p role="alert">{getLocalizedErrorMessage(query.error, t`Could not load this cover letter.`)}</p>
 						<Button onClick={() => void query.refetch()}>
 							<Trans>Retry</Trans>
 						</Button>

@@ -32,7 +32,7 @@ export async function generateJson<T>(
 	const start = candidate.indexOf("{");
 	const end = candidate.lastIndexOf("}");
 	if (start === -1 || end === -1 || end < start) {
-		throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "The AI response could not be parsed." });
+		throw new ORPCError("AI_RESPONSE_INVALID", { status: 502 });
 	}
 
 	return schema.parse(JSON.parse(candidate.slice(start, end + 1)));

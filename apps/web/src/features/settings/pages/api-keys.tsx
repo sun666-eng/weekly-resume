@@ -9,7 +9,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 
 export function ApiKeysSettingsPage() {
 	const confirm = useConfirm();
@@ -50,7 +50,7 @@ export function ApiKeysSettingsPage() {
 		if (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(
+				description: getLocalizedErrorMessage(
 					error,
 					t({
 						comment: "Fallback toast when deleting an API key fails",

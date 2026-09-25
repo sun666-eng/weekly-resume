@@ -11,7 +11,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
@@ -53,7 +53,7 @@ export function ProfileSettingsPage({ session }: Props) {
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when updating profile details fails",
@@ -77,7 +77,7 @@ export function ProfileSettingsPage({ session }: Props) {
 				if (error) {
 					toast.add({
 						type: "error",
-						description: getReadableErrorMessage(
+						description: getLocalizedErrorMessage(
 							error,
 							t({
 								comment: "Fallback toast when requesting email change confirmation fails",
@@ -115,7 +115,7 @@ export function ProfileSettingsPage({ session }: Props) {
 		if (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(
+				description: getLocalizedErrorMessage(
 					error,
 					t({
 						comment: "Fallback toast when resending account verification email fails",

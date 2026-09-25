@@ -12,7 +12,7 @@ function isInvalidAiBaseUrl(error: unknown) {
 }
 
 function throwInvalidProviderConfig(): never {
-	throw new ORPCError("BAD_REQUEST", { message: "Invalid AI provider configuration." });
+	throw new ORPCError("AI_PROVIDER_INVALID", { status: 400 });
 }
 
 export const aiProvidersRouter = {
@@ -137,7 +137,7 @@ export const aiProvidersRouter = {
 			} catch (error) {
 				if (isInvalidAiBaseUrl(error)) throwInvalidProviderConfig();
 				if (error instanceof ORPCError) throw error;
-				throw new ORPCError("BAD_GATEWAY", { message: "Could not reach the AI provider." });
+				throw new ORPCError("AI_PROVIDER_UNREACHABLE", { status: 502 });
 			}
 		}),
 };

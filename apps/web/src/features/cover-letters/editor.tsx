@@ -8,7 +8,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { RichInput } from "@/components/input/rich-input";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 
 type CoverLetterChanges = Pick<CoverLetter, "name" | "recipient" | "content"> & { expectedRevision: number };
 export type CoverLetterEditorProps = {
@@ -71,7 +71,7 @@ export function CoverLetterEditor({
 			setError(
 				cause instanceof ORPCError && cause.code === "CONFLICT"
 					? t`This cover letter changed elsewhere. Your edits are still here. Reload the latest version before saving again.`
-					: getReadableErrorMessage(cause, t`Could not save the cover letter. Please try again.`),
+					: getLocalizedErrorMessage(cause, t`Could not save the cover letter. Please try again.`),
 			);
 		} finally {
 			saving.current = false;

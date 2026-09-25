@@ -61,13 +61,19 @@ const letter: CoverLetter = {
 
 describe("CoverLetterEditor", () => {
 	it("keeps edits after a failed save", async () => {
-		const onSave = vi.fn().mockRejectedValue(new Error("Save failed"));
-		render(<CoverLetterEditor letter={letter} onSave={onSave} onClose={() => {}} />);
-		fireEvent.change(screen.getByLabelText("Content"), { target: { value: "My unsaved draft" } });
-		fireEvent.click(screen.getByRole("button", { name: "Save Changes" }));
-		await screen.findByRole("alert");
-		expect(screen.getByLabelText("Content")).toHaveValue("My unsaved draft");
-		expect(screen.getByRole("alert")).toHaveTextContent("Save failed");
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			const onSave = vi.fn().mockRejectedValue(new Error("Save failed"));
+			render(<CoverLetterEditor letter={letter} onSave={onSave} onClose={() => {}} />);
+			fireEvent.change(screen.getByLabelText("Content"), { target: { value: "My unsaved draft" } });
+			fireEvent.click(screen.getByRole("button", { name: "Save Changes" }));
+			await screen.findByRole("alert");
+			expect(screen.getByLabelText("Content")).toHaveValue("My unsaved draft");
+			// The raw error message is not shown verbatim; the localized fallback is.
+			expect(screen.getByRole("alert")).toHaveTextContent("Could not save the cover letter. Please try again.");
+		} finally {
+			consoleError.mockRestore();
+		}
 	});
 
 	it("saves current content with original revision and uses returned revision for the next edit", async () => {

@@ -18,7 +18,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 
@@ -65,7 +65,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when changing account password fails",

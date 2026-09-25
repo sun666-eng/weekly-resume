@@ -19,7 +19,7 @@ function timelineDate(value: Date | string): Date {
 
 function atFromDateString(date: string, existing?: Date | string): Date {
 	const [year, month, day] = date.split("-").map(Number);
-	if (!year || !month || !day) throw new ORPCError("BAD_REQUEST", { message: "Date must use YYYY-MM-DD format." });
+	if (!year || !month || !day) throw new ORPCError("APPLICATION_DATE_INVALID", { status: 400 });
 
 	const existingDate = existing ? timelineDate(existing) : undefined;
 
@@ -34,7 +34,7 @@ function atFromDateString(date: string, existing?: Date | string): Date {
 			existingDate?.getUTCMilliseconds() ?? 0,
 		),
 	);
-	if (timelineDay(parsed) !== date) throw new ORPCError("BAD_REQUEST", { message: "Date must use YYYY-MM-DD format." });
+	if (timelineDay(parsed) !== date) throw new ORPCError("APPLICATION_DATE_INVALID", { status: 400 });
 
 	return parsed;
 }
@@ -61,15 +61,12 @@ function currentStageAnchor(activity: ApplicationTimelineEntry[], status: Applic
 
 function assertCurrentStageAnchorLatest(activity: ApplicationTimelineEntry[], status: ApplicationStatus) {
 	const anchor = currentStageAnchor(activity, status);
-	if (!anchor)
-		throw new ORPCError("BAD_REQUEST", { message: "Application timeline is missing its current stage entry." });
+	if (!anchor) throw new ORPCError("APPLICATION_TIMELINE_INVALID", { status: 400 });
 
 	const anchorDay = timelineDay(anchor.at);
 	const newerStage = activity.some((entry) => entry.type === "stage" && timelineDay(entry.at) > anchorDay);
 	if (newerStage) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "Current stage date cannot be older than another stage entry.",
-		});
+		throw new ORPCError("APPLICATION_STAGE_DATE_INVALID", { status: 400 });
 	}
 }
 
@@ -329,7 +326,7 @@ export const applicationService = {
 		contentType: string;
 	}) => {
 		if (input.contentType !== "application/pdf") {
-			throw new ORPCError("BAD_REQUEST", { message: "Application documents must be PDF files." });
+			throw new ORPCError("APPLICATION_DOCUMENTS_INVALID", { status: 400 });
 		}
 
 		const existing = await requireOwned(input.id, input.userId);
@@ -443,7 +440,7 @@ export const applicationService = {
 				if (entry.id !== input.entryId) return entry;
 
 				if (entry.type === "stage" && input.text !== undefined) {
-					throw new ORPCError("BAD_REQUEST", { message: "Stage timeline text is derived and cannot be edited." });
+					throw new ORPCError("APPLICATION_TIMELINE_IMMUTABLE", { status: 400 });
 				}
 
 				return {
@@ -489,7 +486,7 @@ export const applicationService = {
 
 			const anchor = currentStageAnchor(existing.activity, existing.status);
 			if (entry.type === "stage" && anchor?.id === entry.id) {
-				throw new ORPCError("BAD_REQUEST", { message: "The current stage timeline entry cannot be deleted." });
+				throw new ORPCError("APPLICATION_TIMELINE_IMMUTABLE", { status: 400 });
 			}
 
 			const activity = existing.activity.filter((item) => item.id !== input.entryId);

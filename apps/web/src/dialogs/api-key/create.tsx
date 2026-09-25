@@ -27,7 +27,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
 
@@ -66,7 +66,7 @@ const CreateApiKeyForm = ({ setApiKey }: CreateApiKeyFormProps) => {
 			if (error) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when creating an API key fails",

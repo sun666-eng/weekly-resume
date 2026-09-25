@@ -11,7 +11,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
 import { templates } from "@/dialogs/resume/template/data";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { CoverLetterEditorDialog } from "./editor-dialog";
 
@@ -73,7 +73,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 		} catch (error) {
 			toast.add({
 				type: "error",
-				description: getReadableErrorMessage(error, t`Could not complete this action. Please try again.`),
+				description: getLocalizedErrorMessage(error, t`Could not complete this action. Please try again.`),
 			});
 		} finally {
 			running.current = false;
@@ -230,7 +230,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 								</p>
 							)}
 							{source.error && (
-								<p role="alert">{getReadableErrorMessage(source.error, t`Could not load the selected resume.`)}</p>
+								<p role="alert">{getLocalizedErrorMessage(source.error, t`Could not load the selected resume.`)}</p>
 							)}
 						</div>
 					</div>
@@ -240,7 +240,7 @@ export function CoverLetterLibrary({ initialResumeId, resumeReady = true, onEdit
 				<Spinner />
 			) : query.error ? (
 				<div className="space-y-2">
-					<p role="alert">{getReadableErrorMessage(query.error, t`Could not load cover letters.`)}</p>
+					<p role="alert">{getLocalizedErrorMessage(query.error, t`Could not load cover letters.`)}</p>
 					<Button variant="outline" onClick={() => void query.refetch()}>
 						<Trans>Retry</Trans>
 					</Button>

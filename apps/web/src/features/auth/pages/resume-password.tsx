@@ -10,7 +10,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -58,7 +58,7 @@ export function ResumePasswordPage({ username, slug, redirectPath }: ResumePassw
 						} else {
 							toast.add({
 								type: "error",
-								description: getReadableErrorMessage(
+								description: getLocalizedErrorMessage(
 									error,
 									t({
 										comment: "Fallback toast when resume password verification fails unexpectedly",

@@ -23,6 +23,7 @@ import {
 import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { isDefaultThreadTitle } from "@/features/agent/thread-title";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { formatRelativeTime } from "@/libs/locale";
@@ -134,7 +135,9 @@ function ThreadRow({ thread, activeThreadId }: ThreadRowProps) {
 	);
 	const isActive = thread.id === activeThreadId;
 	const isArchived = thread.status === "archived";
-	const title = thread.title === thread.resumeName ? t`New thread` : thread.title;
+	// The server stores the literal "New thread" as the default title; render it through the
+	// catalog so the list follows the interface language instead of the stored English string.
+	const title = isDefaultThreadTitle(thread.title, thread.resumeName) ? t`New thread` : thread.title;
 
 	return (
 		<div

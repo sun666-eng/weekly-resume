@@ -22,24 +22,19 @@ function isCredentialEncryptionUnavailable(error: unknown): boolean {
 
 /** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
 function throwAiProviderGatewayError(cause?: unknown): never {
-	throw new ORPCError("BAD_GATEWAY", { message: "Could not reach the AI provider.", cause });
+	throw new ORPCError("AI_PROVIDER_UNREACHABLE", { status: 502, cause });
 }
 
 function throwAiProviderConfigError(): never {
-	throw new ORPCError("BAD_REQUEST", { message: "Invalid AI provider configuration." });
+	throw new ORPCError("AI_PROVIDER_INVALID", { status: 400 });
 }
 
 function throwCredentialEncryptionUnavailable(): never {
-	throw new ORPCError("PRECONDITION_FAILED", {
-		message: "AI providers are unavailable because ENCRYPTION_SECRET is not configured.",
-	});
+	throw new ORPCError("AI_ENCRYPTION_UNAVAILABLE", { status: 412 });
 }
 
 function throwResumeStructureError(error: ZodError): never {
-	throw new ORPCError("BAD_REQUEST", {
-		message: "Invalid resume data structure",
-		cause: flattenError(error),
-	});
+	throw new ORPCError("AI_REQUEST_INVALID", { status: 400, cause: flattenError(error) });
 }
 
 async function getRunnableProvider(userId: string, aiProviderId?: string) {
@@ -47,7 +42,7 @@ async function getRunnableProvider(userId: string, aiProviderId?: string) {
 		? await aiProvidersService.getRunnableById({ id: aiProviderId, userId })
 		: await aiProvidersService.getDefaultRunnable({ userId });
 
-	if (!provider) throw new ORPCError("BAD_REQUEST", { message: "No tested AI provider is available." });
+	if (!provider) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
 
 	return provider;
 }
@@ -169,7 +164,7 @@ export const aiRouter = {
 				if (isInvalidAiBaseUrlError(error)) throwAiProviderConfigError();
 				if (isAiProviderGatewayError(error)) throwAiProviderGatewayError(error);
 				if (error instanceof ZodError) {
-					throw new ORPCError("BAD_REQUEST", { message: "Invalid ATS review structure", cause: flattenError(error) });
+					throw new ORPCError("AI_RESPONSE_INVALID", { status: 400, cause: flattenError(error) });
 				}
 				throw error;
 			}

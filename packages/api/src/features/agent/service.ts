@@ -286,23 +286,23 @@ export function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<
 function uniqueAttachmentIds(ids: unknown) {
 	if (ids === undefined) return [];
 	if (!Array.isArray(ids)) {
-		throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be an array." });
+		throw new ORPCError("AGENT_ATTACHMENTS_INVALID", { status: 400 });
 	}
 
 	if (ids.length > MAX_ATTACHMENTS_PER_MESSAGE) {
-		throw new ORPCError("BAD_REQUEST", { message: "Too many attachments for one message." });
+		throw new ORPCError("AGENT_ATTACHMENTS_TOO_MANY", { status: 400 });
 	}
 
 	const unique = new Set<string>();
 	for (const id of ids) {
 		if (typeof id !== "string" || !id.trim()) {
-			throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be non-empty strings." });
+			throw new ORPCError("AGENT_ATTACHMENTS_INVALID", { status: 400 });
 		}
 		unique.add(id.trim());
 	}
 
 	if (unique.size !== ids.length) {
-		throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be unique." });
+		throw new ORPCError("AGENT_ATTACHMENTS_INVALID", { status: 400 });
 	}
 
 	return [...unique];
@@ -325,18 +325,14 @@ async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: st
 		);
 
 	if (attachments.length !== ids.length) {
-		throw new ORPCError("BAD_REQUEST", {
-			message: "One or more attachments are unavailable or already linked to a message.",
-		});
+		throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 409 });
 	}
 
 	const attachmentsById = new Map(attachments.map((attachment) => [attachment.id, attachment]));
 	return ids.map((id) => {
 		const attachment = attachmentsById.get(id);
 		if (!attachment) {
-			throw new ORPCError("BAD_REQUEST", {
-				message: "One or more attachments are unavailable or already linked to a message.",
-			});
+			throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 409 });
 		}
 
 		return attachment;
@@ -366,7 +362,7 @@ async function linkAttachmentsToMessage(input: {
 		.returning({ id: schema.agentAttachment.id });
 
 	if (linked.length !== ids.length) {
-		throw new ORPCError("CONFLICT", { message: "One or more attachments were already linked to another message." });
+		throw new ORPCError("AGENT_ATTACHMENTS_UNAVAILABLE", { status: 409 });
 	}
 }
 
@@ -376,7 +372,7 @@ function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): Promis
 		attachments.map(async (attachment) => {
 			const stored = await storage.read(attachment.storageKey);
 			if (!stored) {
-				throw new ORPCError("BAD_REQUEST", { message: `Attachment ${attachment.filename} could not be read.` });
+				throw new ORPCError("AGENT_ATTACHMENT_UNREADABLE", { status: 400, data: { filename: attachment.filename } });
 			}
 
 			return { attachment, data: stored.data };
@@ -486,7 +482,7 @@ async function updateAssistantToolResultMessage(input: { userId: string; threadI
 	const existingRows = await listThreadMessages({ threadId: input.threadId, userId: input.userId });
 	const existingRow = existingRows.find((row) => row.role === "assistant" && toMessage(row).id === input.message.id);
 	if (!existingRow) {
-		throw new ORPCError("BAD_REQUEST", { message: "The answered assistant message was not found." });
+		throw new ORPCError("AGENT_QUESTION_NOT_FOUND", { status: 400 });
 	}
 
 	const {
@@ -498,15 +494,15 @@ async function updateAssistantToolResultMessage(input: { userId: string; threadI
 	} = mergeClientToolResponses(toMessage(existingRow), input.message);
 
 	if (conflictingCount > 0) {
-		throw new ORPCError("BAD_REQUEST", { message: "This approval was already answered with a different decision." });
+		throw new ORPCError("AGENT_RESPONSE_ALREADY_HANDLED", { status: 400 });
 	}
 	// A recorded-but-unexecuted approval (pendingContinuationCount) proceeds: a prior continuation
 	// attempt failed after persisting the decision, and this retry is the recovery path.
 	if (mergedCount === 0 && pendingContinuationCount === 0) {
 		if (alreadyResolvedCount > 0) {
-			throw new ORPCError("CONFLICT", { message: "This response was already handled." });
+			throw new ORPCError("AGENT_RESPONSE_ALREADY_HANDLED", { status: 409 });
 		}
-		throw new ORPCError("BAD_REQUEST", { message: "No matching unanswered user question was found." });
+		throw new ORPCError("AGENT_QUESTION_NOT_FOUND", { status: 400 });
 	}
 
 	await db
@@ -939,7 +935,7 @@ export const agentService = {
 				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId })
 				: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
 
-			if (!selectedProvider) throw new ORPCError("BAD_REQUEST", { message: "No tested AI provider is available." });
+			if (!selectedProvider) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
 
 			const working = await createWorkingResume(input);
 			const [thread] = await db
@@ -975,7 +971,7 @@ export const agentService = {
 				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId })
 				: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
 
-			if (!selectedProvider) throw new ORPCError("BAD_REQUEST", { message: "No tested AI provider is available." });
+			if (!selectedProvider) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
 
 			// Confirms the caller owns the resume (throws otherwise) and provides its name for the summary.
 			const resume = await resumeService.getById({ id: input.resumeId, userId: input.userId });
@@ -1060,7 +1056,7 @@ export const agentService = {
 			// Approval behavior is captured when a run's agent is created; toggling mid-run would
 			// show "review on" while later patches from the same run still auto-apply.
 			if (thread.activeRunId && !isStaleAgentRun(thread)) {
-				throw new ORPCError("CONFLICT", { message: "Review settings cannot change while a run is active." });
+				throw new ORPCError("AGENT_REVIEW_LOCKED", { status: 409 });
 			}
 
 			const [updated] = await db
@@ -1133,11 +1129,11 @@ export const agentService = {
 
 			const thread = await getThread({ id: input.threadId, userId: input.userId });
 			if (thread.status === "archived") {
-				throw new ORPCError("CONFLICT", { message: "This thread is archived." });
+				throw new ORPCError("AGENT_THREAD_ARCHIVED", { status: 409 });
 			}
 			if (thread.activeRunId) {
 				if (!isStaleAgentRun(thread)) {
-					throw new ORPCError("CONFLICT", { message: "This thread already has an active run." });
+					throw new ORPCError("AGENT_THREAD_BUSY", { status: 409 });
 				}
 				// Lazy reap: a dead run's claim heals on the next send instead of CONFLICTing forever.
 				await reapStaleAgentRun({
@@ -1148,7 +1144,7 @@ export const agentService = {
 				});
 			}
 			if (!thread.workingResumeId || !thread.aiProviderId) {
-				throw new ORPCError("BAD_REQUEST", { message: "This thread is read-only." });
+				throw new ORPCError("AGENT_THREAD_READ_ONLY", { status: 400 });
 			}
 			if (input.message.role !== "user" && input.message.role !== "assistant") {
 				throw new ORPCError("BAD_REQUEST", { message: "Agent messages must be user messages or tool results." });
@@ -1179,7 +1175,7 @@ export const agentService = {
 			const claimed = await claimActiveAgentRun({ threadId: input.threadId, userId: input.userId, runId, streamId });
 			if (!claimed) {
 				activeRunControllers.delete(runId);
-				throw new ORPCError("CONFLICT", { message: "This thread already has an active run." });
+				throw new ORPCError("AGENT_THREAD_BUSY", { status: 409 });
 			}
 
 			// Whole-run wall clock. Must abort with an AbortError (see abortReason) — never AbortSignal.timeout().
@@ -1488,13 +1484,13 @@ export const agentService = {
 			if (!action) throw new ORPCError("NOT_FOUND");
 			if (action.status !== "applied") return toAction(action);
 			if (action.kind !== "resume_patch") {
-				throw new ORPCError("BAD_REQUEST", { message: "Only resume patch actions can be rolled back." });
+				throw new ORPCError("AGENT_ROLLBACK_UNSUPPORTED", { status: 400 });
 			}
 			const resumeId = action.resumeId;
 			const snapshotData = action.snapshotData;
-			if (!resumeId) throw new ORPCError("BAD_REQUEST", { message: "The edited resume no longer exists." });
+			if (!resumeId) throw new ORPCError("AGENT_RESUME_GONE", { status: 400 });
 			if (!snapshotData) {
-				throw new ORPCError("BAD_REQUEST", { message: "This legacy patch does not have a rollback snapshot." });
+				throw new ORPCError("AGENT_ROLLBACK_UNAVAILABLE", { status: 400 });
 			}
 
 			const [latestAction] = await db
@@ -1513,7 +1509,7 @@ export const agentService = {
 				.limit(1);
 
 			if (!latestAction) {
-				throw new ORPCError("BAD_REQUEST", { message: "This patch is no longer applied." });
+				throw new ORPCError("AGENT_PATCH_NOT_APPLIED", { status: 400 });
 			}
 
 			try {
