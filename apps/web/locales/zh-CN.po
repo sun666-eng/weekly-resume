@@ -126,6 +126,10 @@ msgstr "{label} 在过去 30 天内"
 msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} 项检查中，{totalRules} 项已通过"
 
+#: src/features/applications/insights.ts
+msgid "{rejected} rejected"
+msgstr "已拒绝 {rejected} 家"
+
 #: src/libs/resume/ats.ts
 msgid "{sectionTitle} · Item {itemNumber}"
 msgstr "{sectionTitle} · 项目 {itemNumber} "
@@ -266,6 +270,10 @@ msgstr "属于你的简历制作工具，数据由你保留，随时可以导出
 msgid "A resume laid out for a human reader, with a photo, headings and columns"
 msgstr "为人类读者设计的简历排版，带照片、标题和分栏"
 
+#: src/libs/error-message.ts
+msgid "A resume with this slug already exists."
+msgstr "已存在相同链接标识的简历。"
+
 #: src/features/ats-checker/parse-preview.tsx
 msgid "A single-column export keeps every fact. Columns and images are where facts get lost."
 msgstr "单栏导出能保留每一条信息。信息容易丢失的地方是分栏和图片。"
@@ -344,11 +352,11 @@ msgstr "为该 URL 添加标签"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
 msgid "Add a new award"
-msgstr "添加新奖项"
+msgstr "添加获奖经历"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
 msgid "Add a new certification"
-msgstr "添加新证书"
+msgstr "添加证书"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Add a new custom section"
@@ -356,7 +364,7 @@ msgstr "添加新的自定义章节"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/education.tsx
 msgid "Add a new education"
-msgstr "添加新的教育经历"
+msgstr "添加教育背景"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
 msgid "Add a new experience"
@@ -381,11 +389,11 @@ msgstr "添加新个人资料"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/projects.tsx
 msgid "Add a new project"
-msgstr "添加新项目"
+msgstr "添加项目经历"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
 msgid "Add a new publication"
-msgstr "添加新出版物"
+msgstr "添加科研成果"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/references.tsx
 msgid "Add a new reference"
@@ -393,7 +401,7 @@ msgstr "添加新推荐人"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
 msgid "Add a new skill"
-msgstr "添加新技能"
+msgstr "添加专业技能"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/volunteer.tsx
 msgid "Add a new volunteer experience"
@@ -402,6 +410,10 @@ msgstr "添加新的志愿者经历"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add a note…"
 msgstr "添加备注…"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/publications.tsx
+msgid "Add a paper, patent, or research report as its own entry."
+msgstr "论文、专利或研究报告分别添加为一条成果。"
 
 #: src/libs/resume/ats.ts
 msgid "Add a period such as \"Jan 2020 - Present\" so it lands on your timeline."
@@ -437,6 +449,10 @@ msgstr "添加申请"
 msgid "Add at least a city and country so roles can be matched to your region."
 msgstr "至少添加一个城市和国家，以便角色可以与您所在的地区相匹配。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/certifications.tsx
+msgid "Add certificates here instead of placing them inside awards."
+msgstr "证书写在这里，不要放进获奖经历。"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Add contact"
 msgstr "添加联系人"
@@ -461,6 +477,10 @@ msgstr "添加多个职位以展示在同一公司的职业晋升情况。"
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "添加一个能展示你作品的链接。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/skills.tsx
+msgid "Add one skill group at a time, then put the specific skills in its keywords."
+msgstr "每次添加一个技能类别，再把具体技能写进关键词。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one with its country code; some application forms require it before you can submit."
@@ -517,6 +537,10 @@ msgstr "南非语"
 #: src/features/ats-checker/ai-review/ai-review-results.tsx
 msgid "Against the job description"
 msgstr "对照职位描述"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Age"
+msgstr "年龄"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
@@ -724,6 +748,7 @@ msgid "Applications to export"
 msgstr "待导出的申请"
 
 #: src/features/applications/components/table-view.tsx
+#: src/features/applications/insights.ts
 #: src/features/homepage/feature-explorer.tsx
 msgid "Applied"
 msgstr "已申请"
@@ -796,7 +821,7 @@ msgstr "您确定要重置这一部分吗？"
 
 #: src/dialogs/resume/sections/education.tsx
 msgid "Area of Study"
-msgstr "学习领域"
+msgstr "专业"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Artificial Intelligence"
@@ -816,7 +841,7 @@ msgstr "宽高比"
 
 #: src/libs/resume/section.tsx
 msgid "ATS Check"
-msgstr "ATS检查”"
+msgstr "ATS检查"
 
 #: src/features/homepage/site-footer.tsx
 #: src/routes/_home/ats-checker.tsx
@@ -864,15 +889,19 @@ msgid "Avoid heavy letter-spacing effects, then re-export."
 msgstr "避免使用过大的字距效果，然后重新导出。"
 
 #: src/dialogs/resume/sections/award.tsx
+msgid "Award name"
+msgstr "奖项名称"
+
+#: src/dialogs/resume/sections/award.tsx
 msgctxt "(noun) person, organization, or entity that gives an award"
 msgid "Awarder"
-msgstr "授予者"
+msgstr "颁发方"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Awards"
-msgstr "奖项"
+msgstr "获奖经历"
 
 #: src/libs/locale.ts
 msgid "Azerbaijani"
@@ -1008,6 +1037,7 @@ msgstr "项目符号列表"
 #: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
 #: src/features/settings/pages/profile.tsx
+#: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
@@ -1029,11 +1059,15 @@ msgstr "加泰罗尼亚语"
 msgid "Center Align"
 msgstr "居中对齐"
 
+#: src/dialogs/resume/sections/certification.tsx
+msgid "Certificate name"
+msgstr "证书名称"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Certifications"
-msgstr "证书"
+msgstr "证书信息"
 
 #: src/routes/_home/-sections/header.tsx
 msgid "Change language"
@@ -1230,6 +1264,10 @@ msgstr "命令调色板"
 msgid "Command Palette - {currentPage}"
 msgstr "命令调板 - {currentPage}"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Communist Youth League member"
+msgstr "共青团员"
+
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Compact"
 msgstr "紧凑型"
@@ -1259,6 +1297,7 @@ msgstr "压缩或移除较大的图片，以保持上传速度。"
 #. Create API key dialog acknowledgment action after copying
 #: src/dialogs/api-key/create.tsx
 #: src/features/settings/pages/account.tsx
+#: src/hooks/use-confirm.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
@@ -1567,6 +1606,10 @@ msgstr "求职信草稿"
 msgid "Cover Letters"
 msgstr "求职信"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "CPC member"
+msgstr "中共党员"
+
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
 #: src/dialogs/resume/index.tsx
@@ -1725,6 +1768,10 @@ msgstr "裁剪图片"
 msgid "CSV data"
 msgstr "CSV 数据"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Current city"
+msgstr "现居地"
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "当前筛选条件"
@@ -1794,6 +1841,10 @@ msgstr "申请日期"
 #: src/features/ats-checker/parse-preview.tsx
 msgid "Dates"
 msgstr "日期"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "Dates attended"
+msgstr "在校时间"
 
 #: src/components/input/rich-input.tsx
 msgid "Decrease indent"
@@ -1898,6 +1949,10 @@ msgstr "正在删除你的 API key…"
 msgid "Deleting your resume..."
 msgstr "正在删除你的简历…"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Democratic parties"
+msgstr "民主党派"
+
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Denied, waiting for the agent…"
 msgstr "已拒绝，正在等待 Agent…"
@@ -1907,9 +1962,17 @@ msgstr "已拒绝，正在等待 Agent…"
 msgid "Deny"
 msgstr "拒绝"
 
+#: src/dialogs/resume/sections/experience.tsx
+msgid "Department"
+msgstr "部门"
+
 #: src/features/ats-checker/messages.ts
 msgid "Describe each role with short bullets. Solid paragraphs are harder to skim and to segment."
 msgstr "用简短的要点描述每一段经历。大段文字更难快速浏览，也更难被系统分段。"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "Describe the work you did. This hint is not saved, and no sample achievement is filled in."
+msgstr "写下具体工作内容。这段提示不会被保存，也不会填入示例业绩。"
 
 #: src/libs/resume/ats.ts
 msgid "Describe what you did so the entry contributes keywords for matching."
@@ -1945,6 +2008,10 @@ msgstr "设计了一个共享组件库，供六个产品团队构建一致的界
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Designed websites and tools for a growing creative community."
 msgstr "为不断成长的创意社群设计网站和工具。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Detailed address"
+msgstr "详细住址"
 
 #. Label above the raw error text forwarded by the identity provider
 #: src/features/auth/pages/error.tsx
@@ -2193,11 +2260,11 @@ msgstr "编辑关键字..."
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Education"
-msgstr "教育经历"
+msgstr "教育背景"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "Email"
-msgstr "电子邮件"
+msgstr "邮箱"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Email (optional)"
@@ -2221,6 +2288,10 @@ msgstr "此实例未配置电子邮件发送功能，因此验证功能已禁用
 msgid "Embed all fonts when exporting, so characters map the way you intended."
 msgstr "导出时嵌入所有字体，确保字符按你的预期显示。"
 
+#: src/dialogs/resume/sections/experience.tsx
+msgid "Employment type"
+msgstr "工作类型"
+
 #: src/features/settings/authentication/components/two-factor.tsx
 msgid "Enable 2FA"
 msgstr "启用 2FA 双重身份验证"
@@ -2240,6 +2311,18 @@ msgstr "已启用"
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enabling two-factor authentication…"
 msgstr "启用双因素身份验证…"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "End date"
+msgstr "结束日期"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "End month"
+msgstr "结束月份"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "End of period"
+msgstr "结束方式"
 
 #: src/features/homepage/resume-sculpture.tsx
 #: src/libs/locale.ts
@@ -2262,9 +2345,17 @@ msgstr "输入通行密钥的名称。"
 msgid "Enter a new password for your account"
 msgstr "为你的账户输入新密码"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Enter a valid email address, or leave it empty for now."
+msgstr "请输入有效的邮箱，或暂时留空。"
+
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Enter a valid email address."
 msgstr "请输入有效的电子邮箱地址。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Enter an age from 1 to 120, or leave it empty."
+msgstr "请填写 1 到 120 的年龄，或留空。"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
@@ -2571,6 +2662,10 @@ msgstr "严重错误"
 msgid "Features"
 msgstr "功能"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Female"
+msgstr "女"
+
 #: src/features/homepage/page.tsx
 msgid "Fifteen templates, all free. Pick one you like. You can change the type, color, and layout in the editor."
 msgstr "十五款模板，全部免费。挑一款你喜欢的。字体、颜色和版式都可以在编辑器中修改。"
@@ -2578,6 +2673,18 @@ msgstr "十五款模板，全部免费。挑一款你喜欢的。字体、颜色
 #: src/dialogs/resume/import.tsx
 msgid "File"
 msgstr "文件"
+
+#: src/dialogs/resume/import.tsx
+msgid "File must be a JSON file"
+msgstr "文件必须是 JSON 文件"
+
+#: src/dialogs/resume/import.tsx
+msgid "File must be a Microsoft Word document"
+msgstr "文件必须是 Word 文档"
+
+#: src/dialogs/resume/import.tsx
+msgid "File must be a PDF"
+msgstr "文件必须是 PDF"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -2663,6 +2770,120 @@ msgstr "用于进一步编辑"
 msgid "For example, note which companies you sent this resume to, or links to the job descriptions."
 msgstr "例如，记下你把这份简历投给了哪些公司，或者职位描述的链接。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "For example: 138 0000 0000"
+msgstr "例如：138 0000 0000"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: 2020.09 - 2024.06"
+msgstr "例如：2020.09 - 2024.06"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "For example: 2022.07 - Present"
+msgstr "例如：2022.07 - 至今"
+
+#: src/dialogs/resume/sections/project.tsx
+msgid "For example: 2023.03 - 2023.08"
+msgstr "例如：2023.03 - 2023.08"
+
+#: src/dialogs/resume/sections/award.tsx
+#: src/dialogs/resume/sections/certification.tsx
+#: src/dialogs/resume/sections/publication.tsx
+msgid "For example: 2024.06"
+msgstr "例如：2024.06"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "For example: 25"
+msgstr "例如：25"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: 985 / 211 / Double First Class"
+msgstr "例如：985、211、双一流"
+
+#: src/dialogs/resume/sections/publication.tsx
+msgid "For example: a university or the patent office"
+msgstr "例如：某某大学或国家知识产权局"
+
+#: src/dialogs/resume/sections/publication.tsx
+msgid "For example: An idempotent order method"
+msgstr "例如：一种订单幂等处理方法"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: Bachelor"
+msgstr "例如：本科"
+
+#: src/dialogs/resume/sections/project.tsx
+msgid "For example: Backend developer"
+msgstr "例如：后端开发"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "For example: Backend engineer"
+msgstr "例如：后端工程师"
+
+#: src/dialogs/resume/sections/certification.tsx
+msgid "For example: CET-6"
+msgstr "例如：大学英语六级"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: Computer Science"
+msgstr "例如：计算机科学"
+
+#: src/dialogs/resume/sections/skill.tsx
+msgid "For example: Familiar"
+msgstr "例如：熟悉"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "For example: Full-time, internship, or part-time"
+msgstr "例如：全职、实习、兼职"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: GPA 3.7 / 4.0"
+msgstr "例如：GPA 3.7 / 4.0"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "For example: Hangzhou"
+msgstr "例如：杭州"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "For example: Java backend engineer"
+msgstr "例如：Java 后端开发"
+
+#: src/dialogs/resume/sections/award.tsx
+msgid "For example: Ministry of Education"
+msgstr "例如：教育部"
+
+#: src/dialogs/resume/sections/certification.tsx
+msgid "For example: Ministry of Education Examination Center"
+msgstr "例如：教育部考试中心"
+
+#: src/dialogs/resume/sections/award.tsx
+msgid "For example: National scholarship"
+msgstr "例如：国家奖学金"
+
+#: src/dialogs/resume/sections/project.tsx
+msgid "For example: Order service"
+msgstr "例如：订单服务"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "For example: Payments"
+msgstr "例如：支付部门"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "For example: Peking University"
+msgstr "例如：北京大学"
+
+#: src/dialogs/resume/sections/skill.tsx
+msgid "For example: Programming languages"
+msgstr "例如：编程语言"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "For example: Starlan Technology"
+msgstr "例如：星澜科技"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "For example: Zhang Wei"
+msgstr "例如：张伟"
+
 #: src/features/homepage/export-playground.tsx
 msgid "For keeping a copy"
 msgstr "用于保留副本"
@@ -2727,6 +2948,10 @@ msgstr "全屏编辑器"
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Gaps:"
 msgstr "差距："
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Gender"
+msgstr "性别"
 
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
@@ -2801,8 +3026,12 @@ msgid "Google"
 msgstr "谷歌"
 
 #: src/dialogs/resume/sections/education.tsx
+msgid "GPA / grade"
+msgstr "GPA / 成绩"
+
+#: src/dialogs/resume/sections/education.tsx
 msgid "Grade"
-msgstr "成绩"
+msgstr "GPA / 成绩"
 
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/resume-sculpture.tsx
@@ -2963,6 +3192,10 @@ msgstr "图标"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "如果是扫描件导致的，这属于正常情况。否则请删除它；招聘人员会把它当作关键词堆砌。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "If this matches a GitHub profile, the exported resume shows that link once."
+msgstr "如果这里和社交资料中的 GitHub 链接相同，导出时只显示一次。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Images cover most of the page."
 msgstr "图片占据了页面的大部分空间。"
@@ -3030,9 +3263,29 @@ msgstr "正在导入…"
 msgid "In {0}"
 msgstr "在 {0} 中"
 
+#: src/features/applications/insights.ts
+msgid "in this view"
+msgstr "当前视图内"
+
 #: src/features/resume/export/download-dialog.tsx
 msgid "Include resume header"
 msgstr "包含简历页眉"
+
+#: src/features/auth/error-message.ts
+msgid "Incorrect backup code. Please try again."
+msgstr "备用验证码不正确，请重新输入。"
+
+#: src/features/auth/error-message.ts
+msgid "Incorrect email, username, or password."
+msgstr "邮箱、用户名或密码不正确。"
+
+#: src/features/auth/error-message.ts
+msgid "Incorrect password. Please try again."
+msgstr "密码不正确，请重新输入。"
+
+#: src/features/auth/error-message.ts
+msgid "Incorrect verification code. Please try again."
+msgstr "验证码不正确，请重新输入。"
 
 #: src/components/input/rich-input.tsx
 msgid "Increase indent"
@@ -3097,13 +3350,25 @@ msgstr "兴趣爱好"
 msgid "Interview"
 msgstr "面试"
 
+#: src/features/applications/insights.ts
+msgid "interview or beyond"
+msgstr "面试及以后阶段"
+
+#: src/features/applications/insights.ts
+msgid "Interviews"
+msgstr "面试数"
+
+#: src/features/auth/error-message.ts
+msgid "Invalid account. Please sign in again."
+msgstr "账号信息无效，请重新登录。"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Invalid AI provider configuration."
 msgstr "AI提供商配置无效。"
 
 #: src/dialogs/resume/sections/certification.tsx
 msgid "Issuer"
-msgstr "签发机构"
+msgstr "颁发机构"
 
 #: src/libs/locale.ts
 msgid "Italian"
@@ -3129,6 +3394,10 @@ msgstr "职位描述"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Job description (optional)"
 msgstr "职位描述（可选）"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Job intention"
+msgstr "求职意向"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Job posting"
@@ -3184,6 +3453,10 @@ msgstr "只保留一个地址，这样软件就不用猜该用哪一个。"
 #: src/features/auth/pages/consent.tsx
 msgid "Keep access when you are not using the application."
 msgstr "在你未使用该应用时保持访问权限。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/awards.tsx
+msgid "Keep awards separate from certificates."
+msgstr "获奖和证书分开填写。"
 
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Keep editing"
@@ -3335,6 +3608,10 @@ msgstr "页面四周至少留出半英寸的边距。"
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "留空则将标题重置为原始值。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Leave this empty, or choose not to say, and gender stays off the resume."
+msgstr "留空或选择不公开时，简历上不会显示性别。"
 
 #: src/dialogs/resume/import.tsx
 msgid "Leave to set up an AI provider?"
@@ -3519,6 +3796,10 @@ msgstr "主界面"
 msgid "Main navigation"
 msgstr "主导航"
 
+#: src/dialogs/resume/sections/education.tsx
+msgid "Major courses"
+msgstr "主修课程"
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Make it your own"
 msgstr "打造成你自己的样子"
@@ -3547,6 +3828,10 @@ msgstr "马来语"
 msgid "Malayalam"
 msgstr "马拉雅拉姆语"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Male"
+msgstr "男"
+
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
 msgstr "很多要点都以相同的短语开头。"
@@ -3567,6 +3852,10 @@ msgstr "页边距（垂直）"
 msgid "Mark rejected"
 msgstr "标记为被拒"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Masses"
+msgstr "群众"
+
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Match scoring failed."
 msgstr "匹配评分失败。"
@@ -3585,9 +3874,17 @@ msgstr "Microsoft Word"
 msgid "Missing working resume"
 msgstr "缺少正在处理的简历"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Mobile numbers and other contact numbers are both accepted."
+msgstr "手机号和其他联系电话都可以填写。"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "模型"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "More information"
+msgstr "更多信息"
 
 #: src/features/ats-checker/messages.ts
 msgid "More than one email address appears."
@@ -3679,6 +3976,14 @@ msgstr "姓名"
 msgid "Name the resume after the position you are applying for."
 msgstr "用你申请的职位来给这份简历命名。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Name, phone, and email are the main contact details. Empty fields can still be saved."
+msgstr "姓名、电话和邮箱是主要联系方式。留空也可以保存。"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Name, phone, or email is still empty. You can export now, and the empty fields stay off the page."
+msgstr "姓名、电话或邮箱仍有空项。现在仍可导出，空着的字段不会出现在成品上。"
+
 #: src/dialogs/api-key/create.tsx
 msgid "Names help you tell keys apart, so name it after what you will use it for."
 msgstr "名称能帮你区分不同的密钥，所以按用途来命名。"
@@ -3686,6 +3991,10 @@ msgstr "名称能帮你区分不同的密钥，所以按用途来命名。"
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Names help you tell passkeys apart if you register more than one."
 msgstr "如果你注册了多个通行密钥，名称能帮你把它们区分开。"
+
+#: src/features/applications/components/application-card.tsx
+msgid "Needs follow-up"
+msgstr "需要跟进"
 
 #: src/libs/locale.ts
 msgid "Nepali"
@@ -3723,6 +4032,10 @@ msgstr "新页面"
 msgid "New Password"
 msgstr "新密码"
 
+#: src/dialogs/auth/change-password.tsx
+msgid "New password cannot be the same as the current password."
+msgstr "新密码不能与当前密码相同。"
+
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 msgid "New Section"
 msgstr "新章节"
@@ -3748,6 +4061,10 @@ msgstr "下一页"
 #: src/features/homepage/template-shelf.tsx
 msgid "Next template"
 msgstr "下一个模板"
+
+#: src/features/auth/error-message.ts
+msgid "No account found for this email or username."
+msgstr "未找到该账号，请检查邮箱或用户名。"
 
 #: src/routes/builder/$resumeId/-components/ai-assistant.tsx
 msgid "No AI provider connected"
@@ -3942,6 +4259,10 @@ msgstr "奥里亚语"
 msgid "Offer"
 msgstr "录用"
 
+#: src/features/applications/insights.ts
+msgid "Offers"
+msgstr "录用数"
+
 #: src/components/ui/donation-toast.tsx
 msgid "OK"
 msgstr "确定"
@@ -4032,6 +4353,10 @@ msgstr "正在打开文件…"
 msgid "Opens in a new tab"
 msgstr "在新标签页中打开"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Optional"
+msgstr "可选"
+
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Optional note for the agent"
 msgstr "给 Agent 的备注（可选）"
@@ -4039,6 +4364,20 @@ msgstr "给 Agent 的备注（可选）"
 #: src/routes/agent/-components/patch-approval-card.tsx
 msgid "Optional note for the agent…"
 msgstr "给 Agent 的备注（可选）…"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Optional street address"
+msgstr "可选的街道地址"
+
+#: src/dialogs/resume/sections/experience.tsx
+msgid "Optional. Existing multi-role entries stay unchanged."
+msgstr "可选。已有的多岗位记录不会被覆盖。"
+
+#: src/dialogs/resume/sections/education.tsx
+#: src/dialogs/resume/sections/experience.tsx
+#: src/dialogs/resume/sections/project.tsx
+msgid "Optional. Leave it empty and it stays off the resume."
+msgstr "可选。留空后不会出现在简历上。"
 
 #: src/routes/_home/ats-checker.tsx
 msgid "Optionally, which terms from a job posting already appear."
@@ -4065,9 +4404,21 @@ msgstr "有序列表"
 msgid "Organization"
 msgstr "组织"
 
+#: src/dialogs/resume/sections/project.tsx
+msgid "Organize the description as background, your responsibility, method, and result. This hint is not saved."
+msgstr "可以按项目背景、本人职责、技术或方法、结果来组织。这段提示不会被保存。"
+
 #: src/components/input/rich-input.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "原始表格格式已保留。由于无法安全编辑，此内容为只读。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Other"
+msgstr "其他"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Other political status"
+msgstr "其他政治面貌"
 
 #: src/features/ats-checker/report/score-header.tsx
 msgid "out of 100"
@@ -4079,8 +4430,9 @@ msgstr "页面"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: Math.floor(offset / 20) + 1
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/cover-letters/library.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -4130,6 +4482,17 @@ msgstr "通行密钥"
 msgid "Password"
 msgstr "密码"
 
+#: src/dialogs/auth/change-password.tsx
+#: src/features/auth/error-message.ts
+#: src/features/auth/pages/register.tsx
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password must be at least 8 characters."
+msgstr "密码长度不能少于 8 位。"
+
+#: src/features/auth/error-message.ts
+msgid "Password must be at most 64 characters."
+msgstr "密码长度不能超过 64 位。"
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Password must be between 6 and 64 characters."
 msgstr "密码长度必须在 6 到 64 个字符之间。"
@@ -4149,6 +4512,10 @@ msgstr "需要密码"
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Passwords do not match."
 msgstr "密码不匹配。"
+
+#: src/features/applications/insights.ts
+msgid "past saved"
+msgstr "来自已保存"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Paste a posting to see which of its terms already appear in your resume."
@@ -4221,6 +4588,10 @@ msgstr "起止时间"
 msgid "Persian"
 msgstr "波斯语"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Personal blog"
+msgstr "个人博客"
+
 #: src/dialogs/resume/sections/reference.tsx
 #: src/features/ats-checker/parse-preview.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
@@ -4230,6 +4601,10 @@ msgstr "电话"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Phone (optional)"
 msgstr "电话（可选）"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Photo is optional. Edit it in the picture section."
+msgstr "头像可选。请在照片区块中编辑。"
 
 #: src/routes/agent/index.tsx
 msgid "Pick a conversation from the sidebar, or start a new thread to work on a draft."
@@ -4291,6 +4666,10 @@ msgstr "Plum"
 msgid "Polish"
 msgstr "波兰语"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Political status"
+msgstr "政治面貌"
+
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Portrait"
@@ -4317,6 +4696,10 @@ msgstr "更喜欢常规标题，例如“工作经验”或“教育程度”。
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "优先使用单栏布局，或让侧栏只放简短、独立的列表。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "Prefer not to say"
+msgstr "不公开"
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/routes/dashboard/-components/sidebar.tsx
@@ -4335,6 +4718,10 @@ msgstr "正在准备示例…"
 #: src/features/resume/export/use-resume-export.ts
 msgid "Preparing your resume for printing..."
 msgstr "准备打印简历……"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "Present"
+msgstr "至今"
 
 #: src/components/input/color-picker.tsx
 msgid "Presets"
@@ -4424,7 +4811,7 @@ msgstr "进度条"
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Projects"
-msgstr "项目"
+msgstr "项目经历"
 
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Protect your resume with a password"
@@ -4455,11 +4842,11 @@ msgstr "公开"
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Publications"
-msgstr "出版物"
+msgstr "科研成果"
 
 #: src/dialogs/resume/sections/publication.tsx
 msgid "Publisher"
-msgstr "发布者"
+msgstr "发表机构"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -4496,6 +4883,10 @@ msgstr "重新导出并嵌入字体，然后打开文件检查文字复制出来
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Re-score"
 msgstr "重新评分"
+
+#: src/features/applications/insights.ts
+msgid "reached screening"
+msgstr "进入筛选"
 
 #. Import source option for legacy Reactive Resume v4 JSON format; the zh-CN translation labels it as the legacy format
 #: src/dialogs/resume/import.tsx
@@ -4725,6 +5116,10 @@ msgstr "重置密码"
 msgid "Resetting your password..."
 msgstr "正在重置你的密码…"
 
+#: src/features/applications/insights.ts
+msgid "Response rate"
+msgstr "回复率"
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Responsible for working on the design system and helping other teams with their designs."
 msgstr "负责设计系统相关工作，并协助其他团队完成他们的设计。"
@@ -4843,6 +5238,10 @@ msgstr "Rhyhorn 示例简历"
 #: src/components/input/rich-input.tsx
 msgid "Right Align"
 msgstr "右对齐"
+
+#: src/dialogs/resume/sections/project.tsx
+msgid "Role"
+msgstr "担任角色"
 
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Role (optional)"
@@ -4999,7 +5398,11 @@ msgstr "使用你偏好的验证器应用扫描下方二维码。你也可以复
 
 #: src/dialogs/resume/sections/education.tsx
 msgid "School"
-msgstr "学校"
+msgstr "学校名称"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "School tier"
+msgstr "学校层级"
 
 #: src/features/applications/components/application-ai-copilot.tsx
 msgid "Score my fit"
@@ -5341,6 +5744,11 @@ msgstr "退出登录"
 msgid "Sign up"
 msgstr "注册"
 
+#. Fallback toast when the OAuth sign-in continuation fails
+#: src/features/auth/pages/register.tsx
+msgid "Sign-in authorization failed. Please try again."
+msgstr "登录授权失败，请重试。"
+
 #. Title on the page shown after a failed or cancelled OAuth sign-in
 #: src/features/auth/pages/error.tsx
 msgid "Sign-in didn't complete"
@@ -5391,6 +5799,10 @@ msgstr "单栏布局；风格精致严肃，适合高级或企业级职位。"
 msgid "Size"
 msgstr "大小"
 
+#: src/dialogs/resume/sections/skill.tsx
+msgid "Skill name"
+msgstr "技能名称"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/features/homepage/export-playground.tsx
 #: src/features/homepage/languages-showcase.tsx
@@ -5398,7 +5810,7 @@ msgstr "大小"
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "Skills"
-msgstr "技能"
+msgstr "专业技能"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Skip and Upload"
@@ -5423,6 +5835,10 @@ msgstr "斯洛文尼亚语"
 #: src/dialogs/resume/index.tsx
 msgid "Slug"
 msgstr "短链接"
+
+#: src/features/applications/insights.ts
+msgid "so far"
+msgstr "至今"
 
 #: src/libs/resume/ats.ts
 msgid "Some application systems require one before you can submit."
@@ -5491,6 +5907,7 @@ msgstr "登录时出错。请重试。"
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/resume/builder/password-dialog.tsx
+#: src/libs/error-message.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "出现了一些问题。请重试。"
@@ -5566,11 +5983,6 @@ msgstr "阶段日期"
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "在 GitHub 上为我们加星（在新标签页中打开）"
 
-#. placeholder {0}: starCount.toLocaleString()
-#: src/components/input/github-stars-button.tsx
-msgid "Star us on GitHub, currently {0} stars (opens in new tab)"
-msgstr "在 GitHub 上为我们加星，目前有 {0} 颗星（在新标签页中打开）"
-
 #: src/routes/agent/$threadId.tsx
 msgid "Start a new thread"
 msgstr "开始新会话"
@@ -5582,6 +5994,10 @@ msgstr "开始一个会话"
 #: src/features/homepage/feature-explorer.tsx
 msgid "Start again"
 msgstr "重新开始"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "Start and end"
+msgstr "起止月份"
 
 #: src/dialogs/resume/index.tsx
 msgid "Start building your resume by giving it a name."
@@ -5599,6 +6015,10 @@ msgstr "开始日期必须早于或等于结束日期。"
 #: src/features/ats-checker/messages.ts
 msgid "Start each one with a concrete verb: built, led, reduced, migrated."
 msgstr "每一条都以具体的动词开头：搭建、领导、降低、迁移。"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "Start month"
+msgstr "开始月份"
 
 #: src/routes/agent/index.tsx
 msgid "Start new thread"
@@ -5650,6 +6070,10 @@ msgstr "删除线"
 msgid "Strong fit"
 msgstr "高度匹配"
 
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "Studying"
+msgstr "在读"
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Stylesheet editor"
 msgstr "样式表编辑器"
@@ -5678,7 +6102,7 @@ msgstr "建议"
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Summary"
-msgstr "总结"
+msgstr "个人评价"
 
 #: src/features/ats-checker/messages.ts
 #: src/libs/resume/ats.ts
@@ -5844,6 +6268,10 @@ msgstr "以上检查都是机械化的规则判断。这项功能会询问语言
 msgid "The deep check could not finish. Please try again."
 msgstr "深度检查未能完成。请重试。"
 
+#: src/features/auth/error-message.ts
+msgid "The email address is not valid."
+msgstr "邮箱格式不正确，请重新输入。"
+
 #. Error shown when AI parsing returns invalid resume structure during import
 #: src/dialogs/resume/import.tsx
 msgid "The imported file could not be parsed into a valid resume."
@@ -5872,6 +6300,10 @@ msgstr "你输入的密码不正确"
 #: src/routes/_home/ats-checker.tsx
 msgid "The PDF is read by code running in this tab. Nothing is uploaded, nothing is stored, and no account is needed. Open your browser's network tab and watch, if you like."
 msgstr "PDF 是由运行在此标签页中的代码读取的。不会上传任何内容，不会存储任何内容，也不需要账号。如果你愿意，可以打开浏览器的网络标签页观察一下。"
+
+#: src/dialogs/resume/sections/period-range-fields.tsx
+msgid "The period text above is what gets saved. This helper fills it only when both dates are complete, and leaves an existing period unchanged if it cannot be read."
+msgstr "上方的时间文本才会被保存。只有起止时间都完整时，这里才会写入；如果原来的时间无法识别，则保持原样。"
 
 #: src/features/auth/pages/error.tsx
 msgid "The provider didn't share an email address, which is required to sign in."
@@ -6002,6 +6434,14 @@ msgstr "此编辑请求已无法回应。"
 msgid "This email address will not be recognized."
 msgstr "该电子邮件地址将不会被识别。"
 
+#: src/features/auth/error-message.ts
+msgid "This email is already registered. Please sign in or use another email."
+msgstr "该邮箱已注册，请直接登录或更换邮箱。"
+
+#: src/features/auth/error-message.ts
+msgid "This email is already registered. Please sign in."
+msgstr "该邮箱已注册，请直接登录。"
+
 #: src/libs/resume/ats.ts
 msgid "This entry has no dates."
 msgstr "该条目没有日期。"
@@ -6090,6 +6530,14 @@ msgstr "这不是简历常用的页面尺寸。"
 msgid "This key is shown only once. Copy it before you close this dialog."
 msgstr "该密钥只显示一次。关闭此对话框前请先复制。"
 
+#: src/features/auth/error-message.ts
+msgid "This link has expired. Please request a new one."
+msgstr "验证链接已过期，请重新获取。"
+
+#: src/features/auth/error-message.ts
+msgid "This link is invalid. Please request a new one."
+msgstr "验证链接无效，请重新获取。"
+
 #: src/libs/resume/ats.ts
 msgid "This link is missing its protocol."
 msgstr "此链接缺少其协议。"
@@ -6152,6 +6600,10 @@ msgstr "此简历已锁定"
 msgid "This resume is locked and cannot be updated."
 msgstr "这份简历已被锁定，无法更新。"
 
+#: src/libs/error-message.ts
+msgid "This resume is locked. Unlock it first to make changes."
+msgstr "该简历已锁定，请先解锁再修改。"
+
 #: src/features/ats-checker/messages.ts
 msgid "This resume is long."
 msgstr "这份简历比较长。"
@@ -6192,6 +6644,10 @@ msgstr "此部分位于侧边栏中。"
 msgid "This sign-in attempt expired or was already used. Please start again."
 msgstr "此次登录尝试已过期或已被使用。请重新开始。"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+msgid "This stays separate from the city and is hidden when empty."
+msgstr "详细住址和城市分开保存，留空时不显示。"
+
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
 msgstr "此步骤可选，但推荐完成。"
@@ -6207,6 +6663,10 @@ msgstr "此会话为只读"
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "由于工作简历或 AI 提供商不可用，此会话为只读。"
+
+#: src/features/auth/error-message.ts
+msgid "This verification code has expired. Please request a new one."
+msgstr "验证码已过期，请重新获取。"
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "This will remove all items from this section."
@@ -6298,9 +6758,21 @@ msgstr "Token：{total}"
 msgid "Tokens: {total} ({cached} cached)"
 msgstr "Token：{total}（{cached} 已缓存）"
 
+#: src/features/auth/error-message.ts
+msgid "Too many attempts. Please request a new code."
+msgstr "尝试次数过多，请重新获取验证码。"
+
+#: src/features/auth/error-message.ts
+msgid "Too many failed attempts. Your account is temporarily locked. Please try again later."
+msgstr "失败次数过多，账号已暂时锁定，请稍后再试。"
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Tools"
 msgstr "工具"
+
+#: src/features/applications/insights.ts
+msgid "Total applications"
+msgstr "投递总数"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Total unavailable"
@@ -6432,6 +6904,10 @@ msgstr "排版"
 #: src/libs/locale.ts
 msgid "Ukrainian"
 msgstr "乌克兰语"
+
+#: src/features/resume/public/pdf-viewer.tsx
+msgid "Unable to display PDF preview."
+msgstr "无法显示 PDF 预览。"
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -6660,6 +7136,10 @@ msgstr "请使用 6 至 64 个字符。"
 msgid "Use color {color}"
 msgstr "使用颜色 {color}"
 
+#: src/dialogs/resume/sections/publication.tsx
+msgid "Use one entry for a paper, patent, or research report. This hint is not saved."
+msgstr "论文、专利或研究报告各写一条。这段提示不会被保存。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Use plain headings such as \"Experience\", \"Education\" and \"Skills\"."
 msgstr "使用简单明了的标题，例如“工作经历”、“教育经历”和“技能”。"
@@ -6695,6 +7175,10 @@ msgstr "用户研究"
 #: src/features/settings/pages/profile.tsx
 msgid "Username"
 msgstr "用户名"
+
+#: src/features/auth/pages/register.tsx
+msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr "用户名只能包含小写字母、数字、点、连字符和下划线。"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Users"
@@ -6944,6 +7428,10 @@ msgstr "在你的 AI 应用里处理简历。"
 msgid "Work OpenAI"
 msgstr "OpenAI"
 
+#: src/dialogs/resume/sections/publication.tsx
+msgid "Work title"
+msgstr "成果名称"
+
 #: src/features/homepage/resume-sculpture.tsx
 msgid "Worked with engineers from idea to launch."
 msgstr "从想法到上线，一直与工程师协作。"
@@ -6959,6 +7447,10 @@ msgstr "值得一试"
 #: src/features/ats-checker/messages.ts
 msgid "Write \"Present\" as the end date of your current role."
 msgstr "把你当前这份工作的结束日期写成“现在”。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/summary.tsx
+msgid "Write a short personal summary. Only the text you enter is saved."
+msgstr "用几句话写个人评价。只有你输入的文字会被保存。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Write each role as a clear title and company line, with the dates alongside."
@@ -6976,6 +7468,10 @@ msgstr "写出完整地址，使其能被识别为链接。"
 msgid "Write the full address, including https://."
 msgstr "写入完整地址，包括 https:// 。"
 
+#: src/dialogs/resume/sections/skill.tsx
+msgid "Write the skill points directly, for example Java, Spring Boot, and MySQL. The example is not saved."
+msgstr "直接写技能点，例如 Java、Spring Boot、MySQL。示例不会被保存。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Writing"
 msgstr "文案"
@@ -6991,6 +7487,10 @@ msgstr "你也可以用用户名登录。"
 #: src/features/homepage/feature-explorer.tsx
 msgid "You can always go back to the original."
 msgstr "你随时可以恢复原文。"
+
+#: src/dialogs/resume/sections/education.tsx
+msgid "You can list major courses here. This hint is not saved, and nothing is filled in for you."
+msgstr "主修课程可以写在这里。这段提示不会被保存，也不会自动填入内容。"
 
 #: src/features/auth/pages/error.tsx
 msgid "You cancelled the sign-in before it finished."
@@ -7073,6 +7573,10 @@ msgstr "你的电子邮件地址被拆分到了不同的文字片段中。"
 #: src/features/auth/pages/error.tsx
 msgid "Your email address isn't verified with the provider."
 msgstr "您的电子邮件地址未在提供商处验证。"
+
+#: src/features/auth/error-message.ts
+msgid "Your email is not verified yet. Please verify it first."
+msgstr "邮箱尚未验证，请先完成邮箱验证。"
 
 #: src/routes/_home/ats-checker.tsx
 msgid "Your file stays here"
@@ -7192,6 +7696,10 @@ msgstr "您保存的求职信将保持不变。"
 msgid "Your selected file"
 msgstr "你选择的文件"
 
+#: src/features/auth/error-message.ts
+msgid "Your session has expired. Please sign in again."
+msgstr "登录状态已过期，请重新登录。"
+
 #: src/features/homepage/feature-explorer.tsx
 msgid "Your tools, connected"
 msgstr "你的工具已连接"
@@ -7220,7 +7728,3 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
-
-#: src/features/auth/pages/register.tsx
-msgid "登录授权失败，请重试。"
-msgstr "登录授权失败，请重试。"
