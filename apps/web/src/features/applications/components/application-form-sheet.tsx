@@ -24,6 +24,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
+import { stageDisplayLabel } from "../stage-labels";
 import { FileAttachmentField } from "./file-attachment-field";
 
 // Preset source suggestions surfaced via a <datalist>; the field itself stays free-text.
@@ -306,7 +307,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application }: Props)
 							<Combobox
 								className="w-full"
 								value={form.status}
-								options={STAGES.map((s) => ({ value: s.value, label: s.label }))}
+								options={STAGES.map((s) => ({ value: s.value, label: stageDisplayLabel(s.value) }))}
 								onValueChange={(value) => value && set("status", value)}
 							/>
 						</Field>

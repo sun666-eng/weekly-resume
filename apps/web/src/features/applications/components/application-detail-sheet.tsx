@@ -32,6 +32,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
+import { stageDisplayLabel } from "../stage-labels";
 import { ApplicationAiCopilot } from "./application-ai-copilot";
 import { FileAttachmentField } from "./file-attachment-field";
 
@@ -149,14 +150,14 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 						{STAGES.map((stage, i) => (
 							<span
 								key={stage.value}
-								title={stage.label}
+								title={stageDisplayLabel(stage.value)}
 								className={cn("h-1.5 flex-1 rounded-full", i <= idx ? "" : "bg-muted")}
 								style={i <= idx ? { background: stage.color } : undefined}
 							/>
 						))}
 					</div>
 					<div className="flex items-center justify-between">
-						<span className="font-medium text-sm">{STAGES[idx]?.label ?? current.status}</span>
+						<span className="font-medium text-sm">{stageDisplayLabel(current.status)}</span>
 						{nextStage && (
 							<Button
 								size="sm"
@@ -164,7 +165,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEdit }: Pr
 								disabled={update.isPending}
 								onClick={() => update.mutate({ id: current.id, status: nextStage.value })}
 							>
-								<Trans>Move to</Trans> {nextStage.label}
+								<Trans>Move to</Trans> {stageDisplayLabel(nextStage.value)}
 								<ArrowRightIcon />
 							</Button>
 						)}
@@ -424,7 +425,7 @@ function ApplicationTimeline({
 									<div className="min-w-0 flex-1">
 										{entry.type === "stage" ? (
 											<div className="font-medium">
-												<Trans>Moved to</Trans> {stage?.label ?? entry.stage}
+												<Trans>Moved to</Trans> {stageDisplayLabel(entry.stage)}
 											</div>
 										) : (
 											<button

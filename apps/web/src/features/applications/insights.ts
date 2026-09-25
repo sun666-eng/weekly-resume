@@ -1,6 +1,7 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { STAGES } from "@reactive-resume/schema/applications/data";
+import { stageDisplayLabel } from "./stage-labels";
 
 export type StageCount = { status: ApplicationStatus; count: number };
 
@@ -32,7 +33,7 @@ export function computeInsights(byStage: StageCount[]): Insights {
 		const reachedCount = reached[i] ?? 0;
 		const prev = i === 0 ? reachedCount : (reached[i - 1] ?? reachedCount);
 		return {
-			label: stage?.label ?? status,
+			label: stageDisplayLabel(status),
 			color: stage?.color ?? "var(--muted)",
 			count: at(status),
 			reached: reachedCount,

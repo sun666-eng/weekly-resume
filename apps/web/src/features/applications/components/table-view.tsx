@@ -22,6 +22,7 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
+import { stageDisplayLabel } from "../stage-labels";
 import { tileColor } from "../tile-color";
 import { ApplicationActionsMenu } from "./application-actions-menu";
 
@@ -137,7 +138,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 							{STAGES.map((stage) => (
 								<DropdownMenuItem key={stage.value} onClick={() => bulkUpdate.mutate({ ids, status: stage.value })}>
 									<span className="size-2 rounded-sm" style={{ background: stage.color }} />
-									{stage.label}
+									{stageDisplayLabel(stage.value)}
 								</DropdownMenuItem>
 							))}
 						</DropdownMenuContent>
@@ -253,7 +254,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 									<td className="whitespace-nowrap px-3 py-2">
 										<span className="inline-flex items-center gap-1.5">
 											<span className="size-2 rounded-sm" style={{ background: stage?.color }} />
-											{stage?.label ?? app.status}
+											{stageDisplayLabel(app.status)}
 										</span>
 									</td>
 									<td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{app.location || "—"}</td>
@@ -319,7 +320,7 @@ export function ApplicationTable({ applications, onOpen, onEdit }: Props) {
 									<div className="truncate text-muted-foreground text-xs">{app.company}</div>
 									<div className="mt-1 flex items-center gap-1.5 text-xs">
 										<span className="size-2 shrink-0 rounded-sm" style={{ background: stage?.color }} />
-										<span className="text-muted-foreground">{stage?.label ?? app.status}</span>
+										<span className="text-muted-foreground">{stageDisplayLabel(app.status)}</span>
 										{app.salary && <span className="truncate font-medium">· {app.salary}</span>}
 									</div>
 								</div>

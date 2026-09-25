@@ -19,6 +19,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
+import { stageDisplayLabel } from "../stage-labels";
 import { ApplicationCard } from "./application-card";
 
 type Props = {
@@ -116,7 +117,7 @@ function Column({ stage, applications, onOpen, onEdit }: ColumnProps) {
 		<div className="flex w-72 shrink-0 flex-col rounded-2xl border border-border bg-muted/30">
 			<div className="flex items-center gap-2 px-3.5 py-3">
 				<span className="size-2.5 rounded-sm" style={{ background: stage.color }} />
-				<span className="font-semibold text-sm tracking-tight">{stage.label}</span>
+				<span className="font-semibold text-sm tracking-tight">{stageDisplayLabel(stage.value)}</span>
 				<span className="rounded-full bg-muted px-2 py-0.5 font-semibold text-muted-foreground text-xs">
 					{applications.length}
 				</span>

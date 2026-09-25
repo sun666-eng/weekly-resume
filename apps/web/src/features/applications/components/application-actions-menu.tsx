@@ -27,6 +27,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/libs/orpc/client";
 import { applicationsListQueryKey } from "../queries";
+import { stageDisplayLabel } from "../stage-labels";
 
 type Props = {
 	application: Application;
@@ -117,7 +118,7 @@ export function ApplicationActionsMenu({ application, onEdit, showOnHover, class
 									onClick={() => update.mutate({ id: application.id, status: stage.value })}
 								>
 									<span className="size-2 rounded-sm" style={{ background: stage.color }} />
-									{stage.label}
+									{stageDisplayLabel(stage.value)}
 								</DropdownMenuItem>
 							))}
 						</DropdownMenuSubContent>

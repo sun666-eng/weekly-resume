@@ -50,6 +50,12 @@ describe("locale catalogs follow the interface language", () => {
 		expect(t`Interviews`).toBe("面试数");
 		expect(t`Unable to display PDF preview.`).toBe("无法显示 PDF 预览。");
 		expect(t`Sign-in authorization failed. Please try again.`).toBe("登录授权失败，请重试。");
+		expect(t`Submit`).toBe("提交");
+		expect(t`Toggle Sidebar`).toBe("切换侧边栏");
+		expect(t`Sidebar`).toBe("侧边栏");
+		expect(t`Displays the mobile sidebar.`).toBe("显示移动端侧边栏。");
+		expect(t`Loading`).toBe("加载中");
+		expect(t`Close toast`).toBe("关闭通知");
 
 		const rejected = 3;
 		expect(t`${rejected} rejected`).toBe("已拒绝 3 家");
@@ -58,5 +64,23 @@ describe("locale catalogs follow the interface language", () => {
 	it("keeps the fixed ATS Check entry free of the stray full-width quote", () => {
 		i18n.loadAndActivate({ locale: "zh-CN", messages: loadCatalog("zh-CN") });
 		expect(t`ATS Check`).toBe("ATS检查");
+	});
+
+	it("renders application stage labels in the interface language", () => {
+		i18n.loadAndActivate({ locale: "en-US", messages: loadCatalog("en-US") });
+		expect(t`Saved`).toBe("Saved");
+		expect(t`Applied`).toBe("Applied");
+		expect(t`Screening`).toBe("Screening");
+		expect(t`Interview`).toBe("Interview");
+		expect(t`Offer`).toBe("Offer");
+		expect(t`Rejected`).toBe("Rejected");
+
+		i18n.loadAndActivate({ locale: "zh-CN", messages: loadCatalog("zh-CN") });
+		expect(t`Saved`).toBe("已保存");
+		expect(t`Applied`).toBe("已申请");
+		expect(t`Screening`).toBe("筛选中");
+		expect(t`Interview`).toBe("面试");
+		expect(t`Offer`).toBe("录用");
+		expect(t`Rejected`).toBe("已拒绝");
 	});
 });
