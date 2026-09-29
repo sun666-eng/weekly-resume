@@ -8,10 +8,7 @@ import { useRender } from "../../context";
 import { createBaseTemplateStyles } from "./base-template-styles";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "./contact-item";
 import { getTemplateMetrics } from "./metrics";
 import { hasTemplatePicture } from "./picture";
@@ -66,14 +63,11 @@ export const TemplateHeader = ({
 	contactListOutsideTitle?: boolean;
 	picturePosition?: "start" | "end";
 }) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 	const contactList = (
 		<SemanticContactListView style={styles.contactList}>
-			<EmailContactItem email={basics.email} style={styles.contactItem} />
-			<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-			<LocationContactItem location={basics.location} style={styles.contactItem} />
-			<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+			{renderBasicsContactItems({ basics, locale: metadata.page.locale, style: styles.contactItem })}
 			{basics.customFields.map((field) => (
 				<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
 			))}

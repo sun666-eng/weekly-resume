@@ -1,24 +1,34 @@
 import type { MultiComboboxProps, SingleComboboxProps } from "@/components/ui/combobox";
 import { useCallback, useMemo } from "react";
-import { fontList, getFont, getFontDisplayName, getFontSearchKeywords, sortFontWeights } from "@reactive-resume/fonts";
+import {
+	fontList,
+	getFont,
+	getFontDisplayName,
+	getFontSearchKeywords,
+	getWebFontSource,
+	isOfflineFontFamily,
+	sortFontWeights,
+} from "@reactive-resume/fonts";
 import { cn } from "@reactive-resume/utils/style";
 import { Combobox } from "@/components/ui/combobox";
 import { FontDisplay } from "./font-display";
 
 // Options depend only on the static font list, so compute them once per process
 // instead of per component instance (the body + heading pickers rendered identical output twice).
-const FONT_FAMILY_OPTIONS = fontList.map((font) => ({
-	value: font.family,
-	keywords: getFontSearchKeywords(font.family),
-	label: (
-		<FontDisplay
-			family={font.family}
-			label={getFontDisplayName(font.family)}
-			type={font.type}
-			url={"preview" in font ? font.preview : undefined}
-		/>
-	),
-}));
+const FONT_FAMILY_OPTIONS = fontList
+	.filter((font) => isOfflineFontFamily(font.family))
+	.map((font) => ({
+		value: font.family,
+		keywords: getFontSearchKeywords(font.family),
+		label: (
+			<FontDisplay
+				family={font.family}
+				label={getFontDisplayName(font.family)}
+				type={font.type}
+				url={getWebFontSource(font.family) ?? undefined}
+			/>
+		),
+	}));
 
 type FontFamilyComboboxProps = Omit<SingleComboboxProps, "options">;
 

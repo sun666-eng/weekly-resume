@@ -1,25 +1,7 @@
 import type { Template } from "@reactive-resume/schema/templates";
 import { templateSchema } from "@reactive-resume/schema/templates";
+import { homepageTemplates, templateCatalog } from "./catalog";
 
-const chineseTemplateNames: Record<Template, string> = {
-	azurill: "经典",
-	bronzor: "雅致",
-	chikorita: "青蓝",
-	ditgar: "学术",
-	ditto: "简约",
-	gengar: "目标",
-	glalie: "清朗",
-	kakuna: "视觉",
-	lapras: "标准",
-	leafish: "自然",
-	meowth: "校园",
-	onyx: "商务",
-	pikachu: "清爽",
-	rhyhorn: "极简",
-	scizor: "技术",
-};
-
-const chineseFeaturedTemplates: Template[] = ["meowth", "scizor", "onyx", "kakuna"];
 const chineseReferenceTemplates: Template[] = [
 	"ditgar",
 	"meowth",
@@ -42,8 +24,8 @@ export function getTemplateOrder(locale: string): Template[] {
 	];
 }
 
-export function getHomepageTemplateOrder(locale: string): Template[] {
-	return locale === "zh-CN" ? [...chineseFeaturedTemplates] : getTemplateOrder(locale);
+export function getHomepageTemplateOrder(_locale: string): Template[] {
+	return [...homepageTemplates];
 }
 
 const chineseReferenceTags: Partial<Record<Template, string[]>> = {
@@ -128,7 +110,7 @@ const chineseTemplateTags: Record<string, string> = {
 };
 
 export function getTemplateDisplayName(template: Template, locale: string, fallback?: string): string {
-	if (locale === "zh-CN") return chineseTemplateNames[template];
+	if (locale === "zh-CN") return templateCatalog[template].name;
 	return fallback ?? template[0].toUpperCase() + template.slice(1);
 }
 

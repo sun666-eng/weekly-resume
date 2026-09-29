@@ -8,10 +8,7 @@ import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
@@ -96,7 +93,7 @@ export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 };
 
 const Header = ({ styles }: MeowthHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 
 	return (
@@ -108,10 +105,7 @@ const Header = ({ styles }: MeowthHeaderProps) => {
 				</View>
 
 				<SemanticContactListView style={styles.contactList}>
-					<EmailContactItem email={basics.email} style={styles.contactItem} />
-					<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-					<LocationContactItem location={basics.location} style={styles.contactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+					{renderBasicsContactItems({ basics, locale: metadata.page.locale, style: styles.contactItem })}
 					{basics.customFields.map((field) => (
 						<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
 					))}

@@ -2,15 +2,29 @@ import type { DateToken, ExtractedDocument } from "../types";
 import { isFutureEndpoint, isReversedPeriod, parsePeriod, parseSingleDate } from "../../ats/period";
 
 const MONTH_WORD = String.raw`[A-Za-z]{3,9}\.?`;
-const ENDPOINT = String.raw`(?:${MONTH_WORD}\s*'?\d{2,4}|\d{1,2}[/.\-]\d{2,4}|\d{4})`;
-const ONGOING = String.raw`(?:present|current|currently|now|ongoing|to\s?date|today)`;
+// Year-first numeric endpoints (2022.09, 2022/09) must come before the ambiguous
+// \d{1,2}[/.-]\d{2,4} form: "2022.09 - 2026.06" used to be captured from the middle as
+// "22.09 - 2026" and reported unparseable. Year-month CJK forms cover 2022年9月.
+const ENDPOINT = String.raw`(?:\d{4}年\d{1,2}月|\d{4}[./]\d{1,2}|${MONTH_WORD}\s*'?\d{2,4}|\d{1,2}[/.\-]\d{2,4}|\d{4}年?)`;
+const ONGOING = String.raw`(?:present|current|currently|now|ongoing|to\s?date|today|至今|迄今|现在|現在)`;
 const SEPARATOR = String.raw`\s*(?:[-–—~]|to|through|until)\s*`;
 
 const RANGE_PATTERN = new RegExp(`${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})`, "gi");
-const SINGLE_PATTERN = new RegExp(String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4})\b`, "gi");
+const SINGLE_PATTERN = new RegExp(String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4}|\d{4}[./]\d{1,2}|\d{4}年\d{1,2}月)\b`, "gi");
 
 /** A numeric date whose first two components could each be a month or a day. */
 const AMBIGUOUS_NUMERIC_PATTERN = /\b(0?[1-9]|1[0-2])[/.-](0?[1-9]|[12]\d|3[01])[/.-](\d{2}|\d{4})\b/g;
+
+/**
+ * The endpoint patterns have no left boundary: "2022.09" would happily yield the tail match
+ * "22.09". A candidate that starts right after a digit or date punctuation is the tail of a
+ * longer number, never a date. (A lookbehind would do, but the deep check runs this in
+ * browsers whose JS engines may not support one.)
+ */
+function startsInsideNumber(text: string, index: number): boolean {
+	if (index <= 0) return false;
+	return /[0-9./-]/.test(text[index - 1] ?? "");
+}
 
 /**
  * `[A-Za-z]{3,9}` in the range pattern will happily match "Framework 2021 - 2023", which is a
@@ -110,7 +124,10 @@ export function analyzeDates(document: ExtractedDocument, locale: string, now: D
 	const ambiguousNumericDates: string[] = [];
 
 	document.lines.forEach((line, lineIndex) => {
-		const ranges = (line.text.match(RANGE_PATTERN) ?? []).filter((raw) => looksLikeDateWords(raw, locale));
+		const ranges = [...line.text.matchAll(RANGE_PATTERN)]
+			.filter((match) => !startsInsideNumber(line.text, match.index ?? 0))
+			.map((match) => match[0])
+			.filter((raw) => looksLikeDateWords(raw, locale));
 		for (const raw of ranges) {
 			const token = toToken(raw.trim(), "range", line.page, lineIndex, locale, now);
 			tokens.push(token);
@@ -119,9 +136,10 @@ export function analyzeDates(document: ExtractedDocument, locale: string, now: D
 
 		// A lone date inside a range we already captured would double-count it.
 		const withoutRanges = ranges.reduce((text, range) => text.replace(range, " "), line.text);
-		for (const raw of withoutRanges.match(SINGLE_PATTERN) ?? []) {
-			if (!looksLikeDateWords(raw, locale)) continue;
-			tokens.push(toToken(raw.trim(), "single", line.page, lineIndex, locale, now));
+		for (const match of withoutRanges.matchAll(SINGLE_PATTERN)) {
+			if (!looksLikeDateWords(match[0], locale)) continue;
+			if (startsInsideNumber(withoutRanges, match.index ?? 0)) continue;
+			tokens.push(toToken(match[0].trim(), "single", line.page, lineIndex, locale, now));
 		}
 
 		for (const raw of line.text.match(AMBIGUOUS_NUMERIC_PATTERN) ?? []) ambiguousNumericDates.push(raw);

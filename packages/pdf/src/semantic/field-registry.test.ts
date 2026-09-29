@@ -4,10 +4,10 @@ import { STANDARD_FIELD_REGISTRY, STANDARD_ROLE_REGISTRY } from "./binding-inven
 const expectedFields = {
 	summary: ["content"],
 	profiles: ["network", "username"],
-	experience: ["company", "position", "location", "period", "description"],
+	experience: ["company", "position", "location", "period", "description", "department", "employmentType"],
 	"experience-role": ["position", "period", "description"],
-	education: ["school", "area", "degree", "grade", "location", "period", "description"],
-	projects: ["name", "period", "description"],
+	education: ["school", "area", "degree", "grade", "location", "period", "description", "schoolTier"],
+	projects: ["name", "period", "description", "role"],
 	skills: ["name", "proficiency", "keywords"],
 	languages: ["language", "fluency"],
 	interests: ["name", "keywords"],

@@ -7,10 +7,15 @@ type CustomFieldLink = {
 	link?: string | undefined;
 };
 
+export const softenLongText = (value: string): string => {
+	if (value.length < 36) return value;
+	return value.replace(/([/.:_?&=@~-])/g, "$1\u200b");
+};
+
 export const getWebsiteDisplayText = (website: WebsiteDisplay): string => {
 	const label = website.label?.trim();
 
-	return label || website.url;
+	return softenLongText(label || website.url);
 };
 
 export const getCustomFieldLinkUrl = (field: CustomFieldLink): string | undefined => {

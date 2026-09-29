@@ -71,7 +71,7 @@ export default defineConfig({
 	catalogs: [
 		{
 			path: "<rootDir>/locales/{locale}",
-			include: ["src"],
+			include: ["src", "../../packages/ui/src"],
 		},
 	],
 });

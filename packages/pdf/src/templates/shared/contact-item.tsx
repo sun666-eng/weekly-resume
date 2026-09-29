@@ -1,11 +1,14 @@
 import type { Style } from "@react-pdf/types";
-import type { CustomField } from "@reactive-resume/schema/resume/data";
+import type { ReactNode } from "react";
+import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
+import type { BasicsContactEntry } from "@reactive-resume/schema/resume/cn-fields";
 import type { IconName } from "phosphor-icons-react-pdf/dynamic";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { View } from "#react-pdf-renderer";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
 import { useResolvedNode, useSemanticNodeKey, useSemanticNodeVisible } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
-import { getCustomFieldLinkUrl, getWebsiteDisplayText } from "./contact";
+import { getCustomFieldLinkUrl, getWebsiteDisplayText, softenLongText } from "./contact";
 import { Icon, Link, Text } from "./primitives";
 import { composeStyles } from "./styles";
 
@@ -31,6 +34,7 @@ const useContactNodeKeys = (name: string, id?: string, primitiveNodeKey?: string
 
 type WebsiteContactItemProps = {
 	website: WebsiteDisplay;
+	contactName?: string;
 	style?: ContactStyle;
 	textStyle?: ContactStyle;
 	iconColor?: string;
@@ -47,18 +51,23 @@ type CustomFieldContactItemProps = {
 
 export const WebsiteContactItem = ({
 	website,
+	contactName = "website",
 	style,
 	textStyle,
 	iconColor,
 	primitiveNodeKey,
 }: WebsiteContactItemProps) => {
-	const keys = useContactNodeKeys("website", undefined, primitiveNodeKey);
+	const keys = useContactNodeKeys(contactName, undefined, primitiveNodeKey);
 	const visible = useSemanticNodeVisible(keys.primitiveNodeKey);
 	if (!website.url || !visible) return null;
 
 	return (
 		<Link nodeKey={keys.primitiveNodeKey} src={website.url} {...(style ? { style } : {})}>
-			<Icon nodeKey={keys.iconNodeKey} name="globe" {...(iconColor ? { color: iconColor } : {})} />
+			<Icon
+				nodeKey={keys.iconNodeKey}
+				name={contactName === "github" ? "github-logo" : contactName === "blog" ? "link" : "globe"}
+				{...(iconColor ? { color: iconColor } : {})}
+			/>
 			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
 				{getWebsiteDisplayText(website)}
 			</Text>
@@ -104,6 +113,7 @@ export const CustomFieldContactItem = ({
 
 type EmailContactItemProps = {
 	email: string;
+	contactName?: string;
 	style?: ContactStyle;
 	textStyle?: ContactStyle;
 	iconColor?: string;
@@ -114,20 +124,21 @@ type EmailContactItemProps = {
 
 export const EmailContactItem = ({
 	email,
+	contactName = "email",
 	style,
 	textStyle,
 	iconColor,
 	iconName = "envelope",
 	primitiveNodeKey,
 }: EmailContactItemProps) => {
-	const keys = useContactNodeKeys("email", undefined, primitiveNodeKey);
+	const keys = useContactNodeKeys(contactName, undefined, primitiveNodeKey);
 	const visible = useSemanticNodeVisible(keys.primitiveNodeKey);
 	if (!email || !visible) return null;
 	return (
 		<Link nodeKey={keys.primitiveNodeKey} src={`mailto:${email}`} {...(style ? { style } : {})}>
 			<Icon nodeKey={keys.iconNodeKey} name={iconName} {...(iconColor ? { color: iconColor } : {})} />
 			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
-				{email}
+				{softenLongText(email)}
 			</Text>
 		</Link>
 	);
@@ -135,14 +146,22 @@ export const EmailContactItem = ({
 
 type PhoneContactItemProps = {
 	phone: string;
+	contactName?: string;
 	style?: ContactStyle;
 	textStyle?: ContactStyle;
 	iconColor?: string;
 	primitiveNodeKey?: string | undefined;
 };
 
-export const PhoneContactItem = ({ phone, style, textStyle, iconColor, primitiveNodeKey }: PhoneContactItemProps) => {
-	const keys = useContactNodeKeys("phone", undefined, primitiveNodeKey);
+export const PhoneContactItem = ({
+	phone,
+	contactName = "phone",
+	style,
+	textStyle,
+	iconColor,
+	primitiveNodeKey,
+}: PhoneContactItemProps) => {
+	const keys = useContactNodeKeys(contactName, undefined, primitiveNodeKey);
 	const visible = useSemanticNodeVisible(keys.primitiveNodeKey);
 	if (!phone || !visible) return null;
 	return (
@@ -183,3 +202,115 @@ export const LocationContactItem = ({
 		</View>
 	);
 };
+
+const TEXT_CONTACT_ICONS = {
+	gender: "user",
+	age: "clock",
+	location: "map-pin",
+	address: "map-pin",
+	political: "star",
+} as const satisfies Partial<Record<BasicsContactEntry["name"], IconName>>;
+
+type TextContactItemProps = {
+	contactName: string;
+	text: string;
+	iconName?: IconName;
+	style?: ContactStyle;
+	textStyle?: ContactStyle;
+	iconColor?: string;
+	primitiveNodeKey?: string | undefined;
+};
+
+export const TextContactItem = ({
+	contactName,
+	text,
+	iconName = "info",
+	style,
+	textStyle,
+	iconColor,
+	primitiveNodeKey,
+}: TextContactItemProps) => {
+	const keys = useContactNodeKeys(contactName, undefined, primitiveNodeKey);
+	const resolved = useResolvedNode(keys.primitiveNodeKey);
+	const visible = useSemanticNodeVisible(keys.primitiveNodeKey);
+	if (!text || !visible) return null;
+
+	return (
+		<View {...resolvedPdfFlowProps(resolved)} style={composeStyles(style, resolved.style)}>
+			<Icon nodeKey={keys.iconNodeKey} name={iconName} {...(iconColor ? { color: iconColor } : {})} />
+			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
+				{softenLongText(text)}
+			</Text>
+		</View>
+	);
+};
+
+type BasicsContactRenderOptions = {
+	basics: Basics;
+	locale: string;
+	style?: ContactStyle;
+	textStyle?: ContactStyle;
+	iconColor?: string;
+	emailIconName?: IconName;
+	names?: ReadonlySet<string>;
+	primitiveNodeKey?: (name: string) => string | undefined;
+};
+
+export function renderBasicsContactItem(
+	entry: BasicsContactEntry,
+	options: Omit<BasicsContactRenderOptions, "basics" | "locale" | "names">,
+): ReactNode {
+	const primitiveNodeKey = options.primitiveNodeKey?.(entry.name);
+	const shared = {
+		contactName: entry.name,
+		...(options.style ? { style: options.style } : {}),
+		...(options.textStyle ? { textStyle: options.textStyle } : {}),
+		...(options.iconColor ? { iconColor: options.iconColor } : {}),
+		...(primitiveNodeKey ? { primitiveNodeKey } : {}),
+	};
+
+	if (entry.name === "email") {
+		return (
+			<EmailContactItem
+				key={entry.name}
+				email={entry.text}
+				{...(options.emailIconName ? { iconName: options.emailIconName } : {})}
+				{...shared}
+			/>
+		);
+	}
+
+	if (entry.name === "phone") {
+		return <PhoneContactItem key={entry.name} phone={entry.text} {...shared} />;
+	}
+
+	if ((entry.name === "blog" || entry.name === "github" || entry.name === "website") && entry.href) {
+		return (
+			<WebsiteContactItem
+				key={entry.name}
+				website={{ url: entry.href, label: entry.text }}
+				{...shared}
+			/>
+		);
+	}
+
+	return (
+		<TextContactItem
+			key={entry.name}
+			text={entry.text}
+			iconName={TEXT_CONTACT_ICONS[entry.name as keyof typeof TEXT_CONTACT_ICONS] ?? "info"}
+			{...shared}
+		/>
+	);
+}
+
+export function renderBasicsContactItems({
+	basics,
+	locale,
+	names,
+	...options
+}: BasicsContactRenderOptions): ReactNode[] {
+	return listBasicsContactEntries(basics, locale)
+		.filter((entry) => !names || names.has(entry.name))
+		.map((entry) => renderBasicsContactItem(entry, options));
+}

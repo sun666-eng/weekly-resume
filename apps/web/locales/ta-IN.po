@@ -199,6 +199,12 @@ msgstr "ஒரு தேதி வரம்பு தொடங்குவதற
 msgid "A date range is written in a form most software cannot read."
 msgstr "ஒரு தேதி வரம்பு பெரும்பாலான மென்பொருள்களால் படிக்க முடியாத வடிவத்தில் எழுதப்பட்டுள்ளது."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "ஒரு எழுத்துரு குறிப்பிடப்பட்டுள்ளது ஆனால் உட்பொதிக்கப்படவில்லை."
@@ -2085,6 +2091,10 @@ msgstr "இரண்டு நிலை அங்கீகாரத்தை ம
 msgid "Discard"
 msgstr "நிராகரி"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "சேமிக்கப்படாத மாற்றங்களை நிராகரிக்கவா?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்."
 
@@ -3594,6 +3605,10 @@ msgstr "விசை"
 msgid "Keyword layout"
 msgstr "முக்கியச்சொல் அடுக்கு அமைப்பு"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "https:// கொண்டு தொடங்க வேண்டும்"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "பெயர்"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "இதில் உங்கள் பெயரை இடத் தய�
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "பெறுநர்"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "பூட்டை திற"
 msgid "Unnamed passkey"
 msgstr "பெயரிடப்படாத பாஸ் கீ"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "சரிபார்க்கப்படவில்லை"
@@ -7423,6 +7450,10 @@ msgstr "பயனர் பெயர்"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

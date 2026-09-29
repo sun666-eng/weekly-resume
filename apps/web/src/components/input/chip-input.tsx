@@ -16,6 +16,7 @@ import { PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { AnimatePresence, m } from "motion/react";
 import * as React from "react";
 import { createPortal } from "react-dom";
+import { splitSkillKeywords } from "@reactive-resume/resume/skill-groups";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { useFormControl } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -145,6 +146,8 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	defaultValue?: string[];
 	onChange?: (value: string[]) => void;
 	hideDescription?: boolean;
+	commitOnBlur?: boolean;
+	bulkPaste?: boolean;
 };
 
 export function ChipInput({
@@ -153,6 +156,8 @@ export function ChipInput({
 	onChange,
 	className,
 	hideDescription = false,
+	commitOnBlur = false,
+	bulkPaste = false,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
 	"aria-invalid": ariaInvalidProp,
@@ -186,8 +191,14 @@ export function ChipInput({
 			});
 			if (nextValues.length === 0) return;
 
-			const newChips = [...new Set([...chips, ...nextValues])];
-			setChips(newChips);
+			// Only newly typed values are deduplicated: duplicates that already exist in the data
+			// (from imports or group merges) must survive unrelated edits unchanged.
+			const merged = [...chips];
+			for (const value of nextValues) {
+				if (!merged.includes(value)) merged.push(value);
+			}
+			if (merged.length === chips.length) return;
+			setChips(merged);
 		},
 		[chips, setChips],
 	);
@@ -276,8 +287,11 @@ export function ChipInput({
 
 			const { active, over } = event;
 			if (!over || active.id === over.id) return;
-			const oldIndex = chips.indexOf(active.id as string);
-			const newIndex = chips.indexOf(over.id as string);
+			// Sortable ids are index-qualified because chip text can repeat; matching on the raw text
+			// would always move the first duplicate.
+			const ids = chips.map((chip, index) => `${index}:${chip}`);
+			const oldIndex = ids.indexOf(active.id as string);
+			const newIndex = ids.indexOf(over.id as string);
 			if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
 				const newOrder = [...chips];
 				const [removed] = newOrder.splice(oldIndex, 1);
@@ -316,6 +330,7 @@ export function ChipInput({
 
 	const handleKeyDown = React.useCallback(
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.nativeEvent.isComposing || e.keyCode === 229) return;
 			if (e.key === "Enter" || e.key === ",") {
 				e.preventDefault();
 
@@ -356,13 +371,16 @@ export function ChipInput({
 						<div
 							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-border/70 border-b" : "hidden")}
 						>
-							<SortableContext items={chips} strategy={rectSortingStrategy}>
+							<SortableContext
+								items={chips.map((chip, index) => `${index}:${chip}`)}
+								strategy={rectSortingStrategy}
+							>
 								<m.div layout className="flex flex-wrap gap-1">
 									<AnimatePresence initial={false} mode="popLayout">
 										{chips.map((chip, idx) => (
 											<ChipItem
-												key={chip}
-												id={chip}
+												key={`${idx}:${chip}`}
+												id={`${idx}:${chip}`}
 												chip={chip}
 												index={idx}
 												isEditing={editingIndex === idx}
@@ -391,6 +409,26 @@ export function ChipInput({
 								placeholder={isEditingKeyword ? t`Editing keyword...` : t`Add a keyword...`}
 								onKeyDown={handleKeyDown}
 								onChange={handleInputChange}
+								onBlur={() => {
+									if (!commitOnBlur || !input.trim()) return;
+									if (editingIndex !== null) updateChip(editingIndex, input);
+									else addChip(input);
+									setEditingIndex(null);
+									setInput("");
+								}}
+								onPaste={(event) => {
+									if (!bulkPaste || editingIndex !== null) return;
+									const text = event.clipboardData.getData("text");
+									if (!/[,，、;；\r\n]/u.test(text)) return;
+									event.preventDefault();
+									const element = event.currentTarget;
+									const combined =
+										input.slice(0, element.selectionStart ?? input.length) +
+										text +
+										input.slice(element.selectionEnd ?? input.length);
+									addChips(splitSkillKeywords(combined));
+									setInput("");
+								}}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
 							/>
 							<AnimatePresence>

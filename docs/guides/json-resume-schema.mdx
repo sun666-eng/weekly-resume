@@ -239,19 +239,19 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 				},
 				"headline": {
 					"type": "string",
-					"description": "The headline of the author of the resume."
+					"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 				},
 				"email": {
 					"type": "string",
-					"description": "The email address of the author of the resume."
+					"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 				},
 				"phone": {
 					"type": "string",
-					"description": "The phone number of the author of the resume."
+					"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 				},
 				"location": {
 					"type": "string",
-					"description": "The location of the author of the resume."
+					"description": "The city or current location of the author of the resume."
 				},
 				"website": {
 					"type": "object",
@@ -302,6 +302,66 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 						]
 					},
 					"description": "The custom fields to display on the resume."
+				},
+				"gender": {
+					"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed.",
+					"type": "string"
+				},
+				"age": {
+					"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed.",
+					"type": "string"
+				},
+				"blog": {
+					"description": "Optional personal blog URL. Empty values are not displayed.",
+					"type": "object",
+					"properties": {
+						"url": {
+							"default": "",
+							"description": "The URL to show as a link. Must use http:// or https://.",
+							"type": "string"
+						},
+						"label": {
+							"default": "",
+							"description": "The label to display for the URL. Leave blank to display the URL as-is.",
+							"type": "string"
+						}
+					},
+					"required": [
+						"url",
+						"label"
+					]
+				},
+				"github": {
+					"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once.",
+					"type": "object",
+					"properties": {
+						"url": {
+							"default": "",
+							"description": "The URL to show as a link. Must use http:// or https://.",
+							"type": "string"
+						},
+						"label": {
+							"default": "",
+							"description": "The label to display for the URL. Leave blank to display the URL as-is.",
+							"type": "string"
+						}
+					},
+					"required": [
+						"url",
+						"label"
+					]
+				},
+				"politicalStatus": {
+					"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty.",
+					"type": "string"
+				},
+				"politicalStatusOther": {
+					"description": "Free-text political status used when politicalStatus is other.",
+					"type": "string"
+				},
+				"address": {
+					"description": "Optional detailed address. Kept separate from the city in location.",
+					"type": "string"
 				}
 			},
 			"required": [
@@ -596,6 +656,14 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 										"type": "string",
 										"description": "The description of the experience. This should be a HTML-formatted string."
 									},
+									"department": {
+										"description": "Optional department. Empty values are not displayed and do not replace roles.",
+										"type": "string"
+									},
+									"employmentType": {
+										"description": "Optional employment type, such as full-time or internship. Empty values are not displayed.",
+										"type": "string"
+									},
 									"roles": {
 										"default": [],
 										"description": "List of individual roles held at this company to show career progression.",
@@ -763,6 +831,10 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 									"description": {
 										"type": "string",
 										"description": "The description of the education. This should be a HTML-formatted string."
+									},
+									"schoolTier": {
+										"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed.",
+										"type": "string"
 									}
 								},
 								"required": [
@@ -884,6 +956,10 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 									"description": {
 										"type": "string",
 										"description": "The description of the project. This should be a HTML-formatted string."
+									},
+									"role": {
+										"description": "Optional role on the project. Empty values are not displayed.",
+										"type": "string"
 									}
 								},
 								"required": [
@@ -973,7 +1049,7 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 									"name": {
 										"type": "string",
 										"minLength": 1,
-										"description": "The name of the skill."
+										"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 									},
 									"proficiency": {
 										"type": "string",
@@ -988,7 +1064,7 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 									},
 									"keywords": {
 										"default": [],
-										"description": "The keywords associated with the skill, if any. These are displayed as tags below the name.",
+										"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members.",
 										"type": "array",
 										"items": {
 											"type": "string"
@@ -2282,6 +2358,14 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 											"type": "string",
 											"description": "The description of the experience. This should be a HTML-formatted string."
 										},
+										"department": {
+											"description": "Optional department. Empty values are not displayed and do not replace roles.",
+											"type": "string"
+										},
+										"employmentType": {
+											"description": "Optional employment type, such as full-time or internship. Empty values are not displayed.",
+											"type": "string"
+										},
 										"roles": {
 											"default": [],
 											"description": "List of individual roles held at this company to show career progression.",
@@ -2461,6 +2545,10 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 										"description": {
 											"type": "string",
 											"description": "The description of the education. This should be a HTML-formatted string."
+										},
+										"schoolTier": {
+											"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed.",
+											"type": "string"
 										}
 									},
 									"required": [
@@ -2594,6 +2682,10 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 										"description": {
 											"type": "string",
 											"description": "The description of the project. This should be a HTML-formatted string."
+										},
+										"role": {
+											"description": "Optional role on the project. Empty values are not displayed.",
+											"type": "string"
 										}
 									},
 									"required": [
@@ -2702,7 +2794,7 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 										"name": {
 											"type": "string",
 											"minLength": 1,
-											"description": "The name of the skill."
+											"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 										},
 										"proficiency": {
 											"type": "string",
@@ -2717,7 +2809,7 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 										},
 										"keywords": {
 											"default": [],
-											"description": "The keywords associated with the skill, if any. These are displayed as tags below the name.",
+											"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members.",
 											"type": "array",
 											"items": {
 												"type": "string"
@@ -3639,6 +3731,35 @@ The full JSON Schema for Weekly Resume follows. You can also fetch the latest ve
 		"metadata": {
 			"type": "object",
 			"properties": {
+				"editor": {
+					"type": "object",
+					"properties": {
+						"version": {
+							"type": "number",
+							"const": 1
+						},
+						"scenario": {
+							"type": "string",
+							"enum": [
+								"general",
+								"graduate",
+								"experienced",
+								"academic"
+							]
+						},
+						"enabledSections": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"version",
+						"scenario",
+						"enabledSections"
+					]
+				},
 				"template": {
 					"default": "onyx",
 					"description": "The template to use for the resume. Determines the overall design and appearance of the resume.",

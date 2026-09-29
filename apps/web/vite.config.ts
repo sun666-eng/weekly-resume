@@ -32,6 +32,8 @@ export default defineConfig({
 
 	resolve: {
 		tsconfigPaths: true,
+		// UI is source-consumed; its Lingui macros must use the app's active i18n singleton.
+		dedupe: ["@lingui/core"],
 	},
 
 	define: {
@@ -74,6 +76,10 @@ export default defineConfig({
 		}),
 		viteReact(),
 		lingui(),
-		babel({ presets: [reactCompilerPreset(), linguiTransformerBabelPreset()] }),
+		babel({
+			presets: [reactCompilerPreset(), linguiTransformerBabelPreset()],
+			// Keep compiling app source, and also Lingui macros in @reactive-resume/ui.
+			exclude: /[\\/]node_modules(?![\\/]@reactive-resume[\\/]ui[\\/])(?![\\/]\.pnpm[\\/]@reactive-resume\+ui@)/,
+		}),
 	],
 });

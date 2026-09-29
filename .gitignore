@@ -34,6 +34,8 @@ logs
 .tanstack
 
 # Testing
+.playwright-cli/
+/output/playwright/
 coverage
 reports
 playwright-report

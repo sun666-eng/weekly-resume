@@ -5,7 +5,114 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { AskUserQuestion, AssistantMarkdown, withoutResumeDataForExport } from "./agent-chat";
+import {
+	AskUserQuestion,
+	AssistantMarkdown,
+	getMessageRollbackState,
+	PatchToolCard,
+	withoutResumeDataForExport,
+} from "./agent-chat";
+
+describe("mixed Agent edits in one reply", () => {
+	const message = {
+		parts: [
+			{ type: "tool-apply_resume_patch", output: { actionId: "first" } },
+			{ type: "tool-apply_resume_patch", output: { actionId: "second" } },
+		],
+	} as unknown as Pick<UIMessage, "parts">;
+
+	it("keeps the reply visible when only one of its edits was undone", () => {
+		const actions = new Map([
+			["first", { status: "rolled_back" as const }],
+			["second", { status: "applied" as const }],
+		]);
+		expect(getMessageRollbackState(message, actions)).toBe("partial");
+	});
+
+	it("folds a reply only when every edit in it was undone", () => {
+		const actions = new Map([
+			["first", { status: "rolled_back" as const }],
+			["second", { status: "reverted" as const }],
+		]);
+		expect(getMessageRollbackState(message, actions)).toBe("all");
+	});
+});
+
+describe("visible undo action", () => {
+	beforeAll(() => i18n.loadAndActivate({ locale: "en", messages: {} }));
+	it.each([false, true])("exposes undo outside details and respects busy=%s", (busy) => {
+		const onRevert = vi.fn();
+		const part = {
+			type: "tool-apply_resume_patch",
+			state: "output-available",
+			toolCallId: "call",
+			input: { title: "Edit summary" },
+			output: { actionId: "action-1" },
+		};
+		render(
+			<I18nProvider i18n={i18n}>
+				<PatchToolCard part={part as never} action={undefined} onRevert={onRevert} isReverting={busy} />
+			</I18nProvider>,
+		);
+		const button = screen.getByRole("button", { name: "Undo this and later changes" });
+		expect(button.closest("details")).toBeNull();
+		if (busy) expect(button).toBeDisabled();
+		else {
+			fireEvent.click(button);
+			expect(onRevert).toHaveBeenCalledWith("action-1");
+		}
+	});
+
+	it("replaces the server's rollback status text with a translatable message", () => {
+		render(
+			<I18nProvider i18n={i18n}>
+				<PatchToolCard
+					part={
+						{
+							type: "tool-apply_resume_patch",
+							state: "output-available",
+							output: { actionId: "action-1" },
+						} as never
+					}
+					action={
+						{
+							id: "action-1",
+							title: "Edit summary",
+							status: "rolled_back",
+							revertMessage: "This patch was rolled back when the resume was restored to an earlier state.",
+						} as never
+					}
+					onRevert={vi.fn()}
+					isReverting={false}
+				/>
+			</I18nProvider>,
+		);
+		expect(
+			screen.getByText("This change was undone when the resume was restored to an earlier version."),
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText("This patch was rolled back when the resume was restored to an earlier state."),
+		).toBeNull();
+	});
+
+	it("allows retrying a legacy conflicted action", () => {
+		const onRevert = vi.fn();
+		render(
+			<I18nProvider i18n={i18n}>
+				<PatchToolCard
+					part={
+						{ type: "tool-apply_resume_patch", state: "output-available", output: { actionId: "action-1" } } as never
+					}
+					action={{ id: "action-1", title: "Edit", status: "conflicted", canRollback: true } as never}
+					onRevert={onRevert}
+					isReverting={false}
+				/>
+			</I18nProvider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Undo this and later changes" }));
+		expect(onRevert).toHaveBeenCalledWith("action-1");
+	});
+});
 
 describe("AssistantMarkdown", () => {
 	it("renders GitHub-style pipe tables as tables", () => {

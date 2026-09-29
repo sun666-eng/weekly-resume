@@ -199,6 +199,12 @@ msgstr "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯು ಪ್ರಾರಂಭ�
 msgid "A date range is written in a form most software cannot read."
 msgstr "ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಹೆಚ್ಚಿನ ಸಾಫ್ಟ್‌ವೇರ್‌ಗಳಿಗೆ ಓದಲಾಗದ ರೂಪದಲ್ಲಿ ಬರೆಯಲಾಗಿದೆ."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "ಫಾಂಟ್ ಒಂದನ್ನು ಉಲ್ಲೇಖಿಸಲಾಗಿದೆ ಆದರೆ ಎಂಬೆಡ್ ಮಾಡಲಾಗಿಲ್ಲ."
@@ -2085,6 +2091,10 @@ msgstr "ಎರಡು ಅಂಶಗಳ ದೃಢೀಕರಣವನ್ನು ನಿ
 msgid "Discard"
 msgstr "ತಿರಸ್ಕರಿಸು"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "ಉಳಿಸದ ಬದಲಾವಣೆಗಳನ್ನು ತ್ಯಜಿಸುವುದೇ?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "ಮಾನ್ಯವಾದ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ."
 
@@ -3594,6 +3605,10 @@ msgstr "ಕೀ"
 msgid "Keyword layout"
 msgstr "ಕೀವರ್ಡ್ ಲೇಔಟ್"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "https:// ನಿಂದ ಪ್ರಾರಂಭವಾಗಬೇಕು"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "ಹೆಸರು"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "ಇದರ ಮೇಲೆ ನಿಮ್ಮ ಹೆಸರು ಹಾಕಲು �
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "ಸ್ವೀಕೃತದಾರ"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "ಅನಿರ್ಬಂಧಿಸಿ"
 msgid "Unnamed passkey"
 msgstr "ಹೆಸರಿಡದ ಪಾಸ್‌ಕೀ"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "ಪರಿಶೀಲಿಸಲಾಗಿಲ್ಲ"
@@ -7423,6 +7450,10 @@ msgstr "ಬಳಕೆದಾರರ ಹೆಸರು"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

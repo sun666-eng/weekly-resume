@@ -1,5 +1,6 @@
 import z from "zod";
 import { templateSchema } from "../templates";
+import { ensureCnFieldDefaults } from "./cn-fields";
 import { semanticStylesheetSchema } from "./stylesheet";
 
 const iconSchema = z
@@ -87,14 +88,42 @@ export const customFieldSchema = z.object({
 	link: z.string().describe("If the custom field should be a link, the URL to link to.").catch(""),
 });
 
+const optionalText = (description: string) => z.string().optional().describe(description);
+
+const optionalWebsiteSchema = z
+	.object({
+		url: z.string().catch("").describe("The URL to show as a link. Must use http:// or https://."),
+		label: z.string().catch("").describe("The label to display for the URL. Leave blank to display the URL as-is."),
+	})
+	.optional();
+
 export const basicsSchema = z.object({
 	name: z.string().describe("The full name of the author of the resume."),
-	headline: z.string().describe("The headline of the author of the resume."),
-	email: z.string().describe("The email address of the author of the resume."),
-	phone: z.string().describe("The phone number of the author of the resume."),
-	location: z.string().describe("The location of the author of the resume."),
+	headline: z
+		.string()
+		.describe("The headline of the author of the resume. In Chinese resumes this is the target role."),
+	email: z
+		.string()
+		.describe("The email address of the author of the resume. Empty is allowed until a value is entered."),
+	phone: z
+		.string()
+		.describe("The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."),
+	location: z.string().describe("The city or current location of the author of the resume."),
 	website: websiteSchema.describe("The website of the author of the resume."),
 	customFields: z.array(customFieldSchema).describe("The custom fields to display on the resume."),
+	gender: optionalText(
+		"Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed.",
+	),
+	age: optionalText("Optional age as an integer string from 1 to 120. Empty values are not displayed."),
+	blog: optionalWebsiteSchema.describe("Optional personal blog URL. Empty values are not displayed."),
+	github: optionalWebsiteSchema.describe(
+		"Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once.",
+	),
+	politicalStatus: optionalText(
+		"Optional political status key: party-member, league-member, masses, democratic-party, other, or empty.",
+	),
+	politicalStatusOther: optionalText("Free-text political status used when politicalStatus is other."),
+	address: optionalText("Optional detailed address. Kept separate from the city in location."),
 });
 
 export const summarySchema = z.object({
@@ -156,6 +185,9 @@ export const educationItemSchema = baseItemSchema.extend({
 	period: z.string().describe("The period of time the education was obtained over."),
 	website: itemWebsiteSchema.describe("The website of the school or institution, if any."),
 	description: z.string().describe("The description of the education. This should be a HTML-formatted string."),
+	schoolTier: optionalText(
+		"Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed.",
+	),
 });
 
 const roleItemSchema = z.object({
@@ -182,6 +214,10 @@ export const experienceItemSchema = baseItemSchema.extend({
 		),
 	website: itemWebsiteSchema.describe("The website of the company or organization, if any."),
 	description: z.string().describe("The description of the experience. This should be a HTML-formatted string."),
+	department: optionalText("Optional department. Empty values are not displayed and do not replace roles."),
+	employmentType: optionalText(
+		"Optional employment type, such as full-time or internship. Empty values are not displayed.",
+	),
 	roles: z
 		.array(roleItemSchema)
 		.catch([])
@@ -228,6 +264,7 @@ export const projectItemSchema = baseItemSchema.extend({
 	period: z.string().describe("The period of time the project was worked on."),
 	website: itemWebsiteSchema.describe("The link to the project, if any."),
 	description: z.string().describe("The description of the project. This should be a HTML-formatted string."),
+	role: optionalText("Optional role on the project. Empty values are not displayed."),
 });
 
 export const publicationItemSchema = baseItemSchema.extend({
@@ -253,7 +290,10 @@ export const referenceItemSchema = baseItemSchema.extend({
 export const skillItemSchema = baseItemSchema.extend({
 	icon: iconSchema,
 	iconColor: iconColorSchema,
-	name: z.string().min(1).describe("The name of the skill."),
+	name: z
+		.string()
+		.min(1)
+		.describe("The skill category heading, or a standalone skill name if the source has no grouping."),
 	proficiency: z
 		.string()
 		.describe(
@@ -270,7 +310,9 @@ export const skillItemSchema = baseItemSchema.extend({
 	keywords: z
 		.array(z.string())
 		.catch([])
-		.describe("The keywords associated with the skill, if any. These are displayed as tags below the name."),
+		.describe(
+			"The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members.",
+		),
 });
 
 export const volunteerItemSchema = baseItemSchema.extend({
@@ -661,6 +703,13 @@ export type StyleRule = z.infer<typeof styleRuleSchema>;
 export type StyleRuleTarget = z.infer<typeof styleRuleTargetSchema>;
 
 export const metadataSchema = z.object({
+	editor: z
+		.object({
+			version: z.literal(1),
+			scenario: z.enum(["general", "graduate", "experienced", "academic"]),
+			enabledSections: z.array(z.string()),
+		})
+		.optional(),
 	template: templateSchema
 		.catch("onyx")
 		.describe("The template to use for the resume. Determines the overall design and appearance of the resume."),
@@ -709,7 +758,7 @@ export const parseResumeData = (data: unknown): ResumeData => {
 	parsed.summary.showHeading ??= true;
 	for (const section of Object.values(parsed.sections)) section.showHeading ??= true;
 	for (const section of parsed.customSections) section.showHeading ??= true;
-	return parsed;
+	return ensureCnFieldDefaults(parsed);
 };
 
 export type LayoutPage = z.infer<typeof pageLayoutSchema>;

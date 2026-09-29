@@ -14,14 +14,16 @@ import {
 	ToolLoopAgent,
 	wrapLanguageModel,
 } from "ai";
-import { and, asc, count, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { planAgentRollback } from "@reactive-resume/resume/agent-rollback";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { assertAgentEnvironment, getAgentToolApprovalSecret } from "../ai/credentials";
 import { getAgentModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
+import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
 import { pruneAgentModelContext } from "./context";
@@ -60,7 +62,6 @@ const DIRECT_MODEL_FILE_ATTACHMENT_TYPES = new Set([
 ]);
 const AGENT_ATTACHMENT_URL_PREFIX = "agent-attachment:";
 const MAX_ATTACHMENT_TEXT_CHARS = 40_000;
-const ROLLBACK_CONFLICT_MESSAGE = "The resume changed after this action was applied.";
 const ROLLED_BACK_MESSAGE = "This patch was rolled back when the resume was restored to an earlier state.";
 
 const activeRunControllers = new Map<string, AbortController>();
@@ -139,7 +140,7 @@ function toAction(row: AgentActionRecord) {
 		title: row.title,
 		summary: row.summary,
 		operations: row.operations,
-		canRollback: row.status === "applied" && row.snapshotData !== null,
+		canRollback: (row.status === "applied" || row.status === "conflicted") && row.snapshotData !== null,
 		baseUpdatedAt: row.baseUpdatedAt,
 		appliedUpdatedAt: row.appliedUpdatedAt,
 		revertedAt: row.revertedAt,
@@ -757,6 +758,7 @@ function createAgent(input: {
 	userId: string;
 	threadId: string;
 	resumeId: string;
+	forceFreshRead?: boolean;
 	draftRowId?: string;
 	requirePatchApproval?: boolean;
 	provider: {
@@ -837,7 +839,7 @@ function createAgent(input: {
 		},
 	});
 
-	const instructionsText = buildAgentInstructions({ hasProviderNativeSearch: "web_search" in tools });
+	const instructionsText = `${buildAgentInstructions({ hasProviderNativeSearch: "web_search" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
 
 	return new ToolLoopAgent({
 		// Providers without native inputExamples support get them appended to the tool description.
@@ -862,9 +864,14 @@ function createAgent(input: {
 		// does not type this key yet, hence the spread-cast.
 		...({ experimental_toolApprovalSecret: getAgentToolApprovalSecret() } as object),
 		// Runs before every loop step, so intra-run growth (N patches → N snapshots) is pruned too.
-		prepareStep: ({ messages }) => {
+		prepareStep: ({ messages, stepNumber }) => {
 			const pruned = pruneAgentModelContext(messages);
-			return pruned === messages ? {} : { messages: pruned };
+			return {
+				...(pruned === messages ? {} : { messages: pruned }),
+				...(input.forceFreshRead && stepNumber === 0
+					? { toolChoice: { type: "tool" as const, toolName: "read_resume" as const } }
+					: {}),
+			};
 		},
 		tools,
 	});
@@ -1267,6 +1274,7 @@ export const agentService = {
 					userId: input.userId,
 					threadId: input.threadId,
 					resumeId: thread.workingResumeId,
+					forceFreshRead: input.message.role === "user",
 					...(draftRowId ? { draftRowId } : {}),
 					requirePatchApproval: thread.reviewPatches,
 					provider: {
@@ -1474,7 +1482,7 @@ export const agentService = {
 	},
 
 	actions: {
-		revert: async (input: { id: string; userId: string }) => {
+		revert: async (input: { id: string; userId: string; conflictStrategy?: "reject" | "restore-agent-fields" }) => {
 			assertAgentEnvironment();
 
 			const [action] = await db
@@ -1484,7 +1492,7 @@ export const agentService = {
 				.limit(1);
 
 			if (!action) throw new ORPCError("NOT_FOUND");
-			if (action.status !== "applied") return toAction(action);
+			if (action.status !== "applied" && action.status !== "conflicted") return toAction(action);
 			if (action.kind !== "resume_patch") {
 				throw new ORPCError("AGENT_ROLLBACK_UNSUPPORTED", { status: 400 });
 			}
@@ -1495,82 +1503,83 @@ export const agentService = {
 				throw new ORPCError("AGENT_ROLLBACK_UNAVAILABLE", { status: 400 });
 			}
 
-			const [latestAction] = await db
-				.select()
-				.from(schema.agentAction)
-				.where(
-					and(
-						eq(schema.agentAction.userId, input.userId),
-						eq(schema.agentAction.threadId, action.threadId),
-						eq(schema.agentAction.resumeId, resumeId),
-						eq(schema.agentAction.kind, "resume_patch"),
-						eq(schema.agentAction.status, "applied"),
-					),
-				)
-				.orderBy(desc(schema.agentAction.appliedUpdatedAt))
-				.limit(1);
+			const { updated, restored } = await db.transaction(async (tx) => {
+				// Lock first, then read actions. A concurrent save or Agent edit cannot appear between
+				// the merge base and the replacement write.
+				const [current] = await tx
+					.select({ data: schema.resume.data, updatedAt: schema.resume.updatedAt, isLocked: schema.resume.isLocked })
+					.from(schema.resume)
+					.where(and(eq(schema.resume.id, resumeId), eq(schema.resume.userId, input.userId)))
+					.for("update");
+				if (!current) throw new ORPCError("NOT_FOUND");
+				if (current.isLocked) throw new ORPCError("RESUME_LOCKED");
 
-			if (!latestAction) {
-				throw new ORPCError("AGENT_PATCH_NOT_APPLIED", { status: 400 });
-			}
-
-			try {
-				const { updated, restored } = await db.transaction(async (tx) => {
-					const restored = await resumeService.patchInTransaction(tx, {
-						id: resumeId,
-						userId: input.userId,
-						operations: [{ op: "replace", path: "", value: structuredClone(snapshotData) }],
-						expectedUpdatedAt: latestAction.appliedUpdatedAt,
-					});
-
-					const rolledBackAt = new Date();
-					const updatedActions = await tx
-						.update(schema.agentAction)
-						.set({
-							status: "rolled_back",
-							revertedAt: rolledBackAt,
-							revertMessage: ROLLED_BACK_MESSAGE,
-							appliedUpdatedAt: restored.updatedAt,
-						})
-						.where(
-							and(
-								eq(schema.agentAction.userId, input.userId),
-								eq(schema.agentAction.threadId, action.threadId),
-								eq(schema.agentAction.resumeId, resumeId),
-								eq(schema.agentAction.kind, "resume_patch"),
-								eq(schema.agentAction.status, "applied"),
-								gte(schema.agentAction.appliedUpdatedAt, action.appliedUpdatedAt),
-							),
-						)
-						.returning();
-
-					const updated = updatedActions.find((row) => row.id === action.id);
-					if (!updated) throw new ORPCError("NOT_FOUND");
-					return { updated, restored };
+				const appliedActions = await tx
+					.select()
+					.from(schema.agentAction)
+					.where(
+						and(
+							eq(schema.agentAction.userId, input.userId),
+							eq(schema.agentAction.threadId, action.threadId),
+							eq(schema.agentAction.resumeId, resumeId),
+							eq(schema.agentAction.kind, "resume_patch"),
+							or(eq(schema.agentAction.status, "applied"), eq(schema.agentAction.id, action.id)),
+						),
+					)
+					.orderBy(desc(schema.agentAction.createdAt), desc(schema.agentAction.appliedUpdatedAt));
+				const selectedIndex = appliedActions.findIndex((row) => row.id === action.id);
+				if (selectedIndex < 0) throw new ORPCError("AGENT_PATCH_NOT_APPLIED", { status: 400 });
+				const rolledBackActions = appliedActions.slice(0, selectedIndex + 1);
+				const rollbackSteps = rolledBackActions.toReversed().map((row) => {
+					if (!row.snapshotData) throw new ORPCError("AGENT_ROLLBACK_UNAVAILABLE", { status: 400 });
+					return { snapshotData: row.snapshotData, operations: row.operations };
 				});
-
-				await resumeService.notifyResumePatched({
-					resumeId: restored.id,
-					userId: input.userId,
-					updatedAt: restored.updatedAt,
-				});
-
-				return toAction(updated);
-			} catch (error) {
-				if (error instanceof ORPCError && error.code === "RESUME_VERSION_CONFLICT") {
-					const [updated] = await db
-						.update(schema.agentAction)
-						.set({ status: "conflicted", revertMessage: ROLLBACK_CONFLICT_MESSAGE })
-						.where(and(eq(schema.agentAction.id, input.id), eq(schema.agentAction.userId, input.userId)))
-						.returning();
-
-					if (!updated) throw new ORPCError("NOT_FOUND");
-
-					return toAction(updated);
+				const plan = planAgentRollback(
+					rollbackSteps,
+					parseStoredResumeData(current.data),
+					input.conflictStrategy ?? "reject",
+				);
+				if (plan.conflicts.length > 0 && input.conflictStrategy !== "restore-agent-fields") {
+					throw new ORPCError("AGENT_ROLLBACK_CONFLICT", { status: 409, data: { paths: plan.conflicts } });
 				}
 
-				throw error;
-			}
+				const restored = await resumeService.patchInTransaction(tx, {
+					id: resumeId,
+					userId: input.userId,
+					operations: [{ op: "replace", path: "", value: plan.data }],
+					expectedUpdatedAt: current.updatedAt,
+				});
+				const updatedActions = await tx
+					.update(schema.agentAction)
+					.set({
+						status: "rolled_back",
+						revertedAt: new Date(),
+						revertMessage: ROLLED_BACK_MESSAGE,
+					})
+					.where(
+						and(
+							eq(schema.agentAction.userId, input.userId),
+							eq(schema.agentAction.threadId, action.threadId),
+							eq(schema.agentAction.resumeId, resumeId),
+							inArray(
+								schema.agentAction.id,
+								rolledBackActions.map((row) => row.id),
+							),
+							inArray(schema.agentAction.status, ["applied", "conflicted"]),
+						),
+					)
+					.returning();
+				const updated = updatedActions.find((row) => row.id === action.id);
+				if (!updated) throw new ORPCError("AGENT_PATCH_NOT_APPLIED", { status: 409 });
+				return { updated, restored };
+			});
+
+			await resumeService.notifyResumePatched({
+				resumeId: restored.id,
+				userId: input.userId,
+				updatedAt: restored.updatedAt,
+			});
+			return toAction(updated);
 		},
 	},
 };

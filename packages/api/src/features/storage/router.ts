@@ -27,7 +27,7 @@ export const storageRouter = {
 			operationId: "uploadFile",
 			summary: "Upload a file",
 			description:
-				"Uploads a file to storage. Images are automatically resized and converted to JPEG format. Maximum file size is 10MB. Requires authentication.",
+				"Uploads a file to storage. Images are resized; transparent images retain transparency as PNG, and opaque images use JPEG. Maximum file size is 10MB. Requires authentication.",
 			successDescription: "The file was uploaded successfully.",
 		})
 		.input(fileSchema)

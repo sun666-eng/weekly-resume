@@ -5,6 +5,7 @@ import { createVitestProjectConfig } from "../vitest.shared.mts";
 const config = createVitestProjectConfig({
 	name: "@reactive-resume/tooling",
 	dirname: fileURLToPath(new URL(".", import.meta.url)),
+	extraSetupFiles: ["vitest.fonts.setup.ts"],
 });
 
 export default {

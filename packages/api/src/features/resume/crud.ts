@@ -72,6 +72,7 @@ export const crudRouter = {
 				userId: context.user.id,
 				data: createResumeData({
 					withSampleData: input.withSampleData,
+					scenario: input.scenario,
 					name: input.name,
 					locale: context.locale,
 				}),
@@ -144,6 +145,10 @@ export const crudRouter = {
 				message: "A resume with this slug already exists.",
 				status: 400,
 			},
+			RESUME_VERSION_CONFLICT: {
+				message: "The resume was updated elsewhere since it was loaded.",
+				status: 409,
+			},
 		})
 		.handler(({ context, input }) =>
 			resumeService.update({
@@ -155,6 +160,7 @@ export const crudRouter = {
 				...(input.data !== undefined ? { data: input.data } : {}),
 				...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),
 				...(input.showDownloadButtons !== undefined ? { showDownloadButtons: input.showDownloadButtons } : {}),
+				...(input.expectedUpdatedAt !== undefined ? { expectedUpdatedAt: input.expectedUpdatedAt } : {}),
 			}),
 		),
 

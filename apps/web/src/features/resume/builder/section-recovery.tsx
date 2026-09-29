@@ -1,30 +1,22 @@
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
 import type { LeftSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EyeClosedIcon, EyeIcon } from "@phosphor-icons/react";
 import { Fragment } from "react";
+import { enableEditorSection } from "@reactive-resume/resume/editor-sections";
 import { getSectionAvailability } from "@reactive-resume/resume/section-availability";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { leftSidebarSections } from "@/libs/resume/section";
+import { getSidebarEntries } from "@/libs/resume/sidebar-order";
+import { PlacedCustomSection } from "@/routes/builder/$resumeId/-sidebar/left/sections/custom";
 import { resolveLayoutSectionTitle } from "@/routes/builder/$resumeId/-sidebar/right/sections/layout/title";
+import { AddEditorSection, EditorScenarioPicker } from "./editor-scenario";
 
-export function getVisibleLeftSidebarSections(data: ResumeData): LeftSidebarSection[] {
-	const hiddenSectionIds = new Set(
-		getSectionAvailability(data)
-			.filter((section) => section.hidden)
-			.map((section) => section.sectionId),
-	);
-
-	return leftSidebarSections.filter(
-		(section) =>
-			section === "picture" || section === "basics" || section === "custom" || !hiddenSectionIds.has(section),
-	);
-}
+export { getSidebarEntries, getVisibleLeftSidebarSections } from "@/libs/resume/sidebar-order";
 
 function focusSidebarSection(sectionId: string): void {
 	const editorTarget = document.getElementById(`sidebar-${sectionId}`);
@@ -65,17 +57,30 @@ type SectionEditorListProps = {
 };
 
 export function SectionEditorList({ renderSection }: SectionEditorListProps) {
-	const sectionKey = useCurrentBuilderResumeSelector((resume) => getVisibleLeftSidebarSections(resume.data).join(","));
-	const sections = sectionKey.split(",") as LeftSidebarSection[];
+	const sectionKey = useCurrentBuilderResumeSelector((resume) =>
+		getSidebarEntries(resume.data)
+			.map((entry) => (entry.kind === "builtin" ? entry.section : `custom:${entry.id}`))
+			.join(","),
+	);
+	const entries = sectionKey
+		.split(",")
+		.filter(Boolean)
+		.map((token) =>
+			token.startsWith("custom:")
+				? ({ kind: "custom", id: token.slice("custom:".length) } as const)
+				: ({ kind: "builtin", section: token as LeftSidebarSection } as const),
+		);
 
 	return (
 		<>
-			{sections.map((section) => (
-				<Fragment key={section}>
-					{renderSection(section)}
+			<EditorScenarioPicker />
+			{entries.map((entry) => (
+				<Fragment key={entry.kind === "builtin" ? entry.section : entry.id}>
+					{entry.kind === "builtin" ? renderSection(entry.section) : <PlacedCustomSection id={entry.id} />}
 					<Separator />
 				</Fragment>
 			))}
+			<AddEditorSection />
 			<SectionRecovery />
 		</>
 	);
@@ -90,6 +95,7 @@ export function SectionRecovery() {
 
 	const showSection = (sectionId: string) => {
 		updateResumeData((draft) => {
+			enableEditorSection(draft, sectionId);
 			if (sectionId === "summary") {
 				draft.summary.hidden = false;
 				return;

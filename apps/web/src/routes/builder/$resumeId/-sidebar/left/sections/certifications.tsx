@@ -1,6 +1,7 @@
 import type { certificationItemSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { AnimatePresence, Reorder } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -9,6 +10,9 @@ import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 export function CertificationsSectionBuilder() {
 	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.certifications);
+	const chinese = useCurrentBuilderResumeSelector((resume) =>
+		isChineseResumeLocale(resume.data.metadata?.page?.locale),
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof certificationItemSchema>[]) => {
@@ -36,6 +40,11 @@ export function CertificationsSectionBuilder() {
 				</AnimatePresence>
 			</Reorder.Group>
 
+			{chinese ? (
+				<p className="text-muted-foreground text-xs">
+					<Trans>Add certificates here instead of placing them inside awards.</Trans>
+				</p>
+			) : null}
 			<SectionAddItemButton type="certifications">
 				<Trans>Add a new certification</Trans>
 			</SectionAddItemButton>

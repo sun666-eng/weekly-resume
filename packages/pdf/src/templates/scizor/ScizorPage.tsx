@@ -8,10 +8,7 @@ import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
@@ -83,7 +80,7 @@ export const ScizorPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 };
 
 const Header = ({ styles }: ScizorHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 
 	return (
@@ -94,10 +91,11 @@ const Header = ({ styles }: ScizorHeaderProps) => {
 				{basics.headline && <Text style={styles.headerHeadline}>{basics.headline}</Text>}
 
 				<SemanticContactListView style={styles.headerContactRow}>
-					<LocationContactItem location={basics.location} style={styles.headerContactItem} />
-					<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-					<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+					{renderBasicsContactItems({
+						basics,
+						locale: metadata.page.locale,
+						style: styles.headerContactItem,
+					})}
 					{basics.customFields.map((field) => (
 						<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
 					))}

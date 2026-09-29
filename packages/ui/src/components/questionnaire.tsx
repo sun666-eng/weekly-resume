@@ -1,7 +1,9 @@
 import type * as React from "react";
 import type { Button } from "./button";
+import { t } from "@lingui/core/macro";
 import { CheckIcon } from "@phosphor-icons/react";
 import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire";
+import { useLinguiChanges } from "@reactive-resume/ui/hooks/use-lingui-changes";
 import { cn } from "@reactive-resume/utils/style";
 import { buttonVariants } from "./button";
 
@@ -142,6 +144,7 @@ function QuestionnaireSubmit({
 	...props
 }: React.ComponentProps<typeof QuestionnairePrimitive.Submit> &
 	Pick<React.ComponentProps<typeof Button>, "size" | "variant">) {
+	useLinguiChanges();
 	return (
 		<QuestionnairePrimitive.Submit
 			data-slot="questionnaire-submit"
@@ -154,7 +157,7 @@ function QuestionnaireSubmit({
 			)}
 			{...props}
 		>
-			{children ?? "Submit"}
+			{children ?? t`Submit`}
 		</QuestionnairePrimitive.Submit>
 	);
 }

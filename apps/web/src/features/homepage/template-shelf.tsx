@@ -1,10 +1,14 @@
 import type { Template } from "@reactive-resume/schema/templates";
 import type { CSSProperties } from "react";
+import type { TemplateCategory } from "@/dialogs/resume/template/catalog";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
+import { TemplateBrowser } from "@/dialogs/resume/template/browser";
+import { templateCatalog } from "@/dialogs/resume/template/catalog";
 import { getHomepageTemplateOrder, getTemplateDisplayName } from "@/dialogs/resume/template/labels";
 import { templatePreviewImage, templatePreviewPdf } from "@/libs/template-assets";
 import { textLink } from "./classes";
@@ -16,8 +20,11 @@ const roundLinkClass =
 export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 	const { i18n } = useLingui();
 	const templates = getHomepageTemplateOrder(i18n.locale);
-	const index = templates.indexOf(template);
+	const index = Math.max(0, templates.indexOf(template));
 	const [instant, setInstant] = useState(false);
+	const [library, setLibrary] = useState<TemplateCategory | "all" | null>(null);
+	const [preview, setPreview] = useState<Template | null>(null);
+	const zh = i18n.locale.startsWith("zh");
 	const select = (next: Template, keyboard: boolean) => {
 		setInstant(keyboard);
 		onChange(next);
@@ -100,6 +107,62 @@ export function TemplateShelf({ template, onChange }: TemplateShelfProps) {
 					</button>
 				))}
 			</fieldset>
+			<div className="mt-6 flex flex-wrap justify-center gap-3">
+				<button
+					type="button"
+					className={textLink}
+					onClick={() => {
+						setPreview(null);
+						setLibrary(templateCatalog[template].category);
+					}}
+				>
+					{zh ? "查看同类" : "View similar"}
+				</button>
+				<button
+					type="button"
+					className={textLink}
+					onClick={() => {
+						setPreview(null);
+						setLibrary("all");
+					}}
+				>
+					{zh ? "查看全部模板" : "View all templates"}
+				</button>
+			</div>
+			{library && (
+				<section className="mt-6 max-h-[75svh] overflow-y-auto rounded-md border bg-background p-4 text-foreground">
+					<div className="mb-4 flex justify-end">
+						<Button type="button" variant="ghost" onClick={() => setLibrary(null)}>
+							{zh ? "关闭模板库" : "Close gallery"}
+						</Button>
+					</div>
+					{preview ? (
+						<div className="space-y-3">
+							<div className="flex gap-2">
+								<Button type="button" variant="outline" onClick={() => setPreview(null)}>
+									{zh ? "返回" : "Back"}
+								</Button>
+								<Button
+									type="button"
+									onClick={() => {
+										onChange(preview);
+										setLibrary(null);
+									}}
+								>
+									{zh ? "使用此模板" : "Use this template"}
+								</Button>
+							</div>
+							<img
+								src={templatePreviewImage(preview, i18n.locale)}
+								alt={getTemplateDisplayName(preview, i18n.locale)}
+								className="mx-auto w-full max-w-xl"
+							/>
+						</div>
+					) : (
+						<TemplateBrowser key={library} selected={template} initialCategory={library} onPreview={setPreview} />
+					)}
+				</section>
+			)}
 			<div className="mt-[30px] flex items-center justify-end gap-5 border-(--home-line) border-t pt-[35px] max-[540px]:pt-[25px]">
 				<a
 					href={templatePreviewPdf(template, i18n.locale)}

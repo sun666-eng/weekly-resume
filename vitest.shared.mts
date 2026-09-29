@@ -12,6 +12,7 @@ type VitestProjectOptions = {
 	dirname: string;
 	environment?: VitestEnvironment;
 	plugins?: ViteUserConfig["plugins"];
+	dedupe?: string[];
 	/** Project-specific setup files, resolved from `dirname` and run after the root setup. */
 	extraSetupFiles?: string[];
 };
@@ -21,12 +22,13 @@ export const createVitestProjectConfig = ({
 	dirname,
 	environment = "node",
 	plugins = [],
+	dedupe = [],
 	extraSetupFiles = [],
 }: VitestProjectOptions) =>
 	defineConfig({
 		root: dirname,
 		envDir: workspaceRoot,
-		resolve: { tsconfigPaths: true },
+		resolve: { tsconfigPaths: true, dedupe },
 		plugins,
 		test: {
 			name,

@@ -14,7 +14,6 @@ const LEXICON_SOURCE =
 const LEXICON = new Set(LEXICON_SOURCE.split(/\s+/).filter(Boolean));
 
 const VOWELS = /[aeiouy]/;
-const LATIN = /[A-Za-z]/;
 const ALPHABETIC_TOKEN = /^[A-Za-z][A-Za-z'-]*$/;
 
 /** Long enough that a vowel-free run stops being a plausible acronym or abbreviation. */
@@ -77,7 +76,10 @@ export function analyzeTextQuality(input: TextQualityInput): TextQuality {
 	const runOn = alphabetic.filter((token) => token.length >= RUN_ON_MIN_LENGTH).length;
 
 	const declaresEnglish = (input.languageTag ?? "").toLowerCase().startsWith("en");
-	const looksLatin = charCount === 0 ? false : latinCount / charCount > 0.4 || LATIN.test(fullText);
+	// Predominantly Latin text. Any single English word must NOT flip this: a Chinese resume
+	// full of "Java" and "Spring Boot" is still a Chinese document, and letting the lexicon run
+	// on it turned clean CJK extraction into a false "no experience found" report.
+	const looksLatin = charCount === 0 ? false : latinCount / charCount > 0.4;
 
 	return {
 		tokenCount: tokens.length,

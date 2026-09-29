@@ -37,4 +37,11 @@ test("uploads a large JPEG after cropping without exceeding the upload limit", a
 	await expect
 		.poll(() => page.locator("#sidebar-picture img").evaluate((image: HTMLImageElement) => image.naturalWidth))
 		.toBeGreaterThan(0);
+
+	// The upload callback must persist the new URL, rather than the previous form value.
+	await page.reload();
+	await expect(page.locator("#sidebar-picture input[name=url]")).toHaveValue(/\/api\/uploads\//);
+	await expect
+		.poll(() => page.locator("#sidebar-picture img").evaluate((image: HTMLImageElement) => image.naturalWidth))
+		.toBeGreaterThan(0);
 });

@@ -1,6 +1,7 @@
 import type { publicationItemSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { AnimatePresence, Reorder } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -9,6 +10,9 @@ import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 export function PublicationsSectionBuilder() {
 	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.publications);
+	const chinese = useCurrentBuilderResumeSelector((resume) =>
+		isChineseResumeLocale(resume.data.metadata?.page?.locale),
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof publicationItemSchema>[]) => {
@@ -27,6 +31,11 @@ export function PublicationsSectionBuilder() {
 				</AnimatePresence>
 			</Reorder.Group>
 
+			{chinese ? (
+				<p className="text-muted-foreground text-xs">
+					<Trans>Add a paper, patent, or research report as its own entry.</Trans>
+				</p>
+			) : null}
 			<SectionAddItemButton type="publications">
 				<Trans>Add a new publication</Trans>
 			</SectionAddItemButton>

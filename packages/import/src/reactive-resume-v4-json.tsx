@@ -2,6 +2,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import z, { ZodError } from "zod";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { parseColorString } from "@reactive-resume/utils/color";
 import { generateId } from "@reactive-resume/utils/string";
@@ -283,6 +284,7 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 				shadowWidth: 0,
 			},
 			basics: {
+				...defaultResumeData.basics,
 				name: v4Data.basics.name ?? "",
 				headline: v4Data.basics.headline ?? "",
 				email: sanitizeEmail(v4Data.basics.email),
@@ -329,6 +331,8 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 							period: item.date ?? "",
 							website: toWebsite(item.url),
 							roles: [],
+							department: "",
+							employmentType: "",
 							description: item.summary ?? "",
 						})),
 				},
@@ -346,6 +350,7 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 							period: item.date ?? "",
 							website: toWebsite(item.url),
 							description: item.summary ?? "",
+							schoolTier: "",
 						})),
 				},
 				projects: {
@@ -358,6 +363,7 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 							period: item.date ?? "",
 							website: toWebsite(item.url),
 							description: item.summary ?? item.description ?? "",
+							role: "",
 						})),
 				},
 				skills: {
@@ -489,6 +495,8 @@ export function parseReactiveResumeV4JSON(json: string): ResumeData {
 						period: item.date ?? "",
 						website: toWebsite(item.url),
 						roles: [],
+						department: "",
+						employmentType: "",
 						// Prefer HTML summary; fall back to plain description
 						// (for description-only items, description IS the body content)
 						description: item.summary ?? item.description ?? "",

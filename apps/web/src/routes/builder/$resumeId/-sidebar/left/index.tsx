@@ -25,7 +25,8 @@ import {
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-import { getSectionIcon, getSectionTitle, leftSidebarSections } from "@/libs/resume/section";
+import { getSectionIcon, getSectionTitle } from "@/libs/resume/section";
+import { getCustomRailPresentation, getSidebarEntries } from "@/libs/resume/sidebar-order";
 import { BuilderSidebarEdge } from "../../-components/edge";
 import { useBuilderSidebar } from "../../-store/sidebar";
 import { AwardsSectionBuilder } from "./sections/awards";
@@ -131,22 +132,91 @@ function SidebarEdge() {
 	const coverLetterSectionId = useCurrentBuilderResumeSelector(
 		(resume) => resume.data.customSections.find((section) => section.type === "cover-letter")?.id ?? null,
 	);
+	const sidebarKey = useCurrentBuilderResumeSelector((resume) =>
+		getSidebarEntries(resume.data)
+			.map((entry) => (entry.kind === "builtin" ? entry.section : `custom:${entry.id}`))
+			.join(","),
+	);
+	const customRailKey = useCurrentBuilderResumeSelector((resume) =>
+		resume.data.customSections
+			.map((section) => [section.id, section.title, section.icon, section.type].join("\u001f"))
+			.join("\u001e"),
+	);
+	const sidebarEntries = sidebarKey.split(",").filter(Boolean).map((token) =>
+		token.startsWith("custom:")
+			? { kind: "custom" as const, id: token.slice("custom:".length) }
+			: { kind: "builtin" as const, section: token as LeftSidebarSection },
+	);
+	const customRails = new Map(
+		customRailKey
+			.split("\u001e")
+			.filter(Boolean)
+			.map((row) => {
+				const [id = "", title = "", icon = "", type = ""] = row.split("\u001f");
+				return [id, getCustomRailPresentation({ title, icon, type })] as const;
+			}),
+	);
 	type SidebarRailSection = LeftSidebarSection | "cover-letter";
-	type SidebarRailItem = { key: string; section: SidebarRailSection; target: string };
-	const railSections = leftSidebarSections.flatMap<SidebarRailItem>((section) => {
-		if (section !== "custom" || !coverLetterSectionId) return [{ key: section, section, target: section }];
+	type SidebarRailItem = {
+		key: string;
+		section: SidebarRailSection;
+		target: string;
+		placed: boolean;
+		label: string;
+		iconName: string;
+	};
+	const railSections = sidebarEntries.flatMap<SidebarRailItem>((entry) => {
+		if (entry.kind === "custom") {
+			const presentation = customRails.get(entry.id) ?? getCustomRailPresentation(undefined);
+			return [
+				{
+					key: entry.id,
+					section: presentation.fallbackSection as SidebarRailSection,
+					target: entry.id,
+					placed: true,
+					label: presentation.label,
+					iconName: presentation.iconName,
+				},
+			];
+		}
+		if (entry.section !== "custom" || !coverLetterSectionId) {
+			return [
+				{
+					key: entry.section,
+					section: entry.section,
+					target: entry.section,
+					placed: false,
+					label: "",
+					iconName: "",
+				},
+			];
+		}
 
 		return [
-			{ key: "cover-letter", section: "cover-letter" as const, target: coverLetterSectionId },
-			{ key: section, section, target: section },
+			{
+				key: "cover-letter",
+				section: "cover-letter" as const,
+				target: coverLetterSectionId,
+				placed: true,
+				label: "",
+				iconName: "",
+			},
+			{
+				key: entry.section,
+				section: entry.section,
+				target: entry.section,
+				placed: false,
+				label: "",
+				iconName: "",
+			},
 		];
 	});
 
 	const scrollToSection = useCallback(
-		(section: LeftSidebarSection | "cover-letter", target: LeftSidebarSection | string) => {
+		(section: LeftSidebarSection | "cover-letter", target: string, placed: boolean) => {
 			toggleSidebar("left", true);
-			if (section === "cover-letter") focusCustomSidebarSection(target);
-			else focusLeftSidebarSection(section);
+			if (placed) focusCustomSidebarSection(target);
+			else focusLeftSidebarSection(section as LeftSidebarSection);
 		},
 		[toggleSidebar],
 	);
@@ -156,25 +226,28 @@ function SidebarEdge() {
 			<div className="flex min-h-0 w-full flex-1 flex-col items-center gap-y-2 overflow-hidden">
 				<div className="no-scrollbar min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
 					<div className="flex min-h-full flex-col items-center justify-center gap-y-2">
-						{railSections.map(({ key, section, target }) => (
-							<Tooltip key={key}>
-								<TooltipTrigger
-									render={
-										<Button
-											size="icon"
-											variant="ghost"
-											aria-label={getSectionTitle(section)}
-											onClick={() => scrollToSection(section, target)}
-										>
-											{getSectionIcon(section)}
-										</Button>
-									}
-								/>
-								<TooltipContent side="right" className="font-medium">
-									{getSectionTitle(section)}
-								</TooltipContent>
-							</Tooltip>
-						))}
+						{railSections.map(({ key, section, target, placed, label, iconName }) => {
+							const railLabel = label || getSectionTitle(section);
+							return (
+								<Tooltip key={key}>
+									<TooltipTrigger
+										render={
+											<Button
+												size="icon"
+												variant="ghost"
+												aria-label={railLabel}
+												onClick={() => scrollToSection(section, target, placed)}
+											>
+												{iconName ? <i className={`ph ph-${iconName} shrink-0 text-base`} /> : getSectionIcon(section)}
+											</Button>
+										}
+									/>
+									<TooltipContent side="right" className="font-medium">
+										{railLabel}
+									</TooltipContent>
+								</Tooltip>
+							);
+						})}
 					</div>
 				</div>
 

@@ -1381,6 +1381,9 @@ importers:
       '@fontsource-variable/ibm-plex-sans':
         specifier: ^5.3.0
         version: 5.3.0
+      '@lingui/core':
+        specifier: ^6.7.0
+        version: 6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5)(babel-plugin-macros@3.1.0)
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1415,9 +1418,21 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
+      '@lingui/cli':
+        specifier: ^6.7.0
+        version: 6.7.0(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.9)(supports-color@7.2.0)
+      '@lingui/format-po':
+        specifier: ^6.7.0
+        version: 6.7.0
+      '@lingui/vite-plugin':
+        specifier: ^6.7.0
+        version: 6.7.0(@babel/core@8.0.5)(@lingui/babel-plugin-lingui-macro@6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.5)(@babel/runtime@7.29.7)(rolldown@1.2.9)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)))(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.9)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
       '@reactive-resume/config':
         specifier: workspace:*
         version: link:../config
+      '@rolldown/plugin-babel':
+        specifier: ^0.2.4
+        version: 0.2.4(@babel/core@8.0.5)(@babel/runtime@7.29.7)(rolldown@1.2.9)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
@@ -1495,6 +1510,9 @@ importers:
       '@reactive-resume/env':
         specifier: workspace:*
         version: link:../packages/env
+      '@reactive-resume/fonts':
+        specifier: workspace:*
+        version: link:../packages/fonts
       '@reactive-resume/pdf':
         specifier: workspace:*
         version: link:../packages/pdf
@@ -10598,6 +10616,14 @@ snapshots:
       '@babel/core': 8.0.5
       '@babel/types': 7.29.8
 
+  '@lingui/babel-plugin-lingui-macro@6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5)':
+    dependencies:
+      '@lingui/conf': 6.7.0
+      '@lingui/message-utils': 6.7.0
+    optionalDependencies:
+      '@babel/core': 8.0.5
+      '@babel/types': 8.0.5
+
   '@lingui/cli@6.7.0(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.9)(supports-color@7.2.0)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@7.2.0)
@@ -10655,6 +10681,16 @@ snapshots:
       - '@babel/core'
       - '@babel/types'
 
+  '@lingui/core@6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5)(babel-plugin-macros@3.1.0)':
+    dependencies:
+      '@lingui/babel-plugin-lingui-macro': 6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5)
+      '@lingui/message-utils': 6.7.0
+    optionalDependencies:
+      babel-plugin-macros: 3.1.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@babel/types'
+
   '@lingui/format-po@6.7.0':
     dependencies:
       '@lingui/conf': 6.7.0
@@ -10687,6 +10723,21 @@ snapshots:
     optionalDependencies:
       '@babel/core': 8.0.5
       '@lingui/babel-plugin-lingui-macro': 6.7.0(@babel/core@8.0.5)(@babel/types@7.29.8)
+      '@rolldown/plugin-babel': 0.2.4(@babel/core@8.0.5)(@babel/runtime@7.29.7)(rolldown@1.2.9)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
+      rolldown: 1.2.9
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - esbuild
+      - supports-color
+
+  '@lingui/vite-plugin@6.7.0(@babel/core@8.0.5)(@lingui/babel-plugin-lingui-macro@6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.5)(@babel/runtime@7.29.7)(rolldown@1.2.9)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)))(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.9)(supports-color@7.2.0)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))':
+    dependencies:
+      '@lingui/cli': 6.7.0(babel-plugin-macros@3.1.0)(esbuild@0.28.2)(rolldown@1.2.9)(supports-color@7.2.0)
+      '@lingui/conf': 6.7.0
+      vite: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1)
+    optionalDependencies:
+      '@babel/core': 8.0.5
+      '@lingui/babel-plugin-lingui-macro': 6.7.0(@babel/core@8.0.5)(@babel/types@8.0.5)
       '@rolldown/plugin-babel': 0.2.4(@babel/core@8.0.5)(@babel/runtime@7.29.7)(rolldown@1.2.9)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.1))
       rolldown: 1.2.9
     transitivePeerDependencies:

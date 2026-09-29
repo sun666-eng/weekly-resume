@@ -1,5 +1,6 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { BriefcaseIcon, ChatCircleDotsIcon, PlusIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ import { CommandLoading } from "cmdk";
 import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { useDialogStore } from "@/dialogs/store";
+import { isDefaultThreadTitle } from "@/features/agent/thread-title";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 import { useCommandPaletteStore } from "../store";
@@ -26,6 +28,7 @@ const matchesSearch = (search: string, values: Array<string | null | undefined>)
 };
 
 export function ResumesCommandGroup() {
+	useLingui();
 	const navigate = useNavigate();
 	const { openDialog } = useDialogStore();
 	const { session } = useRouteContext({ strict: false });
@@ -58,8 +61,14 @@ export function ResumesCommandGroup() {
 	const filteredApplications = (applications ?? []).filter((application) =>
 		matchesSearch(search, [application.company, application.role]),
 	);
+	const localizedDefaultThreadTitle = t`New thread`;
 	const filteredThreads = (threads ?? []).filter((thread) =>
-		matchesSearch(search, [thread.title, thread.resumeName, thread.providerLabel]),
+		matchesSearch(search, [
+			thread.title,
+			isDefaultThreadTitle(thread.title, thread.resumeName) ? localizedDefaultThreadTitle : null,
+			thread.resumeName,
+			thread.providerLabel,
+		]),
 	);
 
 	const onCreate = async () => {
@@ -186,7 +195,9 @@ export function ResumesCommandGroup() {
 						</CommandLoading>
 					) : (
 						filteredThreads.map((thread) => {
-							const title = thread.title === thread.resumeName ? t`New thread` : thread.title;
+							const title = isDefaultThreadTitle(thread.title, thread.resumeName)
+								? localizedDefaultThreadTitle
+								: thread.title;
 							const resumeName = thread.resumeName ?? "";
 							const providerLabel = thread.providerLabel ?? "";
 

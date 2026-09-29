@@ -199,6 +199,12 @@ msgstr "Une plage de dates se termine avant de commencer."
 msgid "A date range is written in a form most software cannot read."
 msgstr "Une plage de dates est écrite dans un format que la plupart des logiciels ne peuvent pas lire."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "Une police est référencée mais non intégrée."
@@ -2085,6 +2091,10 @@ msgstr "Désactivation de l'authentification à deux facteurs..."
 msgid "Discard"
 msgstr "Abandonner"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "Abandonner les modifications non enregistrées ?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "Saisissez une adresse email valide."
 
@@ -3594,6 +3605,10 @@ msgstr "Clé"
 msgid "Keyword layout"
 msgstr "Disposition des mots-clés"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "Doit commencer par https://"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Nom"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "Prêt à y apposer votre nom ?"
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "Destinataire"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "Déverrouiller"
 msgid "Unnamed passkey"
 msgstr "Clé d'accès sans nom"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Non vérifié"
@@ -7423,6 +7450,10 @@ msgstr "Nom d’utilisateur"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

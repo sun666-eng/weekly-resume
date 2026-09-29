@@ -356,7 +356,15 @@ export function buildExtractedDocument(raw: RawExtraction): ExtractedDocument {
 	const lines = pages.flatMap((page) => page.lines);
 
 	const fullText = pages.map((page) => page.lines.map((line) => line.text).join("\n")).join("\n\n");
-	const words = fullText.split(/\s+/).filter(Boolean);
+	// Whitespace-delimited counting is meaningless for CJK text, where a whole paragraph shares
+	// one "word". Each CJK character counts as a word; everything else splits on whitespace.
+	// A 300-hanzi resume is a full resume and must not read as "very short document".
+	const cjkChars = (fullText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ?? []).length;
+	const nonCjkWords = fullText
+		.replace(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu, " ")
+		.split(/\s+/)
+		.filter(Boolean);
+	const wordCount = cjkChars + nonCjkWords.length;
 
 	const fontRefs = new Set<string>();
 	const fontWeights = new Map<string, number>();
@@ -377,7 +385,7 @@ export function buildExtractedDocument(raw: RawExtraction): ExtractedDocument {
 		lines,
 		fullText,
 		charCount: fullText.length,
-		wordCount: words.length,
+		wordCount,
 		modalFontSize,
 		modalFontRef,
 		distinctFontRefs: fontRefs.size,

@@ -7,14 +7,37 @@ import {
 	getPdfFallbackFontFamilies,
 	getWebFont,
 	getWebFontSource,
+	isOfflineFontFamily,
 	isStandardPdfFontFamily,
 	resolveBoldFontWeight,
 	resolveLegacyFontAlias,
+	resolveOfflineFontFamily,
 } from "./index";
 
 const sortFontFamilies = (families: string[]) => {
 	return [...families].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
 };
+
+describe("bundled font delivery", () => {
+	it("resolves every offered bundled weight and italic variant to the same origin", () => {
+		for (const font of fontList.filter((font) => isOfflineFontFamily(font.family) && font.type === "web")) {
+			for (const weight of getFont(font.family)!.weights) {
+				expect(getWebFontSource(font.family, weight)).toMatch(/^\/fonts\//);
+				expect(getWebFontSource(font.family, weight, true)).toMatch(/^\/fonts\//);
+			}
+		}
+	});
+	it("resolves historical unsupported weights to a bundled fallback", () => {
+		for (const weight of ["100", "200", "300", "800", "900"] as const) {
+			expect(getWebFontSource("Noto Sans SC", weight)).toMatch(/^\/fonts\//);
+		}
+		expect(getFont("Noto Sans SC")!.weights).toEqual(["400", "500", "600", "700"]);
+	});
+	it("uses a shipped substitute for legacy external fonts without changing the stored name", () => {
+		expect(resolveOfflineFontFamily("Roboto")).toBe("Noto Sans");
+		expect(resolveOfflineFontFamily("Unknown font")).toBe("IBM Plex Serif");
+	});
+});
 
 describe("fontList", () => {
 	it("is ordered by font family name instead of localized display name", () => {
@@ -301,13 +324,12 @@ describe("locale coverage fonts (#3098)", () => {
 		expect(getWebFont("Vazirmatn")?.category).toBe("sans-serif");
 	});
 
-	it("returns a gstatic source for Vazirmatn regular so PDF registration can load it", () => {
+	it("returns a bundled source for Vazirmatn regular so PDF registration works offline", () => {
 		const regularSource = getWebFont("Vazirmatn")?.files["400"];
 		expect(regularSource).toBeDefined();
 
 		const source = getWebFontSource("Vazirmatn", "400");
-		expect(source).toBe(regularSource);
-		expect(source).toEqual(expect.stringContaining("fonts.gstatic.com"));
+		expect(source).toBe("/fonts/vazirmatn/400.ttf");
 		expect(source).toEqual(expect.stringMatching(/\.ttf(\?|$)/));
 	});
 });

@@ -6,7 +6,7 @@ import type { PatchApprovalResponse } from "./patch-approval-card";
 import { useChat } from "@ai-sdk/react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { eventIteratorToUnproxiedDataStream } from "@orpc/client";
+import { eventIteratorToUnproxiedDataStream, ORPCError } from "@orpc/client";
 import {
 	ArchiveIcon,
 	ArrowClockwiseIcon,
@@ -236,7 +236,7 @@ function toRecord(value: unknown) {
 	return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
 }
 
-function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardProps) {
+export function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardProps) {
 	const partRecord = part as Record<string, unknown>;
 	const state = typeof partRecord.state === "string" ? partRecord.state : null;
 	const input = toRecord(partRecord.input);
@@ -259,6 +259,12 @@ function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardPro
 				: []);
 	const status = action?.status ?? "applied";
 	const revertMessage = action?.revertMessage ?? null;
+	const localizedRevertMessage =
+		revertMessage === "The resume changed after this action was applied."
+			? t`The resume changed after this edit. The change could not be undone automatically.`
+			: revertMessage === "This patch was rolled back when the resume was restored to an earlier state."
+				? t`This change was undone when the resume was restored to an earlier version.`
+				: revertMessage;
 	const label =
 		state === "output-error"
 			? t`Patch failed`
@@ -270,8 +276,7 @@ function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardPro
 						? t`Patch conflicted`
 						: t`Patch applied`;
 	const canRollback = action?.canRollback ?? (Boolean(actionId) && status === "applied");
-	const revertDisabled =
-		isReverting || !canRollback || status === "rolled_back" || status === "reverted" || status === "conflicted";
+	const revertDisabled = isReverting || !canRollback || status === "rolled_back" || status === "reverted";
 	const errorText = typeof partRecord.errorText === "string" ? partRecord.errorText : null;
 	const rawPayload = JSON.stringify(
 		{
@@ -288,48 +293,48 @@ function PatchToolCard({ part, action, onRevert, isReverting }: PatchToolCardPro
 	);
 
 	return (
-		<details className="group text-muted-foreground text-xs">
-			<summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-md py-1 font-medium text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
-				<span>{label}</span>
-				<span className="text-muted-foreground/70 group-open:hidden">{title}</span>
-			</summary>
-
-			<div className="mt-2 space-y-2 rounded-md border bg-muted/20 p-3">
-				<div className="flex items-center justify-between gap-3">
-					<div className="min-w-0">
-						<p className="truncate font-medium text-foreground">{title}</p>
-						{status === "conflicted" && revertMessage ? (
-							<p className="mt-1 text-amber-600 dark:text-amber-300">{revertMessage}</p>
-						) : null}
-						{status === "rolled_back" && revertMessage ? (
-							<p className="mt-1 text-muted-foreground">{revertMessage}</p>
-						) : null}
-						{errorText ? <p className="mt-1 text-rose-500">{errorText}</p> : null}
-					</div>
-					{actionId ? (
-						<Button size="xs" variant="ghost" disabled={revertDisabled} onClick={() => onRevert(actionId)}>
-							<ClockCounterClockwiseIcon />
-							<Trans>Restore</Trans>
-						</Button>
+		<div className="w-full rounded-md border bg-muted/20 p-3 text-xs">
+			<div className="flex flex-wrap items-center justify-between gap-2">
+				<div className="min-w-0">
+					<p className="font-medium text-foreground">
+						{label} · {title}
+					</p>
+					{status === "conflicted" && localizedRevertMessage ? (
+						<p className="mt-1 text-amber-600 dark:text-amber-300">{localizedRevertMessage}</p>
 					) : null}
+					{status === "rolled_back" && localizedRevertMessage ? (
+						<p className="mt-1 text-muted-foreground">{localizedRevertMessage}</p>
+					) : null}
+					{errorText ? <p className="mt-1 text-rose-500">{errorText}</p> : null}
 				</div>
+				{actionId ? (
+					<Button size="xs" variant="outline" disabled={revertDisabled} onClick={() => onRevert(actionId)}>
+						<ClockCounterClockwiseIcon />
+						<Trans>Undo this and later changes</Trans>
+					</Button>
+				) : null}
+			</div>
+			<details className="mt-2 text-muted-foreground">
+				<summary className="cursor-pointer hover:text-foreground">
+					<Trans>View change details</Trans>
+				</summary>
 				{operations.length > 0 ? (
-					<ul className="max-h-48 space-y-1 overflow-auto rounded border bg-background p-2">
+					<ul className="mt-2 max-h-48 space-y-1 overflow-auto rounded border bg-background p-2">
 						{operations.map((operation, index) => (
 							<OperationRow key={`${String((operation as { path?: unknown }).path)}-${index}`} operation={operation} />
 						))}
 					</ul>
 				) : null}
-				<details>
-					<summary className="cursor-pointer text-muted-foreground/70 hover:text-foreground">
+				<details className="mt-2">
+					<summary className="cursor-pointer hover:text-foreground">
 						<Trans>Raw JSON</Trans>
 					</summary>
 					<pre className="mt-1 max-h-72 overflow-auto whitespace-pre-wrap break-words rounded border bg-background p-3 font-mono text-[0.7rem] leading-relaxed">
 						{rawPayload}
 					</pre>
 				</details>
-			</div>
-		</details>
+			</details>
+		</div>
 	);
 }
 
@@ -741,6 +746,21 @@ function MessageTokenFooter({ message }: { message: UIMessage }) {
 	);
 }
 
+export function getMessageRollbackState(
+	message: Pick<UIMessage, "parts">,
+	actionsById: ReadonlyMap<string, Pick<AgentAction, "status">>,
+): "none" | "partial" | "all" {
+	const statuses = message.parts.flatMap((part) => {
+		if (part.type !== "tool-apply_resume_patch" || !("output" in part)) return [];
+		const output = toRecord(part.output);
+		if (typeof output?.actionId !== "string") return [];
+		return [actionsById.get(output.actionId)?.status ?? "applied"];
+	});
+	if (statuses.length === 0) return "none";
+	const undone = statuses.filter((status) => status === "rolled_back" || status === "reverted").length;
+	return undone === 0 ? "none" : undone === statuses.length ? "all" : "partial";
+}
+
 // Memoized: completed messages keep stable part references, so they stop re-rendering while a
 // later message streams (the handlers passed down are useCallback-stable).
 const ChatMessage = memo(function ChatMessage({
@@ -753,8 +773,9 @@ const ChatMessage = memo(function ChatMessage({
 	actionsById,
 }: ChatMessageProps) {
 	const isUser = message.role === "user";
+	const rollbackState = getMessageRollbackState(message, actionsById);
 
-	return (
+	const content = (
 		<Message align={isUser ? "end" : "start"}>
 			<MessageContent className={cn(isUser ? "items-end" : "items-start")}>
 				{buildRenderItems(message).map((item) =>
@@ -777,6 +798,29 @@ const ChatMessage = memo(function ChatMessage({
 				{message.role === "assistant" ? <MessageTokenFooter message={message} /> : null}
 			</MessageContent>
 		</Message>
+	);
+	if (rollbackState === "partial") {
+		return (
+			<div className="rounded-md border p-3">
+				<p className="mb-2 text-muted-foreground text-xs">
+					<Trans>Some changes in this reply were undone. Check each change card for its current status.</Trans>
+				</p>
+				{content}
+			</div>
+		);
+	}
+	return rollbackState === "all" ? (
+		<details className="rounded-md border p-3 text-muted-foreground">
+			<summary className="cursor-pointer text-sm">
+				<Trans>Changes undone · View earlier conversation</Trans>
+			</summary>
+			<p className="my-2 text-xs">
+				<Trans>This reply describes an earlier version, not the current resume.</Trans>
+			</p>
+			{content}
+		</details>
+	) : (
+		content
 	);
 });
 
@@ -1055,40 +1099,43 @@ export function AgentChat({
 		);
 	};
 
-	const revertActionMutate = revertMutation.mutate;
+	const revertActionMutateAsync = revertMutation.mutateAsync;
 	const revertAction = useCallback(
 		(actionId: string) => {
 			void (async () => {
 				const confirmation = await confirm(t`Restore the resume to before this patch?`, {
-					description: t`This will roll back this patch and any patches applied after it.`,
+					description: t`This will undo this change and later changes. Conversation history is kept and marked as undone.`,
 				});
 				if (!confirmation) return;
 
-				revertActionMutate(
-					{ id: actionId },
-					{
-						onSuccess: (action) => {
-							if (action.status === "conflicted") {
-								toast.add({
-									type: "error",
-									description:
-										action.revertMessage ?? t`Cannot restore; the resume has changed since this edit was applied.`,
-								});
-							} else if (action.status === "rolled_back" || action.status === "reverted") {
-								toast.add({ type: "success", description: t`Patch rolled back.` });
-							}
-							void refreshThread();
-						},
-						onError: (error) =>
-							toast.add({
-								type: "error",
-								description: getLocalizedErrorMessage(error, t`Could not restore this patch.`),
-							}),
-					},
-				);
+				try {
+					let action: Awaited<ReturnType<typeof revertActionMutateAsync>>;
+					try {
+						action = await revertActionMutateAsync({ id: actionId });
+					} catch (error) {
+						if (!(error instanceof ORPCError) || error.code !== "AGENT_ROLLBACK_CONFLICT") throw error;
+						const restoreConflictingFields = await confirm(
+							t`Later edits changed the same fields. Restore them anyway?`,
+							{
+								description: t`Only those conflicting fields will return to their earlier values. Other later edits will stay.`,
+							},
+						);
+						if (!restoreConflictingFields) return;
+						action = await revertActionMutateAsync({ id: actionId, conflictStrategy: "restore-agent-fields" });
+					}
+					if (action.status === "rolled_back" || action.status === "reverted") {
+						toast.add({ type: "success", description: t`Patch rolled back.` });
+					}
+					void refreshThread();
+				} catch (error) {
+					toast.add({
+						type: "error",
+						description: getLocalizedErrorMessage(error, t`Could not restore this patch.`),
+					});
+				}
 			})();
 		},
-		[confirm, revertActionMutate, refreshThread],
+		[confirm, revertActionMutateAsync, refreshThread],
 	);
 
 	const retryLastMessage = () => {
@@ -1111,6 +1158,24 @@ export function AgentChat({
 
 	return (
 		<section className="flex h-full min-h-0 flex-col bg-background">
+			<div className="flex items-center justify-end border-b px-3 py-2">
+				<Button
+					variant="outline"
+					size="sm"
+					disabled={
+						isReadOnly || isStreaming || revertMutation.isPending || !actions.some((action) => action.canRollback)
+					}
+					onClick={() => {
+						const latest = [...actions]
+							.filter((action) => action.canRollback)
+							.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+						if (latest) revertAction(latest.id);
+					}}
+				>
+					<ClockCounterClockwiseIcon />
+					{revertMutation.isPending ? <Trans>Undoing changes…</Trans> : <Trans>Undo last change</Trans>}
+				</Button>
+			</div>
 			<AgentChatHeader
 				isArchived={isArchived}
 				isArchivePending={archiveMutation.isPending}
@@ -1135,7 +1200,7 @@ export function AgentChat({
 				actionsById={actionsById}
 				error={error}
 				isReadOnly={isReadOnly}
-				isReverting={revertMutation.isPending}
+				isReverting={revertMutation.isPending || isStreaming || isReadOnly}
 				isStreaming={isStreaming}
 				messages={messages}
 				onAnswer={answerToolCall}

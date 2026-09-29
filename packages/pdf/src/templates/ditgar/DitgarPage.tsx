@@ -9,10 +9,7 @@ import { semanticNodeKeys } from "../../semantic/node-keys";
 import { getPrimaryTint } from "../shared/color-helpers";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { getFeaturedSummaryLayout } from "../shared/featured-summary";
@@ -30,6 +27,7 @@ import {
 	Text,
 } from "../shared/primitives";
 import { Section } from "../shared/sections";
+import { reservesSidebarColumn } from "../shared/sidebar-column";
 import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
 import { useTemplateBase } from "../shared/template-base";
 
@@ -73,7 +71,7 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 	const { metadata } = data;
 	const { colors, styles } = useDitgarTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const showSidebar = !page.fullWidth || showHeader;
+	const reserveSidebar = reservesSidebarColumn(page);
 	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
 	const { featuredSummarySection, regularSections: regularMainSections } = getFeaturedSummaryLayout({
@@ -91,12 +89,13 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			style={composeStyles(
 				styles.page,
 				{ paddingVertical: metrics.page.paddingVertical },
+				reserveSidebar ? {} : { flexDirection: "column" },
 				pageMinHeightStyle,
 				semanticPageStyle,
 			)}
 		>
 			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={ditgarFeatures}>
-				{showSidebar && (
+				{reserveSidebar ? (
 					<View
 						style={composeStyles(styles.sidebarColumn, {
 							width: `${metadata.layout.sidebarWidth}%`,
@@ -109,17 +108,17 @@ export const DitgarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 						/>
 						{showHeader && <Header styles={styles} colors={colors} />}
 
-						{!page.fullWidth && (
-							<SemanticRegionView
-								region="sidebar"
-								style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
-							>
-								{regularSidebarSections.map((section) => (
-									<Section key={section} section={section} placement="sidebar" />
-								))}
-							</SemanticRegionView>
-						)}
+						<SemanticRegionView
+							region="sidebar"
+							style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
+						>
+							{regularSidebarSections.map((section) => (
+								<Section key={section} section={section} placement="sidebar" />
+							))}
+						</SemanticRegionView>
 					</View>
+				) : (
+					showHeader && <Header styles={styles} colors={colors} />
 				)}
 
 				<View style={composeStyles(styles.mainColumn, { marginTop: -metrics.page.paddingVertical })}>
@@ -161,31 +160,14 @@ const Header = ({ styles, colors }: DitgarHeaderProps) => {
 			</View>
 
 			<SemanticContactListView style={styles.contactList}>
-				<EmailContactItem
-					email={basics.email}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={contactIconColor}
-					iconName="at"
-				/>
-				<PhoneContactItem
-					phone={basics.phone}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={contactIconColor}
-				/>
-				<LocationContactItem
-					location={basics.location}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={contactIconColor}
-				/>
-				<WebsiteContactItem
-					website={basics.website}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={contactIconColor}
-				/>
+				{renderBasicsContactItems({
+					basics,
+					locale: metadata.page.locale,
+					style: styles.contactItem,
+					textStyle: styles.headerText,
+					iconColor: contactIconColor,
+					emailIconName: "at",
+				})}
 				{basics.customFields.map((field) => (
 					<CustomFieldContactItem
 						key={field.id}

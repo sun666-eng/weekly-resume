@@ -8,10 +8,7 @@ import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
@@ -126,7 +123,7 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 };
 
 const Header = ({ styles }: ChikoritaHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 
 	return (
@@ -141,13 +138,21 @@ const Header = ({ styles }: ChikoritaHeaderProps) => {
 
 				<SemanticContactListView style={styles.headerContactList}>
 					<SemanticContactRowView partKey="contact-row-primary" style={styles.headerContactRow}>
-						<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-						<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-						<LocationContactItem location={basics.location} style={styles.headerContactItem} />
+						{renderBasicsContactItems({
+							basics,
+							locale: metadata.page.locale,
+							style: styles.headerContactItem,
+							names: new Set(["email", "phone", "gender", "age", "location", "address", "political"]),
+						})}
 					</SemanticContactRowView>
 
 					<SemanticContactRowView partKey="contact-row-secondary" style={styles.headerContactRow}>
-						<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+						{renderBasicsContactItems({
+							basics,
+							locale: metadata.page.locale,
+							style: styles.headerContactItem,
+							names: new Set(["blog", "github", "website"]),
+						})}
 						{basics.customFields.map((field) => (
 							<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
 						))}

@@ -199,6 +199,12 @@ msgstr "A date range ends before it starts."
 msgid "A date range is written in a form most software cannot read."
 msgstr "A date range is written in a form most software cannot read."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "A font is referenced but not embedded."
@@ -2085,6 +2091,10 @@ msgstr "Disabling two-factor authentication..."
 msgid "Discard"
 msgstr "Discard"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr "Discard draft"
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "Discard unsaved changes?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr "Enter a valid email address, or leave it empty for now."
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "Enter a valid email address."
 
@@ -3594,6 +3605,10 @@ msgstr "Key"
 msgid "Keyword layout"
 msgstr "Keyword layout"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "Must start with https://"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Name"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr "Name must be at least 2 characters."
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "Ready to put your name on it?"
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "Recipient"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr "Recover draft"
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "Unlock"
 msgid "Unnamed passkey"
 msgstr "Unnamed passkey"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr "Unsaved changes from your last visit were found."
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Unverified"
@@ -7424,6 +7451,10 @@ msgstr "Username"
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
+msgstr "Username must be at least 3 characters."
 
 #: src/features/homepage/community-stats.tsx
 msgid "Users"
@@ -7974,3 +8005,61 @@ msgstr "Zoom out"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
+
+
+msgid "Organize skill groups"
+msgstr "Organize skill groups"
+
+
+msgid "Select a category and its skills, then choose the category heading. Only plain visible entries can be merged; entries with ratings or existing keywords remain unchanged."
+msgstr "Select a category and its skills, then choose the category heading. Only plain visible entries can be merged; entries with ratings or existing keywords remain unchanged."
+
+
+msgid "Entries to merge"
+msgstr "Entries to merge"
+
+
+msgid "Category heading"
+msgstr "Category heading"
+
+
+msgid "Choose a selected entry"
+msgstr "Choose a selected entry"
+
+
+msgid "Merge into group"
+msgstr "Merge into group"
+
+
+msgid "Undo last grouping"
+msgstr "Undo last grouping"
+
+
+msgid "Skills changed after grouping. Undo is disabled to protect newer edits."
+msgstr "Skills changed after grouping. Undo is disabled to protect newer edits."
+
+
+msgid "Skills changed. Review the current entries and try again."
+msgstr "Skills changed. Review the current entries and try again."
+
+
+msgid "Add a skill group"
+msgstr "Add a skill group"
+
+
+msgid "Category name"
+msgstr "Category name"
+
+
+msgid "Proficiency and rating (optional)"
+msgstr "Proficiency and rating (optional)"
+
+
+msgid "Specific skills"
+msgstr "Specific skills"
+
+msgid "Your session expired. Sign in again to save your changes."
+msgstr "Your session expired. Sign in again to save your changes."
+
+msgid "Sign in again"
+msgstr "Sign in again"

@@ -199,6 +199,12 @@ msgstr "ଏକ ତାରିଖ ପରିସର ଆରମ୍ଭ ହେବା ପ�
 msgid "A date range is written in a form most software cannot read."
 msgstr "ଏକ ତାରିଖ ପରିସର ଏପରି ଫର୍ମରେ ଲେଖାଯାଇଛି ଯାହା ଅଧିକାଂଶ ସଫ୍ଟୱେର୍ ପଢ଼ିପାରେ ନାହିଁ।"
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "ଏକ ଫଣ୍ଟ ସନ୍ଦର୍ଭିତ କିନ୍ତୁ ଏମ୍ବେଡ୍ କରାଯାଇ ନାହିଁ।"
@@ -2085,6 +2091,10 @@ msgstr "ଦ୍ୱି-ଘଟକ ପରିଚୟ ପ୍ରମାଣିକରଣ �
 msgid "Discard"
 msgstr "ପରିତ୍ୟାଗ କରନ୍ତୁ |"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "ସଂରକ୍ଷିତ ପରିବର୍ତ୍ତନକୁ ପରିତ୍ୟାଗ କରନ୍ତୁ?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "ଏକ ବ valid ଧ ଇମେଲ୍ ଠିକଣା ପ୍ରବେଶ କରନ୍ତୁ |"
 
@@ -3594,6 +3605,10 @@ msgstr "କୀ"
 msgid "Keyword layout"
 msgstr "କୀୱାର୍ଡ ଲେଆଉଟ୍ |"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "https:// ସହ ଆରମ୍ଭ ହେବା ଆବଶ୍ୟକ"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "ନାମ"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "ଏଥିରେ ଆପଣଙ୍କ ନାମ ଲେଖିବାକୁ �
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "ପ୍ରାପ୍ତକର୍ତ୍ତା"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "ଅନଲକ୍ କରନ୍ତୁ"
 msgid "Unnamed passkey"
 msgstr "ନାମହୀନ ପାସକି"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "ଅସତ୍ୟାପିତ"
@@ -7423,6 +7450,10 @@ msgstr "ୟୁଜରନେମ୍"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

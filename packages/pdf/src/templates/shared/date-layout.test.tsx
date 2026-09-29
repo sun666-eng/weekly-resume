@@ -561,7 +561,13 @@ describe("date layout characterization (#3155, #2841)", () => {
 	it("records default date evidence for every template without claiming parity geometry", async () => {
 		const evidence: Record<string, unknown> = {};
 		for (const template of templates) {
-			const result = await renderFixture(dateFixture(), template);
+			const data = dateFixture();
+			// The recorded baselines for these templates have a sidebar header. Request that
+			// layout explicitly now that fullWidth correctly puts the header above the body.
+			if (["ditgar", "gengar", "glalie"].includes(template)) {
+				for (const page of data.metadata.layout.pages) page.fullWidth = false;
+			}
+			const result = await renderFixture(data, template);
 			const coordinates = coordinatesFor(result, dateMarkers);
 			const missingMarkers = dateMarkers.filter((marker) => markerItems(result, marker).length === 0);
 			expect(missingMarkers, template).toEqual(expectedMissingMarkers[template]);

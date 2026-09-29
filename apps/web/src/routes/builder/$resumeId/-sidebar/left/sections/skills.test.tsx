@@ -8,7 +8,15 @@ import { I18nProvider } from "@lingui/react";
 
 const sectionItems = vi.hoisted(() => [
 	{ id: "s1", name: "TypeScript", proficiency: "Expert", level: 5, keywords: [], description: "", hidden: false },
-	{ id: "s2", name: "Go", proficiency: "Intermediate", level: 3, keywords: [], description: "", hidden: false },
+	{
+		id: "s2",
+		name: "Go",
+		proficiency: "Intermediate",
+		level: 3,
+		keywords: ["HTTP", "SQL"],
+		description: "",
+		hidden: false,
+	},
 ]);
 
 type SectionBaseProps = {
@@ -64,7 +72,10 @@ describe("SkillsSectionBuilder", () => {
 		);
 
 		expect(screen.getAllByTestId("item-title").map((el) => el.textContent)).toEqual(["TypeScript", "Go"]);
-		expect(screen.getAllByTestId("item-subtitle").map((el) => el.textContent)).toEqual(["Expert", "Intermediate"]);
+		expect(screen.getAllByTestId("item-subtitle").map((el) => el.textContent)).toEqual([
+			"Expert",
+			"Intermediate · HTTP、SQL",
+		]);
 	});
 
 	it("renders an Add a new skill affordance", () => {

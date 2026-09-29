@@ -199,6 +199,12 @@ msgstr "날짜 범위의 종료일이 시작일보다 빠릅니다."
 msgid "A date range is written in a form most software cannot read."
 msgstr "날짜 범위가 대부분의 소프트웨어가 읽을 수 없는 형식으로 작성되어 있습니다."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "폰트가 참조되었지만 임베드되지 않았습니다."
@@ -2085,6 +2091,10 @@ msgstr "2단계 인증을 비활성화하는 중입니다..."
 msgid "Discard"
 msgstr "버리기"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "저장하지 않은 변경 사항을 버릴까요?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "유효한 이메일 주소를 입력하세요."
 
@@ -3594,6 +3605,10 @@ msgstr "키"
 msgid "Keyword layout"
 msgstr "키워드 레이아웃"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "https:// 으로 시작해야 합니다."
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "이름"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "이제 여기에 이름을 올려 볼까요?"
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "수신인"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "잠금 해제"
 msgid "Unnamed passkey"
 msgstr "이름 없는 패스키"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "인증되지 않음"
@@ -7423,6 +7450,10 @@ msgstr "사용자 이름"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

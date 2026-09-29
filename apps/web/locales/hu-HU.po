@@ -199,6 +199,12 @@ msgstr "Egy időintervallum előbb ér véget, mint ahogy elkezdődik."
 msgid "A date range is written in a form most software cannot read."
 msgstr "Egy időintervallum olyan formában van megadva, amelyet a legtöbb szoftver nem tud beolvasni."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "Egy betűtípusra hivatkozik a fájl, de nincs beágyazva."
@@ -2085,6 +2091,10 @@ msgstr "Kétlépcsős hitelesítés kikapcsolása..."
 msgid "Discard"
 msgstr "Eldobni"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "Elveti a nem mentett módosításokat?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "Adjon meg egy érvényes e-mail címet."
 
@@ -3594,6 +3605,10 @@ msgstr "Kulcs"
 msgid "Keyword layout"
 msgstr "Kulcsszó-elrendezés"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "A https:// címmel kell kezdeni."
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Név"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "Készen állsz, hogy a neved rákerüljön?"
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "Címzett"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "Feloldás"
 msgid "Unnamed passkey"
 msgstr "Névtelen passkey"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Nem hitelesített"
@@ -7423,6 +7450,10 @@ msgstr "Felhasználónév"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

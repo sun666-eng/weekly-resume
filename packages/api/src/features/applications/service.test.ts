@@ -195,7 +195,7 @@ describe("applicationService timeline entries", () => {
 				text: "Impossible date",
 				date: "2026-99-99",
 			} as never),
-		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		).rejects.toMatchObject({ code: "APPLICATION_DATE_INVALID", status: 400 });
 	});
 
 	it("updates note text and timeline dates", async () => {
@@ -306,7 +306,7 @@ describe("applicationService timeline entries", () => {
 					}) => Promise<unknown>;
 				}
 			).updateTimelineEntry({ id: "app-1", userId: "user-1", entryId: "stage-2", date: "2026-07-01" }),
-		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		).rejects.toMatchObject({ code: "APPLICATION_STAGE_DATE_INVALID", status: 400 });
 	});
 
 	it("blocks deleting the current-stage anchor", async () => {
@@ -337,7 +337,7 @@ describe("applicationService timeline entries", () => {
 					deleteTimelineEntry: (input: { id: string; userId: string; entryId: string }) => Promise<unknown>;
 				}
 			).deleteTimelineEntry({ id: "app-1", userId: "user-1", entryId: "stage-2" }),
-		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		).rejects.toMatchObject({ code: "APPLICATION_TIMELINE_IMMUTABLE", status: 400 });
 		expect(dbMock.transaction).toHaveBeenCalled();
 		expect(dbMock.execute).toHaveBeenCalled();
 	});
@@ -429,7 +429,7 @@ describe("applicationService.attachDocument", () => {
 				contentType: "text/plain",
 				data: new Uint8Array([1]),
 			}),
-		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		).rejects.toMatchObject({ code: "APPLICATION_DOCUMENTS_INVALID", status: 400 });
 
 		expect(uploadFileMock).not.toHaveBeenCalled();
 	});

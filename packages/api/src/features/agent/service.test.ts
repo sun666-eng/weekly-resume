@@ -32,6 +32,7 @@ const resumeServiceMock = {
 	patchInTransaction: vi.fn(),
 	notifyResumePatched: vi.fn(),
 };
+const planAgentRollbackMock = vi.fn();
 
 const aiProvidersServiceMock = {
 	getRunnableById: vi.fn(),
@@ -89,7 +90,15 @@ vi.mock("@reactive-resume/db/schema", () => ({
 		size: "agent_attachments.size",
 		createdAt: "agent_attachments.created_at",
 	},
-	resume: { name: "resume.name", id: "resume.id", userId: "resume.user_id", slug: "resume.slug" },
+	resume: {
+		name: "resume.name",
+		id: "resume.id",
+		userId: "resume.user_id",
+		slug: "resume.slug",
+		data: "resume.data",
+		updatedAt: "resume.updated_at",
+		isLocked: "resume.is_locked",
+	},
 	aiProvider: { label: "ai_provider.label", id: "ai_provider.id" },
 }));
 
@@ -102,6 +111,7 @@ vi.mock("drizzle-orm", () => ({
 	gte: (left: unknown, right: unknown) => ({ type: "gte", left, right }),
 	inArray: (left: unknown, values: unknown[]) => ({ type: "inArray", left, values }),
 	isNull: (value: unknown) => ({ type: "isNull", value }),
+	or: (...conditions: unknown[]) => ({ type: "or", conditions }),
 	max: (value: unknown) => ({ type: "max", value }),
 	sql: () => ({ type: "sql" }),
 }));
@@ -131,6 +141,8 @@ vi.mock("../ai/credentials", () => ({
 }));
 vi.mock("../ai-providers/service", () => ({ aiProvidersService: aiProvidersServiceMock }));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
+vi.mock("../resume/resume-data-validation", () => ({ parseStoredResumeData: (data: unknown) => data }));
+vi.mock("@reactive-resume/resume/agent-rollback", () => ({ planAgentRollback: planAgentRollbackMock }));
 vi.mock("../storage/service", () => ({
 	getStorageService: vi.fn(() => storageServiceMock),
 	inferContentType: vi.fn(),
@@ -172,6 +184,11 @@ beforeEach(() => {
 	messagesPersistenceMock.nextMessageSequence.mockResolvedValue(1);
 	for (const mock of Object.values(storageServiceMock)) mock.mockReset();
 	for (const mock of Object.values(resumeServiceMock)) mock.mockReset();
+	planAgentRollbackMock.mockReset();
+	planAgentRollbackMock.mockImplementation((actions: { snapshotData: unknown }[]) => ({
+		data: actions[0]?.snapshotData,
+		conflicts: [],
+	}));
 	for (const mock of Object.values(aiProvidersServiceMock)) mock.mockReset();
 });
 
@@ -243,10 +260,9 @@ function selectOrderByResult(rows: unknown[]) {
 	return { from };
 }
 
-function selectWhereOrderByLimitResult(rows: unknown[]) {
-	const limit = vi.fn(async () => rows);
-	const orderBy = vi.fn(() => ({ limit }));
-	const where = vi.fn(() => ({ orderBy }));
+function selectForUpdateResult(rows: unknown[]) {
+	const forUpdate = vi.fn(async () => rows);
+	const where = vi.fn(() => ({ for: forUpdate }));
 	const from = vi.fn(() => ({ where }));
 	return { from };
 }
@@ -431,6 +447,14 @@ describe("agentService.messages.send", () => {
 				}),
 			}),
 		]);
+		const agentSettings = vi.mocked(ToolLoopAgent).mock.calls[0]?.[0];
+		expect(agentSettings).toBeDefined();
+		const prepareStep = agentSettings?.prepareStep;
+		expect(prepareStep).toBeDefined();
+		expect(await prepareStep?.({ stepNumber: 0, messages: [] } as never)).toMatchObject({
+			toolChoice: { type: "tool", toolName: "read_resume" },
+		});
+		expect(await prepareStep?.({ stepNumber: 1, messages: [] } as never)).not.toHaveProperty("toolChoice");
 	});
 
 	it("stores snapshotData and applies a valid JSON Patch guarded by the pre-read timestamp", async () => {
@@ -1231,8 +1255,8 @@ describe("agentService.messages.send", () => {
 
 		await expect(sending).rejects.toBeInstanceOf(ORPCError);
 		await expect(sending).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-			message: "Attachment IDs must be non-empty strings.",
+			code: "AGENT_ATTACHMENTS_INVALID",
+			status: 400,
 		});
 		expect(dbMock.insert).not.toHaveBeenCalled();
 	});
@@ -1262,13 +1286,13 @@ describe("agentService.messages.send", () => {
 
 		await expect(sending).rejects.toBeInstanceOf(ORPCError);
 		await expect(sending).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-			message: "One or more attachments are unavailable or already linked to a message.",
+			code: "AGENT_ATTACHMENTS_UNAVAILABLE",
+			status: 400,
 		});
 		expect(dbMock.insert).not.toHaveBeenCalled();
 	});
 
-	it("throws CONFLICT when the underlying thread is archived", async () => {
+	it("throws AGENT_THREAD_ARCHIVED when the underlying thread is archived", async () => {
 		const archivedThread = buildArchivedThread();
 
 		dbMock.select.mockImplementation(() => {
@@ -1288,7 +1312,7 @@ describe("agentService.messages.send", () => {
 		});
 
 		await expect(sending).rejects.toBeInstanceOf(ORPCError);
-		await expect(sending).rejects.toMatchObject({ code: "CONFLICT", message: "This thread is archived." });
+		await expect(sending).rejects.toMatchObject({ code: "AGENT_THREAD_ARCHIVED", status: 409 });
 
 		// Ensure we never tried to claim a run or persist anything for an archived thread.
 		expect(aiProvidersServiceMock.getRunnableById).not.toHaveBeenCalled();
@@ -1614,7 +1638,12 @@ describe("agentService.actions.revert", () => {
 
 		dbMock.select
 			.mockImplementationOnce(() => selectLimitResult([action]))
-			.mockImplementationOnce(() => selectWhereOrderByLimitResult([laterAction]));
+			.mockImplementationOnce(() =>
+				selectForUpdateResult([
+					{ data: action.snapshotData, updatedAt: laterAction.appliedUpdatedAt, isLocked: false },
+				]),
+			)
+			.mockImplementationOnce(() => selectOrderByResult([laterAction, action]));
 
 		const updateReturning = vi.fn(async () => [updatedAction]);
 		const updateWhere = vi.fn(() => ({ returning: updateReturning }));
@@ -1636,54 +1665,87 @@ describe("agentService.actions.revert", () => {
 			operations: [{ op: "replace", path: "", value: action.snapshotData }],
 			expectedUpdatedAt: laterAction.appliedUpdatedAt,
 		});
+		expect(planAgentRollbackMock).toHaveBeenCalledWith(
+			[
+				{ snapshotData: action.snapshotData, operations: action.operations },
+				{ snapshotData: laterAction.snapshotData, operations: laterAction.operations },
+			],
+			action.snapshotData,
+			"reject",
+		);
 		expect(updateSet).toHaveBeenCalledWith(
 			expect.objectContaining({
 				status: "rolled_back",
 				revertMessage: "This patch was rolled back when the resume was restored to an earlier state.",
-				appliedUpdatedAt: new Date("2026-05-03T00:00:00.000Z"),
 			}),
 		);
 		expect(result.status).toBe("rolled_back");
 	});
 
-	it("returns a conflicted action when snapshot restore throws RESUME_VERSION_CONFLICT", async () => {
+	it("reports overlapping edits without changing the action or resume, so the user can retry", async () => {
 		const action = buildAction();
-		const latestAction = buildAction({
-			id: "action-2",
-			appliedUpdatedAt: new Date("2026-05-03T00:00:00.000Z"),
-		});
-		const conflictedAction = {
-			...action,
-			status: "conflicted",
-			revertMessage: "The resume changed after this action was applied.",
-		};
-
 		dbMock.select
 			.mockImplementationOnce(() => selectLimitResult([action]))
-			.mockImplementationOnce(() => selectWhereOrderByLimitResult([latestAction]));
-
-		const updateReturning = vi.fn(async () => [conflictedAction]);
-		const updateWhere = vi.fn(() => ({ returning: updateReturning }));
-		const updateSet = vi.fn(() => ({ where: updateWhere }));
-		dbMock.update.mockReturnValue({ set: updateSet });
-
-		resumeServiceMock.patchInTransaction.mockRejectedValue(new ORPCError("RESUME_VERSION_CONFLICT"));
+			.mockImplementationOnce(() =>
+				selectForUpdateResult([{ data: action.snapshotData, updatedAt: action.appliedUpdatedAt, isLocked: false }]),
+			)
+			.mockImplementationOnce(() => selectOrderByResult([action]));
+		planAgentRollbackMock.mockReturnValue({ data: action.snapshotData, conflicts: ["/summary/content"] });
 
 		const { agentService } = await import("./service");
+		await expect(agentService.actions.revert({ id: action.id, userId: action.userId })).rejects.toMatchObject({
+			code: "AGENT_ROLLBACK_CONFLICT",
+			status: 409,
+		});
+		expect(resumeServiceMock.patchInTransaction).not.toHaveBeenCalled();
+		expect(dbMock.update).not.toHaveBeenCalled();
+	});
 
-		const result = await agentService.actions.revert({ id: "action-1", userId: "user-1" });
-
-		expect(resumeServiceMock.patchInTransaction).toHaveBeenCalled();
-		expect(updateSet).toHaveBeenCalledWith(
-			expect.objectContaining({
-				status: "conflicted",
-				revertMessage: "The resume changed after this action was applied.",
-			}),
+	it("restores conflicting fields only after the caller explicitly chooses that strategy", async () => {
+		const action = buildAction();
+		dbMock.select
+			.mockImplementationOnce(() => selectLimitResult([action]))
+			.mockImplementationOnce(() =>
+				selectForUpdateResult([{ data: action.snapshotData, updatedAt: action.appliedUpdatedAt, isLocked: false }]),
+			)
+			.mockImplementationOnce(() => selectOrderByResult([action]));
+		planAgentRollbackMock.mockReturnValue({ data: action.snapshotData, conflicts: ["/summary/content"] });
+		const updateWhere = vi.fn(() => ({ returning: async () => [{ ...action, status: "rolled_back" }] }));
+		dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: updateWhere })) });
+		resumeServiceMock.patchInTransaction.mockResolvedValue({ id: "resume-1", updatedAt: new Date() });
+		const { agentService } = await import("./service");
+		const result = await agentService.actions.revert({
+			id: action.id,
+			userId: action.userId,
+			conflictStrategy: "restore-agent-fields",
+		});
+		expect(result.status).toBe("rolled_back");
+		expect(planAgentRollbackMock).toHaveBeenCalledWith(
+			[{ snapshotData: action.snapshotData, operations: action.operations }],
+			action.snapshotData,
+			"restore-agent-fields",
 		);
-		expect(updateWhere).toHaveBeenCalled();
-		expect(updateReturning).toHaveBeenCalled();
-		expect(result.status).toBe("conflicted");
-		expect(result.revertMessage).toBe("The resume changed after this action was applied.");
+		expect(resumeServiceMock.patchInTransaction).toHaveBeenCalled();
+	});
+	it("lets a previously conflicted action retry instead of leaving it permanently disabled", async () => {
+		const action = buildAction({ status: "conflicted" });
+		dbMock.select
+			.mockImplementationOnce(() => selectLimitResult([action]))
+			.mockImplementationOnce(() =>
+				selectForUpdateResult([{ data: action.snapshotData, updatedAt: action.appliedUpdatedAt, isLocked: false }]),
+			)
+			.mockImplementationOnce(() => selectOrderByResult([action]));
+		const updateWhere = vi.fn(() => ({ returning: async () => [{ ...action, status: "rolled_back" }] }));
+		const updateSet = vi.fn(() => ({ where: updateWhere }));
+		dbMock.update.mockReturnValue({ set: updateSet });
+		resumeServiceMock.patchInTransaction.mockResolvedValue({
+			id: "resume-1",
+			updatedAt: new Date("2026-05-04T00:00:00.000Z"),
+		});
+		const { agentService } = await import("./service");
+		const result = await agentService.actions.revert({ id: action.id, userId: "user-1" });
+		expect(result.status).toBe("rolled_back");
+		expect(updateSet).toHaveBeenCalledWith(expect.objectContaining({ status: "rolled_back" }));
 	});
 
 	it("returns the existing action unchanged when its status is already rolled_back", async () => {
@@ -1704,7 +1766,7 @@ describe("agentService.actions.revert", () => {
 		expect(result.id).toBe("action-1");
 	});
 
-	it("throws BAD_REQUEST when an applied legacy action has no snapshotData", async () => {
+	it("throws AGENT_ROLLBACK_UNAVAILABLE when an applied legacy action has no snapshotData", async () => {
 		const action = buildAction({ snapshotData: null });
 
 		dbMock.select.mockImplementation(() => selectLimitResult([action]));
@@ -1714,11 +1776,11 @@ describe("agentService.actions.revert", () => {
 		const reverting = agentService.actions.revert({ id: "action-1", userId: "user-1" });
 
 		await expect(reverting).rejects.toBeInstanceOf(ORPCError);
-		await expect(reverting).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		await expect(reverting).rejects.toMatchObject({ code: "AGENT_ROLLBACK_UNAVAILABLE", status: 400 });
 		expect(resumeServiceMock.patch).not.toHaveBeenCalled();
 	});
 
-	it("throws BAD_REQUEST when the action has no resumeId", async () => {
+	it("throws AGENT_RESUME_GONE when the action has no resumeId", async () => {
 		const action = buildAction({ resumeId: null });
 
 		dbMock.select.mockImplementation(() => selectLimitResult([action]));
@@ -1728,7 +1790,7 @@ describe("agentService.actions.revert", () => {
 		const reverting = agentService.actions.revert({ id: "action-1", userId: "user-1" });
 
 		await expect(reverting).rejects.toBeInstanceOf(ORPCError);
-		await expect(reverting).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		await expect(reverting).rejects.toMatchObject({ code: "AGENT_RESUME_GONE", status: 400 });
 		expect(resumeServiceMock.patch).not.toHaveBeenCalled();
 	});
 

@@ -242,12 +242,17 @@ describe("Gengar skill rating placement (#2611)", () => {
 			}
 			return pixels;
 		});
-		const ratingBand = rows.findIndex((pixels, y) => pixels > 40 && y > 60 && y < 120);
 		const pageText = required(result.pages[0]);
 		const nameY = required(pageText.find((item) => item.str === "Engineering")).transform[5];
 		const proficiencyY = required(pageText.find((item) => item.str === "Experienced")).transform[5];
+		// Full-width Gengar draws the header as a page-wide red band. The rating is the narrower
+		// red row under the skill name, not that header.
+		const nameRasterY = raster.height - nameY * 1.5;
+		const ratingBand = rows.findIndex(
+			(pixels, y) => pixels > 40 && pixels < raster.width * 0.5 && y > nameRasterY + 2,
+		);
 		const ratingY = (raster.height - ratingBand) / 1.5;
-		expect(ratingBand).toBeGreaterThan(0);
+		expect(ratingBand).toBeGreaterThan(nameRasterY);
 		expect(ratingY).toBeLessThan(nameY);
 		expect(ratingY).toBeGreaterThan(proficiencyY);
 		expect(text.join(" ")).toContain("Engineering");

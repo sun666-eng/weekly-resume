@@ -73,7 +73,7 @@ describe("templates metadata", () => {
 			"chikorita",
 		]);
 		expect(new Set(order)).toEqual(new Set(Object.keys(templates)));
-		expect(getHomepageTemplateOrder("zh-CN")).toEqual(["meowth", "scizor", "onyx", "kakuna"]);
-		expect(getHomepageTemplateOrder("en")).toHaveLength(order.length);
+		expect(getHomepageTemplateOrder("zh-CN")).toEqual(["scizor", "onyx", "meowth", "kakuna"]);
+		expect(getHomepageTemplateOrder("en")).toHaveLength(4);
 	});
 });

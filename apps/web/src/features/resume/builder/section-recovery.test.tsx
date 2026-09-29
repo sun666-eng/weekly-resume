@@ -172,7 +172,7 @@ describe("hidden section recovery", () => {
 		expect(useResumeStore.getState().resume?.data.sections.experience.hidden).toBe(false);
 	});
 
-	it("shows an unplaced hidden section without choosing a layout location", () => {
+	it("places a recovered section in the first page and can undo the placement", () => {
 		const data = makeHiddenData();
 		for (const page of data.metadata.layout.pages) {
 			page.main = page.main.filter((id) => id !== "experience");
@@ -184,7 +184,12 @@ describe("hidden section recovery", () => {
 		act(() => screen.getByRole("button", { name: "Show Work History section" }).click());
 
 		expect(useResumeStore.getState().resume?.data.sections.experience.hidden).toBe(false);
+		const expectedLayout = structuredClone(layoutBefore);
+		expectedLayout.pages[0].main.push("experience");
+		expect(useResumeStore.getState().resume?.data.metadata.layout).toEqual(expectedLayout);
+		act(() => useResumeStore.getState().undo());
 		expect(useResumeStore.getState().resume?.data.metadata.layout).toEqual(layoutBefore);
+		expect(useResumeStore.getState().resume?.data.sections.experience.hidden).toBe(true);
 	});
 
 	it("disables recovery actions for a locked resume", () => {

@@ -42,6 +42,13 @@ const getChildren = (props: object): ReactNode =>
 const contactChildNodeKey = (contactListNodeKey: string, child: ReactNode): string | undefined => {
 	if (!isValidElement(child)) return;
 	const props = child.props as Record<string, unknown>;
+	if (typeof props.contactName === "string") {
+		return semanticNodeKeys.contactItem(
+			contactListNodeKey,
+			props.contactName,
+			typeof props.contactId === "string" ? props.contactId : undefined,
+		);
+	}
 	if (typeof props.primitiveNodeKey === "string") return props.primitiveNodeKey;
 	if (typeof props.nodeKey === "string") return props.nodeKey;
 	if (typeof props.partKey === "string") return semanticTemplatePartNodeKey(contactListNodeKey, props.partKey);

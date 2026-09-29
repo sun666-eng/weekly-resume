@@ -177,6 +177,7 @@ export function matchJobDescription(options: JdMatchOptions): JdMatchReport {
 					term.resumeCount / resumeTokenCount >= STUFFING_MIN_DENSITY,
 			)
 			.map((term) => term.term),
+		jobDescription: options.jobDescription,
 		documentHasHiddenText: options.documentHasHiddenText ?? false,
 	};
 }

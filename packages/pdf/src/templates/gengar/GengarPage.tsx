@@ -9,10 +9,7 @@ import { semanticNodeKeys } from "../../semantic/node-keys";
 import { getPrimaryTint } from "../shared/color-helpers";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { getFeaturedSummaryLayout } from "../shared/featured-summary";
@@ -29,6 +26,7 @@ import {
 	Text,
 } from "../shared/primitives";
 import { Section } from "../shared/sections";
+import { reservesSidebarColumn } from "../shared/sidebar-column";
 import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
 import { useTemplateBase } from "../shared/template-base";
 
@@ -68,7 +66,7 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 	const { metadata } = data;
 	const { colors, styles } = useGengarTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const showSidebar = !page.fullWidth || showHeader;
+	const reserveSidebar = reservesSidebarColumn(page);
 	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
 	const { featuredSummarySection, regularSections: regularMainSections } = getFeaturedSummaryLayout({
@@ -83,10 +81,15 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 		<Page
 			{...semanticPageProps}
 			size={semanticPageSize ?? pageSize}
-			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
+			style={composeStyles(
+				styles.page,
+				reserveSidebar ? {} : { flexDirection: "column" },
+				pageMinHeightStyle,
+				semanticPageStyle,
+			)}
 		>
 			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={gengarFeatures}>
-				{showSidebar && (
+				{reserveSidebar ? (
 					<View
 						style={composeStyles(styles.sidebarColumn, {
 							width: `${metadata.layout.sidebarWidth}%`,
@@ -94,16 +97,16 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 					>
 						{showHeader && <Header styles={styles} colors={colors} />}
 
-						{!page.fullWidth && (
-							<SemanticRegionView region="sidebar" style={styles.sidebarContent}>
-								{regularSidebarSections.map((section) => (
-									<Fragment key={section}>
-										<Section section={section} placement="sidebar" />
-									</Fragment>
-								))}
-							</SemanticRegionView>
-						)}
+						<SemanticRegionView region="sidebar" style={styles.sidebarContent}>
+							{regularSidebarSections.map((section) => (
+								<Fragment key={section}>
+									<Section section={section} placement="sidebar" />
+								</Fragment>
+							))}
+						</SemanticRegionView>
 					</View>
+				) : (
+					showHeader && <Header styles={styles} colors={colors} />
 				)}
 
 				<View style={styles.mainColumn}>
@@ -129,7 +132,7 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 };
 
 const Header = ({ styles, colors }: GengarHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 
 	return (
@@ -144,30 +147,13 @@ const Header = ({ styles, colors }: GengarHeaderProps) => {
 			</View>
 
 			<SemanticContactListView style={styles.contactList}>
-				<EmailContactItem
-					email={basics.email}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<PhoneContactItem
-					phone={basics.phone}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<LocationContactItem
-					location={basics.location}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<WebsiteContactItem
-					website={basics.website}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
+				{renderBasicsContactItems({
+					basics,
+					locale: metadata.page.locale,
+					style: styles.contactItem,
+					textStyle: styles.headerText,
+					iconColor: colors.background,
+				})}
 				{basics.customFields.map((field) => (
 					<CustomFieldContactItem
 						key={field.id}

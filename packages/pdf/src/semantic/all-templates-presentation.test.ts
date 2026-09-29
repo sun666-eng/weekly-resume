@@ -31,6 +31,13 @@ describe("Semantic CSS all-template presentation", () => {
 
 		for (const template of templateSchema.options) {
 			const data = buildAllTemplatesFixture(template);
+			// Exercise the optional Chinese fields added after the original fixture was recorded.
+			for (const item of data.sections.experience.items) {
+				item.department = "研发部";
+				item.employmentType = "full-time";
+			}
+			for (const item of data.sections.education.items) item.schoolTier = "985";
+			for (const item of data.sections.projects.items) item.role = "项目负责人";
 			const { sourceTree } = resolveResumeRuntime({
 				data,
 				template,

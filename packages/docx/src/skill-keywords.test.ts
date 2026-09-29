@@ -21,6 +21,26 @@ function fixture() {
 }
 
 describe("skill keyword lists", () => {
+	it("keeps Chinese category and all inline skills without exposing hidden groups", () => {
+		const section = fixture();
+		section.keywordLayout = "inline";
+		section.items[0] = {
+			...section.items[0]!,
+			name: "硬件与通信",
+			level: 0,
+			proficiency: "",
+			keywords: ["NB-IoT部署", "ESP32-C6", "MQTT"],
+		};
+		section.items.push({ ...section.items[0], id: "hidden", hidden: true, name: "私密分类", keywords: ["私密技能"] });
+		const xml = JSON.stringify(
+			renderBuiltInSection("skills", section, "000000").map((paragraph) =>
+				paragraph.prepForXml({ stack: [] } as never),
+			),
+		);
+		for (const value of ["硬件与通信", "NB-IoT部署", "ESP32-C6", "MQTT"]) expect(xml.split(value)).toHaveLength(2);
+		expect(xml).not.toContain("私密");
+		expect(xml).toContain("NB-IoT部署, ESP32-C6, MQTT");
+	});
 	it.each([false, true])("emits real bullet paragraphs for custom=%s", (custom) => {
 		const section = fixture();
 		const paragraphs = custom

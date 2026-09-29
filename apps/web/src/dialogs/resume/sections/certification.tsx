@@ -1,5 +1,6 @@
 import type z from "zod";
 import type { DialogProps } from "@/dialogs/store";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
@@ -7,7 +8,8 @@ import { certificationItemSchema } from "@reactive-resume/schema/resume/data";
 import { FormControl, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { useDialogStore } from "@/dialogs/store";
-import { useUpdateResumeData } from "@/features/resume/builder/draft";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
@@ -96,14 +98,35 @@ const CertificationForm = withForm({
 	defaultValues,
 	render: function CertificationFormRenderer({ form }) {
 		const inlineLink = useStore(form.store, (s) => s.values.website.inlineLink);
+		const chinese = useCurrentBuilderResumeSelector((resume) =>
+			isChineseResumeLocale(resume.data.metadata?.page?.locale),
+		);
 
 		return (
 			<>
-				<form.AppField name="title">{(field) => <field.TextField label={<Trans>Title</Trans>} />}</form.AppField>
+				<form.AppField name="title">
+					{(field) => (
+						<field.TextField
+							label={chinese ? <Trans>Certificate name</Trans> : <Trans>Title</Trans>}
+							placeholder={chinese ? t`For example: CET-6` : undefined}
+						/>
+					)}
+				</form.AppField>
 
-				<form.AppField name="issuer">{(field) => <field.TextField label={<Trans>Issuer</Trans>} />}</form.AppField>
+				<form.AppField name="issuer">
+					{(field) => (
+						<field.TextField
+							label={<Trans>Issuer</Trans>}
+							placeholder={chinese ? t`For example: Ministry of Education Examination Center` : undefined}
+						/>
+					)}
+				</form.AppField>
 
-				<form.AppField name="date">{(field) => <field.TextField label={<Trans>Date</Trans>} />}</form.AppField>
+				<form.AppField name="date">
+					{(field) => (
+						<field.TextField label={<Trans>Date</Trans>} placeholder={chinese ? t`For example: 2024.06` : undefined} />
+					)}
+				</form.AppField>
 
 				<form.AppField name="website">
 					{(field) => <field.WebsiteField label={<Trans>Website</Trans>} hideLabelButton={inlineLink} />}

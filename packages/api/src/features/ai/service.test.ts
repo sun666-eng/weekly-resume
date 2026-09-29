@@ -63,6 +63,32 @@ function testInput(overrides?: { model?: string; apiKey?: string; baseURL?: stri
 	};
 }
 
+function openRouterTestInput() {
+	return {
+		provider: "openrouter" as const,
+		model: "test-model",
+		apiKey: "test-key",
+		baseURL: "https://relay.example/v1",
+	};
+}
+
+function stubSseResponse() {
+	const fetchMock = vi.fn(() =>
+		Promise.resolve(
+			new Response(
+				[
+					'data: {"id":"chatcmpl-sse","model":"test-model","choices":[{"index":0,"delta":{"role":"assistant","content":"1"},"finish_reason":null}]}',
+					'data: {"choices":[{"index":0,"delta":{"content":""},"finish_reason":"stop"}]}',
+					"data: [DONE]",
+			].join("\n\n"),
+				{ headers: { "Content-Type": "text/event-stream" } },
+			),
+		),
+	);
+	vi.stubGlobal("fetch", fetchMock);
+	return fetchMock;
+}
+
 function stubFailedResponse(status: number, body = "{}") {
 	const fetchMock = vi.fn(() => new Response(body, { status, headers: { "Content-Type": "application/json" } }));
 	vi.stubGlobal("fetch", fetchMock);
@@ -168,6 +194,18 @@ describe("AI provider connection test", () => {
 		stubOpenAICompatibleResponse({ role: "", contentType: "text/event-stream" });
 
 		await expect(testConnection(testInput())).resolves.toEqual({ ok: true });
+	});
+
+	it("folds an SSE relay response into a non-streaming completion", async () => {
+		stubSseResponse();
+
+		await expect(testConnection(testInput())).resolves.toEqual({ ok: true });
+	});
+
+	it("uses the same relay compatibility parser for a custom OpenRouter endpoint", async () => {
+		stubSseResponse();
+
+		await expect(testConnection(openRouterTestInput())).resolves.toEqual({ ok: true });
 	});
 
 	// The credentials schema accepts a single character, so short keys must be redacted too.

@@ -20,7 +20,7 @@ function isCredentialEncryptionUnavailable(error: unknown): boolean {
 	return error instanceof Error && error.message === "AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE";
 }
 
-/** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
+/** Throws an AI_PROVIDER_UNREACHABLE error with HTTP 502, preserving the original cause. */
 function throwAiProviderGatewayError(cause?: unknown): never {
 	throw new ORPCError("AI_PROVIDER_UNREACHABLE", { status: 502, cause });
 }
@@ -47,6 +47,17 @@ async function getRunnableProvider(userId: string, aiProviderId?: string) {
 	return provider;
 }
 
+const aiErrors = {
+	BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
+	BAD_REQUEST: { message: "The AI returned an improperly formatted structure.", status: 400 },
+	AI_PROVIDER_UNREACHABLE: { message: "The AI provider returned an error or is unreachable.", status: 502 },
+	AI_PROVIDER_INVALID: { message: "Invalid AI provider configuration.", status: 400 },
+	AI_PROVIDER_UNAVAILABLE: { message: "No runnable AI provider is available.", status: 400 },
+	AI_ENCRYPTION_UNAVAILABLE: { message: "AI credential encryption is unavailable.", status: 412 },
+	AI_REQUEST_INVALID: { message: "Invalid resume structure.", status: 400 },
+	AI_RESPONSE_INVALID: { message: "The AI response had an invalid structure.", status: 400 },
+};
+
 export const aiRouter = {
 	parsePdf: protectedProcedure
 		.route({
@@ -61,10 +72,7 @@ export const aiRouter = {
 		})
 		.input(z.object({ aiProviderId: z.string().optional(), file: fileInputSchema }))
 		.use(aiRequestRateLimit)
-		.errors({
-			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
-			BAD_REQUEST: { message: "The AI returned an improperly formatted structure.", status: 400 },
-		})
+		.errors(aiErrors)
 		.handler(async ({ context, input }): Promise<ResumeData> => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
@@ -106,10 +114,7 @@ export const aiRouter = {
 			}),
 		)
 		.use(aiRequestRateLimit)
-		.errors({
-			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
-			BAD_REQUEST: { message: "The AI returned an improperly formatted structure.", status: 400 },
-		})
+		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
@@ -144,10 +149,7 @@ export const aiRouter = {
 		.input(atsReviewInputSchema)
 		.use(aiRequestRateLimit)
 		.output(atsReviewOutputSchema)
-		.errors({
-			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
-			BAD_REQUEST: { message: "The AI returned an improperly formatted structure.", status: 400 },
-		})
+		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);

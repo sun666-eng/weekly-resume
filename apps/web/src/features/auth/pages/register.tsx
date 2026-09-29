@@ -16,11 +16,13 @@ import { SocialAuth } from "../components/social-auth";
 import { getAuthErrorMessage } from "../error-message";
 import { getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
-const formSchema = z.object({
-	name: z.string().min(3).max(64),
+export const registerFormSchema = z.object({
+	// Trimmed so an all-whitespace name cannot pass the minimum; the server stores what we send.
+	// Min 2 so common two-character Chinese names (e.g. 王芳) can register.
+	name: z.string().trim().min(2, { error: () => t`Name must be at least 2 characters.` }).max(64),
 	username: z
 		.string()
-		.min(3)
+		.min(3, { error: () => t`Username must be at least 3 characters.` })
 		.max(64)
 		.trim()
 		.toLowerCase()
@@ -28,7 +30,10 @@ const formSchema = z.object({
 			// Resolved lazily at validation time so the active locale is used.
 			error: () => t`Username can only contain lowercase letters, numbers, dots, hyphens and underscores.`,
 		}),
-	email: z.email().toLowerCase(),
+	email: z.email({
+		// Resolved lazily at validation time so the active locale is used.
+		error: () => t`Enter a valid email address.`,
+	}).toLowerCase(),
 	password: z
 		.string()
 		.min(8, { error: () => t`Password must be at least 8 characters.` })
@@ -46,7 +51,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 
 	const form = useAppForm({
 		defaultValues: { name: "", username: "", email: "", password: "" },
-		validators: { onSubmit: formSchema },
+		validators: { onSubmit: registerFormSchema },
 		onSubmit: async ({ value }) => {
 			const toastId = toast.add({ type: "loading", description: t`Signing up...` });
 
@@ -146,7 +151,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 								<FormControl
 									render={
 										<Input
-											minLength={3}
+											minLength={2}
 											maxLength={64}
 											autoComplete="section-register name"
 											placeholder={t({

@@ -16,6 +16,7 @@ import { isRTL } from "@reactive-resume/utils/locale";
 import { getResumeSectionIcon } from "../section-icon";
 import { shouldUseSectionTimeline } from "../templates/shared/columns";
 import { getCustomFieldLinkUrl } from "../templates/shared/contact";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { filterItems, filterSections } from "../templates/shared/filtering";
 import { hasTemplatePicture } from "../templates/shared/picture";
 import { parseNormalizedRichTextHtml, richTextMarkClassName } from "../templates/shared/rich-text-html";
@@ -54,10 +55,10 @@ type SectionDescriptor = {
 
 const ITEM_HEADER_FIELDS = {
 	profiles: ["network"],
-	experience: ["company", "position", "location", "period"],
+	experience: ["company", "position", "location", "period", "department", "employmentType"],
 	"experience-role": ["position", "period"],
-	education: ["school", "area", "degree", "grade", "location", "period"],
-	projects: ["name", "period"],
+	education: ["school", "area", "degree", "grade", "location", "period", "schoolTier"],
+	projects: ["name", "period", "role"],
 	skills: ["name"],
 	languages: [],
 	interests: ["name"],
@@ -458,7 +459,11 @@ const buildSection = ({
 			part.owner.kind === "item-header" &&
 			(part.owner.sectionTypes === undefined || part.owner.sectionTypes.includes(descriptor.type)),
 	);
-	const items = filterItems(descriptor.section.items, descriptor.type).map((item) =>
+	const visibleItems =
+		descriptor.type === "profiles"
+			? omitDuplicateGithubProfiles(filterItems(descriptor.section.items, descriptor.type), data.basics)
+			: filterItems(descriptor.section.items, descriptor.type);
+	const items = visibleItems.map((item) =>
 		buildItem({
 			item,
 			type: descriptor.type,
@@ -578,20 +583,13 @@ const buildHeader = (
 	const contactListKey = semanticNodeKeys.contactList(headerKey);
 	const showIcons = !data.metadata.page.hideIcons;
 	const contacts: SemanticNode[] = [];
-	const baseContacts = [
-		["email", data.basics.email, true],
-		["phone", data.basics.phone, true],
-		["location", data.basics.location, false],
-		["website", data.basics.website.url, true],
-	] as const;
 
-	for (const [name, value, structuredLink] of baseContacts) {
-		if (!value) continue;
+	for (const entry of listBasicsContactEntries(data.basics, data.metadata.page.locale)) {
 		contacts.push(
 			buildContactItem({
 				contactListKey,
-				name,
-				structuredLink,
+				name: entry.name,
+				structuredLink: Boolean(entry.href),
 				icon: showIcons,
 			}),
 		);

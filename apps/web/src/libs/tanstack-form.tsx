@@ -36,6 +36,7 @@ type WebsiteFieldProps = {
 
 type RichTextFieldProps = {
 	label: React.ReactNode;
+	description?: React.ReactNode;
 	formItemClassName?: string;
 };
 
@@ -138,7 +139,7 @@ function WebsiteField({ label, formItemClassName, hideLabelButton }: WebsiteFiel
 	);
 }
 
-function RichTextField({ label, formItemClassName }: RichTextFieldProps) {
+function RichTextField({ label, description, formItemClassName }: RichTextFieldProps) {
 	const field = useFieldContext<string>();
 	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
@@ -147,6 +148,7 @@ function RichTextField({ label, formItemClassName }: RichTextFieldProps) {
 			<FormLabel>{label}</FormLabel>
 			<FormControl render={<RichInput value={field.state.value} onChange={(value) => field.handleChange(value)} />} />
 			<FormMessage errors={field.state.meta.errors} />
+			{description ? <FormDescription>{description}</FormDescription> : null}
 		</FormItem>
 	);
 }

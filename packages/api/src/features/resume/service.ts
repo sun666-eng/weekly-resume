@@ -446,6 +446,7 @@ export const resumeService = {
 				id: input.resumeId,
 				userId: input.userId,
 				data: versionData,
+				expectedUpdatedAt: current.updatedAt,
 				skipAutoSnapshot: true,
 			});
 
@@ -619,6 +620,7 @@ export const resumeService = {
 		isPublic?: boolean;
 		showDownloadButtons?: boolean;
 		skipAutoSnapshot?: boolean;
+		expectedUpdatedAt?: Date;
 	}) => {
 		const resume = await db
 			.transaction(async (tx) => {
@@ -626,6 +628,7 @@ export const resumeService = {
 					.select({
 						data: schema.resume.data,
 						isLocked: schema.resume.isLocked,
+						updatedAt: schema.resume.updatedAt,
 					})
 					.from(schema.resume)
 					.where(and(eq(schema.resume.id, input.id), eq(schema.resume.userId, input.userId)))
@@ -633,6 +636,11 @@ export const resumeService = {
 
 				if (!existing) throw new ORPCError("NOT_FOUND");
 				if (existing.isLocked) throw new ORPCError("RESUME_LOCKED");
+				// Optimistic concurrency for full-document writes (same guard as the patch path):
+				// a stale autosave must not silently overwrite a newer version another tab/agent wrote.
+				if (input.expectedUpdatedAt && existing.updatedAt.getTime() !== input.expectedUpdatedAt.getTime()) {
+					throw resumeVersionConflict(existing.updatedAt);
+				}
 				const normalizedData = input.data ? parseWritableResumeData(input.data) : undefined;
 				const updateData: Partial<typeof schema.resume.$inferSelect> = {
 					...(input.name !== undefined ? { name: input.name } : {}),

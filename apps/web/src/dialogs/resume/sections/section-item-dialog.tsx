@@ -61,7 +61,7 @@ export function SectionItemDialog({
 			>
 				{children}
 
-				<DialogFooter className={singleColumn ? undefined : "sm:col-span-full"}>
+				<DialogFooter className={singleColumn ? "order-last" : "order-last sm:col-span-full"}>
 					<Button variant="ghost" onClick={onCancel}>
 						<Trans>Cancel</Trans>
 					</Button>

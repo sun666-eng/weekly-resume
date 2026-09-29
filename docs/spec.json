@@ -310,6 +310,166 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid AI provider configuration."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNAVAILABLE"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No runnable AI provider is available."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_REQUEST_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid resume structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_RESPONSE_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI response had an invalid structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_ENCRYPTION_UNAVAILABLE"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "AI credential encryption is unavailable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -349,6 +509,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -499,6 +684,166 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid AI provider configuration."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNAVAILABLE"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No runnable AI provider is available."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_REQUEST_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid resume structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_RESPONSE_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI response had an invalid structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_ENCRYPTION_UNAVAILABLE"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "AI credential encryption is unavailable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -538,6 +883,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -726,6 +1096,166 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid AI provider configuration."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNAVAILABLE"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No runnable AI provider is available."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_REQUEST_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid resume structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_RESPONSE_INVALID"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI response had an invalid structure."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "412",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_ENCRYPTION_UNAVAILABLE"
+												},
+												"status": {
+													"const": 412
+												},
+												"message": {
+													"type": "string",
+													"default": "AI credential encryption is unavailable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -765,6 +1295,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -851,7 +1406,7 @@
 													"const": true
 												},
 												"code": {
-													"const": "PRECONDITION_FAILED"
+													"const": "AGENT_ENVIRONMENT_UNAVAILABLE"
 												},
 												"status": {
 													"const": 412
@@ -1050,7 +1605,7 @@
 													"const": true
 												},
 												"code": {
-													"const": "PRECONDITION_FAILED"
+													"const": "AGENT_ENVIRONMENT_UNAVAILABLE"
 												},
 												"status": {
 													"const": 412
@@ -1318,7 +1873,7 @@
 													"const": true
 												},
 												"code": {
-													"const": "PRECONDITION_FAILED"
+													"const": "AGENT_ENVIRONMENT_UNAVAILABLE"
 												},
 												"status": {
 													"const": 412
@@ -1415,7 +1970,7 @@
 													"const": true
 												},
 												"code": {
-													"const": "PRECONDITION_FAILED"
+													"const": "AGENT_ENVIRONMENT_UNAVAILABLE"
 												},
 												"status": {
 													"const": 412
@@ -1513,6 +2068,31 @@
 												},
 												"code": {
 													"const": "BAD_REQUEST"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "Invalid AI provider configuration."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_INVALID"
 												},
 												"status": {
 													"const": 400
@@ -1632,7 +2212,7 @@
 													"const": true
 												},
 												"code": {
-													"const": "PRECONDITION_FAILED"
+													"const": "AGENT_ENVIRONMENT_UNAVAILABLE"
 												},
 												"status": {
 													"const": 412
@@ -1693,6 +2273,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -2272,6 +2877,25 @@
 						}
 					}
 				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"conflictStrategy": {
+										"enum": [
+											"reject",
+											"restore-agent-fields"
+										],
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -6454,6 +7078,81 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_NOT_CONFIGURED"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No AI provider is configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_RESUME"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no linked resume."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_JD"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no job description."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -6493,6 +7192,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -6610,6 +7334,81 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_NOT_CONFIGURED"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No AI provider is configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_RESUME"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no linked resume."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_JD"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no job description."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -6649,6 +7448,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -6794,6 +7618,81 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_NOT_CONFIGURED"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No AI provider is configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_RESUME"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no linked resume."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_JD"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no job description."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -6833,6 +7732,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -6957,6 +7881,81 @@
 											"type": "object",
 											"properties": {
 												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_NOT_CONFIGURED"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "No AI provider is configured."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_RESUME"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no linked resume."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "APPLICATION_AI_NO_JD"
+												},
+												"status": {
+													"const": 400
+												},
+												"message": {
+													"type": "string",
+													"default": "This application has no job description."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
 													"const": false
 												},
 												"code": {
@@ -6996,6 +7995,31 @@
 												},
 												"code": {
 													"const": "BAD_GATEWAY"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The AI provider returned an error or is unreachable."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "AI_PROVIDER_UNREACHABLE"
 												},
 												"status": {
 													"const": 502
@@ -7228,19 +8252,19 @@
 																	},
 																	"headline": {
 																		"type": "string",
-																		"description": "The headline of the author of the resume."
+																		"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 																	},
 																	"email": {
 																		"type": "string",
-																		"description": "The email address of the author of the resume."
+																		"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 																	},
 																	"phone": {
 																		"type": "string",
-																		"description": "The phone number of the author of the resume."
+																		"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 																	},
 																	"location": {
 																		"type": "string",
-																		"description": "The location of the author of the resume."
+																		"description": "The city or current location of the author of the resume."
 																	},
 																	"website": {
 																		"type": "object",
@@ -7290,6 +8314,62 @@
 																			]
 																		},
 																		"description": "The custom fields to display on the resume."
+																	},
+																	"gender": {
+																		"type": "string",
+																		"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+																	},
+																	"age": {
+																		"type": "string",
+																		"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+																	},
+																	"blog": {
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string",
+																				"description": "The URL to show as a link. Must use http:// or https://."
+																			},
+																			"label": {
+																				"type": "string",
+																				"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																			}
+																		},
+																		"required": [
+																			"url",
+																			"label"
+																		],
+																		"description": "Optional personal blog URL. Empty values are not displayed."
+																	},
+																	"github": {
+																		"type": "object",
+																		"properties": {
+																			"url": {
+																				"type": "string",
+																				"description": "The URL to show as a link. Must use http:// or https://."
+																			},
+																			"label": {
+																				"type": "string",
+																				"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																			}
+																		},
+																		"required": [
+																			"url",
+																			"label"
+																		],
+																		"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+																	},
+																	"politicalStatus": {
+																		"type": "string",
+																		"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+																	},
+																	"politicalStatusOther": {
+																		"type": "string",
+																		"description": "Free-text political status used when politicalStatus is other."
+																	},
+																	"address": {
+																		"type": "string",
+																		"description": "Optional detailed address. Kept separate from the city in location."
 																	}
 																},
 																"required": [
@@ -7381,6 +8461,34 @@
 															"metadata": {
 																"type": "object",
 																"properties": {
+																	"editor": {
+																		"type": "object",
+																		"properties": {
+																			"version": {
+																				"const": 1
+																			},
+																			"scenario": {
+																				"enum": [
+																					"general",
+																					"graduate",
+																					"experienced",
+																					"academic"
+																				],
+																				"type": "string"
+																			},
+																			"enabledSections": {
+																				"type": "array",
+																				"items": {
+																					"type": "string"
+																				}
+																			}
+																		},
+																		"required": [
+																			"version",
+																			"scenario",
+																			"enabledSections"
+																		]
+																	},
 																	"template": {
 																		"enum": [
 																			"azurill",
@@ -7859,19 +8967,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -7921,6 +9029,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -8012,6 +9176,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -8435,19 +9627,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -8497,6 +9689,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -8588,6 +9836,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -9062,19 +10338,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -9124,6 +10400,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -9215,6 +10547,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -9721,19 +11081,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -9783,6 +11143,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -9874,6 +11290,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -10314,19 +11758,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -10376,6 +11820,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -10467,6 +11967,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -10913,19 +12441,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -10975,6 +12503,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -11066,6 +12650,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -11489,19 +13101,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -11551,6 +13163,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -11642,6 +13310,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -12020,19 +13716,19 @@
 															},
 															"headline": {
 																"type": "string",
-																"description": "The headline of the author of the resume."
+																"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 															},
 															"email": {
 																"type": "string",
-																"description": "The email address of the author of the resume."
+																"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 															},
 															"phone": {
 																"type": "string",
-																"description": "The phone number of the author of the resume."
+																"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 															},
 															"location": {
 																"type": "string",
-																"description": "The location of the author of the resume."
+																"description": "The city or current location of the author of the resume."
 															},
 															"website": {
 																"type": "object",
@@ -12082,6 +13778,62 @@
 																	]
 																},
 																"description": "The custom fields to display on the resume."
+															},
+															"gender": {
+																"type": "string",
+																"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+															},
+															"age": {
+																"type": "string",
+																"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+															},
+															"blog": {
+																"type": "object",
+																"properties": {
+																	"url": {
+																		"type": "string",
+																		"description": "The URL to show as a link. Must use http:// or https://."
+																	},
+																	"label": {
+																		"type": "string",
+																		"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																	}
+																},
+																"required": [
+																	"url",
+																	"label"
+																],
+																"description": "Optional personal blog URL. Empty values are not displayed."
+															},
+															"github": {
+																"type": "object",
+																"properties": {
+																	"url": {
+																		"type": "string",
+																		"description": "The URL to show as a link. Must use http:// or https://."
+																	},
+																	"label": {
+																		"type": "string",
+																		"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																	}
+																},
+																"required": [
+																	"url",
+																	"label"
+																],
+																"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+															},
+															"politicalStatus": {
+																"type": "string",
+																"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+															},
+															"politicalStatusOther": {
+																"type": "string",
+																"description": "Free-text political status used when politicalStatus is other."
+															},
+															"address": {
+																"type": "string",
+																"description": "Optional detailed address. Kept separate from the city in location."
 															}
 														},
 														"required": [
@@ -12173,6 +13925,34 @@
 													"metadata": {
 														"type": "object",
 														"properties": {
+															"editor": {
+																"type": "object",
+																"properties": {
+																	"version": {
+																		"const": 1
+																	},
+																	"scenario": {
+																		"enum": [
+																			"general",
+																			"graduate",
+																			"experienced",
+																			"academic"
+																		],
+																		"type": "string"
+																	},
+																	"enabledSections": {
+																		"type": "array",
+																		"items": {
+																			"type": "string"
+																		}
+																	}
+																},
+																"required": [
+																	"version",
+																	"scenario",
+																	"enabledSections"
+																]
+															},
 															"template": {
 																"enum": [
 																	"azurill",
@@ -12546,19 +14326,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -12608,6 +14388,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -12699,6 +14535,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -13532,6 +15396,15 @@
 									"withSampleData": {
 										"type": "boolean",
 										"default": false
+									},
+									"scenario": {
+										"enum": [
+											"general",
+											"graduate",
+											"experienced",
+											"academic"
+										],
+										"type": "string"
 									}
 								},
 								"required": [
@@ -13767,19 +15640,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -13829,6 +15702,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -14095,6 +16024,14 @@
 																				"type": "string",
 																				"description": "The description of the experience. This should be a HTML-formatted string."
 																			},
+																			"department": {
+																				"type": "string",
+																				"description": "Optional department. Empty values are not displayed and do not replace roles."
+																			},
+																			"employmentType": {
+																				"type": "string",
+																				"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																			},
 																			"roles": {
 																				"type": "array",
 																				"items": {
@@ -14250,6 +16187,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the education. This should be a HTML-formatted string."
+																			},
+																			"schoolTier": {
+																				"type": "string",
+																				"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -14360,6 +16301,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the project. This should be a HTML-formatted string."
+																			},
+																			"role": {
+																				"type": "string",
+																				"description": "Optional role on the project. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -15535,6 +17480,14 @@
 																					"type": "string",
 																					"description": "The description of the experience. This should be a HTML-formatted string."
 																				},
+																				"department": {
+																					"type": "string",
+																					"description": "Optional department. Empty values are not displayed and do not replace roles."
+																				},
+																				"employmentType": {
+																					"type": "string",
+																					"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																				},
 																				"roles": {
 																					"type": "array",
 																					"items": {
@@ -15703,6 +17656,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the education. This should be a HTML-formatted string."
+																				},
+																				"schoolTier": {
+																					"type": "string",
+																					"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -15826,6 +17783,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the project. This should be a HTML-formatted string."
+																				},
+																				"role": {
+																					"type": "string",
+																					"description": "Optional role on the project. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -15927,7 +17888,7 @@
 																				"name": {
 																					"type": "string",
 																					"minLength": 1,
-																					"description": "The name of the skill."
+																					"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 																				},
 																				"proficiency": {
 																					"type": "string",
@@ -15944,7 +17905,7 @@
 																					"items": {
 																						"type": "string"
 																					},
-																					"description": "The keywords associated with the skill, if any. These are displayed as tags below the name."
+																					"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members."
 																				}
 																			},
 																			"required": [
@@ -16801,6 +18762,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -17242,6 +19231,11 @@
 									"showDownloadButtons": {
 										"type": "boolean",
 										"description": "Whether download buttons are shown on the public resume page."
+									},
+									"expectedUpdatedAt": {
+										"type": "string",
+										"format": "date-time",
+										"x-native-type": "date"
 									}
 								}
 							}
@@ -17378,19 +19372,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -17440,6 +19434,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -17706,6 +19756,14 @@
 																				"type": "string",
 																				"description": "The description of the experience. This should be a HTML-formatted string."
 																			},
+																			"department": {
+																				"type": "string",
+																				"description": "Optional department. Empty values are not displayed and do not replace roles."
+																			},
+																			"employmentType": {
+																				"type": "string",
+																				"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																			},
 																			"roles": {
 																				"type": "array",
 																				"items": {
@@ -17861,6 +19919,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the education. This should be a HTML-formatted string."
+																			},
+																			"schoolTier": {
+																				"type": "string",
+																				"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -17971,6 +20033,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the project. This should be a HTML-formatted string."
+																			},
+																			"role": {
+																				"type": "string",
+																				"description": "Optional role on the project. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -19146,6 +21212,14 @@
 																					"type": "string",
 																					"description": "The description of the experience. This should be a HTML-formatted string."
 																				},
+																				"department": {
+																					"type": "string",
+																					"description": "Optional department. Empty values are not displayed and do not replace roles."
+																				},
+																				"employmentType": {
+																					"type": "string",
+																					"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																				},
 																				"roles": {
 																					"type": "array",
 																					"items": {
@@ -19314,6 +21388,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the education. This should be a HTML-formatted string."
+																				},
+																				"schoolTier": {
+																					"type": "string",
+																					"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -19437,6 +21515,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the project. This should be a HTML-formatted string."
+																				},
+																				"role": {
+																					"type": "string",
+																					"description": "Optional role on the project. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -19538,7 +21620,7 @@
 																				"name": {
 																					"type": "string",
 																					"minLength": 1,
-																					"description": "The name of the skill."
+																					"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 																				},
 																				"proficiency": {
 																					"type": "string",
@@ -19555,7 +21637,7 @@
 																					"items": {
 																						"type": "string"
 																					},
-																					"description": "The keywords associated with the skill, if any. These are displayed as tags below the name."
+																					"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members."
 																				}
 																			},
 																			"required": [
@@ -20412,6 +22494,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -20859,6 +22969,66 @@
 								}
 							}
 						}
+					},
+					"409": {
+						"description": "409",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "RESUME_VERSION_CONFLICT"
+												},
+												"status": {
+													"const": 409
+												},
+												"message": {
+													"type": "string",
+													"default": "The resume was updated elsewhere since it was loaded."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": false
+												},
+												"code": {
+													"type": "string"
+												},
+												"status": {
+													"type": "number"
+												},
+												"message": {
+													"type": "string"
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										}
+									]
+								}
+							}
+						}
 					}
 				}
 			},
@@ -21141,19 +23311,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -21203,6 +23373,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -21469,6 +23695,14 @@
 																				"type": "string",
 																				"description": "The description of the experience. This should be a HTML-formatted string."
 																			},
+																			"department": {
+																				"type": "string",
+																				"description": "Optional department. Empty values are not displayed and do not replace roles."
+																			},
+																			"employmentType": {
+																				"type": "string",
+																				"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																			},
 																			"roles": {
 																				"type": "array",
 																				"items": {
@@ -21624,6 +23858,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the education. This should be a HTML-formatted string."
+																			},
+																			"schoolTier": {
+																				"type": "string",
+																				"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -21734,6 +23972,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the project. This should be a HTML-formatted string."
+																			},
+																			"role": {
+																				"type": "string",
+																				"description": "Optional role on the project. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -22909,6 +25151,14 @@
 																					"type": "string",
 																					"description": "The description of the experience. This should be a HTML-formatted string."
 																				},
+																				"department": {
+																					"type": "string",
+																					"description": "Optional department. Empty values are not displayed and do not replace roles."
+																				},
+																				"employmentType": {
+																					"type": "string",
+																					"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																				},
 																				"roles": {
 																					"type": "array",
 																					"items": {
@@ -23077,6 +25327,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the education. This should be a HTML-formatted string."
+																				},
+																				"schoolTier": {
+																					"type": "string",
+																					"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -23200,6 +25454,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the project. This should be a HTML-formatted string."
+																				},
+																				"role": {
+																					"type": "string",
+																					"description": "Optional role on the project. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -23301,7 +25559,7 @@
 																				"name": {
 																					"type": "string",
 																					"minLength": 1,
-																					"description": "The name of the skill."
+																					"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 																				},
 																				"proficiency": {
 																					"type": "string",
@@ -23318,7 +25576,7 @@
 																					"items": {
 																						"type": "string"
 																					},
-																					"description": "The keywords associated with the skill, if any. These are displayed as tags below the name."
+																					"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members."
 																				}
 																			},
 																			"required": [
@@ -24175,6 +26433,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -24875,19 +27161,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -24937,6 +27223,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -25203,6 +27545,14 @@
 																				"type": "string",
 																				"description": "The description of the experience. This should be a HTML-formatted string."
 																			},
+																			"department": {
+																				"type": "string",
+																				"description": "Optional department. Empty values are not displayed and do not replace roles."
+																			},
+																			"employmentType": {
+																				"type": "string",
+																				"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																			},
 																			"roles": {
 																				"type": "array",
 																				"items": {
@@ -25358,6 +27708,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the education. This should be a HTML-formatted string."
+																			},
+																			"schoolTier": {
+																				"type": "string",
+																				"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -25468,6 +27822,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the project. This should be a HTML-formatted string."
+																			},
+																			"role": {
+																				"type": "string",
+																				"description": "Optional role on the project. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -26643,6 +29001,14 @@
 																					"type": "string",
 																					"description": "The description of the experience. This should be a HTML-formatted string."
 																				},
+																				"department": {
+																					"type": "string",
+																					"description": "Optional department. Empty values are not displayed and do not replace roles."
+																				},
+																				"employmentType": {
+																					"type": "string",
+																					"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																				},
 																				"roles": {
 																					"type": "array",
 																					"items": {
@@ -26811,6 +29177,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the education. This should be a HTML-formatted string."
+																				},
+																				"schoolTier": {
+																					"type": "string",
+																					"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -26934,6 +29304,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the project. This should be a HTML-formatted string."
+																				},
+																				"role": {
+																					"type": "string",
+																					"description": "Optional role on the project. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -27035,7 +29409,7 @@
 																				"name": {
 																					"type": "string",
 																					"minLength": 1,
-																					"description": "The name of the skill."
+																					"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 																				},
 																				"proficiency": {
 																					"type": "string",
@@ -27052,7 +29426,7 @@
 																					"items": {
 																						"type": "string"
 																					},
-																					"description": "The keywords associated with the skill, if any. These are displayed as tags below the name."
+																					"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members."
 																				}
 																			},
 																			"required": [
@@ -27909,6 +30283,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -28897,19 +31299,19 @@
 														},
 														"headline": {
 															"type": "string",
-															"description": "The headline of the author of the resume."
+															"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 														},
 														"email": {
 															"type": "string",
-															"description": "The email address of the author of the resume."
+															"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 														},
 														"phone": {
 															"type": "string",
-															"description": "The phone number of the author of the resume."
+															"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 														},
 														"location": {
 															"type": "string",
-															"description": "The location of the author of the resume."
+															"description": "The city or current location of the author of the resume."
 														},
 														"website": {
 															"type": "object",
@@ -28959,6 +31361,62 @@
 																]
 															},
 															"description": "The custom fields to display on the resume."
+														},
+														"gender": {
+															"type": "string",
+															"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed."
+														},
+														"age": {
+															"type": "string",
+															"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed."
+														},
+														"blog": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional personal blog URL. Empty values are not displayed."
+														},
+														"github": {
+															"type": "object",
+															"properties": {
+																"url": {
+																	"type": "string",
+																	"description": "The URL to show as a link. Must use http:// or https://."
+																},
+																"label": {
+																	"type": "string",
+																	"description": "The label to display for the URL. Leave blank to display the URL as-is."
+																}
+															},
+															"required": [
+																"url",
+																"label"
+															],
+															"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once."
+														},
+														"politicalStatus": {
+															"type": "string",
+															"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty."
+														},
+														"politicalStatusOther": {
+															"type": "string",
+															"description": "Free-text political status used when politicalStatus is other."
+														},
+														"address": {
+															"type": "string",
+															"description": "Optional detailed address. Kept separate from the city in location."
 														}
 													},
 													"required": [
@@ -29225,6 +31683,14 @@
 																				"type": "string",
 																				"description": "The description of the experience. This should be a HTML-formatted string."
 																			},
+																			"department": {
+																				"type": "string",
+																				"description": "Optional department. Empty values are not displayed and do not replace roles."
+																			},
+																			"employmentType": {
+																				"type": "string",
+																				"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																			},
 																			"roles": {
 																				"type": "array",
 																				"items": {
@@ -29380,6 +31846,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the education. This should be a HTML-formatted string."
+																			},
+																			"schoolTier": {
+																				"type": "string",
+																				"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -29490,6 +31960,10 @@
 																			"description": {
 																				"type": "string",
 																				"description": "The description of the project. This should be a HTML-formatted string."
+																			},
+																			"role": {
+																				"type": "string",
+																				"description": "Optional role on the project. Empty values are not displayed."
 																			}
 																		},
 																		"required": [
@@ -30665,6 +33139,14 @@
 																					"type": "string",
 																					"description": "The description of the experience. This should be a HTML-formatted string."
 																				},
+																				"department": {
+																					"type": "string",
+																					"description": "Optional department. Empty values are not displayed and do not replace roles."
+																				},
+																				"employmentType": {
+																					"type": "string",
+																					"description": "Optional employment type, such as full-time or internship. Empty values are not displayed."
+																				},
 																				"roles": {
 																					"type": "array",
 																					"items": {
@@ -30833,6 +33315,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the education. This should be a HTML-formatted string."
+																				},
+																				"schoolTier": {
+																					"type": "string",
+																					"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -30956,6 +33442,10 @@
 																				"description": {
 																					"type": "string",
 																					"description": "The description of the project. This should be a HTML-formatted string."
+																				},
+																				"role": {
+																					"type": "string",
+																					"description": "Optional role on the project. Empty values are not displayed."
 																				}
 																			},
 																			"required": [
@@ -31057,7 +33547,7 @@
 																				"name": {
 																					"type": "string",
 																					"minLength": 1,
-																					"description": "The name of the skill."
+																					"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 																				},
 																				"proficiency": {
 																					"type": "string",
@@ -31074,7 +33564,7 @@
 																					"items": {
 																						"type": "string"
 																					},
-																					"description": "The keywords associated with the skill, if any. These are displayed as tags below the name."
+																					"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members."
 																				}
 																			},
 																			"required": [
@@ -31931,6 +34421,34 @@
 												"metadata": {
 													"type": "object",
 													"properties": {
+														"editor": {
+															"type": "object",
+															"properties": {
+																"version": {
+																	"const": 1
+																},
+																"scenario": {
+																	"enum": [
+																		"general",
+																		"graduate",
+																		"experienced",
+																		"academic"
+																	],
+																	"type": "string"
+																},
+																"enabledSections": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	}
+																}
+															},
+															"required": [
+																"version",
+																"scenario",
+																"enabledSections"
+															]
+														},
 														"template": {
 															"enum": [
 																"azurill",
@@ -32543,19 +35061,19 @@
 							},
 							"headline": {
 								"type": "string",
-								"description": "The headline of the author of the resume."
+								"description": "The headline of the author of the resume. In Chinese resumes this is the target role."
 							},
 							"email": {
 								"type": "string",
-								"description": "The email address of the author of the resume."
+								"description": "The email address of the author of the resume. Empty is allowed until a value is entered."
 							},
 							"phone": {
 								"type": "string",
-								"description": "The phone number of the author of the resume."
+								"description": "The phone number of the author of the resume. Accepts mobile numbers and other phone numbers."
 							},
 							"location": {
 								"type": "string",
-								"description": "The location of the author of the resume."
+								"description": "The city or current location of the author of the resume."
 							},
 							"website": {
 								"type": "object",
@@ -32606,6 +35124,66 @@
 									]
 								},
 								"description": "The custom fields to display on the resume."
+							},
+							"gender": {
+								"description": "Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed.",
+								"type": "string"
+							},
+							"age": {
+								"description": "Optional age as an integer string from 1 to 120. Empty values are not displayed.",
+								"type": "string"
+							},
+							"blog": {
+								"description": "Optional personal blog URL. Empty values are not displayed.",
+								"type": "object",
+								"properties": {
+									"url": {
+										"default": "",
+										"description": "The URL to show as a link. Must use http:// or https://.",
+										"type": "string"
+									},
+									"label": {
+										"default": "",
+										"description": "The label to display for the URL. Leave blank to display the URL as-is.",
+										"type": "string"
+									}
+								},
+								"required": [
+									"url",
+									"label"
+								]
+							},
+							"github": {
+								"description": "Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once.",
+								"type": "object",
+								"properties": {
+									"url": {
+										"default": "",
+										"description": "The URL to show as a link. Must use http:// or https://.",
+										"type": "string"
+									},
+									"label": {
+										"default": "",
+										"description": "The label to display for the URL. Leave blank to display the URL as-is.",
+										"type": "string"
+									}
+								},
+								"required": [
+									"url",
+									"label"
+								]
+							},
+							"politicalStatus": {
+								"description": "Optional political status key: party-member, league-member, masses, democratic-party, other, or empty.",
+								"type": "string"
+							},
+							"politicalStatusOther": {
+								"description": "Free-text political status used when politicalStatus is other.",
+								"type": "string"
+							},
+							"address": {
+								"description": "Optional detailed address. Kept separate from the city in location.",
+								"type": "string"
 							}
 						},
 						"required": [
@@ -32900,6 +35478,14 @@
 													"type": "string",
 													"description": "The description of the experience. This should be a HTML-formatted string."
 												},
+												"department": {
+													"description": "Optional department. Empty values are not displayed and do not replace roles.",
+													"type": "string"
+												},
+												"employmentType": {
+													"description": "Optional employment type, such as full-time or internship. Empty values are not displayed.",
+													"type": "string"
+												},
 												"roles": {
 													"default": [],
 													"description": "List of individual roles held at this company to show career progression.",
@@ -33067,6 +35653,10 @@
 												"description": {
 													"type": "string",
 													"description": "The description of the education. This should be a HTML-formatted string."
+												},
+												"schoolTier": {
+													"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed.",
+													"type": "string"
 												}
 											},
 											"required": [
@@ -33188,6 +35778,10 @@
 												"description": {
 													"type": "string",
 													"description": "The description of the project. This should be a HTML-formatted string."
+												},
+												"role": {
+													"description": "Optional role on the project. Empty values are not displayed.",
+													"type": "string"
 												}
 											},
 											"required": [
@@ -33277,7 +35871,7 @@
 												"name": {
 													"type": "string",
 													"minLength": 1,
-													"description": "The name of the skill."
+													"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 												},
 												"proficiency": {
 													"type": "string",
@@ -33292,7 +35886,7 @@
 												},
 												"keywords": {
 													"default": [],
-													"description": "The keywords associated with the skill, if any. These are displayed as tags below the name.",
+													"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members.",
 													"type": "array",
 													"items": {
 														"type": "string"
@@ -34586,6 +37180,14 @@
 														"type": "string",
 														"description": "The description of the experience. This should be a HTML-formatted string."
 													},
+													"department": {
+														"description": "Optional department. Empty values are not displayed and do not replace roles.",
+														"type": "string"
+													},
+													"employmentType": {
+														"description": "Optional employment type, such as full-time or internship. Empty values are not displayed.",
+														"type": "string"
+													},
 													"roles": {
 														"default": [],
 														"description": "List of individual roles held at this company to show career progression.",
@@ -34765,6 +37367,10 @@
 													"description": {
 														"type": "string",
 														"description": "The description of the education. This should be a HTML-formatted string."
+													},
+													"schoolTier": {
+														"description": "Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed.",
+														"type": "string"
 													}
 												},
 												"required": [
@@ -34898,6 +37504,10 @@
 													"description": {
 														"type": "string",
 														"description": "The description of the project. This should be a HTML-formatted string."
+													},
+													"role": {
+														"description": "Optional role on the project. Empty values are not displayed.",
+														"type": "string"
 													}
 												},
 												"required": [
@@ -35006,7 +37616,7 @@
 													"name": {
 														"type": "string",
 														"minLength": 1,
-														"description": "The name of the skill."
+														"description": "The skill category heading, or a standalone skill name if the source has no grouping."
 													},
 													"proficiency": {
 														"type": "string",
@@ -35021,7 +37631,7 @@
 													},
 													"keywords": {
 														"default": [],
-														"description": "The keywords associated with the skill, if any. These are displayed as tags below the name.",
+														"description": "The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members.",
 														"type": "array",
 														"items": {
 															"type": "string"
@@ -35943,6 +38553,35 @@
 					"metadata": {
 						"type": "object",
 						"properties": {
+							"editor": {
+								"type": "object",
+								"properties": {
+									"version": {
+										"type": "number",
+										"const": 1
+									},
+									"scenario": {
+										"type": "string",
+										"enum": [
+											"general",
+											"graduate",
+											"experienced",
+											"academic"
+										]
+									},
+									"enabledSections": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": [
+									"version",
+									"scenario",
+									"enabledSections"
+								]
+							},
 							"template": {
 								"default": "onyx",
 								"description": "The template to use for the resume. Determines the overall design and appearance of the resume.",

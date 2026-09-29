@@ -13,8 +13,9 @@ import { cn } from "@reactive-resume/utils/style";
 import { ChipInput } from "@/components/input/chip-input";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { useDialogStore } from "@/dialogs/store";
-import { useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
@@ -104,6 +105,9 @@ const SkillForm = withForm({
 	defaultValues,
 	render: function SkillFormRenderer({ form }) {
 		const nameMeta = useStore(form.store, (s) => s.fieldMeta?.name);
+		const chinese = useCurrentBuilderResumeSelector((resume) =>
+			isChineseResumeLocale(resume.data.metadata?.page?.locale),
+		);
 
 		const isNameInvalid = (nameMeta?.isTouched ?? false) && (nameMeta?.errors?.length ?? 0) > 0;
 
@@ -132,14 +136,13 @@ const SkillForm = withForm({
 					<form.Field name="name">
 						{(field) => (
 							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-								<FormLabel>
-									<Trans>Name</Trans>
-								</FormLabel>
+								<FormLabel>{chinese ? <Trans>Category name</Trans> : <Trans>Name</Trans>}</FormLabel>
 								<FormControl
 									render={
 										<Input
 											className="rounded-s-none rounded-e-none"
 											name={field.name}
+											placeholder={chinese ? t`For example: Programming languages` : undefined}
 											value={field.state.value}
 											onBlur={field.handleBlur}
 											onChange={(event) => field.handleChange(event.target.value)}
@@ -177,52 +180,71 @@ const SkillForm = withForm({
 					</form.Field>
 				</div>
 
-				<form.AppField name="proficiency">
-					{(field) => <field.TextField label={<Trans>Proficiency</Trans>} />}
-				</form.AppField>
-
-				<form.Field name="level">
-					{(field) => (
-						<FormItem
-							className="gap-4 sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-						>
-							<FormLabel>
-								<Trans>Level</Trans>
-							</FormLabel>
-							<FormControl
-								render={
-									<Slider
-										min={0}
-										max={5}
-										step={1}
-										value={[field.state.value]}
-										onValueChange={(value) => {
-											field.handleChange(Array.isArray(value) ? value[0] : value);
-										}}
-									/>
-								}
+				<details
+					open={!chinese || Boolean(form.state.values.proficiency) || form.state.values.level > 0}
+					className="space-y-3"
+				>
+					<summary className="cursor-pointer text-sm">
+						<Trans>Proficiency and rating (optional)</Trans>
+					</summary>
+					<form.AppField name="proficiency">
+						{(field) => (
+							<field.TextField
+								label={<Trans>Proficiency</Trans>}
+								placeholder={chinese ? t`For example: Familiar` : undefined}
 							/>
-							<FormMessage errors={field.state.meta.errors} />
-							<FormDescription>
-								{Number(field.state.value) === 0 ? t`Hidden` : `${field.state.value} / 5`}
-							</FormDescription>
-						</FormItem>
-					)}
-				</form.Field>
+						)}
+					</form.AppField>
 
+					<form.Field name="level">
+						{(field) => (
+							<FormItem
+								className="gap-4 sm:col-span-full"
+								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							>
+								<FormLabel>
+									<Trans>Level</Trans>
+								</FormLabel>
+								<FormControl
+									render={
+										<Slider
+											min={0}
+											max={5}
+											step={1}
+											value={[field.state.value]}
+											onValueChange={(value) => {
+												field.handleChange(Array.isArray(value) ? value[0] : value);
+											}}
+										/>
+									}
+								/>
+								<FormMessage errors={field.state.meta.errors} />
+								<FormDescription>
+									{Number(field.state.value) === 0 ? t`Hidden` : `${field.state.value} / 5`}
+								</FormDescription>
+							</FormItem>
+						)}
+					</form.Field>
+				</details>
 				<form.Field name="keywords">
 					{(field) => (
 						<FormItem
 							className="sm:col-span-full"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>
-							<FormLabel>
-								<Trans>Keywords</Trans>
-							</FormLabel>
+							<FormLabel>{chinese ? <Trans>Specific skills</Trans> : <Trans>Keywords</Trans>}</FormLabel>
+							{chinese ? (
+								<FormDescription>
+									<Trans>
+										Write the skill points directly, for example Java, Spring Boot, and MySQL. The example is not saved.
+									</Trans>
+								</FormDescription>
+							) : null}
 							<FormControl
 								render={
 									<ChipInput
+										commitOnBlur
+										bulkPaste
 										value={field.state.value}
 										onChange={(v: string[]) => {
 											field.handleChange(v);

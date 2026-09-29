@@ -9,5 +9,6 @@ export default createVitestProjectConfig({
 	name: "web",
 	dirname: fileURLToPath(new URL(".", import.meta.url)),
 	plugins: [tailwindcss(), lingui(), babel({ presets: [linguiTransformerBabelPreset()] })],
+	dedupe: ["@lingui/core"],
 	extraSetupFiles: ["./vitest.setup.web.ts"],
 });

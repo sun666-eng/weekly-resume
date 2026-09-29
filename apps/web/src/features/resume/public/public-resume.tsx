@@ -1,4 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CircleNotchIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
@@ -40,6 +41,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 
 	const { basics, picture } = resume.data;
 	const showDownloadButtons = resume.showDownloadButtons !== false;
+	const contact = listBasicsContactEntries(basics, resume.data.metadata.page.locale);
 
 	return (
 		<>
@@ -51,6 +53,21 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 					<div className="space-y-1">
 						{basics.name && <h1 className="font-semibold text-2xl tracking-tight">{basics.name}</h1>}
 						{basics.headline && <p className="text-muted-foreground">{basics.headline}</p>}
+						{contact.length > 0 && (
+							<ul className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
+								{contact.map((entry) => (
+									<li key={entry.name} className="max-w-full break-all">
+										{entry.href ? (
+											<a href={entry.href} className="hover:text-foreground">
+												{entry.text}
+											</a>
+										) : (
+											entry.text
+										)}
+									</li>
+								))}
+							</ul>
+						)}
 					</div>
 					{showDownloadButtons && (
 						<Button onClick={() => void onDownloadPDF()} disabled={isExporting}>

@@ -56,20 +56,25 @@ msgstr "跳过了 {0} 个联系人（邮箱无效或缺少联系人姓名）。�
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} applicable checks passed"
-msgstr "{0} 项适用检查中，{1} 项已通过"
+msgstr "{1} 项适用检查中，{0} 项已通过"
 
 #. placeholder {0}: category.passedChecks
+#. placeholder {0}: report.passedChecks
 #. placeholder {1}: category.applicableChecks
+#. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/report-view.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} applicable checks passed."
-msgstr "{0} 项适用检查中，{1} 项已通过。"
+msgstr "{1} 项适用检查中，{0} 项已通过。"
 
 #. placeholder {0}: jd.matchedCount
 #. placeholder {1}: jd.totalTerms
 #: src/features/ats-checker/report/jd-coverage.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} terms found"
-msgstr "找到 {0} 个词中的 {1} 个"
+msgstr "找到 {1} 个词中的 {0} 个"
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -122,9 +127,10 @@ msgstr "{count, plural, one {# 个警告} other {# 个警告}}"
 msgid "{label} over the last 30 days"
 msgstr "{label} 在过去 30 天内"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "{passedRules} of {totalRules} checks passed"
-msgstr "{passedRules} 项检查中，{totalRules} 项已通过"
+msgstr "{totalRules} 项检查中，{passedRules} 项已通过"
 
 #: src/features/applications/insights.ts
 #: src/libs/locale-catalogs.test.ts
@@ -199,6 +205,12 @@ msgstr "有一个时间段的结束日期早于开始日期。"
 msgid "A date range is written in a form most software cannot read."
 msgstr "有一个时间段的写法是大多数软件无法读取的。"
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: new Date(resume.updatedAt).toLocaleString()
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr "草稿保存于 {0}。服务器当前版本保存于 {1}。"
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "有一款字体被引用但未嵌入。"
@@ -238,6 +250,10 @@ msgstr "值得分享的链接"
 #: src/features/homepage/languages-showcase.tsx
 msgid "A little more<0/>at home."
 msgstr "多一点<0/>亲切感。"
+
+#: src/features/resume/builder/draft.ts
+msgid "A local backup could not be saved. Keep this page open until saving succeeds."
+msgstr "无法保存本地备份。请保持此页面打开，直到保存成功。"
 
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
@@ -2085,6 +2101,10 @@ msgstr "正在禁用双重身份验证…"
 msgid "Discard"
 msgstr "放弃"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr "放弃草稿"
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "放弃未保存的更改？"
@@ -2408,6 +2428,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr "请输入有效的邮箱，或暂时留空。"
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "请输入有效的电子邮箱地址。"
 
@@ -3553,6 +3574,10 @@ msgstr "继续在 Word、Google Docs 或 Pages 中编辑。版式可能与 PDF �
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "将文件控制在 2.5 MB 以内，通常可通过移除或缩小图片实现。"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Keep my values"
+msgstr "保留我的冲突内容"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "在这里记录关于这份简历的私人备注。其他人看不到。"
@@ -3593,6 +3618,10 @@ msgstr "密钥"
 #: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
 msgid "Keyword layout"
 msgstr "关键词布局"
+
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr "关键词匹配目前对英文职位描述支持最好。中文职位描述请把下方词条当作参考清单，而非覆盖率结论。"
 
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
@@ -4063,6 +4092,10 @@ msgstr "必须从 https:// 开始"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "姓名"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr "姓名至少需要 2 个字符。"
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -4655,27 +4688,27 @@ msgstr "粘贴后会自动填充各字段。"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch applied"
-msgstr "已应用补丁"
+msgstr "已应用修改"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch conflicted"
-msgstr "补丁冲突"
+msgstr "修改冲突"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch failed"
-msgstr "补丁失败"
+msgstr "修改失败"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch pending"
-msgstr "补丁待定"
+msgstr "修改待确认"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back"
-msgstr "补丁已回滚"
+msgstr "修改已撤销"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back."
-msgstr "补丁已回滚。"
+msgstr "修改已撤销。"
 
 #: src/features/homepage/feature-explorer.tsx
 msgid "Pause data flow animation"
@@ -5084,6 +5117,10 @@ msgstr "准备好署上你的名字了吗？"
 msgid "Recipient"
 msgstr "收件人"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr "恢复草稿"
+
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
 msgstr "矩形"
@@ -5246,12 +5283,51 @@ msgid "Responsible for working on the design system and helping other teams with
 msgstr "负责设计系统相关工作，并协助其他团队完成他们的设计。"
 
 #: src/routes/agent/-components/agent-chat.tsx
+msgid "Undo last change"
+msgstr "撤销上次修改"
+
+msgid "Undoing changes…"
+msgstr "正在撤销…"
+
+msgid "Undo this and later changes"
+msgstr "撤销此次及后续修改"
+
+msgid "View change details"
+msgstr "查看修改详情"
+
+msgid "Changes undone · View earlier conversation"
+msgstr "修改已撤销 · 展开查看历史对话"
+
+msgid "This reply describes an earlier version, not the current resume."
+msgstr "此回复描述的是撤销前的版本，不代表当前简历内容。"
+
+msgid "This change was undone when the resume was restored to an earlier version."
+msgstr "恢复到较早版本时，此次修改已撤销。"
+
+msgid "The resume changed after this edit. The change could not be undone automatically."
+msgstr "简历在此次修改后发生了变化，无法自动撤销。"
+
+msgid "A later edit changed the same field. Nothing was undone; review that field and try again."
+msgstr "后续编辑修改了同一字段，本次未撤销。请检查该字段后重试。"
+
+msgid "Later edits changed the same fields. Restore them anyway?"
+msgstr "后续编辑修改了相同字段，仍要恢复吗？"
+
+msgid "Only those conflicting fields will return to their earlier values. Other later edits will stay."
+msgstr "只有冲突字段会恢复为之前的值；其他后续编辑会保留。"
+
+msgid "Some changes in this reply were undone. Check each change card for its current status."
+msgstr "此回复中的部分修改已撤销。请查看各修改卡片的当前状态。"
+
+msgid "This will undo this change and later changes. Conversation history is kept and marked as undone."
+msgstr "将撤销此次及后续修改。聊天记录会保留，并标记为已撤销。"
+
 msgid "Restore"
 msgstr "恢复"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore the resume to before this patch?"
-msgstr "将简历恢复到此补丁之前的状态？"
+msgstr "撤销此次及后续修改？"
 
 #: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Restore this version?"
@@ -5299,7 +5375,7 @@ msgstr "简历选项"
 
 #: src/routes/agent/-components/agent-chat.tsx
 msgid "Resume patch"
-msgstr "简历补丁"
+msgstr "简历修改"
 
 #: src/features/homepage/template-shelf.tsx
 msgid "Resume templates"
@@ -5506,6 +5582,10 @@ msgstr "保存文件时确保每一页都是正向的。"
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "已保存"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Saving is paused. Choose which conflicting values to keep. Changes that do not conflict will be kept from both versions."
+msgstr "已暂停保存。请选择保留哪一方的冲突内容。两个版本中没有冲突的修改都会保留。"
 
 #: src/features/resume/builder/draft.ts
 msgid "Saving is taking longer than expected. Your changes are still open."
@@ -5982,6 +6062,10 @@ msgstr "有些申请系统需要先有一个，然后才能提交。"
 #: src/features/ats-checker/messages.ts
 msgid "Some bullets run long."
 msgstr "有些要点写得太长。"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Some changes conflict with a version saved elsewhere."
+msgstr "部分修改与其他位置保存的版本冲突。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Some characters come out as question marks."
@@ -6506,6 +6590,14 @@ msgstr "简历预览无法更新，仍显示上次有效的预览版本。"
 msgid "The same line repeats on every page."
 msgstr "同一行文字在每一页都重复出现。"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
+msgid "The saved font {fontFamily} uses {renderedFamily} for preview and export. Choose a bundled font to update this setting."
+msgstr "已保存的字体 {fontFamily} 在预览和导出时使用 {renderedFamily}。选择本地字体即可更新此设置。"
+
+#: src/features/resume/builder/draft.ts
+msgid "The saved version could not be loaded. Your draft is still available."
+msgstr "无法加载已保存的版本。你的草稿仍然保留，可以重试。"
+
 #. placeholder {0}: getPdfFindingMessage(cap).title
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
@@ -6758,6 +6850,10 @@ msgstr "这可能需要一点时间。请不要关闭窗口或刷新页面。"
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
 msgstr "这项指标衡量的是软件能多忠实地提取出这个文件中的文字。它不预测申请是否会被拒绝，也没有工具能做到。你的文件是在这个浏览器中读取的，从未上传。"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "This older draft has no comparison version. Your choice will replace the complete resume."
+msgstr "此旧版草稿缺少用于比较的原始版本。你的选择将替换整份简历。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This page is in columns, and the text extracts out of order."
@@ -7191,6 +7287,10 @@ msgstr "解锁"
 msgid "Unnamed passkey"
 msgstr "未命名通行密钥"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr "发现上次访问时有未保存的修改。"
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "未验证"
@@ -7393,6 +7493,10 @@ msgstr "使用简单明了的标题，例如“工作经历”、“教育经历
 msgid "Use sample"
 msgstr "使用示例"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Use server values"
+msgstr "采用服务器的冲突内容"
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "Use the API to connect this resume builder to your own applications. It covers the endpoints, the request format, and authentication."
 msgstr "使用 API 将此简历制作工具连接到你自己的应用程序。文档包含接口、请求格式和身份验证方式。"
@@ -7424,6 +7528,10 @@ msgstr "用户名"
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
 msgstr "用户名只能包含小写字母、数字、点、连字符和下划线。"
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
+msgstr "用户名至少需要 3 个字符。"
 
 #: src/features/homepage/community-stats.tsx
 msgid "Users"
@@ -7534,9 +7642,10 @@ msgid "Want a second opinion on the writing?"
 msgstr "想为你的文案获取第二意见吗？"
 
 #: src/features/ats-checker/messages.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Warning"
-msgstr "警告”"
+msgstr "警告"
 
 #: src/dialogs/resume/import.tsx
 msgid "We couldn't detect the format automatically. Choose it above."
@@ -7974,3 +8083,61 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
+
+
+msgid "Organize skill groups"
+msgstr "整理技能分组"
+
+
+msgid "Select a category and its skills, then choose the category heading. Only plain visible entries can be merged; entries with ratings or existing keywords remain unchanged."
+msgstr "勾选分类及其技能，再选择分类标题。仅可合并普通可见条目，带评分或已有具体技能的条目保持原样。"
+
+
+msgid "Entries to merge"
+msgstr "选择要合并的条目"
+
+
+msgid "Category heading"
+msgstr "分类标题"
+
+
+msgid "Choose a selected entry"
+msgstr "请选择已勾选的条目"
+
+
+msgid "Merge into group"
+msgstr "合并为分组"
+
+
+msgid "Undo last grouping"
+msgstr "撤销上次合并"
+
+
+msgid "Skills changed after grouping. Undo is disabled to protect newer edits."
+msgstr "合并后技能已有新修改，无法直接撤销，以免覆盖新内容。"
+
+
+msgid "Skills changed. Review the current entries and try again."
+msgstr "技能内容已变化，请核对当前条目后重试。"
+
+
+msgid "Add a skill group"
+msgstr "添加技能分组"
+
+
+msgid "Category name"
+msgstr "分类名称"
+
+
+msgid "Proficiency and rating (optional)"
+msgstr "熟练程度与评分（选填）"
+
+
+msgid "Specific skills"
+msgstr "具体技能"
+
+msgid "Your session expired. Sign in again to save your changes."
+msgstr "登录已过期，请重新登录后保存修改。"
+
+msgid "Sign in again"
+msgstr "重新登录"

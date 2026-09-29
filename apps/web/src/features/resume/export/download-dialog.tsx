@@ -69,6 +69,13 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 	const { hasCoverLetter, isExporting, onDownloadDOCX, onDownloadJSON, onDownloadMarkdown, onDownloadPDF } =
 		useResumeExport(resume);
 	const disabled = !resume || isExporting;
+	const missingCoreFields = resume
+		? [
+				resume.data.basics.name.trim() ? "" : "name",
+				resume.data.basics.phone.trim() ? "" : "phone",
+				resume.data.basics.email.trim() ? "" : "email",
+			].filter(Boolean)
+		: [];
 
 	// Cover letter can't be the active scope when the resume has none (also guards a stale toggle).
 	const activeScope: ResumeExportTarget = scope === "cover-letter" && !hasCoverLetter ? "resume" : scope;
@@ -91,6 +98,14 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						<Trans>Pick a format for your resume or cover letter.</Trans>
 					</DialogDescription>
 				</DialogHeader>
+
+				{missingCoreFields.length > 0 && (
+					<p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs leading-normal">
+						<Trans>
+							Name, phone, or email is still empty. You can export now, and the empty fields stay off the page.
+						</Trans>
+					</p>
+				)}
 
 				<Tabs value={activeScope} onValueChange={(value) => setScope(value as ResumeExportTarget)}>
 					<TabsList className="h-11! w-full">

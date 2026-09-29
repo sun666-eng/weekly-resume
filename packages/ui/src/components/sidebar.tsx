@@ -1,6 +1,7 @@
 import type { VariantProps } from "class-variance-authority";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { t } from "@lingui/core/macro";
 import { SidebarIcon } from "@phosphor-icons/react";
 import { cva } from "class-variance-authority";
 import * as React from "react";
@@ -8,6 +9,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@reactive-resume/ui/components/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
+import { useLinguiChanges } from "@reactive-resume/ui/hooks/use-lingui-changes";
 import { useIsMobile } from "@reactive-resume/ui/hooks/use-mobile";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -154,6 +156,7 @@ function Sidebar({
 	collapsible?: "offcanvas" | "icon" | "none";
 }) {
 	const { isMobile, state, openMobile, setOpenMobile } = useSidebarState();
+	useLinguiChanges();
 
 	if (collapsible === "none") {
 		return (
@@ -184,8 +187,8 @@ function Sidebar({
 					side={side}
 				>
 					<SheetHeader className="sr-only">
-						<SheetTitle>Sidebar</SheetTitle>
-						<SheetDescription>Displays the mobile sidebar.</SheetDescription>
+						<SheetTitle>{t`Sidebar`}</SheetTitle>
+						<SheetDescription>{t`Displays the mobile sidebar.`}</SheetDescription>
 					</SheetHeader>
 					<div className="flex h-full w-full flex-col">{children}</div>
 				</SheetContent>
@@ -241,6 +244,7 @@ function Sidebar({
 
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
 	const { toggleSidebar } = useSidebarState();
+	useLinguiChanges();
 
 	return (
 		<Button
@@ -256,23 +260,24 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
 			{...props}
 		>
 			<SidebarIcon className="rtl:rotate-180" />
-			<span className="sr-only">Toggle Sidebar</span>
+			<span className="sr-only">{t`Toggle Sidebar`}</span>
 		</Button>
 	);
 }
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 	const { toggleSidebar } = useSidebarState();
+	useLinguiChanges();
 
 	return (
 		<button
 			type="button"
 			data-sidebar="rail"
 			data-slot="sidebar-rail"
-			aria-label="Toggle Sidebar"
+			aria-label={t`Toggle Sidebar`}
 			tabIndex={-1}
 			onClick={toggleSidebar}
-			title="Toggle Sidebar"
+			title={t`Toggle Sidebar`}
 			className={cn(
 				"absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-s-1/2 after:inset-y-0 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
 				"in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize rtl:in-data-[side=left]:cursor-e-resize rtl:in-data-[side=right]:cursor-w-resize",

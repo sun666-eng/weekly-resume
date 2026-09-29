@@ -54,7 +54,7 @@ describe("copilot provider-failure translation", () => {
 		vi.mocked(generateText).mockReset();
 	});
 
-	it("translates APICallError provider failures to BAD_GATEWAY in generatePlainText", async () => {
+	it("translates APICallError provider failures to AI_PROVIDER_UNREACHABLE in generatePlainText", async () => {
 		vi.mocked(generateText).mockRejectedValue(
 			new APICallError({
 				message: "Provider returned 401",
@@ -64,10 +64,13 @@ describe("copilot provider-failure translation", () => {
 			}),
 		);
 
-		await expect(generatePlainText({} as never, "prompt")).rejects.toMatchObject({ code: "BAD_GATEWAY" });
+		await expect(generatePlainText({} as never, "prompt")).rejects.toMatchObject({
+			code: "AI_PROVIDER_UNREACHABLE",
+			status: 502,
+		});
 	});
 
-	it("translates APICallError provider failures to BAD_GATEWAY in generateJson", async () => {
+	it("translates APICallError provider failures to AI_PROVIDER_UNREACHABLE in generateJson", async () => {
 		vi.mocked(generateText).mockRejectedValue(
 			new APICallError({
 				message: "Model not found",
@@ -78,11 +81,12 @@ describe("copilot provider-failure translation", () => {
 		);
 
 		await expect(generateJson({} as never, { prompt: "prompt" }, schema)).rejects.toMatchObject({
-			code: "BAD_GATEWAY",
+			code: "AI_PROVIDER_UNREACHABLE",
+			status: 502,
 		});
 	});
 
-	it("translates RetryError with maxRetriesExceeded to BAD_GATEWAY", async () => {
+	it("translates RetryError with maxRetriesExceeded to AI_PROVIDER_UNREACHABLE", async () => {
 		const providerError = new APICallError({
 			message: "Provider returned 500",
 			url: "https://api.openai.com/v1/chat/completions",
@@ -97,10 +101,13 @@ describe("copilot provider-failure translation", () => {
 			}),
 		);
 
-		await expect(generatePlainText({} as never, "prompt")).rejects.toMatchObject({ code: "BAD_GATEWAY" });
+		await expect(generatePlainText({} as never, "prompt")).rejects.toMatchObject({
+			code: "AI_PROVIDER_UNREACHABLE",
+			status: 502,
+		});
 	});
 
-	it("preserves the provider error as the BAD_GATEWAY cause", async () => {
+	it("preserves the provider error as the AI_PROVIDER_UNREACHABLE cause", async () => {
 		const providerError = new APICallError({
 			message: "quota exceeded",
 			url: "https://api.openai.com/v1/chat/completions",
@@ -112,7 +119,7 @@ describe("copilot provider-failure translation", () => {
 		const error: { code?: string; cause?: unknown } = await generatePlainText({} as never, "prompt").catch(
 			(thrown) => thrown,
 		);
-		expect(error.code).toBe("BAD_GATEWAY");
+		expect(error.code).toBe("AI_PROVIDER_UNREACHABLE");
 		expect(error.cause).toBe(providerError);
 	});
 

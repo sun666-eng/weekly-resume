@@ -134,6 +134,13 @@ function parseEndpoint(raw: string, months: ReadonlyMap<string, number>): Endpoi
 	const yearOnly = /^(\d{4})$/.exec(value);
 	if (yearOnly?.[1]) return toEndpoint(Number(yearOnly[1]));
 
+	// 2022年9月 / 2026年 — Chinese year-month endpoints.
+	const cjkYearMonth = /^(\d{4})年(\d{1,2})月$/.exec(value);
+	if (cjkYearMonth?.[1] && cjkYearMonth[2]) return toEndpoint(Number(cjkYearMonth[1]), Number(cjkYearMonth[2]));
+
+	const cjkYear = /^(\d{4})年$/.exec(value);
+	if (cjkYear?.[1]) return toEndpoint(Number(cjkYear[1]));
+
 	const iso = /^(\d{4})-(\d{1,2})(?:-(\d{1,2}))?$/.exec(value);
 	if (iso?.[1] && iso[2]) return toEndpoint(Number(iso[1]), Number(iso[2]));
 

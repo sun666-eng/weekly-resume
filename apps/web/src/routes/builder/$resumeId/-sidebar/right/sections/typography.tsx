@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { useStore } from "@tanstack/react-form";
+import { resolveOfflineFontFamily } from "@reactive-resume/fonts";
 import { typographySchema } from "@reactive-resume/schema/resume/data";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import {
@@ -116,9 +117,18 @@ type TypographyGroupFieldsProps = {
 
 function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroupFieldsProps) {
 	const fontFamily = useStore(form.store, (s) => s.values[prefix].fontFamily);
+	const renderedFamily = resolveOfflineFontFamily(fontFamily);
 
 	return (
 		<>
+			{fontFamily !== renderedFamily && (
+				<FormDescription className="col-span-full">
+					<Trans>
+						The saved font {fontFamily} uses {renderedFamily} for preview and export. Choose a bundled font to update
+						this setting.
+					</Trans>
+				</FormDescription>
+			)}
 			<form.Field name={`${prefix}.fontFamily`}>
 				{(field) => (
 					<FormItem

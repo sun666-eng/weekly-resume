@@ -51,7 +51,10 @@ export const resumeDto = {
 	create: {
 		input: resumeSchema
 			.pick({ name: true, slug: true, tags: true })
-			.extend({ withSampleData: z.boolean().default(false) }),
+			.extend({
+				withSampleData: z.boolean().default(false),
+				scenario: z.enum(["general", "graduate", "experienced", "academic"]).optional(),
+			}),
 		output: z.string().describe("The ID of the created resume."),
 	},
 
@@ -64,7 +67,14 @@ export const resumeDto = {
 		input: resumeSchema
 			.pick({ name: true, slug: true, tags: true, data: true, isPublic: true, showDownloadButtons: true })
 			.partial()
-			.extend({ id: z.string(), data: writableResumeDataSchema.optional() }),
+			.extend({
+				id: z.string(),
+				data: writableResumeDataSchema.optional(),
+				// Optimistic concurrency: when provided and the stored row is newer, the update is
+				// rejected with RESUME_VERSION_CONFLICT so a concurrent editor's changes are not
+				// silently clobbered by a stale full-document write.
+				expectedUpdatedAt: z.date().optional(),
+			}),
 		output: resumeSchema.omit({ password: true, userId: true, createdAt: true }).extend({ hasPassword: z.boolean() }),
 	},
 

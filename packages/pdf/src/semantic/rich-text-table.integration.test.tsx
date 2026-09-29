@@ -151,6 +151,9 @@ describe("imported rich-text tables", () => {
 				{ name: "table edit", data: fixture(bordered.replace("Beta", "Beta!"), mode), expectedBeta: "Beta!" },
 			];
 			for (const stage of stages) {
+				// This coordinate baseline measures the sidebar-header layout. Full-width layout now
+				// intentionally moves the header above the table and is checked separately below.
+				stage.data.metadata.layout.pages = [{ fullWidth: false, main: ["summary"], sidebar: [] }];
 				const pdf = await readPdf(stage.data, "ditgar");
 				expect(tableCoordinates(pdf.items), stage.name).toEqual({
 					Alpha: [227.348, 808.69],
@@ -169,6 +172,13 @@ describe("imported rich-text tables", () => {
 		},
 		30_000,
 	);
+	it("positions a full-width table at the page inset below the header", async () => {
+		const pdf = await readPdf(fixture(table(), "semantic"), "ditgar");
+		const coordinates = tableCoordinates(pdf.items);
+		expect(coordinates.Alpha).toEqual([19, 752.29]);
+		expect(coordinates.Beta).toEqual([119, 752.29]);
+		expect(coordinates.Gamma).toEqual([219, 752.29]);
+	});
 
 	it.each(["legacy", "semantic"] as const)("keeps borderless tables borderless in %s mode", async (mode) => {
 		const borderless = table().replaceAll("border: 1pt solid black; ", "");

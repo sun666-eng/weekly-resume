@@ -2,7 +2,6 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { User } from "better-auth";
 import { ORPCError, os } from "@orpc/server";
 import { eq } from "drizzle-orm";
-import { auth, verifyOAuthToken } from "@reactive-resume/auth/config";
 import { db } from "@reactive-resume/db/client";
 import { user } from "@reactive-resume/db/schema";
 
@@ -18,6 +17,7 @@ async function getUserFromBearerToken(headers: Headers): Promise<User | null> {
 		const authHeader = headers.get("authorization");
 		if (!authHeader?.startsWith("Bearer ")) return null;
 
+		const { verifyOAuthToken } = await import("@reactive-resume/auth/config");
 		const payload = await verifyOAuthToken(authHeader.slice(7));
 		if (!payload?.sub) return null;
 
@@ -31,6 +31,7 @@ async function getUserFromBearerToken(headers: Headers): Promise<User | null> {
 
 async function getUserFromHeaders(headers: Headers): Promise<User | null> {
 	try {
+		const { auth } = await import("@reactive-resume/auth/config");
 		const result = await auth.api.getSession({ headers });
 		if (!result?.user) return null;
 
@@ -43,6 +44,7 @@ async function getUserFromHeaders(headers: Headers): Promise<User | null> {
 
 async function getUserFromApiKey(apiKey: string): Promise<User | null> {
 	try {
+		const { auth } = await import("@reactive-resume/auth/config");
 		const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
 		if (!result.key || !result.valid) return null;
 

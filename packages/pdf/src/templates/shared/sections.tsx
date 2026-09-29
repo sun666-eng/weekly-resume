@@ -44,6 +44,7 @@ import {
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { ITEM_HEADER_ROW_PART_KEYS } from "../../semantic/shared-parts";
 import { getSectionItemRows, getSectionItemsLayout, shouldUseSectionTimeline } from "./columns";
+import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { getWebsiteDisplayText } from "./contact";
 import {
 	SectionStyleProvider,
@@ -766,7 +767,7 @@ const CustomSummarySection = ({ section, showHeading = true }: CustomSummarySect
 const ProfileSection = ({ sectionId = "profiles", sectionData }: ItemSectionProps<ProfileItem> = {}) => {
 	const data = useRender();
 	const profiles = sectionData ?? data.sections.profiles;
-	const items = getVisibleItems(profiles, "profiles");
+	const items = omitDuplicateGithubProfiles(getVisibleItems(profiles, "profiles"), data.basics);
 	const inlineStyle = useTemplateStyle("inline");
 
 	if (items.length === 0) return null;
@@ -906,6 +907,14 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 							}
 						/>
 					);
+					const extraHeader = (
+						<>
+							{item.department?.trim() ? <Text semanticField="department">{item.department}</Text> : null}
+							{item.employmentType?.trim() ? (
+								<Text semanticField="employmentType">{item.employmentType}</Text>
+							) : null}
+						</>
+					);
 
 					const renderSplitHeader = () => (
 						<>
@@ -944,7 +953,10 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 							<ExperienceItemContent
 								item={item}
 								header={
-									<SectionItemHeader>{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}</SectionItemHeader>
+									<SectionItemHeader>
+										{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}
+										{extraHeader}
+									</SectionItemHeader>
 								}
 								splitRowStyle={splitRowStyle}
 								alignEndStyle={alignEndStyle}
@@ -1072,6 +1084,9 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 							}
 						/>
 					);
+					const schoolTier = item.schoolTier?.trim() ? (
+						<Text semanticField="schoolTier">{item.schoolTier}</Text>
+					) : null;
 
 					const renderSplitHeader = () => (
 						<>
@@ -1115,6 +1130,7 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 									)}
 								</View>
 							)}
+							{schoolTier}
 						</>
 					);
 
@@ -1123,7 +1139,10 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 							<EducationItemContent
 								item={item}
 								header={
-									<SectionItemHeader>{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}</SectionItemHeader>
+									<SectionItemHeader>
+										{inlineItemHeader ? renderInlineHeader() : renderSplitHeader()}
+										{inlineItemHeader ? schoolTier : null}
+									</SectionItemHeader>
 								}
 							/>
 						</SectionItem>
@@ -1157,6 +1176,7 @@ const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionPro
 									{item.period}
 								</Text>
 							</ItemHeaderRow>
+							{item.role?.trim() ? <Text semanticField="role">{item.role}</Text> : null}
 						</SectionItemHeader>
 
 						<RichText semanticField="description">{item.description}</RichText>

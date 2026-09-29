@@ -162,6 +162,7 @@ const businessErrorMessages: Record<string, MessageDescriptor> = {
 	AGENT_ROLLBACK_UNSUPPORTED: msg`Only resume patch actions can be rolled back.`,
 	AGENT_RESUME_GONE: msg`The edited resume no longer exists.`,
 	AGENT_ROLLBACK_UNAVAILABLE: msg`This patch does not have a rollback snapshot.`,
+	AGENT_ROLLBACK_CONFLICT: msg`A later edit changed the same field. Nothing was undone; review that field and try again.`,
 	AGENT_PATCH_NOT_APPLIED: msg`This patch is no longer applied.`,
 	// ai
 	AI_PROVIDER_UNREACHABLE: msg`Could not reach the AI provider.`,

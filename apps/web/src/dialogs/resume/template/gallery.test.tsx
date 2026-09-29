@@ -54,7 +54,7 @@ describe("TemplateGalleryDialog", () => {
 		renderGallery();
 		const dittoImg = screen.getByAltText("Ditto");
 		const button = dittoImg.closest("button") as HTMLButtonElement;
-		expect(button.className).toContain("ring-ring");
+		expect(button.getAttribute("aria-pressed")).toBe("true");
 	});
 
 	it("selecting a different template calls updateResumeData with the new template id", () => {
@@ -62,6 +62,8 @@ describe("TemplateGalleryDialog", () => {
 		const onyxImg = screen.getByAltText("Onyx");
 		const button = onyxImg.closest("button") as HTMLButtonElement;
 		fireEvent.click(button);
+		expect(updateResumeData).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: "Use this template" }));
 
 		expect(updateResumeData).toHaveBeenCalledTimes(1);
 		const recipe = updateResumeData.mock.calls[0]?.[0] as (draft: { metadata: { template: string } }) => void;

@@ -199,6 +199,12 @@ msgstr "期間の終了日が開始日より前になっています。"
 msgid "A date range is written in a form most software cannot read."
 msgstr "期間が、多くのソフトウェアでは読み取れない形式で書かれています。"
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "フォントが参照されていますが、埋め込まれていません。"
@@ -2085,6 +2091,10 @@ msgstr "二要素認証を無効にしています..."
 msgid "Discard"
 msgstr "破棄"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "保存していない変更を破棄しますか？"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "有効なメールアドレスを入力してください。"
 
@@ -3594,6 +3605,10 @@ msgstr "キー"
 msgid "Keyword layout"
 msgstr "キーワードのレイアウト"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "先頭を https:// にしてください"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "名前"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "あなたの名前を載せる準備はできましたか？"
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "宛先"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "ロック解除"
 msgid "Unnamed passkey"
 msgstr "名前なしのパスキー"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "未確認"
@@ -7423,6 +7450,10 @@ msgstr "ユーザー名"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

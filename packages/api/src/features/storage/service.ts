@@ -7,6 +7,7 @@ import {
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
+import { ORPCError } from "@orpc/server";
 import sharp from "sharp";
 import { env } from "@reactive-resume/env/server";
 import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
@@ -102,15 +103,21 @@ export async function processImageForUpload(file: File): Promise<ProcessedImage>
 		};
 	}
 
-	const processedBuffer = await sharp(fileBuffer)
-		.resize(800, 800, { fit: "inside", withoutEnlargement: true })
-		.jpeg({ quality: 80 })
-		.toBuffer();
-
-	return {
-		data: new Uint8Array(processedBuffer),
-		contentType: "image/jpeg",
-	};
+	try {
+		const image = sharp(fileBuffer);
+		const { hasAlpha } = await image.metadata();
+		const resized = image.rotate().resize(800, 800, { fit: "inside", withoutEnlargement: true });
+		const processedBuffer = await (hasAlpha ? resized.png() : resized.jpeg({ quality: 80 })).toBuffer();
+		return {
+			data: new Uint8Array(processedBuffer),
+			contentType: hasAlpha ? "image/png" : "image/jpeg",
+		};
+	} catch (cause) {
+		throw new ORPCError("BAD_REQUEST", {
+			message: "The image could not be processed. Please choose a valid image.",
+			cause,
+		});
+	}
 }
 
 class LocalStorageService implements StorageService {

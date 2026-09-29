@@ -1,0 +1,108 @@
+{
+	"IBM Plex Serif": {
+		"400": "/fonts/ibm-plex-serif/400.ttf",
+		"500": "/fonts/ibm-plex-serif/500.ttf",
+		"600": "/fonts/ibm-plex-serif/600.ttf",
+		"700": "/fonts/ibm-plex-serif/700.ttf",
+		"400italic": "/fonts/ibm-plex-serif/400italic.ttf",
+		"700italic": "/fonts/ibm-plex-serif/700italic.ttf"
+	},
+	"Noto Sans SC": {
+		"400": "/fonts/noto-sans-sc/400.ttf",
+		"500": "/fonts/noto-sans-sc/500.ttf",
+		"600": "/fonts/noto-sans-sc/600.ttf",
+		"700": "/fonts/noto-sans-sc/700.ttf"
+	},
+	"Noto Serif SC": {
+		"400": "/fonts/noto-serif-sc/400.ttf",
+		"700": "/fonts/noto-serif-sc/700.ttf"
+	},
+	"Noto Sans": {
+		"400": "/fonts/noto-sans/400.ttf",
+		"700": "/fonts/noto-sans/700.ttf"
+	},
+	"Noto Serif": {
+		"400": "/fonts/noto-serif/400.ttf",
+		"700": "/fonts/noto-serif/700.ttf"
+	},
+	"Open Sans": {
+		"300": "/fonts/open-sans/300.ttf",
+		"400": "/fonts/open-sans/400.ttf",
+		"500": "/fonts/open-sans/500.ttf",
+		"600": "/fonts/open-sans/600.ttf",
+		"700": "/fonts/open-sans/700.ttf",
+		"800": "/fonts/open-sans/800.ttf"
+	},
+	"Source Sans 3": {
+		"200": "/fonts/source-sans-3/200.ttf",
+		"300": "/fonts/source-sans-3/300.ttf",
+		"400": "/fonts/source-sans-3/400.ttf",
+		"500": "/fonts/source-sans-3/500.ttf",
+		"600": "/fonts/source-sans-3/600.ttf",
+		"700": "/fonts/source-sans-3/700.ttf",
+		"800": "/fonts/source-sans-3/800.ttf",
+		"900": "/fonts/source-sans-3/900.ttf"
+	},
+	"Lato": {
+		"100": "/fonts/lato/100.ttf",
+		"300": "/fonts/lato/300.ttf",
+		"400": "/fonts/lato/400.ttf",
+		"700": "/fonts/lato/700.ttf",
+		"900": "/fonts/lato/900.ttf"
+	},
+	"Vazirmatn": {
+		"100": "/fonts/vazirmatn/100.ttf",
+		"200": "/fonts/vazirmatn/200.ttf",
+		"300": "/fonts/vazirmatn/300.ttf",
+		"400": "/fonts/vazirmatn/400.ttf",
+		"500": "/fonts/vazirmatn/500.ttf",
+		"600": "/fonts/vazirmatn/600.ttf",
+		"700": "/fonts/vazirmatn/700.ttf",
+		"800": "/fonts/vazirmatn/800.ttf",
+		"900": "/fonts/vazirmatn/900.ttf"
+	},
+	"Noto Serif KR": {
+		"400": "/fonts/noto-serif-kr/400.ttf",
+		"700": "/fonts/noto-serif-kr/700.ttf"
+	},
+	"Noto Sans KR": {
+		"400": "/fonts/noto-sans-kr/400.ttf",
+		"700": "/fonts/noto-sans-kr/700.ttf"
+	},
+	"Noto Serif JP": {
+		"400": "/fonts/noto-serif-jp/400.ttf",
+		"700": "/fonts/noto-serif-jp/700.ttf"
+	},
+	"Noto Sans JP": {
+		"400": "/fonts/noto-sans-jp/400.ttf",
+		"700": "/fonts/noto-sans-jp/700.ttf"
+	},
+	"Noto Serif TC": {
+		"400": "/fonts/noto-serif-tc/400.ttf",
+		"700": "/fonts/noto-serif-tc/700.ttf"
+	},
+	"Noto Sans TC": {
+		"400": "/fonts/noto-sans-tc/400.ttf",
+		"700": "/fonts/noto-sans-tc/700.ttf"
+	},
+	"Noto Naskh Arabic": {
+		"400": "/fonts/noto-naskh-arabic/400.ttf",
+		"700": "/fonts/noto-naskh-arabic/700.ttf"
+	},
+	"Noto Sans Arabic": {
+		"400": "/fonts/noto-sans-arabic/400.ttf",
+		"700": "/fonts/noto-sans-arabic/700.ttf"
+	},
+	"Noto Sans Hebrew": {
+		"400": "/fonts/noto-sans-hebrew/400.ttf",
+		"700": "/fonts/noto-sans-hebrew/700.ttf"
+	},
+	"Noto Sans Thai": {
+		"400": "/fonts/noto-sans-thai/400.ttf",
+		"700": "/fonts/noto-sans-thai/700.ttf"
+	},
+	"Noto Emoji": {
+		"400": "/fonts/noto-emoji/400.ttf",
+		"700": "/fonts/noto-emoji/700.ttf"
+	}
+}

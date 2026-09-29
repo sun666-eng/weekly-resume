@@ -56,18 +56,23 @@ msgstr "已略過 {0} 位聯絡人（電子郵件無效或缺少聯絡人姓名�
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} applicable checks passed"
 msgstr "{0} 項適用檢查中，{1} 項已通過"
 
 #. placeholder {0}: category.passedChecks
+#. placeholder {0}: report.passedChecks
 #. placeholder {1}: category.applicableChecks
+#. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/report-view.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0} 項適用檢查中，{1} 項已通過。"
 
 #. placeholder {0}: jd.matchedCount
 #. placeholder {1}: jd.totalTerms
 #: src/features/ats-checker/report/jd-coverage.tsx
+#: src/libs/locale-catalogs.test.ts
 msgid "{0} of {1} terms found"
 msgstr "找到 {0} 個詞中的 {1} 個"
 
@@ -122,6 +127,7 @@ msgstr "{count, plural, one {# 個警告} other {# 個警告}}"
 msgid "{label} over the last 30 days"
 msgstr "{label} 過去 30 天內"
 
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "{passedRules} of {totalRules} checks passed"
 msgstr "{passedRules} 項檢查中，{totalRules} 項已通過"
@@ -199,6 +205,12 @@ msgstr "有一個時間段的結束日期早於開始日期。"
 msgid "A date range is written in a form most software cannot read."
 msgstr "有一個時間段的寫法是大多數軟體無法讀取的。"
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: new Date(resume.updatedAt).toLocaleString()
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "有一款字體被引用但未嵌入。"
@@ -238,6 +250,10 @@ msgstr "值得分享的連結"
 #: src/features/homepage/languages-showcase.tsx
 msgid "A little more<0/>at home."
 msgstr "多一點<0/>親切感。"
+
+#: src/features/resume/builder/draft.ts
+msgid "A local backup could not be saved. Keep this page open until saving succeeds."
+msgstr "無法儲存本機備份。請保持此頁面開啟，直到儲存成功。"
 
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
@@ -2085,6 +2101,10 @@ msgstr "正在停用雙因子驗證…"
 msgid "Discard"
 msgstr "捨棄"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "捨棄未儲存的變更？"
@@ -2408,6 +2428,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "請輸入有效的電子郵件地址。"
 
@@ -3553,6 +3574,10 @@ msgstr "在 Word、Google Docs 或 Pages 中繼續編輯。版面可能與 PDF �
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "將檔案控制在 2.5 MB 以內，通常可透過移除或縮小圖片來達成。"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Keep my values"
+msgstr "保留我的衝突內容"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "在這裡記下關於這份履歷的私人筆記。其他人看不到。"
@@ -3593,6 +3618,10 @@ msgstr "金鑰"
 #: src/routes/builder/$resumeId/-sidebar/left/shared/skill-keyword-layout-menu.tsx
 msgid "Keyword layout"
 msgstr "關鍵詞版面"
+
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
 
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
@@ -4063,6 +4092,10 @@ msgstr "必須從 https:// 開始"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "名稱"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5084,6 +5117,10 @@ msgstr "準備好署上你的名字了嗎？"
 msgid "Recipient"
 msgstr "收件人"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
+
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
 msgstr "長方形"
@@ -5506,6 +5543,10 @@ msgstr "儲存檔案時確保每一頁都是正向的。"
 #: src/routes/builder/$resumeId/-components/header.tsx
 msgid "Saved"
 msgstr "已儲存"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Saving is paused. Choose which conflicting values to keep. Changes that do not conflict will be kept from both versions."
+msgstr "已暫停儲存。請選擇保留哪一方的衝突內容。兩個版本中沒有衝突的修改都會保留。"
 
 #: src/features/resume/builder/draft.ts
 msgid "Saving is taking longer than expected. Your changes are still open."
@@ -5982,6 +6023,10 @@ msgstr "有些申請系統需要先有一個，然後再提交。"
 #: src/features/ats-checker/messages.ts
 msgid "Some bullets run long."
 msgstr "有些重點寫得太長。"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Some changes conflict with a version saved elsewhere."
+msgstr "部分修改與其他位置儲存的版本衝突。"
 
 #: src/features/ats-checker/messages.ts
 msgid "Some characters come out as question marks."
@@ -6506,6 +6551,14 @@ msgstr "履歷預覽無法更新，仍顯示上次有效的預覽版本。"
 msgid "The same line repeats on every page."
 msgstr "同一行文字在每一頁都重複出現。"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
+msgid "The saved font {fontFamily} uses {renderedFamily} for preview and export. Choose a bundled font to update this setting."
+msgstr "已儲存的字型 {fontFamily} 在預覽和匯出時使用 {renderedFamily}。選擇本機字型即可更新此設定。"
+
+#: src/features/resume/builder/draft.ts
+msgid "The saved version could not be loaded. Your draft is still available."
+msgstr "無法載入已儲存的版本。你的草稿仍然保留，可以重試。"
+
 #. placeholder {0}: getPdfFindingMessage(cap).title
 #: src/features/ats-checker/report/score-header.tsx
 msgid "The score is capped because of a blocking problem: {0}"
@@ -6758,6 +6811,10 @@ msgstr "這可能需要一點時間。請勿關閉視窗或重新整理頁面。
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
 msgstr "這項指標衡量的是軟體能多忠實地擷取這個檔案中的文字。它不預測應徵是否會被拒絕，也沒有任何工具做得到。您的檔案是在這個瀏覽器中讀取的，從未上傳。"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "This older draft has no comparison version. Your choice will replace the complete resume."
+msgstr "此舊版草稿缺少用於比較的原始版本。你的選擇將替換整份履歷。"
 
 #: src/features/ats-checker/messages.ts
 msgid "This page is in columns, and the text extracts out of order."
@@ -7191,6 +7248,10 @@ msgstr "解鎖"
 msgid "Unnamed passkey"
 msgstr "未命名通行金鑰"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "未驗證"
@@ -7393,6 +7454,10 @@ msgstr "使用簡單明瞭的標題，例如「經歷」、「學歷」和「技
 msgid "Use sample"
 msgstr "使用範例"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Use server values"
+msgstr "採用伺服器的衝突內容"
+
 #: src/features/settings/pages/api-keys.tsx
 msgid "Use the API to connect this resume builder to your own applications. It covers the endpoints, the request format, and authentication."
 msgstr ""
@@ -7423,6 +7488,10 @@ msgstr "使用者名稱"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx
@@ -7534,9 +7603,10 @@ msgid "Want a second opinion on the writing?"
 msgstr "想為您的文案取得第二意見嗎？"
 
 #: src/features/ats-checker/messages.ts
+#: src/libs/locale-catalogs.test.ts
 #: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
 msgid "Warning"
-msgstr "警告”"
+msgstr "警告"
 
 #: src/dialogs/resume/import.tsx
 msgid "We couldn't detect the format automatically. Choose it above."
@@ -7974,3 +8044,61 @@ msgstr "縮小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖魯語"
+
+
+msgid "Organize skill groups"
+msgstr "整理技能分組"
+
+
+msgid "Select a category and its skills, then choose the category heading. Only plain visible entries can be merged; entries with ratings or existing keywords remain unchanged."
+msgstr "勾選分類及其技能，再選擇分類標題。僅可合併普通可見條目，帶評分或已有具體技能的條目保持原樣。"
+
+
+msgid "Entries to merge"
+msgstr "選擇要合併的條目"
+
+
+msgid "Category heading"
+msgstr "分類標題"
+
+
+msgid "Choose a selected entry"
+msgstr "請選擇已勾選的條目"
+
+
+msgid "Merge into group"
+msgstr "合併為分組"
+
+
+msgid "Undo last grouping"
+msgstr "復原上次合併"
+
+
+msgid "Skills changed after grouping. Undo is disabled to protect newer edits."
+msgstr "合併後技能已有新修改，無法直接復原，以免覆蓋新內容。"
+
+
+msgid "Skills changed. Review the current entries and try again."
+msgstr "技能內容已變化，請核對目前條目後重試。"
+
+
+msgid "Add a skill group"
+msgstr "新增技能分組"
+
+
+msgid "Category name"
+msgstr "分類名稱"
+
+
+msgid "Proficiency and rating (optional)"
+msgstr "熟練程度與評分（選填）"
+
+
+msgid "Specific skills"
+msgstr "具體技能"
+
+msgid "Your session expired. Sign in again to save your changes."
+msgstr "登入已過期，請重新登入後儲存修改。"
+
+msgid "Sign in again"
+msgstr "重新登入"

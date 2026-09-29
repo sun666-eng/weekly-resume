@@ -128,6 +128,8 @@ export const aiProvidersRouter = {
 		.errors({
 			BAD_REQUEST: { message: "Invalid AI provider configuration.", status: 400 },
 			BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
+			AI_PROVIDER_INVALID: { message: "Invalid AI provider configuration.", status: 400 },
+			AI_PROVIDER_UNREACHABLE: { message: "The AI provider returned an error or is unreachable.", status: 502 },
 			NOT_FOUND: { message: "AI provider was not found.", status: 404 },
 			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})

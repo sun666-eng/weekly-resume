@@ -81,7 +81,11 @@ const EXPECTED_PARTS = {
 				take: [
 					{ kind: "contact-item", name: "email" },
 					{ kind: "contact-item", name: "phone" },
+					{ kind: "contact-item", name: "gender" },
+					{ kind: "contact-item", name: "age" },
 					{ kind: "contact-item", name: "location" },
+					{ kind: "contact-item", name: "address" },
+					{ kind: "contact-item", name: "political" },
 				],
 			},
 		},
@@ -93,6 +97,8 @@ const EXPECTED_PARTS = {
 				parent: "owner",
 				at: "end",
 				take: [
+					{ kind: "contact-item", name: "blog" },
+					{ kind: "contact-item", name: "github" },
 					{ kind: "contact-item", name: "website" },
 					{ kind: "contact-item", name: "custom" },
 				],

@@ -18,6 +18,8 @@ import { parseColorString } from "@reactive-resume/utils/color";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { shouldShowResumeHeader } from "./cover-letter";
 import { toSafeDocxLink } from "./link-utils";
+import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
 
 // --- Color helpers ---
@@ -119,18 +121,29 @@ function renderSection(
 	}
 
 	// ponytail: data.sections keys are the source of truth; no need to maintain a parallel Set
+	if (sectionId === "profiles") {
+		const profiles = data.sections.profiles;
+		return renderBuiltInSection(
+			"profiles",
+			titled({ ...profiles, items: omitDuplicateGithubProfiles(profiles.items, data.basics) }),
+			colorHex,
+		);
+	}
+
 	if (sectionId in data.sections) {
 		const section = data.sections[sectionId as SectionType];
-		if (section) {
-			return renderBuiltInSection(sectionId as SectionType, titled(section), colorHex);
-		}
+		if (section) return renderBuiltInSection(sectionId as SectionType, titled(section), colorHex);
 		return [];
 	}
 
 	const customSection = data.customSections.find((cs) => cs.id === sectionId);
-	if (customSection) {
-		return renderCustomSection(titled(customSection), colorHex);
+	if (customSection?.type === "profiles") {
+		return renderCustomSection(
+			titled({ ...customSection, items: omitDuplicateGithubProfiles(customSection.items, data.basics) }),
+			colorHex,
+		);
 	}
+	if (customSection) return renderCustomSection(titled(customSection), colorHex);
 
 	return [];
 }
@@ -188,49 +201,20 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 		}
 	};
 
-	if (basics.email) {
-		const mailtoLink = toSafeDocxLink(`mailto:${basics.email}`);
-		if (mailtoLink) {
-			addSeparator();
+	for (const entry of listBasicsContactEntries(basics, data.metadata.page.locale)) {
+		addSeparator();
+		const link = entry.href ? toSafeDocxLink(entry.href) : null;
+		if (link) {
 			contactParts.push(
 				new ExternalHyperlink({
-					link: mailtoLink,
+					link,
 					children: [
-						new TextRun({ text: basics.email, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
+						new TextRun({ text: entry.text, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
 					],
 				}),
 			);
-		}
-	}
-
-	if (basics.phone) {
-		addSeparator();
-		contactParts.push(new TextRun({ text: basics.phone, size: bodySize, font: bodyFont, color: textColorHex }));
-	}
-
-	if (basics.location) {
-		addSeparator();
-		contactParts.push(new TextRun({ text: basics.location, size: bodySize, font: bodyFont, color: textColorHex }));
-	}
-
-	if (basics.website.url) {
-		const websiteLink = toSafeDocxLink(basics.website.url);
-		if (websiteLink) {
-			addSeparator();
-			contactParts.push(
-				new ExternalHyperlink({
-					link: websiteLink,
-					children: [
-						new TextRun({
-							text: basics.website.label || websiteLink,
-							color: colorHex,
-							underline: {},
-							size: bodySize,
-							font: bodyFont,
-						}),
-					],
-				}),
-			);
+		} else {
+			contactParts.push(new TextRun({ text: entry.text, size: bodySize, font: bodyFont, color: textColorHex }));
 		}
 	}
 
@@ -390,6 +374,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		bodySizeHalfPt: bodySize,
 		textColorHex,
 		primaryColorHex: colorHex,
+		locale: data.metadata.page.locale,
 	};
 	const showHeader = shouldShowResumeHeader(data);
 

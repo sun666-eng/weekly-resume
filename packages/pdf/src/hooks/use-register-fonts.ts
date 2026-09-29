@@ -9,6 +9,7 @@ import {
 	isStandardPdfFontFamily,
 	resolveBoldFontWeight,
 	resolveLegacyFontAlias,
+	resolveOfflineFontFamily,
 	sortFontWeights,
 } from "@reactive-resume/fonts";
 import { isCJKLocale } from "@reactive-resume/utils/locale";
@@ -112,7 +113,7 @@ const toFontWeight = (weight: number): FontWeight => {
 const resolvePdfFontFamily = (family: string) => {
 	if (getFont(family)) {
 		const alias = resolveLegacyFontAlias(family);
-		return alias ?? family;
+		return resolveOfflineFontFamily(alias ?? family);
 	}
 	return fallbackFontFamily;
 };

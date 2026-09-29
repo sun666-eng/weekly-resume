@@ -35,11 +35,13 @@ import {
 } from "@reactive-resume/ui/components/input-group";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { normalizePictureUrl } from "@reactive-resume/utils/picture-url";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { usePictureUploadTasks } from "@/features/resume/builder/picture-upload";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
-import { getReadableErrorMessage } from "@/libs/error-message";
+import { getLocalizedErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -412,20 +414,6 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 
 type PictureValues = z.infer<typeof pictureSchema>;
 
-function normalizePictureUrl(url: string, origin: string): string {
-	if (!url) return url;
-	if (url.startsWith("/uploads/")) return `/api${url}`;
-
-	try {
-		const parsed = new URL(url, origin);
-		if (parsed.origin !== origin) return url;
-		if (!parsed.pathname.startsWith("/uploads/")) return url;
-		return `/api${parsed.pathname}${parsed.search}${parsed.hash}`;
-	} catch {
-		return url;
-	}
-}
-
 async function getCroppedImageBlob(imageSrc: string, pixelCrop: Area, mimeType: string): Promise<Blob> {
 	const image = await new Promise<HTMLImageElement>((resolve, reject) => {
 		const element = new Image();
@@ -500,6 +488,7 @@ type PictureSettingsForm = ReturnType<typeof usePictureSettingsForm>;
 type CropState = {
 	file: File;
 	imageSrc: string;
+	requestId: number;
 };
 
 function PictureSectionForm() {
@@ -515,8 +504,10 @@ function PictureSectionForm() {
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
 	const updateResumeData = useUpdateResumeData();
 
-	const { mutate: uploadFile } = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
-	const { mutate: deleteFile } = useMutation(orpc.storage.deleteFile.mutationOptions({ meta: { noInvalidate: true } }));
+	const { mutateAsync: uploadFile } = useMutation(
+		orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }),
+	);
+	const uploadTasks = usePictureUploadTasks();
 
 	const persist = (data: PictureValues) => {
 		updateResumeData((draft) => {
@@ -536,66 +527,64 @@ function PictureSectionForm() {
 	};
 
 	const onDeletePicture = () => {
-		if (!picture.url) return;
-
-		const appOrigin = window.location.origin;
-		const pictureUrl = new URL(picture.url, appOrigin);
-		const pictureOrigin = pictureUrl.origin;
-
-		const filename = pictureUrl.pathname.split("/").pop();
-		if (!filename) return;
-
-		// If the picture is from the same origin, attempt to delete it
-		if (pictureOrigin === appOrigin) deleteFile({ filename });
-
+		uploadTasks.invalidate();
+		// History stores URLs, not file bytes. Keep the resource for undo and saved versions.
 		form.reset(defaultResumeData.picture);
 		persist(defaultResumeData.picture);
 	};
 
-	const uploadPictureFile = (file: File) => {
+	const uploadPictureFile = async (file: File, requestId: number) => {
+		if (!uploadTasks.isCurrent(requestId)) return;
 		const toastId = toast.add({ type: "loading", description: t`Uploading picture…` });
-
-		uploadFile(file, {
-			onSuccess: ({ url }) => {
-				form.setFieldValue("url", url);
-				handleAutoSave();
-				toast.close(toastId);
-			},
-			onError: (error) => {
+		const finish = uploadTasks.track(() => toast.close(toastId));
+		try {
+			const { url } = await uploadFile(file);
+			if (uploadTasks.isCurrent(requestId)) {
+				const normalizedUrl = normalizePictureUrl(url, appOrigin);
+				// setFieldValue updates the form asynchronously. Persist the new URL
+				// explicitly so the upload callback cannot save the previous picture.
+				form.setFieldValue("url", normalizedUrl);
+				persist({ ...form.state.values, url: normalizedUrl });
+			}
+		} catch (error) {
+			if (uploadTasks.isCurrent(requestId)) {
 				toast.add({
 					type: "error",
-					description: getReadableErrorMessage(
+					description: getLocalizedErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when uploading profile picture for resume fails",
 							message: "Failed to upload picture. Please try again.",
 						}),
 					),
-					id: toastId,
 				});
-			},
-			onSettled: () => {
-				if (fileInputRef.current) fileInputRef.current.value = "";
-			},
-		});
+			}
+		} finally {
+			finish();
+			if (uploadTasks.isCurrent(requestId) && fileInputRef.current) fileInputRef.current.value = "";
+		}
 	};
 
 	const onUploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
+		const requestId = uploadTasks.invalidate();
+		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
 		if (form.state.values.fit === "contain") {
-			uploadPictureFile(file);
+			setCropState(null);
+			void uploadPictureFile(file, requestId);
 			return;
 		}
 
 		// Open the interactive crop step instead of uploading immediately.
-		setCropState({ file, imageSrc: URL.createObjectURL(file) });
+		setCropState({ file, imageSrc: URL.createObjectURL(file), requestId });
 		setCrop({ x: 0, y: 0 });
 		setZoom(1);
 		setCroppedAreaPixels(null);
 	};
 
-	const closeCropDialog = () => {
+	const closeCropDialog = (cancel = true) => {
+		if (cancel) uploadTasks.invalidate();
 		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
 		setCropState(null);
 		if (fileInputRef.current) fileInputRef.current.value = "";
@@ -615,8 +604,9 @@ function PictureSectionForm() {
 			fileToUpload = cropState.file;
 		}
 
-		uploadPictureFile(fileToUpload);
-		closeCropDialog();
+		if (!uploadTasks.isCurrent(cropState.requestId)) return;
+		void uploadPictureFile(fileToUpload, cropState.requestId);
+		closeCropDialog(false);
 	};
 
 	const cropAspect = Number(form.state.values.aspectRatio) || 1;
@@ -680,7 +670,7 @@ function PictureSectionForm() {
 					</div>
 
 					<DialogFooter className="flex-row flex-wrap justify-between">
-						<Button variant="outline" onClick={closeCropDialog}>
+						<Button variant="outline" onClick={() => closeCropDialog()}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<div className="flex flex-wrap gap-2">
@@ -688,8 +678,8 @@ function PictureSectionForm() {
 								variant="outline"
 								onClick={() => {
 									if (!cropState) return;
-									uploadPictureFile(cropState.file);
-									closeCropDialog();
+									void uploadPictureFile(cropState.file, cropState.requestId);
+									closeCropDialog(false);
 								}}
 							>
 								<Trans>Skip and Upload</Trans>

@@ -33,6 +33,7 @@ import { stripHtml } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { getInlineCustomSectionIds } from "@/libs/resume/sidebar-order";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getSectionTitle } from "@/libs/resume/section";
 import { SectionBase } from "../shared/section-base";
@@ -122,14 +123,24 @@ function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): 
 	return typeof value === "string" ? value || undefined : undefined;
 }
 
+export function PlacedCustomSection({ id }: { id: string }) {
+	const section = useCurrentBuilderResumeSelector((resume) =>
+		resume.data.customSections.find((item) => item.id === id),
+	);
+	if (!section || section.hidden) return null;
+	return <CustomSectionContainer section={section} />;
+}
+
 export function CustomSectionBuilder() {
 	const customSections = useCurrentBuilderResumeSelector((resume) => resume.data.customSections);
+	const inlineKey = useCurrentBuilderResumeSelector((resume) => getInlineCustomSectionIds(resume.data).join(","));
+	const inlineIds = new Set(inlineKey ? inlineKey.split(",") : []);
 
 	return (
 		<SectionBase type="custom" className={cn("space-y-4", customSections.length === 0 && "border-dashed")}>
 			<AnimatePresence>
 				{customSections
-					.filter((section) => !section.hidden)
+					.filter((section) => !section.hidden && !inlineIds.has(section.id))
 					.map((section) => (
 						<CustomSectionContainer key={section.id} section={section} />
 					))}

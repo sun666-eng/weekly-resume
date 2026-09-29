@@ -1,5 +1,6 @@
 import type { ResumeData } from "./data";
 import z from "zod";
+import { ensureCnFieldDefaults } from "./cn-fields";
 import { resumeDataSchema } from "./data";
 import { createResumeDataJsonSchema } from "./json-schema";
 
@@ -31,7 +32,7 @@ export const writableResumeDataSchema = z.transform<z.input<typeof resumeDataSch
 	}
 
 	// Use the canonical result so JSON Schema conversion cannot strip compatible extra data.
-	return canonical.data;
+	return ensureCnFieldDefaults(canonical.data);
 });
 
 export const parseResumeDataForWrite = (data: unknown): ResumeData => writableResumeDataSchema.parse(data);

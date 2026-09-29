@@ -177,6 +177,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 	if (jsonResume.basics) {
 		const basics = jsonResume.basics;
 		result.basics = {
+			...defaultResumeData.basics,
 			name: basics.name || "",
 			headline: basics.label || "",
 			email: basics.email || "",
@@ -184,6 +185,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 			location: [basics.location?.city, basics.location?.region, basics.location?.countryCode]
 				.filter(Boolean)
 				.join(", "),
+			address: basics.location?.address || "",
 			website: createUrl(basics.url),
 			customFields: [],
 		};
@@ -222,6 +224,8 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					period: formatPeriod(work.startDate, work.endDate),
 					website: createItemWebsite(work.url),
 					roles: [],
+					department: "",
+					employmentType: "",
 					description: toHtmlDescription(work.summary, work.highlights),
 				})),
 		};
@@ -244,6 +248,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					period: formatPeriod(edu.startDate, edu.endDate),
 					website: createItemWebsite(edu.url),
 					description: edu.courses && edu.courses.length > 0 ? arrayToHtmlList(edu.courses) : "",
+					schoolTier: "",
 				})),
 		};
 	}
@@ -261,6 +266,7 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 					period: formatPeriod(project.startDate, project.endDate),
 					website: createItemWebsite(project.url),
 					description: toHtmlDescription(project.description, project.highlights),
+					role: "",
 				})),
 		};
 	}

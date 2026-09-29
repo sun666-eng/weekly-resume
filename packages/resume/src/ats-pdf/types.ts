@@ -311,6 +311,7 @@ export type PdfSkipReason =
 	| "no-text"
 	| "no-operators"
 	| "not-english"
+	| "unrecognized-language"
 	| "not-applicable"
 	| "encrypted"
 	| "insufficient-data";
@@ -359,6 +360,8 @@ export type JdTermMatch = {
 };
 
 export type JdMatchReport = {
+	/** The job description the terms came from, kept so the UI can caveat non-English coverage. */
+	jobDescription: string;
 	/** Terms extracted from the job description, most important first. */
 	terms: readonly JdTermMatch[];
 	matchedTerms: readonly string[];

@@ -118,7 +118,9 @@ describe("generateOpenApiSpec", () => {
 			);
 
 		const publishedPaths = coverLetterPaths(published);
-		const runtimePaths = coverLetterPaths(runtime as GeneratedSpecView);
+		// Published JSON omits undefined optional metadata from the in-memory generator result.
+		const serializedRuntime = JSON.parse(JSON.stringify(runtime)) as GeneratedSpecView;
+		const runtimePaths = coverLetterPaths(serializedRuntime);
 		expect(Object.keys(publishedPaths).sort()).toEqual(Object.keys(runtimePaths).sort());
 		expect(publishedPaths).toEqual(runtimePaths);
 	});

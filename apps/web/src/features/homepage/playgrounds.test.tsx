@@ -11,7 +11,7 @@ import { TemplateShelf } from "./template-shelf";
 i18n.loadAndActivate({ locale: "en", messages: {} });
 
 function Shelf() {
-	const [template, setTemplate] = useState<Template>("azurill");
+	const [template, setTemplate] = useState<Template>("scizor");
 	return (
 		<I18nProvider i18n={i18n}>
 			<TemplateShelf template={template} onChange={setTemplate} />
@@ -22,12 +22,12 @@ function Shelf() {
 it("wraps the template shelf and keeps the PDF link aligned with the selection", () => {
 	const { getByRole } = render(<Shelf />);
 	fireEvent.click(getByRole("button", { name: "Previous template" }));
-	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/scizor.pdf");
+	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/kakuna.pdf");
 	fireEvent.click(getByRole("button", { name: "Next template" }));
-	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/azurill.pdf");
-	fireEvent.click(within(getByRole("group", { name: "Choose a template" })).getByRole("button", { name: "Rhyhorn" }));
-	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/rhyhorn.pdf");
-	expect(getByRole("button", { name: "Choose Rhyhorn" })).toHaveAttribute("aria-pressed", "true");
+	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/scizor.pdf");
+	fireEvent.click(within(getByRole("group", { name: "Choose a template" })).getByRole("button", { name: "Onyx" }));
+	expect(getByRole("link", { name: /Open template PDF/ })).toHaveAttribute("href", "/templates/pdf/onyx.pdf");
+	expect(getByRole("button", { name: "Choose Onyx" })).toHaveAttribute("aria-pressed", "true");
 });
 
 it("lets visitors undo edits, change sharing previews, and reset the example application", () => {

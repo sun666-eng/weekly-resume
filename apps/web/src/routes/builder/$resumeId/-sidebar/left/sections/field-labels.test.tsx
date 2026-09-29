@@ -155,6 +155,22 @@ describe("builder field labels", () => {
 		expect(state.uploadFile.mock.calls[1]?.[0]).toBe(file);
 	});
 
+	it("saves optional Chinese basics fields without requiring email", async () => {
+		state.data.metadata.page.locale = "zh-CN";
+		const user = userEvent.setup();
+		renderSection(<BasicsSectionBuilder />);
+
+		expect(screen.getByRole("textbox", { name: "Job intention" })).toBeInTheDocument();
+		expect(screen.getByRole("textbox", { name: "Personal blog" })).toBeInTheDocument();
+		expect(screen.getByRole("textbox", { name: "Website" })).toBeInTheDocument();
+
+		await user.type(screen.getByRole("textbox", { name: "Age" }), "25");
+		await waitFor(() => expect(state.data.basics.age).toBe("25"));
+		expect(state.data.basics.email).toBe("");
+		expect(state.data.basics.headline).toBe("");
+		expect(state.data.basics.website).toEqual({ url: "", label: "" });
+	});
+
 	it("disables fit and upload controls inside the builder lock fieldset", () => {
 		renderSection(
 			<fieldset disabled>

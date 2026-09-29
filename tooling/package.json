@@ -19,6 +19,7 @@
 		"@reactive-resume/config": "workspace:*",
 		"@reactive-resume/docx": "workspace:*",
 		"@reactive-resume/env": "workspace:*",
+		"@reactive-resume/fonts": "workspace:*",
 		"@reactive-resume/pdf": "workspace:*",
 		"@reactive-resume/resume": "workspace:*",
 		"@types/pg": "^8.23.1",

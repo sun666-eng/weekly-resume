@@ -34,6 +34,13 @@ export const defaultResumeData: ResumeData = {
 		location: "",
 		website: { url: "", label: "" },
 		customFields: [],
+		gender: "",
+		age: "",
+		blog: { url: "", label: "" },
+		github: { url: "", label: "" },
+		politicalStatus: "",
+		politicalStatusOther: "",
+		address: "",
 	},
 	summary: {
 		title: "",

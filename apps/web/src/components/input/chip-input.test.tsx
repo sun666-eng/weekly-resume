@@ -19,6 +19,40 @@ const renderInput = (props: Partial<React.ComponentProps<typeof ChipInput>> = {}
 	);
 
 describe("ChipInput", () => {
+	it("keeps parenthesized skill descriptions intact on bulk paste", () => {
+		const onChange = vi.fn();
+		renderInput({ bulkPaste: true, onChange });
+		fireEvent.paste(document.querySelector("input")!, {
+			clipboardData: { getData: () => "SQL（查询，索引）、C++、.NET" },
+		});
+		expect(onChange).toHaveBeenLastCalledWith(["SQL（查询，索引）", "C++", ".NET"]);
+	});
+	it("accepts bulk Chinese skill paste and keeps technical punctuation", () => {
+		const onChange = vi.fn();
+		renderInput({ bulkPaste: true, onChange });
+		fireEvent.paste(document.querySelector("input")!, {
+			clipboardData: { getData: () => "C++、.NET，Linux/Windows\nMQTT；SQL" },
+		});
+		expect(onChange).toHaveBeenLastCalledWith(["C++", ".NET", "Linux/Windows", "MQTT", "SQL"]);
+	});
+	it("commits a pending skill on blur so clicking Save does not discard it", () => {
+		const onChange = vi.fn();
+		renderInput({ commitOnBlur: true, onChange });
+		const input = document.querySelector("input")!;
+		fireEvent.change(input, { target: { value: "熟悉 Linux 常用命令" } });
+		fireEvent.blur(input);
+		expect(onChange).toHaveBeenLastCalledWith(["熟悉 Linux 常用命令"]);
+	});
+	it("does not commit the Enter used to confirm Chinese composition", () => {
+		const onChange = vi.fn();
+		renderInput({ onChange });
+		const input = document.querySelector("input")!;
+		fireEvent.change(input, { target: { value: "通信" } });
+		fireEvent.keyDown(input, { key: "Enter", isComposing: true });
+		expect(onChange).not.toHaveBeenCalled();
+		fireEvent.keyDown(input, { key: "Enter" });
+		expect(onChange).toHaveBeenLastCalledWith(["通信"]);
+	});
 	it("renders the supplied chips as Badges", () => {
 		renderInput({ defaultValue: ["alpha", "beta", "gamma"] });
 		expect(screen.getByText("alpha")).toBeInTheDocument();
@@ -116,5 +150,26 @@ describe("ChipInput", () => {
 
 		expect(document.getElementById(input.getAttribute("aria-labelledby") ?? "")).toBeNull();
 		expect(input).toHaveAccessibleName("Add keyword");
+	});
+});
+
+describe("ChipInput duplicate keywords", () => {
+	it("renders pre-existing duplicate keywords without collapsing them", () => {
+		const onChange = vi.fn();
+		renderInput({ defaultValue: ["Java", "Java"], onChange });
+
+		expect(screen.getAllByText("Java")).toHaveLength(2);
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
+	it("keeps pre-existing duplicates when adding a new keyword", () => {
+		const onChange = vi.fn();
+		renderInput({ defaultValue: ["Java", "Java"], onChange });
+
+		const input = document.querySelector("input")!;
+		fireEvent.change(input, { target: { value: "Spring" } });
+		fireEvent.keyDown(input, { key: "Enter" });
+
+		expect(onChange).toHaveBeenLastCalledWith(["Java", "Java", "Spring"]);
 	});
 });

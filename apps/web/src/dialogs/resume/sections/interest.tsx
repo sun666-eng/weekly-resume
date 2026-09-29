@@ -185,6 +185,7 @@ const InterestForm = withForm({
 							<FormControl
 								render={
 									<ChipInput
+										commitOnBlur
 										value={field.state.value}
 										onChange={(v: string[]) => {
 											field.handleChange(v);

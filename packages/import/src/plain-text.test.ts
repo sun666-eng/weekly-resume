@@ -147,10 +147,15 @@ describe("parseResumeText Chinese headings", () => {
 		expect(data.basics).toMatchObject({ name: "林志远", email: "lin@example.com" });
 		expect(data.sections.education.items).toHaveLength(1);
 		expect(data.sections.education.items[0]).toMatchObject({ school: "示例大学", period: "2020.09 - 2024.06" });
-		expect(data.sections.experience.items).toHaveLength(1);
+		// 实习经历 keeps its own section (zh-internship), matching the dedicated section the Chinese
+		// editor provides; it is no longer merged into work experience.
+		expect(data.sections.experience.items).toHaveLength(0);
+		expect(data.customSections.find((section) => section.id === "zh-internship")?.items[0]).toMatchObject({
+			company: "示例科技有限公司",
+		});
 		expect(data.sections.projects.items).toHaveLength(1);
 		expect(data.sections.skills.items.map((item) => item.name)).toEqual(["TypeScript", "Java", "PostgreSQL"]);
-		expect(data.metadata.layout.pages[0]?.main).toEqual(["education", "experience", "projects", "skills"]);
+		expect(data.metadata.layout.pages[0]?.main).toEqual(["education", "zh-internship", "projects", "skills"]);
 	});
 });
 
@@ -165,6 +170,16 @@ describe("parseResumeText edge cases", () => {
 	it("does not mistake a date range for a phone number", () => {
 		const data = parseResumeText("Ada Lovelace\nBerlin\n2016 - 2019\n");
 		expect(data.basics.phone).toBe("");
+	});
+
+	it("finds a phone after a birth date in a flattened PDF header row", () => {
+		const data = parseResumeText("张三\n1995.05.05   +86 180 5252 5252   zhang@example.com");
+
+		expect(data.basics).toMatchObject({
+			name: "张三",
+			email: "zhang@example.com",
+			phone: "+86 180 5252 5252",
+		});
 	});
 
 	it("keeps an unrecognized heading as a custom section", () => {
@@ -264,6 +279,166 @@ describe("parseResumeText multi-line entry preambles", () => {
 	});
 });
 
+describe("parseResumeText personal info sections", () => {
+	it("maps contact lines inside a personal info section to basics", () => {
+		const data = parseResumeText(
+			"测试用户\n\n个人信息\n邮箱：fixture@example.com\n电话：13800000000\n\n教育背景\n示例大学",
+		);
+
+		expect(data.basics).toMatchObject({ name: "测试用户", email: "fixture@example.com", phone: "13800000000" });
+		expect(data.summary.content).not.toContain("fixture@example.com");
+		expect(data.summary.content).not.toContain("13800000000");
+		expect(data.sections.education.items[0]).toMatchObject({ school: "示例大学" });
+		expect(() => resumeDataSchema.parse(data)).not.toThrow();
+	});
+
+	it("reads the name from a labeled line inside the section", () => {
+		const data = parseResumeText("个人信息\n姓名：张三\n邮箱：fixture@example.com\n电话：13800000000");
+
+		expect(data.basics).toMatchObject({ name: "张三", email: "fixture@example.com", phone: "13800000000" });
+		expect(data.summary.content).not.toContain("张三");
+	});
+
+	it("supports the 个人资料 alias and several fields on one line", () => {
+		const data = parseResumeText("测试用户\n\n个人资料\n邮箱：fixture@example.com 电话：13800000000");
+
+		expect(data.basics).toMatchObject({ email: "fixture@example.com", phone: "13800000000" });
+		expect(data.summary.content).toBe("");
+	});
+
+	it("supports spaced Chinese labels from formatted resume text", () => {
+		const data = parseResumeText("个人信息\n姓 名：张三  电 话：138 0000 0000  邮 箱：fixture@example.com");
+
+		expect(data.basics).toMatchObject({ name: "张三", email: "fixture@example.com", phone: "138 0000 0000" });
+		expect(data.summary.content).toBe("");
+	});
+
+	it("extracts bare contact lines under a 联系方式 heading", () => {
+		const data = parseResumeText("测试用户\n\n联系方式\nfixture@example.com\n13800000000\nhttps://github.com/fixture");
+
+		expect(data.basics).toMatchObject({ email: "fixture@example.com", phone: "13800000000" });
+		expect(data.basics.website.url).toBe("https://github.com/fixture");
+		expect(data.basics.headline).not.toBe("联系方式");
+	});
+
+	it("supports an English personal information heading", () => {
+		const data = parseResumeText("PERSONAL INFORMATION\nEmail: fixture@example.com\nPhone: 13800000000");
+
+		expect(data.basics).toMatchObject({ email: "fixture@example.com", phone: "13800000000" });
+	});
+
+	it("keeps a conflicting contact value instead of overwriting basics", () => {
+		const data = parseResumeText("测试用户\nada@example.com\n\n个人信息\n邮箱：other@example.com");
+
+		expect(data.basics.email).toBe("ada@example.com");
+		expect(data.summary.content).toContain("other@example.com");
+	});
+
+	it("drops a duplicated contact value without losing it", () => {
+		const data = parseResumeText("测试用户\nada@example.com\n\n个人信息\n邮箱：ada@example.com");
+
+		expect(data.basics.email).toBe("ada@example.com");
+		expect(data.summary.content).not.toContain("ada@example.com");
+	});
+
+	it("keeps unknown personal fields in the summary while extracting contact details", () => {
+		const data = parseResumeText("测试用户\n\n个人信息\n性别：男\n年龄：25\n邮箱：fixture@example.com");
+
+		expect(data.basics.email).toBe("fixture@example.com");
+		expect(data.summary.content).toContain("性别：男");
+		expect(data.summary.content).toContain("年龄：25");
+	});
+
+	it("keeps a personal info section without contact details as summary text", () => {
+		const data = parseResumeText("测试用户\n\n个人信息\n热爱技术，具备团队精神\n熟悉敏捷开发");
+
+		expect(data.basics.email).toBe("");
+		expect(data.summary.content).toContain("热爱技术，具备团队精神");
+		expect(data.summary.content).toContain("熟悉敏捷开发");
+	});
+});
+
+describe("parseResumeText Chinese resume conventions", () => {
+	it("keeps 实习经历 as its own section instead of merging into work experience", () => {
+		const data = parseResumeText(
+			"测试用户\n\n实习经历\n示例科技有限公司\n后端开发实习生\n2023.06 - 2023.08\n负责接口开发\n\n工作经历\n示例集团\n后端工程师\n2023.09 - 至今\n负责网关开发",
+		);
+
+		const internship = data.customSections.find((section) => section.id === "zh-internship");
+		expect(internship).toMatchObject({ type: "experience", title: "实习经历" });
+		expect(internship?.items[0]).toMatchObject({ company: "示例科技有限公司", position: "后端开发实习生" });
+		expect(data.sections.experience.items).toHaveLength(1);
+		expect(data.sections.experience.items[0]).toMatchObject({ company: "示例集团" });
+		expect(data.metadata.layout.pages[0]?.main).toContain("zh-internship");
+		expect(() => resumeDataSchema.parse(data)).not.toThrow();
+	});
+
+	it("keeps 校园经历 as its own section instead of merging into volunteer", () => {
+		const data = parseResumeText(
+			"测试用户\n\n校园经历\n学生会\n主席\n2021.09 - 2022.06\n组织校园活动\n\n志愿经历\n图书馆\n整理员\n2021\n整理书籍",
+		);
+
+		const campus = data.customSections.find((section) => section.id === "zh-campus");
+		expect(campus).toMatchObject({ type: "experience", title: "校园经历" });
+		expect(campus?.items[0]).toMatchObject({ company: "学生会", position: "主席" });
+		expect(data.sections.volunteer.items).toHaveLength(1);
+		expect(data.sections.volunteer.items[0]).toMatchObject({ organization: "图书馆" });
+		expect(data.metadata.layout.pages[0]?.main).toContain("zh-campus");
+	});
+
+	it("maps a single objective line to the headline and keeps objective prose in the summary", () => {
+		const single = parseResumeText("张三\n\n求职意向\n后端开发工程师\n\n教育背景\n示例大学");
+		expect(single.basics.headline).toBe("后端开发工程师");
+		expect(single.summary.content).not.toContain("后端开发工程师");
+
+		const prose = parseResumeText("张三\n\n求职意向\n期望在后端方向长期发展，参与高并发系统建设\n\n教育背景\n示例大学");
+		expect(prose.basics.headline).toBe("");
+		expect(prose.summary.content).toContain("期望在后端方向长期发展，参与高并发系统建设");
+	});
+
+	it("reads a labeled objective line inside a personal info section as the headline", () => {
+		const data = parseResumeText("张三\n\n个人信息\n求职意向：后端开发工程师\n邮箱：fixture@example.com");
+
+		expect(data.basics.headline).toBe("后端开发工程师");
+		expect(data.basics.email).toBe("fixture@example.com");
+	});
+
+	it("strips the objective label from a headline parsed in the header", () => {
+		const data = parseResumeText("张三\n求职意向：后端开发工程师\n13800000000\n");
+		expect(data.basics.headline).toBe("后端开发工程师");
+		expect(data.basics.phone).toBe("13800000000");
+	});
+});
+
+describe("parseResumeText uppercase mixed-content lines", () => {
+	it("keeps an interest containing uppercase technology names", () => {
+		const data = parseResumeText("测试用户\n\n兴趣爱好\nC++/C#/音乐\n");
+
+		expect(data.sections.interests.items.map((item) => item.name)).toEqual(["C++/C#/音乐"]);
+		expect(data.customSections).toHaveLength(0);
+	});
+
+	it("keeps uppercase skill lines after blank lines inside the skills section", () => {
+		const data = parseResumeText(
+			"测试用户\n\n专业技能\n编程语言\nJava, Go\n\nSQL\nMQTT\nLINUX\nDocker\n\n教育背景\n示例大学",
+		);
+
+		const names = data.sections.skills.items.flatMap((item) => [item.name, ...item.keywords]);
+		for (const expected of ["Java", "Go", "SQL", "MQTT", "LINUX", "Docker"]) {
+			expect(names).toContain(expected);
+		}
+		expect(data.customSections).toHaveLength(0);
+		expect(data.sections.education.items[0]).toMatchObject({ school: "示例大学" });
+	});
+
+	it("keeps a CJK interest line that follows a blank line in its section", () => {
+		const data = parseResumeText("测试用户\n\n兴趣爱好\n音乐\n\n书法\n");
+
+		expect(data.sections.interests.items.map((item) => item.name)).toEqual(["音乐", "书法"]);
+		expect(data.customSections).toHaveLength(0);
+	});
+});
+
 describe("parseResumeText four-line entry preambles", () => {
 	it("keeps company, role, location and dates as one entry", () => {
 		const data = parseResumeText(
@@ -356,5 +531,44 @@ describe("parseResumeText keeps content the layout hides", () => {
 		expect(data.sections.experience.items[0]).toMatchObject({ company: "Acme Corp", period: "Jan 2020 - Present" });
 		expect(data.sections.education.items[0]).toMatchObject({ school: "University of London" });
 		expect(data.sections.certifications.items).toHaveLength(0);
+	});
+});
+
+describe("parseResumeText skill categories colliding with section aliases", () => {
+	it("keeps Languages/Tools as skill categories instead of opening sections", () => {
+		const data = parseResumeText(
+			[
+				"GLM Upload Probe",
+				"PERSONAL INFORMATION",
+				"Email: glm-upload@example.com",
+				"Phone: 13800005678",
+				"EDUCATION",
+				"Upload University EDU-U1",
+				"BSc",
+				"2020 - 2024",
+				"SKILLS",
+				"Languages",
+				"Java, Go",
+				"Tools",
+				"Git, Docker",
+			].join("\n"),
+		);
+
+		expect(data.sections.skills.items.map(({ name, keywords }) => ({ name, keywords }))).toEqual([
+			{ name: "Languages", keywords: ["Java", "Go"] },
+			{ name: "Tools", keywords: ["Git", "Docker"] },
+		]);
+		expect(data.sections.languages.items).toHaveLength(0);
+		expect(data.sections.education.items[0]).toMatchObject({ school: "Upload University EDU-U1" });
+	});
+
+	it("still opens a real languages section after skills", () => {
+		const data = parseResumeText("Tester\n\nSKILLS\nJava, Go\n\nLANGUAGES\nEnglish (Native)\nGerman (B2)\n");
+
+		expect(data.sections.skills.items.map((item) => item.name)).toEqual(["Java", "Go"]);
+		expect(data.sections.languages.items).toMatchObject([
+			{ language: "English", fluency: "Native" },
+			{ language: "German", fluency: "B2" },
+		]);
 	});
 });

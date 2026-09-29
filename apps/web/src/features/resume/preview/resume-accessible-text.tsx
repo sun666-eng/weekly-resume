@@ -19,6 +19,7 @@ import type {
 	VolunteerItem,
 } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { t } from "@lingui/core/macro";
 import { Fragment } from "react";
 import { stripHtml } from "@reactive-resume/utils/string";
@@ -181,7 +182,7 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem, keywordLay
 				<>
 					<ItemBody
 						heading={roles.length > 0 ? it.company : joinInline(it.position, it.company)}
-						details={joinInline(it.location, it.period)}
+						details={joinInline(it.department, it.employmentType, it.location, it.period)}
 						description={it.description}
 						website={it.website}
 					/>
@@ -207,7 +208,7 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem, keywordLay
 
 			return (
 				<ItemBody
-					heading={it.school}
+					heading={joinInline(it.school, it.schoolTier)}
 					details={joinInline(it.degree, it.area, it.grade, it.location, it.period)}
 					description={it.description}
 					website={it.website}
@@ -251,7 +252,14 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem, keywordLay
 		case "projects": {
 			const it = item as ProjectItem;
 
-			return <ItemBody heading={it.name} details={it.period} description={it.description} website={it.website} />;
+			return (
+				<ItemBody
+					heading={joinInline(it.name, it.role)}
+					details={it.period}
+					description={it.description}
+					website={it.website}
+				/>
+			);
 		}
 		case "awards": {
 			const it = item as AwardItem;
@@ -333,13 +341,15 @@ type AccessibleSectionProps = {
 	title: string;
 	hidden: boolean;
 	items: CustomSectionItem[];
+	basics: ResumeData["basics"];
 	keywordLayout?: "inline" | "list";
 };
 
-function AccessibleSection({ type, title, hidden, items, keywordLayout }: AccessibleSectionProps) {
+function AccessibleSection({ type, title, hidden, items, basics, keywordLayout }: AccessibleSectionProps) {
 	if (hidden) return null;
 
-	const visibleItems = items.filter((item) => !item.hidden);
+	const presentItems = items.filter((item) => !item.hidden);
+	const visibleItems = type === "profiles" ? omitDuplicateGithubProfiles(presentItems, basics) : presentItems;
 	if (visibleItems.length === 0) return null;
 
 	return (
@@ -373,14 +383,11 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 
 	const { basics, summary, sections, customSections } = resumeData;
 	const summaryText = summary && !summary.hidden ? summary.content : "";
-	const website = basics.website;
 
-	const contact: ReactNode[] = [];
-	if (basics.email) contact.push(<a href={isSafeHref(`mailto:${basics.email}`)}>{basics.email}</a>);
-	if (basics.phone) contact.push(<a href={isSafeHref(`tel:${basics.phone}`)}>{basics.phone}</a>);
-	if (basics.location) contact.push(basics.location);
-	const websiteUrl = isSafeHref(website?.url);
-	if (websiteUrl) contact.push(<a href={websiteUrl}>{website.label?.trim() || websiteUrl}</a>);
+	const contact: ReactNode[] = listBasicsContactEntries(basics, resumeData.metadata.page.locale).map((entry) => {
+		const href = entry.href ? isSafeHref(entry.href) : undefined;
+		return href ? <a href={href}>{entry.text}</a> : entry.text;
+	});
 	for (const field of basics.customFields ?? []) {
 		if (!field.text?.trim()) continue;
 		const fieldLink = isSafeHref(field.link);
@@ -419,6 +426,7 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 						title={section.title?.trim() || getSectionTitle(type)}
 						hidden={section.hidden}
 						items={section.items}
+						basics={basics}
 						keywordLayout={"keywordLayout" in section ? section.keywordLayout : undefined}
 					/>
 				);
@@ -431,6 +439,7 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 					title={section.title?.trim() || getSectionTitle(section.type)}
 					hidden={section.hidden}
 					items={section.items}
+					basics={basics}
 					keywordLayout={"keywordLayout" in section ? section.keywordLayout : undefined}
 				/>
 			))}

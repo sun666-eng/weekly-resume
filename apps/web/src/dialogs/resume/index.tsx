@@ -1,12 +1,14 @@
+import type { EditorScenario } from "@reactive-resume/resume/editor-sections";
 import type { RouterInput } from "@/libs/orpc/client";
 import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { CaretDownIcon, MagicWandIcon, PencilSimpleLineIcon, PlusIcon, TestTubeIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
@@ -59,6 +61,8 @@ const defaultValues: FormValues = {
 };
 
 export function CreateResumeDialog(_: DialogProps<"resume.create">) {
+	const { i18n } = useLingui();
+	const [scenario, setScenario] = useState<EditorScenario>("general");
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	// Skip the unsaved-changes guard when we close as a result of a successful create.
@@ -77,17 +81,20 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 		onSubmit: ({ value }) => {
 			const toastId = toast.add({ type: "loading", description: t`Creating your resume...` });
 
-			createResume(value, {
-				onSuccess: (id) => {
-					didCreateRef.current = true;
-					toast.add({ type: "success", description: t`Your resume has been created.`, id: toastId });
-					closeDialog();
-					void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
+			createResume(
+				{ ...value, scenario },
+				{
+					onSuccess: (id) => {
+						didCreateRef.current = true;
+						toast.add({ type: "success", description: t`Your resume has been created.`, id: toastId });
+						closeDialog();
+						void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
+					},
+					onError: (error) => {
+						toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
+					},
 				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
-				},
-			});
+			);
 		},
 	});
 
@@ -147,6 +154,32 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 					void form.handleSubmit();
 				}}
 			>
+				{i18n.locale.startsWith("zh") && (
+					<fieldset className="space-y-2">
+						<legend className="font-medium text-sm">{i18n.locale === "zh-TW" ? "求職場景" : "求职场景"}</legend>
+						<div className="flex flex-wrap gap-2">
+							{(
+								[
+									["general", "通用 / 跳过"],
+									["graduate", "应届生"],
+									["experienced", "有工作经验"],
+									["academic", "科研学术"],
+								] as const
+							).map(([id, label]) => (
+								<Button
+									key={id}
+									type="button"
+									size="sm"
+									variant={scenario === id ? "secondary" : "ghost"}
+									aria-pressed={scenario === id}
+									onClick={() => setScenario(id)}
+								>
+									{label}
+								</Button>
+							))}
+						</div>
+					</fieldset>
+				)}
 				<ResumeForm form={form} />
 
 				<DialogFooter>
@@ -425,6 +458,7 @@ const ResumeForm = withForm({
 							<FormControl
 								render={
 									<ChipInput
+										commitOnBlur
 										value={field.state.value}
 										onChange={(value) => {
 											field.handleChange(value);

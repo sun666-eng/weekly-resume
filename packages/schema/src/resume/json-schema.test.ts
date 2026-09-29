@@ -21,6 +21,46 @@ describe("createResumeDataJsonSchema", () => {
 		});
 	});
 
+	it("accepts legacy basics and items that omit the Chinese resume fields", () => {
+		const schema = z.fromJSONSchema(createResumeDataJsonSchema());
+		const legacy = structuredClone(defaultResumeData) as {
+			basics: Record<string, unknown>;
+			sections: {
+				education: { items: Array<Record<string, unknown>> };
+				experience: { items: Array<Record<string, unknown>> };
+				projects: { items: Array<Record<string, unknown>> };
+			};
+		};
+		delete legacy.basics.gender;
+		delete legacy.basics.age;
+		delete legacy.basics.blog;
+		delete legacy.basics.github;
+		delete legacy.basics.politicalStatus;
+		delete legacy.basics.politicalStatusOther;
+		delete legacy.basics.address;
+		legacy.sections.education.items = [
+			{
+				id: "edu",
+				hidden: false,
+				school: "School",
+				degree: "",
+				area: "",
+				grade: "",
+				location: "",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "",
+			},
+		];
+
+		expect(schema.safeParse(legacy).success).toBe(true);
+		expect(createResumeDataJsonSchema()).toMatchObject({
+			properties: {
+				basics: { required: expect.not.arrayContaining(["gender", "age", "blog", "github", "address"]) },
+			},
+		});
+	});
+
 	it("accepts legacy input with omitted picture fit", () => {
 		const schema = createResumeDataJsonSchema();
 

@@ -1,4 +1,5 @@
 import type { CustomSectionType, Summary } from "@reactive-resume/schema/resume/data";
+import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 
 type HiddenItem = {
 	hidden: boolean;
@@ -18,6 +19,9 @@ type CustomSectionLike = ItemSectionLike & {
 };
 
 type FilterableData = {
+	basics?: {
+		github?: { url?: string | undefined } | undefined;
+	};
 	summary: Pick<Summary, "hidden" | "content">;
 	sections: Partial<Record<string, ItemSectionLike>>;
 	customSections: CustomSectionLike[];
@@ -123,7 +127,14 @@ export const isSectionVisible = (sectionId: string, data: FilterableData): boole
 
 	if (!section) return false;
 	if (isSummarySection(section)) return isVisibleSummary(section);
-	if (isItemSection(section)) return hasVisibleItems(section, sectionType);
+	if (isItemSection(section)) {
+		if (section.hidden) return false;
+		const items =
+			sectionType === "profiles"
+				? omitDuplicateGithubProfiles(filterItems(section.items, sectionType), data.basics ?? {})
+				: filterItems(section.items, sectionType);
+		return items.length > 0;
+	}
 
 	return false;
 };

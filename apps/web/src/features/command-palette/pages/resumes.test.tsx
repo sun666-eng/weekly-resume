@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import type { Messages } from "@lingui/core";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
@@ -8,6 +9,9 @@ import { I18nProvider } from "@lingui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Command, CommandList } from "@reactive-resume/ui/components/command";
 import { useCommandPaletteStore } from "../store";
+
+const catalogs = import.meta.glob<{ messages: Messages }>("../../../../locales/*.po", { eager: true });
+const zhMessages = catalogs["../../../../locales/zh-CN.po"].messages;
 
 const mocks = vi.hoisted(() => ({
 	pathname: "/",
@@ -67,13 +71,14 @@ const { ResumesCommandGroup } = await import("./resumes");
 const { NavigationCommandGroup } = await import("./navigation");
 
 beforeAll(() => {
-	i18n.loadAndActivate({ locale: "en", messages: {} });
+	act(() => i18n.loadAndActivate({ locale: "en", messages: {} }));
 });
 
 afterEach(() => {
 	vi.clearAllMocks();
 	mocks.pathname = "/";
 	useCommandPaletteStore.setState({ open: false, search: "", pages: [] });
+	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
 const mockUseQueryData = (getData: (entity: string | undefined) => unknown) => {
@@ -273,6 +278,49 @@ describe("ResumesCommandGroup", () => {
 
 		expect(screen.getByText("Cover letter rewrite")).toBeInTheDocument();
 		expect(screen.queryByText("Resume cleanup")).not.toBeInTheDocument();
+	});
+
+	it.each(["新建会话", "New thread"])("finds a default thread using %s while showing Chinese", (search) => {
+		act(() => i18n.loadAndActivate({ locale: "zh-CN", messages: zhMessages }));
+		useCommandPaletteStore.setState({ pages: ["threads"], search });
+		mockUseQueryData((entity) =>
+			entity === "threads"
+				? [
+						{ id: "thread-1", title: "New thread", resumeName: "Backend Resume" },
+						{ id: "thread-2", title: "Interview draft", resumeName: "Product Resume" },
+					]
+				: [],
+		);
+
+		renderGroup();
+
+		expect(screen.getByText("Backend Resume").closest('[data-value="thread.thread-1"]')).toHaveTextContent("新建会话");
+		expect(screen.queryByText("Interview draft")).not.toBeInTheDocument();
+	});
+
+	it("finds a resume-named default thread by its translated title", () => {
+		act(() => i18n.loadAndActivate({ locale: "zh-CN", messages: zhMessages }));
+		useCommandPaletteStore.setState({ pages: ["threads"], search: "新建会话" });
+		mockUseQueryData((entity) =>
+			entity === "threads" ? [{ id: "thread-1", title: "Backend Resume", resumeName: "Backend Resume" }] : [],
+		);
+
+		renderGroup();
+
+		expect(screen.getByText("Backend Resume").closest('[data-value="thread.thread-1"]')).toHaveTextContent("新建会话");
+	});
+
+	it("updates default-title search when the interface language changes", () => {
+		useCommandPaletteStore.setState({ pages: ["threads"], search: "新建会话" });
+		mockUseQueryData((entity) =>
+			entity === "threads" ? [{ id: "thread-1", title: "New thread", resumeName: "Backend Resume" }] : [],
+		);
+
+		renderGroup();
+		expect(screen.queryByText("Backend Resume")).not.toBeInTheDocument();
+
+		act(() => i18n.loadAndActivate({ locale: "zh-CN", messages: zhMessages }));
+		expect(screen.getByText("Backend Resume").closest('[data-value="thread.thread-1"]')).toHaveTextContent("新建会话");
 	});
 });
 

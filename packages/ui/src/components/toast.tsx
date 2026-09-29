@@ -1,6 +1,8 @@
 import type * as React from "react";
 import { Toast as ToastPrimitive } from "@base-ui/react/toast";
+import { t } from "@lingui/core/macro";
 import { CheckCircleIcon, InfoIcon, SpinnerIcon, WarningIcon, XCircleIcon, XIcon } from "@phosphor-icons/react";
+import { useLinguiChanges } from "@reactive-resume/ui/hooks/use-lingui-changes";
 import { cn } from "@reactive-resume/utils/style";
 import { Button } from "./button";
 
@@ -97,10 +99,11 @@ function ToastClose({
 	render = <Button variant="ghost" size="icon-sm" />,
 	...props
 }: ToastPrimitive.Close.Props) {
+	useLinguiChanges();
 	return (
 		<ToastPrimitive.Close
 			data-slot="toast-close"
-			aria-label="Close toast"
+			aria-label={t`Close toast`}
 			render={render}
 			className={cn(
 				"relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",

@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { compareResumeRecovery } from "./compare-resume";
 
-const SYNTHETIC_SOURCE_HASH = "33bd2901474d077a37ed73f0646ac2812a0fbb6ca8ca7bd5825c56ec4c598b8c";
-const RECOVERED_COPY_HASH = "1c0e1eefac8375d15b5d0d5fc040a970d1f10242c31a224f3c2a0ea5750c719e";
-const CURRENT_COPY_HASH = "0e8a2e90ccb44068f500a92bc0d312b4290269f1b68ba925fdfe6109a15e739e";
-const DEFAULT_RESUME_HASH = "1870f56666738b8748ac2769f5c79fe7b19863efecc07142a34c425254d871d8";
+// These values include the optional zh-CN resume fields added to the canonical default data.
+const SYNTHETIC_SOURCE_HASH = "de570b4570f9af13f5f3c9428134891bc318447833f0edeb6e7a6f1eb7c15212";
+const RECOVERED_COPY_HASH = "6f8bb64e22d26128a67ceab24a59aa256f7c9d0d3acfecbb72d9e36ed03c435b";
+const CURRENT_COPY_HASH = "27c14465c5f028a862c47fbadbe28c169311e38ab39e9cc2cd9d4cc0d7d3faf9";
+const DEFAULT_RESUME_HASH = "967f4482432ef32b2ef664e163966abd0ccbb2ac19a5c500f243868ad22bfa2c";
 
 const FORMAT_CHARACTERS = [
 	["zero-width space (U+200B)", "\u200B"],

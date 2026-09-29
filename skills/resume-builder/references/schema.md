@@ -47,10 +47,10 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `picture.shadowWidth` | `number` | yes | minimum: 0 | The width of the shadow of the picture to display on the resume, defined in points (pt). |
 | `basics` | `object` | yes | — | Basic information about the author, such as name, email, phone, location, and website |
 | `basics.name` | `string` | yes | — | The full name of the author of the resume. |
-| `basics.headline` | `string` | yes | — | The headline of the author of the resume. |
-| `basics.email` | `string` | yes | — | The email address of the author of the resume. |
-| `basics.phone` | `string` | yes | — | The phone number of the author of the resume. |
-| `basics.location` | `string` | yes | — | The location of the author of the resume. |
+| `basics.headline` | `string` | yes | — | The headline of the author of the resume. In Chinese resumes this is the target role. |
+| `basics.email` | `string` | yes | — | The email address of the author of the resume. Empty is allowed until a value is entered. |
+| `basics.phone` | `string` | yes | — | The phone number of the author of the resume. Accepts mobile numbers and other phone numbers. |
+| `basics.location` | `string` | yes | — | The city or current location of the author of the resume. |
 | `basics.website` | `object` | yes | — | The website of the author of the resume. |
 | `basics.website.url` | `string` | yes | — | The URL to show as a link. Must be a valid URL with a protocol (http:// or https://). |
 | `basics.website.label` | `string` | yes | — | The label to display for the URL. Leave blank to display the URL as-is. |
@@ -60,6 +60,17 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `basics.customFields[].icon` | `string` | yes | — | The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available. |
 | `basics.customFields[].text` | `string` | yes | — | The text to display for the custom field. |
 | `basics.customFields[].link` | `string` | yes | default: "" | If the custom field should be a link, the URL to link to. |
+| `basics.gender` | `string` | no | — | Optional gender. Use male, female, other, undisclosed, or an empty string. Empty and undisclosed values are not displayed. |
+| `basics.age` | `string` | no | — | Optional age as an integer string from 1 to 120. Empty values are not displayed. |
+| `basics.blog` | `object` | no | — | Optional personal blog URL. Empty values are not displayed. |
+| `basics.blog.url` | `string` | yes | default: "" | The URL to show as a link. Must use http:// or https://. |
+| `basics.blog.label` | `string` | yes | default: "" | The label to display for the URL. Leave blank to display the URL as-is. |
+| `basics.github` | `object` | no | — | Optional GitHub URL entered from the basics form. When it matches a GitHub profile, export shows it once. |
+| `basics.github.url` | `string` | yes | default: "" | The URL to show as a link. Must use http:// or https://. |
+| `basics.github.label` | `string` | yes | default: "" | The label to display for the URL. Leave blank to display the URL as-is. |
+| `basics.politicalStatus` | `string` | no | — | Optional political status key: party-member, league-member, masses, democratic-party, other, or empty. |
+| `basics.politicalStatusOther` | `string` | no | — | Free-text political status used when politicalStatus is other. |
+| `basics.address` | `string` | no | — | Optional detailed address. Kept separate from the city in location. |
 | `summary` | `object` | yes | — | Summary section of the resume, useful for a short bio or introduction |
 | `summary.title` | `string` | yes | — | The title of the summary of the resume. |
 | `summary.icon` | `string` | yes | default: "" | Phosphor icon name to display before the summary section title in the PDF output. Empty string uses the default summary icon; 'none' hides the icon. |
@@ -111,6 +122,8 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.experience.items[].website.label` | `string` | yes | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `sections.experience.items[].website.inlineLink` | `boolean` | yes | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `sections.experience.items[].description` | `string` | yes | — | The description of the experience. This should be a HTML-formatted string. |
+| `sections.experience.items[].department` | `string` | no | — | Optional department. Empty values are not displayed and do not replace roles. |
+| `sections.experience.items[].employmentType` | `string` | no | — | Optional employment type, such as full-time or internship. Empty values are not displayed. |
 | `sections.experience.items[].roles` | `array` | yes | default: [] | List of individual roles held at this company to show career progression. |
 | `sections.experience.items[].roles[]` | `object` | — | — | — |
 | `sections.experience.items[].roles[].id` | `string` | yes | — | The unique identifier for the role. Usually generated as a UUID. |
@@ -140,6 +153,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.education.items[].website.label` | `string` | yes | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `sections.education.items[].website.inlineLink` | `boolean` | yes | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `sections.education.items[].description` | `string` | yes | — | The description of the education. This should be a HTML-formatted string. |
+| `sections.education.items[].schoolTier` | `string` | no | — | Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed. |
 | `sections.projects` | `object` | yes | — | The section to display the projects of the author. |
 | `sections.projects.title` | `string` | yes | — | The title of the section. |
 | `sections.projects.icon` | `string` | yes | default: "" | Phosphor icon name to display before the section title in the PDF output. Empty string uses the default section icon; 'none' hides the icon. |
@@ -159,6 +173,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.projects.items[].website.label` | `string` | yes | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `sections.projects.items[].website.inlineLink` | `boolean` | yes | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `sections.projects.items[].description` | `string` | yes | — | The description of the project. This should be a HTML-formatted string. |
+| `sections.projects.items[].role` | `string` | no | — | Optional role on the project. Empty values are not displayed. |
 | `sections.skills` | `object` | yes | — | The section to display the skills of the author. |
 | `sections.skills.title` | `string` | yes | — | The title of the section. |
 | `sections.skills.icon` | `string` | yes | default: "" | Phosphor icon name to display before the section title in the PDF output. Empty string uses the default section icon; 'none' hides the icon. |
@@ -173,10 +188,10 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `sections.skills.items[].hidden` | `boolean` | yes | — | Whether to hide the item from the resume. |
 | `sections.skills.items[].icon` | `string` | yes | — | The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available. |
 | `sections.skills.items[].iconColor` | `string` | yes | default: "" | Custom color for the icon, defined as rgba(r, g, b, a). Leave blank to use the template default icon color. |
-| `sections.skills.items[].name` | `string` | yes | minLength: 1 | The name of the skill. |
+| `sections.skills.items[].name` | `string` | yes | minLength: 1 | The skill category heading, or a standalone skill name if the source has no grouping. |
 | `sections.skills.items[].proficiency` | `string` | yes | — | The proficiency level of the skill. Can be any text, such as 'Beginner', 'Intermediate', 'Advanced', etc. |
 | `sections.skills.items[].level` | `number` | yes | minimum: 0; maximum: 5; default: 0 | The proficiency level of the skill, defined as a number between 0 and 5. If set to 0, the icons displaying the level will be hidden. |
-| `sections.skills.items[].keywords` | `array` | yes | default: [] | The keywords associated with the skill, if any. These are displayed as tags below the name. |
+| `sections.skills.items[].keywords` | `array` | yes | default: [] | The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members. |
 | `sections.skills.items[].keywords[]` | `string` | — | — | — |
 | `sections.skills.keywordLayout` | `string` | no | enum: ["inline","list"]; default: "inline" | How skill keywords are displayed: inline separated by commas, or one bullet per keyword. |
 | `sections.skills.layout` | `string` | no | enum: ["default","inline"]; default: "default" | The layout style for skill items. 'inline' places item fields next to name |
@@ -377,6 +392,8 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].website.label` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `customSections[].items[].website.inlineLink` | `boolean` | yes (type experience, schema experienceItemSchema at customSections[]) | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `customSections[].items[].description` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The description of the experience. This should be a HTML-formatted string. |
+| `customSections[].items[].department` | `string` | no (type experience, schema experienceItemSchema at customSections[]) | — | Optional department. Empty values are not displayed and do not replace roles. |
+| `customSections[].items[].employmentType` | `string` | no (type experience, schema experienceItemSchema at customSections[]) | — | Optional employment type, such as full-time or internship. Empty values are not displayed. |
 | `customSections[].items[].roles` | `array` | yes (type experience, schema experienceItemSchema at customSections[]) | default: [] | List of individual roles held at this company to show career progression. |
 | `customSections[].items[].roles[]` | `object` | — (type experience, schema experienceItemSchema at customSections[]) | — | — |
 | `customSections[].items[].roles[].id` | `string` | yes (type experience, schema experienceItemSchema at customSections[]) | — | The unique identifier for the role. Usually generated as a UUID. |
@@ -409,6 +426,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].website.label` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `customSections[].items[].website.inlineLink` | `boolean` | yes (type education, schema educationItemSchema at customSections[]) | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `customSections[].items[].description` | `string` | yes (type education, schema educationItemSchema at customSections[]) | — | The description of the education. This should be a HTML-formatted string. |
+| `customSections[].items[].schoolTier` | `string` | no (type education, schema educationItemSchema at customSections[]) | — | Optional school tier, such as 985, 211, or double first-class. Empty values are not displayed. |
 | `customSections[]` | `object` | — (type projects, schema projectItemSchema at customSections[]) | — | — |
 | `customSections[].title` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The title of the section. |
 | `customSections[].icon` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | default: "" | Phosphor icon name to display before the section title in the PDF output. Empty string uses the default section icon; 'none' hides the icon. |
@@ -431,6 +449,7 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].website.label` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The label to display for the URL. Leave blank to display the URL as-is. |
 | `customSections[].items[].website.inlineLink` | `boolean` | yes (type projects, schema projectItemSchema at customSections[]) | default: false | If true, the website URL is rendered as a hyperlink on the title instead of a separate link at the bottom. |
 | `customSections[].items[].description` | `string` | yes (type projects, schema projectItemSchema at customSections[]) | — | The description of the project. This should be a HTML-formatted string. |
+| `customSections[].items[].role` | `string` | no (type projects, schema projectItemSchema at customSections[]) | — | Optional role on the project. Empty values are not displayed. |
 | `customSections[]` | `object` | — (type skills, schema skillItemSchema at customSections[]) | — | — |
 | `customSections[].title` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | — | The title of the section. |
 | `customSections[].icon` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | default: "" | Phosphor icon name to display before the section title in the PDF output. Empty string uses the default section icon; 'none' hides the icon. |
@@ -448,10 +467,10 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].hidden` | `boolean` | yes (type skills, schema skillItemSchema at customSections[]) | — | Whether to hide the item from the resume. |
 | `customSections[].items[].icon` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | — | The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available. |
 | `customSections[].items[].iconColor` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | default: "" | Custom color for the icon, defined as rgba(r, g, b, a). Leave blank to use the template default icon color. |
-| `customSections[].items[].name` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | minLength: 1 | The name of the skill. |
+| `customSections[].items[].name` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | minLength: 1 | The skill category heading, or a standalone skill name if the source has no grouping. |
 | `customSections[].items[].proficiency` | `string` | yes (type skills, schema skillItemSchema at customSections[]) | — | The proficiency level of the skill. Can be any text, such as 'Beginner', 'Intermediate', 'Advanced', etc. |
 | `customSections[].items[].level` | `number` | yes (type skills, schema skillItemSchema at customSections[]) | minimum: 0; maximum: 5; default: 0 | The proficiency level of the skill, defined as a number between 0 and 5. If set to 0, the icons displaying the level will be hidden. |
-| `customSections[].items[].keywords` | `array` | yes (type skills, schema skillItemSchema at customSections[]) | default: [] | The keywords associated with the skill, if any. These are displayed as tags below the name. |
+| `customSections[].items[].keywords` | `array` | yes (type skills, schema skillItemSchema at customSections[]) | default: [] | The concrete skills or complete skill descriptions belonging to this category, in source order. Keep explicit groups together instead of creating peer items for their members. |
 | `customSections[].items[].keywords[]` | `string` | — (type skills, schema skillItemSchema at customSections[]) | — | — |
 | `customSections[]` | `object` | — (type languages, schema languageItemSchema at customSections[]) | — | — |
 | `customSections[].title` | `string` | yes (type languages, schema languageItemSchema at customSections[]) | — | The title of the section. |
@@ -624,6 +643,11 @@ Choose one coherent shape for each union value. Required fields are local to tha
 | `customSections[].items[].recipient` | `string` | yes (type cover-letter, schema coverLetterItemSchema at customSections[]) | — | The recipient's address block as HTML (name, title, company, address, email). |
 | `customSections[].items[].content` | `string` | yes (type cover-letter, schema coverLetterItemSchema at customSections[]) | — | The cover letter body as HTML (salutation, paragraphs, closing, signature). |
 | `metadata` | `object` | yes | — | Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume. |
+| `metadata.editor` | `object` | no | — | — |
+| `metadata.editor.version` | `number` | yes | — | — |
+| `metadata.editor.scenario` | `string` | yes | enum: ["general","graduate","experienced","academic"] | — |
+| `metadata.editor.enabledSections` | `array` | yes | — | — |
+| `metadata.editor.enabledSections[]` | `string` | — | — | — |
 | `metadata.template` | `string` | yes | enum: ["azurill","bronzor","chikorita","ditgar","ditto","gengar","glalie","kakuna","lapras","leafish","meowth","onyx","pikachu","rhyhorn","scizor"]; default: "onyx" | The template to use for the resume. Determines the overall design and appearance of the resume. |
 | `metadata.layout` | `object` | yes | — | The layout of the resume. Determines the structure and arrangement of the sections on the resume. |
 | `metadata.layout.sidebarWidth` | `number` | yes | minimum: 10; maximum: 50; default: 35 | The width of the sidebar column, defined as a percentage of the page width. |

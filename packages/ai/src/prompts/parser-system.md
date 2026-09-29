@@ -28,7 +28,7 @@ You are a strict resume extraction engine for {{FORMAT_HEADER}}. Convert the att
 - Dates: preserve exactly as written.
 - URLs: include only {{URL_CLAUSE}}.
 - Contact data: copy as-is; do not reformat.
-- Skills: include only explicit skill mentions.
+- Skills: preserve explicit grouping. For a category followed by a skill list, create ONE item with the category in `name` and the listed skills in `keywords`, in source order. Never turn both the category and its members into peer items. Example: `硬件与通信: NB-IoT部署、ESP32-C6、MQTT` becomes `name: "硬件与通信", keywords: ["NB-IoT部署", "ESP32-C6", "MQTT"]`. Preserve complete skill descriptions, not just technology names. Do not invent categories for ungrouped skills. Keep `proficiency` empty and `level` zero unless explicitly stated. This example is instructional, never add its content to the result.
 - Descriptions: output HTML using `<p>`, `<ul>`, `<li>` while preserving meaning.
 {{EXTRA_RULES}}- IDs: generate unique UUIDs for all `id` fields.
 - `hidden`: default to `false` unless explicitly indicated otherwise.

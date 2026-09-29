@@ -26,6 +26,7 @@
 		"knip": "knip",
 		"start": "node apps/server/dist/index.mjs",
 		"typecheck": "turbo run typecheck",
+		"release:preflight": "node tooling/release-preflight.mts",
 		"test": "turbo run test --concurrency=4",
 		"test:coverage": "turbo run test:coverage --concurrency=4",
 		"test:ci": "turbo run test:ci --concurrency=4",

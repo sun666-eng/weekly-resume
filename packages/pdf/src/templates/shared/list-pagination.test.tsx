@@ -90,9 +90,16 @@ describe("list marker pagination (#3344)", () => {
 					timeout: 60000,
 					killSignal: "SIGKILL",
 				},
-			);
+			).catch((error: unknown) => {
+				const failure = error as { code?: unknown; signal?: unknown; stdout?: string; stderr?: string };
+				throw new Error(
+					`Pagination subprocess failed (code=${String(failure.code)}, signal=${String(failure.signal)}).\n${failure.stdout?.slice(-4000) ?? ""}\n${failure.stderr?.slice(-4000) ?? ""}`,
+					{ cause: error },
+				);
+			});
 			return;
 		}
+		process.stdout.write("Pagination probe ready: imports completed\n");
 		for (const rtl of [false, true]) {
 			for (const first of ["list-item-content", "list-marker"]) {
 				const result = await listPages(
@@ -112,6 +119,7 @@ describe("list marker pagination (#3344)", () => {
 						.join(" ")
 						.match(/\bSome\b/g),
 				).toHaveLength(30);
+				process.stdout.write(`Pagination probe completed: rtl=${rtl}, first=${first}\n`);
 			}
 		}
 	}, 70000);

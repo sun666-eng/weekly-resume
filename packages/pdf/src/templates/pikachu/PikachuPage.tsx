@@ -8,10 +8,7 @@ import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItems,
 } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
@@ -126,7 +123,7 @@ export const PikachuPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 };
 
 const Header = ({ styles, colors }: PikachuHeaderProps) => {
-	const { basics } = useRender();
+	const { basics, metadata } = useRender();
 
 	return (
 		<SemanticHeaderView style={styles.header}>
@@ -138,30 +135,13 @@ const Header = ({ styles, colors }: PikachuHeaderProps) => {
 			</SemanticTemplatePartView>
 
 			<SemanticContactListView style={styles.contactList}>
-				<EmailContactItem
-					email={basics.email}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<PhoneContactItem
-					phone={basics.phone}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<LocationContactItem
-					location={basics.location}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<WebsiteContactItem
-					website={basics.website}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
+				{renderBasicsContactItems({
+					basics,
+					locale: metadata.page.locale,
+					style: styles.contactItem,
+					textStyle: styles.headerText,
+					iconColor: colors.background,
+				})}
 				{basics.customFields.map((field) => (
 					<CustomFieldContactItem
 						key={field.id}

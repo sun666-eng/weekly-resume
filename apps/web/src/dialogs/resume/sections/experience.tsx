@@ -1,9 +1,11 @@
 import type { RoleItem } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
 import type { DialogProps } from "@/dialogs/store";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon, RowsIcon, TrashSimpleIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { AnimatePresence, Reorder, useDragControls } from "motion/react";
 import { experienceItemSchema } from "@reactive-resume/schema/resume/data";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -13,7 +15,8 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { generateId } from "@reactive-resume/utils/string";
 import { RichInput } from "@/components/input/rich-input";
 import { useDialogStore } from "@/dialogs/store";
-import { useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { PeriodRangeFields } from "./period-range-fields";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
@@ -33,6 +36,8 @@ const defaultValues: FormValues = {
 	period: "",
 	website: { url: "", label: "", inlineLink: false },
 	description: "",
+	department: "",
+	employmentType: "",
 	roles: [] as RoleItem[],
 };
 
@@ -72,8 +77,16 @@ export function UpdateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
+	const initialExperience: FormValues = {
+		...defaultValues,
+		...data.item,
+		id: data.item.id,
+		department: data.item.department ?? "",
+		employmentType: data.item.employmentType ?? "",
+		roles: data.item.roles ?? [],
+	};
 	const form = useAppForm({
-		defaultValues: data.item,
+		defaultValues: initialExperience,
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
@@ -105,6 +118,9 @@ const ExperienceForm = withForm({
 	render: function ExperienceFormRenderer({ form }) {
 		const inlineLink = useStore(form.store, (s) => s.values.website.inlineLink);
 		const roles = useStore(form.store, (s) => s.values.roles);
+		const period = useStore(form.store, (s) => s.values.period);
+		const locale = useCurrentBuilderResumeSelector((resume) => resume.data.metadata?.page?.locale);
+		const chinese = isChineseResumeLocale(locale);
 		const hasRoles = roles.length > 0;
 
 		const handleReorderRoles = (newOrder: RoleItem[]) => {
@@ -113,13 +129,53 @@ const ExperienceForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="company">{(field) => <field.TextField label={<Trans>Company</Trans>} />}</form.AppField>
+				<form.AppField name="company">
+					{(field) => (
+						<field.TextField label={<Trans>Company</Trans>} placeholder={chinese ? t`For example: Starlan Technology` : undefined} />
+					)}
+				</form.AppField>
+
+				<form.AppField name="position">
+					{(field) => (
+						<field.TextField
+							label={<Trans>Position</Trans>}
+							placeholder={chinese ? t`For example: Backend engineer` : undefined}
+						/>
+					)}
+				</form.AppField>
+
+				<form.AppField name="department">
+					{(field) => (
+						<field.TextField
+							label={<Trans>Department</Trans>}
+							placeholder={chinese ? t`For example: Payments` : undefined}
+							description={<Trans>Optional. Existing multi-role entries stay unchanged.</Trans>}
+						/>
+					)}
+				</form.AppField>
 
 				<form.AppField name="location">{(field) => <field.TextField label={<Trans>Location</Trans>} />}</form.AppField>
 
-				<form.AppField name="position">{(field) => <field.TextField label={<Trans>Position</Trans>} />}</form.AppField>
+				<form.AppField name="employmentType">
+					{(field) => (
+						<field.TextField
+							label={<Trans>Employment type</Trans>}
+							placeholder={chinese ? t`For example: Full-time, internship, or part-time` : undefined}
+							description={<Trans>Optional. Leave it empty and it stays off the resume.</Trans>}
+						/>
+					)}
+				</form.AppField>
 
-				<form.AppField name="period">{(field) => <field.TextField label={<Trans>Period</Trans>} />}</form.AppField>
+				<form.AppField name="period">
+					{(field) => (
+						<field.TextField
+							label={<Trans>Period</Trans>}
+							placeholder={chinese ? t`For example: 2022.07 - Present` : undefined}
+						/>
+					)}
+				</form.AppField>
+
+				<PeriodRangeFields period={period} locale={locale} onPeriodChange={(value) => form.setFieldValue("period", value)} />
 
 				<form.AppField name="website">
 					{(field) => (
@@ -210,7 +266,17 @@ const ExperienceForm = withForm({
 				{/* Single Role Description — only show when no roles are defined */}
 				{!hasRoles && (
 					<form.AppField name="description">
-						{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+						{(field) => (
+							<field.RichTextField
+								label={<Trans>Description</Trans>}
+								formItemClassName="sm:col-span-full"
+								description={
+									chinese ? (
+										<Trans>Describe the work you did. This hint is not saved, and no sample achievement is filled in.</Trans>
+									) : undefined
+								}
+							/>
+						)}
 					</form.AppField>
 				)}
 			</>

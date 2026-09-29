@@ -1,6 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { env } from "@reactive-resume/env/server";
 import { auth } from "./config";
+
+// These tests inspect configuration only. Initializing Better Auth would seed
+// OAuth resources and require a database, which belongs in integration tests.
+vi.mock("better-auth", async (importOriginal) => {
+	const original = await importOriginal<typeof import("better-auth")>();
+	return { ...original, betterAuth: (options: unknown) => ({ options }) };
+});
 
 describe("social provider signup policy", () => {
 	it.each(["google", "github", "linkedin"] as const)(

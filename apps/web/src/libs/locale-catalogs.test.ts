@@ -84,3 +84,35 @@ describe("locale catalogs follow the interface language", () => {
 		expect(t`Rejected`).toBe("已拒绝");
 	});
 });
+
+describe("ATS copy keeps totals before passed counts", () => {
+	// Regression: the zh-CN translations had the placeholders swapped, so "20 of 21" rendered as
+	//「20 项检查中，21 项已通过」. Unequal values make a swap impossible to miss.
+	it("renders unequal ATS counts coherently under zh-CN", () => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: loadCatalog("zh-CN") });
+
+		// The placeholder names below mirror the component expressions so the t macro compiles to
+		// the exact msgid the production code uses. Unequal values make a swap impossible to miss.
+		const passedRules = 3;
+		const totalRules = 8;
+		expect(t`${passedRules} of ${totalRules} checks passed`).toBe("8 项检查中，3 项已通过");
+
+		const report = { passedChecks: 0, applicableChecks: 5 };
+		expect(t`${report.passedChecks} of ${report.applicableChecks} applicable checks passed`).toBe(
+			"5 项适用检查中，0 项已通过",
+		);
+		expect(t`${report.passedChecks} of ${report.applicableChecks} applicable checks passed.`).toBe(
+			"5 项适用检查中，0 项已通过。",
+		);
+
+		const jd = { matchedCount: 2, totalTerms: 14 };
+		expect(t`${jd.matchedCount} of ${jd.totalTerms} terms found`).toBe("找到 14 个词中的 2 个");
+
+		expect(t`Warning`).toBe("警告");
+	});
+
+	it("keeps the Warning badge clean of stray quotes under zh-TW", () => {
+		i18n.loadAndActivate({ locale: "zh-TW", messages: loadCatalog("zh-TW") });
+		expect(t`Warning`).toBe("警告");
+	});
+});

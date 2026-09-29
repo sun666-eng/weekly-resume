@@ -4,6 +4,7 @@ import type { ResumeRenderOptions } from "./context";
 import type { SectionTitleResolver } from "./section-title";
 import { createElement } from "react";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { normalizePictureUrl } from "@reactive-resume/utils/picture-url";
 import { pdf } from "#react-pdf-renderer";
 import { ResumeDocument } from "./document";
 
@@ -21,6 +22,9 @@ export const createResumePdfBlob = async ({
 	resolveSectionTitle,
 }: CreateResumePdfBlobOptions): Promise<Blob> => {
 	const data = parseResumeData(input);
+	if (typeof window !== "undefined") {
+		data.picture.url = normalizePictureUrl(data.picture.url, window.location.origin);
+	}
 	const document = createElement(ResumeDocument, {
 		data,
 		template: template ?? data.metadata.template,

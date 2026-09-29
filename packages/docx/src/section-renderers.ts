@@ -13,6 +13,7 @@ let bodyFont: string | undefined;
 let bodySize: number | undefined;
 let textColor: string | undefined;
 let primaryColor: string | undefined;
+let documentLocale = "en-US";
 
 /**
  * Configures the typography and colors used by all section renderers.
@@ -25,6 +26,8 @@ export function setRenderConfig(config: {
 	bodySizeHalfPt: number;
 	textColorHex: string;
 	primaryColorHex: string;
+	/** The resume's page locale, so embedded labels match the document language. */
+	locale?: string;
 }): void {
 	headingFont = config.headingFont;
 	headingSize = config.headingSizeHalfPt;
@@ -32,6 +35,7 @@ export function setRenderConfig(config: {
 	bodySize = config.bodySizeHalfPt;
 	textColor = config.textColorHex;
 	primaryColor = config.primaryColorHex;
+	documentLocale = config.locale ?? "en-US";
 }
 
 function getHtmlStyle(): HtmlStyleConfig {
@@ -168,8 +172,8 @@ function renderExperience(section: Sections["experience"], colorHex: string): Pa
 		if (item.roles && item.roles.length > 0) {
 			paragraphs.push(titleAndSubtitle(item.company, "", item.period));
 
-			const loc = locationAndPeriod(item.location, "");
-			if (loc) paragraphs.push(loc);
+			const detail = [item.department, item.employmentType, item.location].filter((value) => value?.trim()).join(" · ");
+			if (detail) paragraphs.push(new Paragraph({ children: [new TextRun({ text: detail, ...baseRun })] }));
 
 			for (const role of item.roles) {
 				paragraphs.push(
@@ -188,8 +192,8 @@ function renderExperience(section: Sections["experience"], colorHex: string): Pa
 		} else {
 			paragraphs.push(titleAndSubtitle(item.company, item.position, item.period));
 
-			const loc = locationAndPeriod(item.location, "");
-			if (loc) paragraphs.push(loc);
+			const detail = [item.department, item.employmentType, item.location].filter((value) => value?.trim()).join(" · ");
+			if (detail) paragraphs.push(new Paragraph({ children: [new TextRun({ text: detail, ...baseRun })] }));
 
 			if (item.description) {
 				paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
@@ -211,13 +215,14 @@ function renderEducation(section: Sections["education"], colorHex: string): Para
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const degreeArea = [item.degree, item.area].filter(Boolean).join(", ");
+		const degreeArea = [item.degree, item.area, item.schoolTier].filter((value) => value?.trim()).join(", ");
 		paragraphs.push(titleAndSubtitle(item.school, degreeArea, item.period));
 
 		if (item.grade) {
+			const gradeLabel = documentLocale.startsWith("zh") ? "成绩：" : "Grade: ";
 			paragraphs.push(
 				new Paragraph({
-					children: [new TextRun({ text: `Grade: ${item.grade}`, italics: true, ...baseRun })],
+					children: [new TextRun({ text: `${gradeLabel}${item.grade}`, italics: true, ...baseRun })],
 				}),
 			);
 		}
@@ -243,7 +248,7 @@ function renderProjects(section: Sections["projects"], colorHex: string): Paragr
 	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
 
 	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.name, "", item.period));
+		paragraphs.push(titleAndSubtitle(item.name, item.role ?? "", item.period));
 
 		if (item.description) {
 			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));

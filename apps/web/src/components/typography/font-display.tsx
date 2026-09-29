@@ -23,11 +23,16 @@ export function FontDisplay({ family, label, type, url }: FontDisplayProps) {
 
 		const fontFace = new FontFace(previewName, `url(${url})`, { display: "swap" });
 
-		void fontFace.load().then((loadedFace) => {
-			if (!document.fonts.has(loadedFace)) document.fonts.add(loadedFace);
-			loadedFonts.add(previewName);
-			setIsLoaded(true);
-		});
+		void fontFace
+			.load()
+			.then((loadedFace) => {
+				if (!document.fonts.has(loadedFace)) document.fonts.add(loadedFace);
+				loadedFonts.add(previewName);
+				setIsLoaded(true);
+			})
+			.catch(() => {
+				/* Keep the readable system-font label when a preview font cannot load. */
+			});
 	}, [isInView, isLoaded, previewName, url]);
 
 	return (

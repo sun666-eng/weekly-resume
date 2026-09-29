@@ -27,6 +27,15 @@ dist
 coverage
 reports
 
+# Local browser sessions, downloads, and release-audit artifacts are not runtime inputs.
+.playwright-cli
+output/playwright
+playwright-report
+test-results
+**/*.log
+docs/*evidence
+
+
 # Generated service-worker assets are rebuilt during the web build.
 public/sw.js
 public/workbox-*.js

@@ -103,6 +103,73 @@ function normalizeOpenAICompatiblePayload(payload: unknown) {
 	return payload;
 }
 
+/**
+ * Some OpenAI-compatible relays ignore `stream: false` and still return an SSE
+ * body.  The SDK expects a regular chat-completion JSON object for this request,
+ * so fold SSE deltas back into the equivalent non-streaming response.
+ */
+function parseOpenAICompatibleBody(text: string): unknown {
+	const cleanText = text.replace(/^\uFEFF/, "").trim();
+	try {
+		return normalizeOpenAICompatiblePayload(JSON.parse(cleanText));
+	} catch {
+		// Continue with SSE parsing below.
+	}
+
+	const events = cleanText
+		.split(/\r?\n/)
+		.map((line) => line.trim())
+		.filter((line) => line.startsWith("data:"))
+		.map((line) => line.slice(5).trim())
+		.filter((data) => data && data !== "[DONE]")
+		.map((data) => {
+			try {
+				return JSON.parse(data) as Record<string, unknown>;
+			} catch {
+				return null;
+			}
+		})
+		.filter((event): event is Record<string, unknown> => event !== null);
+
+	if (events.length === 0) throw new Error("Response is neither JSON nor OpenAI-compatible SSE.");
+	const firstEvent = events[0]!;
+
+	// A few relays put a complete completion object in one `data:` event.
+	if (events.length === 1 && Array.isArray(firstEvent.choices)) {
+		return normalizeOpenAICompatiblePayload(firstEvent);
+	}
+
+	let role = "assistant";
+	let content = "";
+	let finishReason: unknown = null;
+	let model: unknown;
+	let id: unknown;
+	let created: unknown;
+	for (const event of events) {
+		model ??= event.model;
+		id ??= event.id;
+		created ??= event.created;
+		const choices = Array.isArray(event.choices) ? event.choices : [];
+		const choice = choices[0];
+		if (typeof choice !== "object" || choice === null) continue;
+		const record = choice as Record<string, unknown>;
+		if (record.finish_reason != null) finishReason = record.finish_reason;
+		const delta = record.delta;
+		if (typeof delta !== "object" || delta === null) continue;
+		const deltaRecord = delta as Record<string, unknown>;
+		if (typeof deltaRecord.role === "string" && deltaRecord.role) role = deltaRecord.role;
+		if (typeof deltaRecord.content === "string") content += deltaRecord.content;
+	}
+
+	return {
+		id: id ?? "chatcmpl-relay",
+		object: "chat.completion",
+		created: created ?? Math.floor(Date.now() / 1000),
+		model: model ?? "unknown",
+		choices: [{ index: 0, message: { role, content }, finish_reason: finishReason ?? "stop" }],
+	};
+}
+
 const openAICompatibleFetch: typeof fetch = async (input, init) => {
 	const response = await fetch(input, init);
 	if (!response.ok || !isNonStreamingJsonRequest(init)) return response;
@@ -110,7 +177,7 @@ const openAICompatibleFetch: typeof fetch = async (input, init) => {
 	const text = await response.text();
 
 	try {
-		const payload = normalizeOpenAICompatiblePayload(JSON.parse(text));
+		const payload = parseOpenAICompatibleBody(text);
 		const headers = new Headers(response.headers);
 		headers.set("content-type", "application/json; charset=utf-8");
 		headers.delete("content-length");
@@ -163,7 +230,9 @@ export function getModel(input: GetModelInput) {
 		.with("anthropic", () => createAnthropic({ apiKey, baseURL }).languageModel(model))
 		.with("gemini", () => createGoogleGenerativeAI({ apiKey, baseURL }).languageModel(model))
 		.with("vercel-ai-gateway", () => createGateway({ apiKey, baseURL }).languageModel(model))
-		.with("openrouter", () => createOpenAICompatible({ name: "openrouter", apiKey, baseURL }).languageModel(model))
+		.with("openrouter", () =>
+			createOpenAICompatible({ name: "openrouter", apiKey, baseURL, fetch: openAICompatibleFetch }).languageModel(model),
+		)
 		.with("mistral", () => createMistral({ apiKey, baseURL }).languageModel(model))
 		.with("cohere", () => createCohere({ apiKey, baseURL }).languageModel(model))
 		.with("xai", () => createXai({ apiKey, baseURL }).languageModel(model))

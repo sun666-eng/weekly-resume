@@ -4,16 +4,14 @@ import type { TemplatePageProps } from "../../document";
 import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { useRender } from "../../context";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
 import { useRenderedSectionIds, useResolvedNode, useSemanticNodeVisible } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
-	EmailContactItem,
-	LocationContactItem,
-	PhoneContactItem,
-	WebsiteContactItem,
+	renderBasicsContactItem,
 } from "../shared/contact-item";
 import { TemplateProvider, useTemplatePageNodeKey } from "../shared/context";
 import { filterSections } from "../shared/filtering";
@@ -118,7 +116,7 @@ export const RhyhornPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 };
 
 const Header = ({ styles }: RhyhornHeaderProps) => {
-	const { basics, picture } = useRender();
+	const { basics, picture, metadata } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 	const pageNodeKey = useTemplatePageNodeKey();
 	const headerNodeKey = semanticNodeKeys.header(semanticNodeKeys.region(pageNodeKey, "header"));
@@ -133,57 +131,14 @@ const Header = ({ styles }: RhyhornHeaderProps) => {
 		content: ReactNode;
 	}[] = [];
 
-	if (basics.email) {
+	for (const entry of listBasicsContactEntries(basics, metadata.page.locale)) {
 		contactItems.push({
-			id: "email",
-			nodeKey: contactNodeKey("email"),
-			content: (
-				<EmailContactItem
-					email={basics.email}
-					primitiveNodeKey={contentNodeKey("email")}
-					style={styles.contactItemContent}
-				/>
-			),
-		});
-	}
-	if (basics.phone) {
-		contactItems.push({
-			id: "phone",
-			nodeKey: contactNodeKey("phone"),
-			content: (
-				<PhoneContactItem
-					phone={basics.phone}
-					primitiveNodeKey={contentNodeKey("phone")}
-					style={styles.contactItemContent}
-				/>
-			),
-		});
-	}
-	if (basics.location) {
-		contactItems.push({
-			id: "location",
-			nodeKey: contactNodeKey("location"),
-			content: (
-				<LocationContactItem
-					location={basics.location}
-					primitiveNodeKey={contentNodeKey("location")}
-					style={styles.contactItemContent}
-				/>
-			),
-		});
-	}
-
-	if (basics.website.url) {
-		contactItems.push({
-			id: "website",
-			nodeKey: contactNodeKey("website"),
-			content: (
-				<WebsiteContactItem
-					website={basics.website}
-					primitiveNodeKey={contentNodeKey("website")}
-					style={styles.contactItemContent}
-				/>
-			),
+			id: entry.name,
+			nodeKey: contactNodeKey(entry.name),
+			content: renderBasicsContactItem(entry, {
+				style: styles.contactItemContent,
+				primitiveNodeKey: (name) => contentNodeKey(name),
+			}),
 		});
 	}
 

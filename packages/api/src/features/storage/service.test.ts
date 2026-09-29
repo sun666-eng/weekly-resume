@@ -13,15 +13,20 @@ const envMock = vi.hoisted(() => ({
 }));
 
 vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
+const imageMock = vi.hoisted(() => ({ hasAlpha: false, invalid: false }));
 // sharp is exercised by processImageForUpload; keep it out of the import graph entirely
 // because resolving it loads native bindings we can't rely on in CI.
 vi.mock("sharp", () => {
 	const chain = {
 		resize: () => chain,
 		jpeg: () => chain,
+		png: () => chain,
 		rotate: () => chain,
 		toBuffer: async () => Buffer.from("processed"),
-		metadata: async () => ({ width: 100, height: 100 }),
+		metadata: () => {
+			if (imageMock.invalid) return Promise.reject(new Error("Invalid image"));
+			return Promise.resolve({ width: 100, height: 100, hasAlpha: imageMock.hasAlpha });
+		},
 	};
 	return { default: () => chain };
 });
@@ -71,6 +76,25 @@ describe("inferContentType", () => {
 });
 
 describe("processImageForUpload", () => {
+	it("preserves transparent pixels by selecting PNG", async () => {
+		envMock.FLAG_DISABLE_IMAGE_PROCESSING = false;
+		imageMock.hasAlpha = true;
+		try {
+			const result = await processImageForUpload(makeFile(new Uint8Array([1])));
+			expect(result.contentType).toBe("image/png");
+		} finally {
+			imageMock.hasAlpha = false;
+		}
+	});
+	it("reports malformed images as a client error", async () => {
+		envMock.FLAG_DISABLE_IMAGE_PROCESSING = false;
+		imageMock.invalid = true;
+		try {
+			await expect(processImageForUpload(makeFile(new Uint8Array([1])))).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		} finally {
+			imageMock.invalid = false;
+		}
+	});
 	it("returns the file untouched when image processing is disabled", async () => {
 		envMock.FLAG_DISABLE_IMAGE_PROCESSING = true;
 		const file = makeFile(new Uint8Array([1, 2, 3, 4]), "image/png");

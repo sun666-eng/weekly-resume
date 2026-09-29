@@ -1,6 +1,6 @@
 import type { TsdownPlugin } from "tsdown";
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, isAbsolute, resolve, win32 } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "tsdown";
 
@@ -8,9 +8,12 @@ const rootPackageJson = JSON.parse(readFileSync(new URL("../../package.json", im
 	version?: string;
 };
 
-const shouldExternalizeThirdParty = (id: string) => {
+export const shouldExternalizeThirdParty = (id: string) => {
 	if (id.startsWith("@reactive-resume/")) return false;
-	if (id.startsWith("@/") || id.startsWith(".") || id.startsWith("/") || id.startsWith("\0")) return false;
+	// tsdown may pass resolved Windows paths (for example, D:\\workspace\\src\\index.ts).
+	// They are local modules and must be bundled into the production artifact.
+	if (id.startsWith("@/") || id.startsWith(".") || id.startsWith("\0") || isAbsolute(id) || win32.isAbsolute(id))
+		return false;
 
 	return true;
 };

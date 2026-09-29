@@ -32,7 +32,7 @@ async function resolveModel(userId: string) {
 // --- AI provider failure translation ------------------------------------------
 // The AI SDK surfaces provider-side failures as `APICallError` (HTTP 4xx/5xx from
 // the provider) or `RetryError` with `reason: "maxRetriesExceeded"`.  Translating
-// only those to BAD_GATEWAY gives the client an actionable status code instead of
+// only those to AI_PROVIDER_UNREACHABLE gives the client an actionable status code instead of
 // an opaque 500.  Validation, credential, model-resolution, and response-parsing
 // errors rethrow unchanged.
 
@@ -42,14 +42,14 @@ function isAiProviderGatewayError(error: unknown): boolean {
 	return false;
 }
 
-/** Throws a BAD_GATEWAY ORPCError, preserving the original cause for upstream error reporters. */
+/** Throws an AI_PROVIDER_UNREACHABLE error with HTTP 502, preserving the original cause. */
 function throwAiProviderGatewayError(cause?: unknown): never {
 	throw new ORPCError("AI_PROVIDER_UNREACHABLE", { status: 502, cause });
 }
 
 /**
  * Wrapper around the shared `generateJson` that translates AI provider failures
- * to BAD_GATEWAY.  Accepts the same prompt shape as the shared module.
+ * to AI_PROVIDER_UNREACHABLE. Accepts the same prompt shape as the shared module.
  * Exported for tests.
  */
 export async function generateJson<T>(
@@ -108,6 +108,10 @@ const matchScoreOutput = z.object({
 const aiErrors = {
 	BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
 	BAD_REQUEST: { message: "Invalid application or AI request.", status: 400 },
+	AI_PROVIDER_UNREACHABLE: { message: "The AI provider returned an error or is unreachable.", status: 502 },
+	AI_PROVIDER_NOT_CONFIGURED: { message: "No AI provider is configured.", status: 400 },
+	APPLICATION_AI_NO_RESUME: { message: "This application has no linked resume.", status: 400 },
+	APPLICATION_AI_NO_JD: { message: "This application has no job description.", status: 400 },
 };
 
 export const aiRouter = {

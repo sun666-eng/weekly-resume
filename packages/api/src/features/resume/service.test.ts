@@ -173,7 +173,7 @@ const createResumeRow = (data: ResumeData, updatedAt = new Date()) => ({
 	hasPassword: false,
 });
 
-const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData) => {
+const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData, concurrentUpdatedAt?: Date) => {
 	const currentRow = createResumeRow(currentData);
 	const versionLookup = {
 		from: () => ({
@@ -197,7 +197,7 @@ const createRestoreHarness = (currentData: ResumeData, restoredData: ResumeData)
 		{
 			data: currentData,
 			isLocked: false,
-			updatedAt: currentRow.updatedAt,
+			updatedAt: concurrentUpdatedAt ?? currentRow.updatedAt,
 		},
 	]);
 	let persistedData: ResumeData | undefined;
@@ -355,6 +355,18 @@ describe("versions.snapshot", () => {
 });
 
 describe("versions.restore", () => {
+	it("does not overwrite a save that lands after reading the pre-restore version", async () => {
+		const { set } = createRestoreHarness(
+			createSemanticResumeData(),
+			createSemanticResumeData(),
+			new Date("2026-02-01T00:00:00Z"),
+		);
+		await expect(
+			resumeService.versions.restore({ resumeId: "r1", versionId: "v1", userId: "u1" }),
+		).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+		expect(set).not.toHaveBeenCalled();
+	});
+
 	it("normalizes a historical applied stylesheet while restoring its canonical source", async () => {
 		const currentData = createSemanticResumeData();
 		const restoredData = createSemanticResumeData();

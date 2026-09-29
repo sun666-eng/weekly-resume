@@ -12,7 +12,13 @@ export const actionsRouter = {
 			operationId: "revertAgentAction",
 			summary: "Restore agent action snapshot",
 		})
-		.input(z.object({ id: z.string() }))
+		.input(z.object({ id: z.string(), conflictStrategy: z.enum(["reject", "restore-agent-fields"]).optional() }))
 		.use(mapAgentEnvironmentError)
-		.handler(({ context, input }) => agentService.actions.revert({ id: input.id, userId: context.user.id })),
+		.handler(({ context, input }) =>
+			agentService.actions.revert({
+				id: input.id,
+				userId: context.user.id,
+				...(input.conflictStrategy ? { conflictStrategy: input.conflictStrategy } : {}),
+			}),
+		),
 };

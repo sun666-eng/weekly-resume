@@ -17,6 +17,8 @@ const experienceItem = (overrides: Partial<ExperienceItem> = {}): ExperienceItem
 	description: "<p>Designed and shipped the difference engine.</p>",
 	roles: [],
 	...overrides,
+	department: overrides.department ?? "",
+	employmentType: overrides.employmentType ?? "",
 });
 
 function makeResume(mutate: (data: ResumeData) => void = () => undefined): ResumeData {
@@ -133,6 +135,7 @@ describe("date rules", () => {
 					period: "",
 					website: { url: "", label: "", inlineLink: false },
 					description: "<p>A machine.</p>",
+					role: "",
 				},
 			];
 			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "projects"], sidebar: [] }];
@@ -227,6 +230,7 @@ describe("structure rules", () => {
 					period: "2016 - 2019",
 					website: { url: "", label: "", inlineLink: false },
 					description: "",
+					schoolTier: "",
 				},
 			];
 		});

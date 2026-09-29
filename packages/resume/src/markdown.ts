@@ -1,4 +1,5 @@
 import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 
 type Sections = ResumeData["sections"];
 
@@ -25,8 +26,17 @@ function isCoverLetterOnlyDocument(data: ResumeData): boolean {
  * into AI agents. Scope the input first with `getResumeExportData(data, target)` to emit only
  * the resume or the cover letter.
  */
+// The education grade label follows the document language; set per buildMarkdown call (synchronous,
+// so a module-level value is safe) because the section renderers have no other access to the locale.
+let markdownDocumentLocale = "en-US";
+
+function markdownGradeLabel(): string {
+	return markdownDocumentLocale.startsWith("zh") ? "成绩：" : "Grade: ";
+}
+
 export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResolver): string {
-	const blocks: string[] = isCoverLetterOnlyDocument(data) ? [] : [...renderHeader(data.basics)];
+	markdownDocumentLocale = data.metadata.page.locale;
+	const blocks: string[] = isCoverLetterOnlyDocument(data) ? [] : [...renderHeader(data.basics, data.metadata.page.locale)];
 
 	for (const page of data.metadata.layout.pages) {
 		for (const sectionId of [...page.main, ...page.sidebar]) {
@@ -50,27 +60,38 @@ function renderSection(sectionId: string, data: ResumeData, resolveTitle?: Secti
 
 	if (sectionId === "summary") return renderSummary(titled(data.summary));
 
+	if (sectionId === "profiles") {
+		const profiles = data.sections.profiles;
+		return renderBuiltInSection(
+			"profiles",
+			titled({ ...profiles, items: omitDuplicateGithubProfiles(profiles.items, data.basics) }),
+		);
+	}
+
 	if (sectionId in data.sections) {
 		const section = data.sections[sectionId as SectionType];
 		return section ? renderBuiltInSection(sectionId as SectionType, titled(section)) : [];
 	}
 
 	const customSection = data.customSections.find((cs) => cs.id === sectionId);
-	return customSection ? renderCustomSection(titled(customSection)) : [];
+	if (!customSection) return [];
+	if (customSection.type === "profiles") {
+		return renderCustomSection(
+			titled({ ...customSection, items: omitDuplicateGithubProfiles(customSection.items, data.basics) }),
+		);
+	}
+	return renderCustomSection(titled(customSection));
 }
 
 // --- Header ---
 
-function renderHeader(basics: ResumeData["basics"]): string[] {
+function renderHeader(basics: ResumeData["basics"], locale: string): string[] {
 	const blocks: string[] = [];
 	if (basics.name) blocks.push(`# ${basics.name}`);
 	if (basics.headline) blocks.push(`_${basics.headline}_`);
 
 	const contact = [
-		basics.email,
-		basics.phone,
-		basics.location,
-		link(basics.website.label || basics.website.url, basics.website.url),
+		...listBasicsContactEntries(basics, locale).map((entry) => (entry.href ? link(entry.text, entry.href) : entry.text)),
 		...basics.customFields.map((field) => (field.link ? link(field.text, field.link) : field.text)),
 	].filter(Boolean);
 
@@ -116,12 +137,18 @@ function renderExperience(section: Sections["experience"]): string[] {
 	const blocks: string[] = [heading(section.title)];
 	for (const item of items) {
 		if (item.roles.length > 0) {
-			blocks.push(entryHeading(item.company, undefined, item.period), italicLine([item.location]));
+			blocks.push(
+				entryHeading(item.company, undefined, item.period),
+				italicLine([item.department, item.employmentType, item.location]),
+			);
 			for (const role of item.roles) {
 				blocks.push(italicLine([role.position, role.period]), htmlToMarkdown(role.description));
 			}
 		} else {
-			blocks.push(entryHeading(item.company, item.position, item.period), italicLine([item.location]));
+			blocks.push(
+				entryHeading(item.company, item.position, item.period),
+				italicLine([item.department, item.employmentType, item.location]),
+			);
 			blocks.push(htmlToMarkdown(item.description));
 		}
 		blocks.push(link(item.website.label, item.website.url));
@@ -135,9 +162,9 @@ function renderEducation(section: Sections["education"]): string[] {
 
 	const blocks: string[] = [heading(section.title)];
 	for (const item of items) {
-		const degreeArea = [item.degree, item.area].filter(Boolean).join(", ");
+		const degreeArea = [item.degree, item.area, item.schoolTier].filter((value) => value?.trim()).join(", ");
 		blocks.push(entryHeading(item.school, degreeArea, item.period));
-		blocks.push(italicLine([item.location, item.grade ? `Grade: ${item.grade}` : ""]));
+		blocks.push(italicLine([item.location, item.grade ? `${markdownGradeLabel()}${item.grade}` : ""]));
 		blocks.push(htmlToMarkdown(item.description), link(item.website.label, item.website.url));
 	}
 	return blocks.filter(Boolean);
@@ -149,7 +176,7 @@ function renderProjects(section: Sections["projects"]): string[] {
 
 	const blocks: string[] = [heading(section.title)];
 	for (const item of items) {
-		blocks.push(entryHeading(item.name, undefined, item.period));
+		blocks.push(entryHeading(item.name, item.role, item.period));
 		blocks.push(htmlToMarkdown(item.description), link(item.website.label, item.website.url));
 	}
 	return blocks.filter(Boolean);

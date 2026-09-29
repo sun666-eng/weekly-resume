@@ -13,6 +13,7 @@ import { getTemplateMetrics } from "../shared/metrics";
 import { PageMarginBackground } from "../shared/page-margin-background";
 import { SemanticRegionView, SemanticTemplatePartView } from "../shared/primitives";
 import { Section } from "../shared/sections";
+import { reservesSidebarColumn } from "../shared/sidebar-column";
 import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
 import { createIconSlot, TemplateHeader, useTemplateBase } from "../shared/template-base";
 
@@ -53,7 +54,7 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 	const { metadata } = data;
 	const { colors, styles } = useGlalieTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const showSidebar = !page.fullWidth || showHeader;
+	const reserveSidebar = reservesSidebarColumn(page);
 	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
 	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 
@@ -69,7 +70,7 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			)}
 		>
 			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={glalieFeatures}>
-				{showSidebar && (
+				{reserveSidebar && (
 					<SemanticTemplatePartView
 						ownerNodeKey={semanticNodeKeys.region(pageNodeKey, "sidebar")}
 						partKeys={["sidebar-background"]}
@@ -78,8 +79,13 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 					/>
 				)}
 
-				<View style={composeStyles(styles.layout, { marginTop: -metrics.page.paddingVertical })}>
-					{showSidebar && (
+				<View
+					style={composeStyles(
+						reserveSidebar ? styles.layout : { flexDirection: "column", minHeight: "100%" },
+						{ marginTop: -metrics.page.paddingVertical },
+					)}
+				>
+					{reserveSidebar ? (
 						<View
 							style={composeStyles(styles.sidebarColumn, {
 								width: `${metadata.layout.sidebarWidth}%`,
@@ -91,17 +97,21 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 							/>
 							{showHeader && <Header styles={styles} />}
 
-							{!page.fullWidth && (
-								<SemanticRegionView
-									region="sidebar"
-									style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
-								>
-									{sidebarSections.map((section) => (
-										<Section key={section} section={section} placement="sidebar" />
-									))}
-								</SemanticRegionView>
-							)}
+							<SemanticRegionView
+								region="sidebar"
+								style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
+							>
+								{sidebarSections.map((section) => (
+									<Section key={section} section={section} placement="sidebar" />
+								))}
+							</SemanticRegionView>
 						</View>
+					) : (
+						showHeader && (
+							<View style={composeStyles(styles.sidebarColumn, { width: "100%" })}>
+								<Header styles={styles} />
+							</View>
+						)
 					)}
 
 					<View style={styles.mainColumn}>

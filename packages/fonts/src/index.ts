@@ -4,6 +4,7 @@ import { getLocaleScript, isCjkScript } from "@reactive-resume/utils/locale";
 // ponytail: inlined from @reactive-resume/utils/field (sole consumer)
 const unique = <T>(items: T[]): T[] => [...new Set(items)];
 
+import localFontsJSON from "./local-fonts.json";
 import webFontListJSON from "./webfontlist.json";
 
 type FontCategory = "display" | "handwriting" | "monospace" | "serif" | "sans-serif";
@@ -129,7 +130,10 @@ export function resolveLegacyFontAlias(family: string): string | null {
 
 export function getFont(family: string) {
 	const direct = fontMap.get(family);
-	if (direct) return direct;
+	if (direct) {
+		const weights = getHostedFontWeights(family);
+		return weights.length ? { ...direct, weights } : direct;
+	}
 
 	const alias = legacyFontAliases[family];
 	return alias ? fontMap.get(alias) : undefined;
@@ -165,7 +169,50 @@ export function getWebFont(family: string) {
 	return webFontMap.get(family);
 }
 
+// Families mirrored into `apps/web/public/fonts/` (see local-fonts.json). Resolving these to
+// same-origin paths keeps default and Chinese rendering working when Google Fonts domains are
+// unreachable; everything else still points at its upstream source.
+const localFontMap = localFontsJSON as Record<string, Record<string, string>>;
+
+export function getHostedFontWeights(family: string): FontWeight[] {
+	return Object.keys(localFontMap[family] ?? {})
+		.filter((key) => /^\d00$/.test(key))
+		.sort() as FontWeight[];
+}
+
+export function isOfflineFontFamily(family: string): boolean {
+	return isStandardPdfFontFamily(family) || Object.hasOwn(localFontMap, family);
+}
+
+/** Legacy selections remain stored; PDF uses a shipped face until the user chooses another. */
+export function resolveOfflineFontFamily(family: string): string {
+	const resolved = resolveLegacyFontAlias(family) ?? family;
+	if (isOfflineFontFamily(resolved)) return resolved;
+	const category = getFont(resolved)?.category;
+	if (category === "monospace") return "Courier";
+	return category === "sans-serif" ? "Noto Sans" : "IBM Plex Serif";
+}
+
+export function getLocalFontSource(family: string, weight: FontWeight = "400", italic = false) {
+	const files = localFontMap[family];
+	if (!files) return null;
+
+	const key = `${weight}${italic ? "italic" : ""}` as FontFileWeight;
+	return files[key] ?? null;
+}
+
 export function getWebFontSource(family: string, weight: FontWeight = "400", italic = false) {
+	// A hosted family resolves entirely locally — including the italic-falls-back-to-normal rule —
+	// so one render never mixes a local 400 with an upstream italic request.
+	const localFiles = localFontMap[family];
+	if (localFiles) {
+		const localKey = `${weight}${italic ? "italic" : ""}` as FontFileWeight;
+		const nearest = getHostedFontWeights(family).sort(
+			(a, b) => Math.abs(Number(a) - Number(weight)) - Math.abs(Number(b) - Number(weight)) || Number(b) - Number(a),
+		)[0];
+		return localFiles[localKey] ?? localFiles[weight] ?? (nearest ? localFiles[nearest] : null) ?? null;
+	}
+
 	const webFont = getWebFont(family);
 	if (!webFont) return null;
 

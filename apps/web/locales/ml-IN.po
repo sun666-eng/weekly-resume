@@ -199,6 +199,12 @@ msgstr "ഒരു തീയതി പരിധി തുടങ്ങുന്ന
 msgid "A date range is written in a form most software cannot read."
 msgstr "മിക്ക സോഫ്റ്റ്‌വെയറുകൾക്കും വായിക്കാൻ കഴിയാത്ത രീതിയിലാണ് ഒരു തീയതി പരിധി എഴുതിയിരിക്കുന്നത്."
 
+#. placeholder {0}: new Date(recovery.savedAt).toLocaleString()
+#. placeholder {1}: recovery.baseUpdatedAt ? new Date(recovery.baseUpdatedAt).toLocaleString() : "an unknown time"
+#: src/routes/builder/$resumeId/route.tsx
+msgid "A draft was saved at {0}. The version currently on the server was last saved at {1}."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A font is referenced but not embedded."
 msgstr "ഒരു ഫോണ്ട് പരാമർശിച്ചിട്ടുണ്ട്, പക്ഷേ എംബെഡ് ചെയ്തിട്ടില്ല."
@@ -2085,6 +2091,10 @@ msgstr "ടു‑ഫാക്ടർ ഓത്‌ന്റിക്കേഷൻ �
 msgid "Discard"
 msgstr "നിരസിക്കുക"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Discard draft"
+msgstr ""
+
 #: src/features/cover-letters/editor-dialog.tsx
 msgid "Discard unsaved changes?"
 msgstr "സംരക്ഷിക്കാത്ത മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?"
@@ -2408,6 +2418,7 @@ msgid "Enter a valid email address, or leave it empty for now."
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/auth/pages/register.tsx
 msgid "Enter a valid email address."
 msgstr "സാധുവായ ഒരു ഇമെയിൽ വിലാസം നൽകുക."
 
@@ -3594,6 +3605,10 @@ msgstr "കീ"
 msgid "Keyword layout"
 msgstr "കീവേഡ് ലേഔട്ട്"
 
+#: src/features/ats-checker/report/jd-coverage.tsx
+msgid "Keyword matching currently understands English postings best. For a Chinese job description, treat the terms below as a rough list rather than a coverage measure."
+msgstr ""
+
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/skill.tsx
 msgid "Keywords"
@@ -4063,6 +4078,10 @@ msgstr "https:// എന്നതിൽ തുടങ്ങണം"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "പേര്"
+
+#: src/features/auth/pages/register.tsx
+msgid "Name must be at least 2 characters."
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 msgid "Name the resume after the position you are applying for."
@@ -5083,6 +5102,10 @@ msgstr "ഇതിൽ നിങ്ങളുടെ പേര് ചേർക്ക
 #: src/features/cover-letters/editor.tsx
 msgid "Recipient"
 msgstr "സ്വീകർത്താവ്"
+
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Recover draft"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Rectangle"
@@ -7191,6 +7214,10 @@ msgstr "അൺലോക്ക് ചെയ്യുക"
 msgid "Unnamed passkey"
 msgstr "പേരില്ലാത്ത പാസ്‌കീ"
 
+#: src/routes/builder/$resumeId/route.tsx
+msgid "Unsaved changes from your last visit were found."
+msgstr ""
+
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "സ്ഥിരീകരിച്ചിട്ടില്ല"
@@ -7423,6 +7450,10 @@ msgstr "യൂസർനെയിം"
 
 #: src/features/auth/pages/register.tsx
 msgid "Username can only contain lowercase letters, numbers, dots, hyphens and underscores."
+msgstr ""
+
+#: src/features/auth/pages/register.tsx
+msgid "Username must be at least 3 characters."
 msgstr ""
 
 #: src/features/homepage/community-stats.tsx

@@ -184,14 +184,14 @@ describe("POST /ai-providers/{id}/test — end to end", () => {
 		expect(response.testError).toContain("***");
 	});
 
-	it("still rejects with BAD_REQUEST when the base URL is not permitted", async () => {
+	it("still rejects with AI_PROVIDER_INVALID when the base URL is not permitted", async () => {
 		// A blocked address must remain a configuration error, not a provider failure.
 		seedProvider({ baseUrl: "ftp://api.openai.test/v1" });
 		stubProvider(200, chatCompletion("1"));
 
 		await expect(client.test({ id: "provider-1" })).rejects.toMatchObject({
-			code: "BAD_REQUEST",
-			message: "Invalid AI provider configuration.",
+			code: "AI_PROVIDER_INVALID",
+			status: 400,
 		});
 	});
 

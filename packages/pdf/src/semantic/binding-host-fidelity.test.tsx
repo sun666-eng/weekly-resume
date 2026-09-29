@@ -211,9 +211,19 @@ describe("semantic binding host fidelity", () => {
 		["scizor", 1],
 	] as const)("%s attaches every visible primitive template part to an existing host", async (template, expected) => {
 		const section = template === "meowth" ? "experience" : "summary";
-		const document = await renderFixture(template, buildFixture("template-part { opacity: 0.37; }", section));
+		const data = buildFixture("template-part { opacity: 0.37; }", section);
+		// Glalie's sidebar decoration exists only when a sidebar column is actually requested.
+		if (template === "glalie") data.metadata.layout.pages = [{ fullWidth: false, main: [section], sidebar: [] }];
+		const document = await renderFixture(template, data);
 
 		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(expected);
+	});
+	it("does not paint a Glalie sidebar decoration across a full-width page", async () => {
+		const document = await renderFixture(
+			"glalie",
+			buildFixture('template-part[name="sidebar-background"] { opacity: 0.37; }'),
+		);
+		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(0);
 	});
 
 	it("honors primitive template-part visibility on the exact existing host", async () => {

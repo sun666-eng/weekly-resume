@@ -101,13 +101,13 @@ describe("physical page margins (#3337, #3175)", () => {
 		expect(backgroundAt(overflow, 3, 3)).toEqual(inside);
 		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual(inside);
 	});
-	it("preserves the existing Glalie sidebar background on full-width overflow", async () => {
+	it("keeps Glalie full-width overflow free of sidebar background", async () => {
 		const { rasters } = await renderOverflow("glalie", "main", "en-US", "semantic", undefined, "@version 1;", true);
 		const overflow = rasters[1];
 		if (!overflow) throw new Error("Missing overflow raster");
-		expect(backgroundAt(overflow, 3, 100)).toEqual([242, 178, 178]);
-		expect(backgroundAt(overflow, 3, 3)).toEqual([242, 178, 178]);
-		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual([242, 178, 178]);
+		expect(backgroundAt(overflow, 3, 100)).toEqual([255, 255, 255]);
+		expect(backgroundAt(overflow, 3, 3)).toEqual([255, 255, 255]);
+		expect(backgroundAt(overflow, 3, overflow.height - 4)).toEqual([255, 255, 255]);
 	});
 	for (const placement of ["main", "sidebar"] as const) {
 		it.each(templates)(`keeps overflowing ${placement} content inside vertical margins (%s)`, async (template) => {

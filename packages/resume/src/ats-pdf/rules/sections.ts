@@ -4,19 +4,25 @@ import { check, failIf, hasNoText, skip } from "./helpers";
 import { THRESHOLDS } from "./thresholds";
 
 /**
- * Heading recognition works off an English alias list, so every check that asks "is there an
- * Experience section?" has to skip on a resume written in another language rather than assert
- * that a German resume has no work history.
+ * Heading recognition is alias-based and now multilingual. For an English resume every check
+ * applies as-is. For any other language the section checks only mean something when the alias
+ * list actually recognised this document's headings — otherwise we cannot tell sections apart
+ * and must not assert that experience or education are absent.
  */
 function requiresEnglish(context: PdfCheckContext): boolean {
 	return context.semantics.quality.isEnglish;
+}
+
+/** True when at least one heading line mapped to a known section type in any supported language. */
+function hasRecognizedHeadings(context: PdfCheckContext): boolean {
+	return context.semantics.headings.some((heading) => heading.sectionType !== null);
 }
 
 const hasSection = (context: PdfCheckContext, type: CustomSectionType) => context.semantics.sectionTypes.includes(type);
 
 function guard(context: PdfCheckContext) {
 	if (hasNoText(context)) return skip("no-text");
-	if (!requiresEnglish(context)) return skip("not-english");
+	if (!requiresEnglish(context) && !hasRecognizedHeadings(context)) return skip("unrecognized-language");
 	return null;
 }
 
@@ -93,8 +99,10 @@ export const sectionChecks: readonly PdfCheck[] = [
 	}),
 
 	check("NO_ROLE_LINES", (context) => {
-		const blocked = guard(context);
-		if (blocked) return blocked;
+		if (hasNoText(context)) return skip("no-text");
+		// Role-line detection keys on Latin capitalisation; asserting its absence for a document
+		// it cannot read would be dishonest, so other languages skip.
+		if (!requiresEnglish(context)) return skip("unrecognized-language");
 
 		return failIf(context.semantics.roleLikeLineCount === 0, "NO_ROLE_LINES");
 	}),
