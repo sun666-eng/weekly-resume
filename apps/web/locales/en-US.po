@@ -8283,3 +8283,32 @@ msgstr "Role methodology and sources"
 
 msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
 msgstr "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+msgid "Resume language"
+msgstr "Resume language"
+
+msgid "Automatic"
+msgstr "Automatic"
+
+msgid "Final resume language"
+msgstr "Final resume language"
+
+msgid "Name not recognized"
+msgstr "Name not recognized"
+
+msgid "Review these fields before creating the new resume. You can change the language above without recognizing the file again."
+msgstr "Review these fields before creating the new resume. You can change the language above without recognizing the file again."
+
+msgid "Conflicting field kept for review"
+msgstr "Conflicting field kept for review"
+
+msgid "Unrecognized field kept for review"
+msgstr "Unrecognized field kept for review"
+
+msgid "Language could not be determined. Confirm the selected language."
+msgstr "Language could not be determined. Confirm the selected language."
+
+msgid "Possible body text in a section title"
+msgstr "Possible body text in a section title"
+
+msgid "Position not recognized"
+msgstr "Position not recognized"

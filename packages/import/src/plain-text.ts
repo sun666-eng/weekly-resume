@@ -1,10 +1,17 @@
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { ImportAnalysis, ResumeTextOptions } from "./import-language";
 import { parsePeriod, parseSingleDate } from "@reactive-resume/resume/ats";
 import { splitSkillKeywords } from "@reactive-resume/resume/skill-groups";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
+import { applyResumeImportLocale, resolveResumeImportLocale } from "./import-language";
+import { createPersonalInfoReader } from "./personal-info";
 import { isSkillCategory, parseSkillLines } from "./skill-lines";
+
+export type { ImportAnalysis, ResumeTextOptions } from "./import-language";
+export type { ImportIssue } from "./personal-info";
+export { detectResumeTextLocale, finalizeResumeImport } from "./import-language";
 
 type SectionKey = SectionType | "summary" | "zh-internship" | "zh-campus";
 
@@ -686,40 +693,6 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 	return { header, segments };
 }
 
-function parseHeader(lines: string[]) {
-	const joined = lines.join(" ");
-	const email = joined.match(EMAIL_PATTERN)?.[0] ?? "";
-	const phone = extractPhone(joined);
-	const urls = joined.match(URL_PATTERN) ?? [];
-
-	const strip = (value: string) => {
-		let result = value;
-		if (email) result = result.replace(email, " ");
-		if (phone) result = result.replace(phone, " ");
-		for (const url of urls) result = result.replace(url, " ");
-		return result.replace(/\s+/g, " ").trim();
-	};
-
-	const remaining = lines.map(strip).filter(Boolean);
-	const name = remaining[0] ?? "";
-	const rest = remaining.slice(1).flatMap(splitHeaderParts).filter(Boolean);
-	const locationIndex = rest.findIndex((part) => /,/.test(part) && !/\d{4}/.test(part));
-	const stripObjectiveLabel = (value: string) =>
-		value.replace(
-			/^(?:求职意向|求职目标|目标职位|job objective|desired position|target position|objective)\s*[:：]\s*/i,
-			"",
-		);
-
-	return {
-		name,
-		headline: stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
-		location: locationIndex === -1 ? "" : (rest[locationIndex] ?? ""),
-		email,
-		phone,
-		website: urls[0] ?? "",
-	};
-}
-
 const PERSONAL_INFO_TITLES = new Set([
 	"个人信息",
 	"个人资料",
@@ -738,196 +711,20 @@ const PERSONAL_INFO_TITLES = new Set([
 
 const isPersonalInfoHeading = (title: string) => PERSONAL_INFO_TITLES.has(normalizeHeading(title));
 
-const PERSONAL_FIELD_LABEL =
-	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective)\s*[:：]/gi;
-
-const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline">> = {
-	姓名: "name",
-	名字: "name",
-	name: "name",
-	电子邮箱: "email",
-	电子邮件: "email",
-	邮箱: "email",
-	"e-mail": "email",
-	email: "email",
-	手机号码: "phone",
-	手机号: "phone",
-	手机: "phone",
-	电话号码: "phone",
-	电话: "phone",
-	tel: "phone",
-	telephone: "phone",
-	phone: "phone",
-	mobile: "phone",
-	网址: "website",
-	主页: "website",
-	网站: "website",
-	website: "website",
-	homepage: "website",
-	url: "website",
-	求职意向: "headline",
-	求职目标: "headline",
-	目标职位: "headline",
-	"job objective": "headline",
-	"desired position": "headline",
-	"target position": "headline",
-	objective: "headline",
-};
-
-// A bare line under 求职意向 is a target role, not prose, only while it stays short and free of
-// sentence or enumeration punctuation; anything else keeps flowing into the summary text.
-const isShortObjectiveLine = (line: string) => line.length <= 40 && !/[。．.!！?？,，、;；]/u.test(line);
-
-const trimEdgeSeparators = (value: string) => value.replace(/^[\s,;，；、。]+|[\s,;，；、。]+$/g, "");
-
-/**
- * Stores one labeled personal-info value into basics and returns the part of the value that could
- * not be stored ("" when fully consumed). A field is only written while basics is empty: a second,
- * different value keeps its original line in the leftover text instead of overwriting the first,
- * and an identical value is treated as a duplicate and consumed without any loss.
- */
-function assignPersonalField(
-	type: "email" | "name" | "phone" | "website" | "headline",
-	value: string,
-	basics: ResumeData["basics"],
-): string {
-	if (type === "name" || type === "headline") {
-		const field = type === "name" ? "name" : "headline";
-		const normalizedValue = value.trim();
-		if (!normalizedValue) return value;
-		if (!basics[field] || basics[field] === normalizedValue) {
-			basics[field] ||= normalizedValue;
-			return "";
-		}
-		return value;
-	}
-
-	if (type === "email") {
-		const email = value.match(EMAIL_PATTERN)?.[0] ?? "";
-		if (!email) return value;
-		if (!basics.email || basics.email.toLowerCase() === email.toLowerCase()) {
-			basics.email ||= email;
-			return trimEdgeSeparators(value.replace(email, ""));
-		}
-		return value;
-	}
-
-	if (type === "phone") {
-		const phone = extractPhone(value);
-		if (!phone) return value;
-		if (!basics.phone || basics.phone === phone) {
-			basics.phone ||= phone;
-			return trimEdgeSeparators(value.replace(phone, ""));
-		}
-		return value;
-	}
-
-	const url = value.match(URL_PATTERN)?.[0] ?? "";
-	if (!url) return value;
-	if (!basics.website.url || basics.website.url.toLowerCase() === url.toLowerCase()) {
-		if (!basics.website.url) basics.website = { url, label: "" };
-		return trimEdgeSeparators(value.replace(url, ""));
-	}
-	return value;
-}
-
-/** Reads bare email/phone/URL text (no field labels) the same way the document header does. */
-function consumeInlineContact(line: string, basics: ResumeData["basics"]): string {
-	let remainder = line;
-
-	const email = remainder.match(EMAIL_PATTERN)?.[0];
-	if (email && (!basics.email || basics.email.toLowerCase() === email.toLowerCase())) {
-		basics.email ||= email;
-		remainder = remainder.replace(email, " ");
-	}
-
-	const phone = extractPhone(remainder);
-	if (phone && (!basics.phone || basics.phone === phone)) {
-		basics.phone ||= phone;
-		remainder = remainder.replace(phone, " ");
-	}
-
-	const url = remainder.match(URL_PATTERN)?.[0];
-	if (url && (!basics.website.url || basics.website.url.toLowerCase() === url.toLowerCase())) {
-		if (!basics.website.url) basics.website = { url, label: "" };
-		remainder = remainder.replace(url, " ");
-	}
-
-	return remainder.replace(/\s+/g, " ").trim();
-}
-
-/**
- * Maps a personal info section (个人信息/个人资料/联系方式/求职意向/…) onto basics without
- * discarding anything unrecognized: consumed fields leave the leftover text, everything else —
- * gender, age, prose — stays in it so the editor still shows it. Labeled fields (邮箱：…) are
- * preferred; label-less lines fall back to the same inline extraction the header uses. A section
- * titled 求职意向 additionally reads its single bare short line as the headline.
- */
-function applyPersonalInfo(lines: string[], basics: ResumeData["basics"], objective = false): string[] {
-	const leftover: string[] = [];
-
-	for (const line of lines) {
-		const trimmed = line.trim();
-		if (!trimmed) continue;
-
-		const fields = [...trimmed.matchAll(PERSONAL_FIELD_LABEL)];
-
-		if (objective && fields.length === 0 && !basics.headline && isShortObjectiveLine(trimmed)) {
-			basics.headline = trimmed;
-			continue;
-		}
-
-		if (fields.length === 0) {
-			const rest = consumeInlineContact(trimmed, basics);
-			if (rest) leftover.push(rest);
-			continue;
-		}
-
-		const [first] = fields;
-		if (!first) continue;
-
-		let remainder = trimmed.slice(0, first.index ?? 0);
-		let cursor = first.index ?? 0;
-
-		for (const [index, match] of fields.entries()) {
-			const start = match.index ?? 0;
-			if (start > cursor) remainder += trimmed.slice(cursor, start);
-			const valueEnd = fields[index + 1]?.index ?? trimmed.length;
-			const value = trimmed.slice(start + match[0].length, valueEnd);
-			cursor = valueEnd;
-			const normalizedLabel = match[1]?.replace(/\s+/g, "").toLowerCase() ?? "";
-			const type = PERSONAL_FIELD_TYPES[normalizedLabel];
-			const kept = type ? assignPersonalField(type, value, basics) : value;
-			if (kept !== value) remainder += kept;
-			else remainder += match[0] + value;
-		}
-
-		remainder = remainder.replace(/\s+/g, " ").trim();
-		if (remainder) leftover.push(remainder);
-	}
-
-	return leftover;
-}
-
 /** Shared with PDF reading-order detection; uses the importer's exact section aliases. */
 export function isKnownResumeHeading(line: string): boolean {
 	return knownHeading(line) !== null;
 }
 
-export function parseResumeText(text: string): ResumeData {
+export function parseResumeTextWithDiagnostics(text: string, options: ResumeTextOptions = {}): ImportAnalysis {
 	const lines = text.replace(/\r\n?/g, "\n").split("\n");
 	const { header, segments } = segment(lines);
-	const contact = parseHeader(header);
-
 	const data: ResumeData = structuredClone(defaultResumeData);
+	const language = resolveResumeImportLocale(text, options);
+	applyResumeImportLocale(data, language.locale);
+	const personal = createPersonalInfoReader(data.basics, extractPhone);
+	personal.read(header, true);
 	const order: string[] = [];
-
-	data.basics.name = contact.name;
-	data.basics.headline = contact.headline;
-	data.basics.email = contact.email;
-	data.basics.phone = contact.phone;
-	data.basics.location = contact.location;
-	data.basics.website = { url: contact.website, label: "" };
 
 	for (const item of segments) {
 		if (item.lines.length === 0) continue;
@@ -935,13 +732,11 @@ export function parseResumeText(text: string): ResumeData {
 		if (item.key === "summary") {
 			if (isPersonalInfoHeading(item.title)) {
 				const objective = normalizeHeading(item.title) === "求职意向" || normalizeHeading(item.title) === "求职目标";
-				const leftover = applyPersonalInfo(item.lines, data.basics, objective);
-				const content = toHtml(leftover);
-				data.summary.content = data.summary.content ? `${data.summary.content}${content}` : content;
-				if (leftover.length > 0 && !order.includes("summary")) order.push("summary");
+				personal.read(item.lines, false, objective);
 				continue;
 			}
 
+			data.summary.title = item.title;
 			const content = toHtml(item.lines);
 			data.summary.content = data.summary.content ? `${data.summary.content}${content}` : content;
 			if (!order.includes("summary")) order.push("summary");
@@ -993,11 +788,22 @@ export function parseResumeText(text: string): ResumeData {
 		if (items.length === 0) continue;
 
 		const section = data.sections[item.key];
+		if (!order.includes(item.key)) section.title = item.title;
 		section.items = [...section.items, ...items] as typeof section.items;
 		if (!order.includes(item.key)) order.push(item.key);
 	}
 
+	const unconsumed = toHtml(personal.leftovers);
+	if (unconsumed) {
+		data.summary.content += unconsumed;
+		if (!order.includes("summary")) order.unshift("summary");
+	}
 	data.metadata.layout.pages = [{ fullWidth: true, main: order, sidebar: [] }];
+	const issues = [...personal.issues, ...language.issues];
+	if (!data.basics.name) issues.push({ code: "missing-name", field: "name", raw: "" });
+	return { data: parseResumeData(data), issues, detectedLocale: language.detectedLocale };
+}
 
-	return parseResumeData(data);
+export function parseResumeText(text: string, options?: ResumeTextOptions): ResumeData {
+	return parseResumeTextWithDiagnostics(text, options).data;
 }

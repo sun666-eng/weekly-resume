@@ -8361,3 +8361,33 @@ msgstr "岗位画像方法与参考来源"
 
 msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
 msgstr "该 JD 语言的分词支持有限，请将词项作为粗略参考清单。"
+
+msgid "Resume language"
+msgstr "简历语言"
+
+msgid "Automatic"
+msgstr "自动识别"
+
+msgid "Final resume language"
+msgstr "最终简历语言"
+
+msgid "Name not recognized"
+msgstr "未识别到姓名"
+
+msgid "Review these fields before creating the new resume. You can change the language above without recognizing the file again."
+msgstr "请先复核识别结果，再创建简历。可在上方切换语言，无需重新识别文件。"
+
+msgid "Conflicting field kept for review"
+msgstr "字段存在冲突，原文已保留，请复核"
+
+msgid "Unrecognized field kept for review"
+msgstr "未映射字段已保留，请复核"
+
+msgid "Language could not be determined. Confirm the selected language."
+msgstr "无法确定正文语言，请确认所选简历语言。"
+
+msgid "Possible body text in a section title"
+msgstr "章节标题可能混入正文"
+
+msgid "Position not recognized"
+msgstr "未识别到职位"

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { parseResumeText } from "@reactive-resume/import/plain-text";
+import { parseResumeTextWithDiagnostics } from "@reactive-resume/import/plain-text";
 import fixture from "./__fixtures__/multi-page-columns.json";
 import { documentToLines } from "./pdf-text";
 
 describe("actual three-page resume with a centered header and continuing sidebar", () => {
 	const lines = documentToLines(fixture);
-	const data = parseResumeText(lines.join("\n"));
+	const { data, issues } = parseResumeTextWithDiagnostics(lines.join("\n"));
 	it("preserves every non-whitespace character exactly once while reordering columns", () => {
 		const characters = (text: string) => [...text.replace(/\s/g, "")].sort().join("");
 		const source = fixture.pages
@@ -13,8 +13,11 @@ describe("actual three-page resume with a centered header and continuing sidebar
 			.join("");
 		expect(characters(lines.join(""))).toBe(characters(source));
 	});
-	it("keeps name and contact details ahead of the sections", () => {
-		expect(data.basics.name).toBe("虚构姓名验收一");
+	it("keeps header text ahead of sections and reviews the deliberately artificial identity", () => {
+		expect(lines[0]).toBe("虚构姓名验收一");
+		expect(data.basics.name).toBe("");
+		expect(data.summary.content).toContain("虚构姓名验收一");
+		expect(issues).toContainEqual({ code: "missing-name", field: "name", raw: "" });
 		expect(data.basics.email).toBe("david.kowalski@email.com");
 	});
 	it("does not combine skill and education headings on the same baseline", () => {

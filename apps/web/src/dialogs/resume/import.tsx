@@ -1,8 +1,11 @@
+import type { ImportAnalysis } from "@reactive-resume/import/plain-text";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Locale } from "@reactive-resume/utils/locale";
 import type { DialogProps } from "../store";
 import type { ImportType } from "./import.utils";
 import type { ResumeJsonFormat } from "./parse-json";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, FileIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
@@ -10,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
 import z from "zod";
+import { finalizeResumeImport, parseResumeTextWithDiagnostics } from "@reactive-resume/import/plain-text";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DialogContent,
@@ -23,7 +27,9 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isLocale } from "@reactive-resume/utils/locale";
 import { Combobox } from "@/components/ui/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { ResumeImportError } from "@/features/resume/import/errors";
 import { getImportReviewIssues } from "@/features/resume/import/review";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -126,8 +132,26 @@ async function detectImportType(file: File): Promise<ImportType> {
 	return "";
 }
 
+type PreparedImport = { data: ResumeData; sourceText: string | undefined; local: boolean; analysis: ImportAnalysis };
+
+function analyzePrepared(
+	prepared: Pick<PreparedImport, "data" | "sourceText" | "local">,
+	locale: Locale | "auto",
+	fallbackLocale: Locale,
+): ImportAnalysis {
+	const options = { ...(locale === "auto" ? {} : { locale }), fallbackLocale };
+	return prepared.local
+		? parseResumeTextWithDiagnostics(prepared.sourceText ?? "", options)
+		: finalizeResumeImport(prepared.data, {
+				...options,
+				...(prepared.sourceText ? { sourceText: prepared.sourceText } : {}),
+			});
+}
+
 export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 	const confirm = useConfirm();
+	const { i18n } = useLingui();
+	const fallbackLocale: Locale = isLocale(i18n.locale) ? i18n.locale : i18n.locale.startsWith("zh") ? "zh-CN" : "en-US";
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
@@ -135,6 +159,9 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 	const [isImporting, setIsImporting] = useState<boolean>(false);
 	const [useAiForWord, setUseAiForWord] = useState(false);
 	const wordAiSwitchId = useId();
+	const languageId = useId();
+	const [resumeLocale, setResumeLocale] = useState<Locale | "auto">("auto");
+	const [prepared, setPrepared] = useState<PreparedImport | null>(null);
 	const selectionSequence = useRef(0);
 
 	const { mutateAsync: importResume } = useMutation(orpc.resume.import.mutationOptions());
@@ -149,7 +176,9 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 		onSubmit: async ({ value }) => {
 			if (value.type === "" || !value.file) return;
 			if (value.type === "doc") return;
+			const selectedFile = value.file;
 
+			const sequence = selectionSequence.current;
 			setIsImporting(true);
 
 			// A PDF parsed in the browser never touches a provider, so promising one would be a lie.
@@ -158,33 +187,41 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 			const toastId = toast.add({
 				type: "loading",
 				title: t`Importing your resume...`,
-				description: isLocalImport
-					? t`This may take a moment. Please do not close the window or refresh the page.`
-					: t`This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page.`,
+				description:
+					isLocalImport || prepared
+						? t`This may take a moment. Please do not close the window or refresh the page.`
+						: t`This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page.`,
 			});
 
 			try {
-				let data: ResumeData | undefined;
+				let data: ResumeData | undefined = prepared?.analysis.data;
+				let sourceText: string | undefined;
+				let local = false;
 
 				if (
-					value.type === "json-resume-json" ||
-					value.type === "reactive-resume-json" ||
-					value.type === "reactive-resume-v4-json"
+					!prepared &&
+					(value.type === "json-resume-json" ||
+						value.type === "reactive-resume-json" ||
+						value.type === "reactive-resume-v4-json")
 				) {
 					data = parseResumeJson(await value.file.text(), value.type as ResumeJsonFormat);
 				}
 
-				if (value.type === "pdf") {
+				if (!prepared && value.type === "pdf") {
 					if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
 
 					if (hasUsableProvider) {
 						const base64 = await fileToBase64(value.file);
 
+						const textPromise = import("@/features/resume/import/pdf-text")
+							.then(({ extractPdfLines }) => extractPdfLines(selectedFile).then((lines) => lines.join("\n")))
+							.catch(() => undefined);
 						data = await client.ai.parsePdf({
 							file: { name: value.file.name, data: base64 },
 						});
+						sourceText = await textPromise;
 					} else {
-						const [{ extractPdfLines }, { parseResumeText }] = await Promise.all([
+						const [{ extractPdfLines }, { parseResumeTextWithDiagnostics }] = await Promise.all([
 							import("@/features/resume/import/pdf-text"),
 							import("@reactive-resume/import/plain-text"),
 						]);
@@ -199,26 +236,34 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 							);
 						}
 
-						data = parseResumeText(lines.join("\n"));
+						sourceText = lines.join("\n");
+						local = true;
+						data = parseResumeTextWithDiagnostics(sourceText, { fallbackLocale }).data;
 					}
 				}
 
-				if (value.type === "docx") {
+				if (!prepared && value.type === "docx") {
 					if (useAiForWord) {
 						if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
 						if (!hasUsableProvider)
 							throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
 						const base64 = await fileToBase64(value.file);
+						const textPromise = import("@/features/resume/import/docx-text")
+							.then(({ extractDocxText }) => extractDocxText(selectedFile))
+							.catch(() => undefined);
 						data = await client.ai.parseDocx({
 							mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 							file: { name: value.file.name, data: base64 },
 						});
+						sourceText = await textPromise;
 					} else {
-						const [{ extractDocxText }, { parseResumeText }] = await Promise.all([
+						const [{ extractDocxText }, { parseResumeTextWithDiagnostics }] = await Promise.all([
 							import("@/features/resume/import/docx-text"),
 							import("@reactive-resume/import/plain-text"),
 						]);
-						data = parseResumeText(await extractDocxText(value.file));
+						sourceText = await extractDocxText(value.file);
+						local = true;
+						data = parseResumeTextWithDiagnostics(sourceText, { fallbackLocale }).data;
 					}
 				}
 
@@ -231,23 +276,12 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					);
 				}
 
-				// PDF/Word recognition is inherently ambiguous. Warn before creating the new resume;
-				// JSON round-trips retain deliberate user-authored titles without an extra prompt.
-				const issues = value.type === "pdf" || value.type === "docx" ? getImportReviewIssues(data) : [];
-				if (issues.length > 0) {
+				if (sequence !== selectionSequence.current) return;
+				if (!prepared && (value.type === "pdf" || value.type === "docx")) {
+					const pending = { data, sourceText, local };
+					setPrepared({ ...pending, analysis: analyzePrepared(pending, resumeLocale, fallbackLocale) });
 					toast.close(toastId);
-					const details = issues.slice(0, 5).map((issue) => {
-						const label = issue.label.slice(0, 80);
-						return issue.kind === "prose-title"
-							? t`Possible body text in a section title: ${label}`
-							: t`Position not recognized: ${label}`;
-					});
-					const accepted = await confirm(t`Check the recognized fields`, {
-						description: `${t`Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged.`} ${details.join(" · ")}`,
-						confirmText: t`Import and review`,
-						cancelText: t`Cancel import`,
-					});
-					if (!accepted) return;
+					return;
 				}
 
 				const id = await importResume({ data });
@@ -306,6 +340,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 		if (!selected) return;
 		const sequence = ++selectionSequence.current;
 		setUseAiForWord(false);
+		setPrepared(null);
+		setResumeLocale("auto");
 		form.setFieldValue("file", selected);
 		form.setFieldValue("type", "");
 		// #7: pre-select the source format from the file's content; the user can still override below.
@@ -407,7 +443,12 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 											showClear={false}
 											disabled={isImporting || type === "doc"}
 											value={field.state.value}
-											onValueChange={(value) => field.handleChange(value as ImportType)}
+											onValueChange={(value) => {
+												++selectionSequence.current;
+												setPrepared(null);
+												setResumeLocale("auto");
+												field.handleChange(value as ImportType);
+											}}
 											options={[
 												{
 													value: "reactive-resume-json",
@@ -484,7 +525,11 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 								id={wordAiSwitchId}
 								checked={useAiForWord}
 								disabled={isImporting}
-								onCheckedChange={setUseAiForWord}
+								onCheckedChange={(value) => {
+									++selectionSequence.current;
+									setPrepared(null);
+									setUseAiForWord(value);
+								}}
 							/>
 							<Trans>AI-enhanced recognition</Trans>
 						</label>
@@ -522,6 +567,70 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					</div>
 				)}
 
+				{(type === "pdf" || type === "docx") && (
+					<FormItem>
+						<FormLabel htmlFor={languageId}>
+							<Trans>Resume language</Trans>
+						</FormLabel>
+						<Combobox
+							id={languageId}
+							value={resumeLocale}
+							disabled={isImporting}
+							showClear={false}
+							options={[{ value: "auto", label: t`Automatic` }, ...getLocaleOptions()]}
+							onValueChange={(value) => {
+								const next = value === "auto" || isLocale(value) ? value : "auto";
+								setResumeLocale(next);
+								if (prepared) setPrepared({ ...prepared, analysis: analyzePrepared(prepared, next, fallbackLocale) });
+							}}
+						/>
+					</FormItem>
+				)}
+				{prepared && (
+					<section className="space-y-2 rounded-md border p-3 text-sm" aria-label={t`Check the recognized fields`}>
+						<p className="font-medium">
+							<Trans>Check the recognized fields</Trans>
+						</p>
+						<p>
+							<Trans>Final resume language</Trans>:{" "}
+							<span data-testid="import-final-locale">{prepared.analysis.data.metadata.page.locale}</span>
+						</p>
+						<p>
+							{prepared.analysis.data.basics.name || t`Name not recognized`} · {prepared.analysis.data.basics.email} ·{" "}
+							{prepared.analysis.data.basics.phone}
+						</p>
+						<p className="text-muted-foreground">
+							<Trans>
+								Review these fields before creating the new resume. You can change the language above without
+								recognizing the file again.
+							</Trans>
+						</p>
+						<ul className="list-inside list-disc">
+							{prepared.analysis.issues.map((issue, index) => (
+								<li key={index}>
+									{issue.code === "missing-name"
+										? t`Name not recognized`
+										: issue.code === "conflicting-field"
+											? t`Conflicting field kept for review`
+											: issue.code === "uncertain-language"
+												? t`Language could not be determined. Confirm the selected language.`
+												: t`Unrecognized field kept for review`}{" "}
+									{issue.raw.slice(0, 160)}
+								</li>
+							))}
+							{getImportReviewIssues(prepared.analysis.data).map((issue, index) => (
+								<li key={`review-${index}`}>
+									{issue.kind === "prose-title" ? t`Possible body text in a section title` : t`Position not recognized`}
+									: {issue.label.slice(0, 160)}
+								</li>
+							))}
+						</ul>
+						<Button variant="outline" disabled={isImporting} onClick={() => setPrepared(null)}>
+							<Trans>Cancel import</Trans>
+						</Button>
+					</section>
+				)}
+
 				<DialogFooter>
 					<Button
 						type="submit"
@@ -530,11 +639,11 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 							!file ||
 							type === "doc" ||
 							isImporting ||
-							(aiRequired && (!hasUsableProvider || isLoadingAiProviders))
+							(!prepared && aiRequired && (!hasUsableProvider || isLoadingAiProviders))
 						}
 					>
 						{isImporting ? <Spinner /> : null}
-						{isImporting ? t`Importing…` : t`Import`}
+						{isImporting ? t`Importing…` : prepared ? t`Import and review` : t`Import`}
 					</Button>
 				</DialogFooter>
 			</form>

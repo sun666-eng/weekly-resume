@@ -310,7 +310,7 @@ describe("parseResumeText multi-line entry preambles", () => {
 describe("parseResumeText personal info sections", () => {
 	it("maps contact lines inside a personal info section to basics", () => {
 		const data = parseResumeText(
-			"测试用户\n\n个人信息\n邮箱：fixture@example.com\n电话：13800000000\n\n教育背景\n示例大学",
+			"姓名：测试用户\n\n个人信息\n邮箱：fixture@example.com\n电话：13800000000\n\n教育背景\n示例大学",
 		);
 
 		expect(data.basics).toMatchObject({ name: "测试用户", email: "fixture@example.com", phone: "13800000000" });
@@ -328,7 +328,7 @@ describe("parseResumeText personal info sections", () => {
 	});
 
 	it("supports the 个人资料 alias and several fields on one line", () => {
-		const data = parseResumeText("测试用户\n\n个人资料\n邮箱：fixture@example.com 电话：13800000000");
+		const data = parseResumeText("姓名：测试用户\n\n个人资料\n邮箱：fixture@example.com 电话：13800000000");
 
 		expect(data.basics).toMatchObject({ email: "fixture@example.com", phone: "13800000000" });
 		expect(data.summary.content).toBe("");
@@ -355,11 +355,11 @@ describe("parseResumeText personal info sections", () => {
 		expect(data.basics).toMatchObject({ email: "fixture@example.com", phone: "13800000000" });
 	});
 
-	it("keeps a conflicting contact value instead of overwriting basics", () => {
+	it("prefers an explicit contact label and preserves the conflicting bare value", () => {
 		const data = parseResumeText("测试用户\nada@example.com\n\n个人信息\n邮箱：other@example.com");
 
-		expect(data.basics.email).toBe("ada@example.com");
-		expect(data.summary.content).toContain("other@example.com");
+		expect(data.basics.email).toBe("other@example.com");
+		expect(data.summary.content).toContain("ada@example.com");
 	});
 
 	it("drops a duplicated contact value without losing it", () => {
@@ -369,12 +369,12 @@ describe("parseResumeText personal info sections", () => {
 		expect(data.summary.content).not.toContain("ada@example.com");
 	});
 
-	it("keeps unknown personal fields in the summary while extracting contact details", () => {
-		const data = parseResumeText("测试用户\n\n个人信息\n性别：男\n年龄：25\n邮箱：fixture@example.com");
+	it("maps supported personal fields while preserving genuinely unknown fields", () => {
+		const data = parseResumeText("测试用户\n\n个人信息\n性别：男\n年龄：25\n民族：汉族\n邮箱：fixture@example.com");
 
 		expect(data.basics.email).toBe("fixture@example.com");
-		expect(data.summary.content).toContain("性别：男");
-		expect(data.summary.content).toContain("年龄：25");
+		expect(data.basics).toMatchObject({ gender: "male", age: "25" });
+		expect(data.summary.content).toContain("民族：汉族");
 	});
 
 	it("keeps a personal info section without contact details as summary text", () => {

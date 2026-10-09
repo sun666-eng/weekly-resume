@@ -1,8 +1,10 @@
 // @vitest-environment happy-dom
 
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { strToU8, zipSync } from "fflate";
-import { parseResumeText } from "@reactive-resume/import/plain-text";
+import { parseResumeText, parseResumeTextWithDiagnostics } from "@reactive-resume/import/plain-text";
 import { extractDocxText, extractWordXmlText } from "./docx-text";
 
 const namespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
@@ -12,6 +14,44 @@ const file = (xml: string, additional: Record<string, Uint8Array> = {}) =>
 	new File([zipSync({ "word/document.xml": strToU8(xml), ...additional }) as Uint8Array<ArrayBuffer>], "resume.docx");
 
 describe("basic Word extraction", () => {
+	it("retains English names and source language under a Chinese interface", async () => {
+		const bytes = await readFile(resolve("../../tests/e2e/fixtures/english-import-paragraph.docx"));
+		const text = await extractDocxText(new File([new Uint8Array(bytes)], "english.docx"));
+		const { data } = parseResumeTextWithDiagnostics(text, { fallbackLocale: "zh-CN" });
+		expect(data.basics.name).toBe("Sarah Broad");
+		expect(data.basics.email).toBe("sarah.broad@example.test");
+		expect(data.metadata.page.locale).toBe("en-US");
+		expect(data.sections.education.title).toBe("Education");
+		expect(JSON.stringify(data)).toContain("Designed reliable services");
+	});
+	it.each(["chinese-import-paragraph.docx", "chinese-import-table-header.docx"])(
+		"extracts and parses an actual fictional file: %s",
+		async (name) => {
+			const bytes = await readFile(resolve("../../tests/e2e/fixtures", name));
+			const input = new File([new Uint8Array(bytes)], name);
+			const text = await extractDocxText(input);
+			const { data, issues } = parseResumeTextWithDiagnostics(text, { fallbackLocale: "en-US" });
+			expect(data.basics).toMatchObject({
+				name: "欧阳明月",
+				email: "import-fixture@example.test",
+				phone: "13800138000",
+				age: "28",
+				gender: "female",
+				politicalStatus: "party-member",
+				location: "杭州",
+				address: "浙江省杭州市，西湖区示例路1号",
+				blog: { url: "https://example.test/blog" },
+				github: { url: "https://github.com/example" },
+			});
+			expect(data.basics.headline.replace(/\s+/g, " ")).toBe("Java 后端开发工程师");
+			expect(data.metadata.page.locale).toBe("zh-CN");
+			expect(JSON.stringify(data)).toContain("负责接口开发、服务测试与技术方案设计");
+			expect(data.sections.education.items[0]?.period).toBe("2020.09 - 2024.06");
+			expect(data.summary.content).toContain("民族：汉族");
+			expect(issues.some((issue) => issue.code === "missing-name" || issue.code === "conflicting-field")).toBe(false);
+			expect(new Uint8Array(await input.arrayBuffer())).toEqual(new Uint8Array(bytes));
+		},
+	);
 	it("structures Chinese contact information and skill groups without AI", async () => {
 		const xml = document(
 			[

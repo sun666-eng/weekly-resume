@@ -62,9 +62,18 @@ vi.mock("@/features/resume/import/pdf-text", () => ({
 
 vi.mock("@/features/resume/import/docx-text", () => ({ extractDocxText: extractWord }));
 
-vi.mock("@reactive-resume/import/plain-text", () => ({
-	parseResumeText: () => structuredClone(parsedPdf.value ?? sampleResumeData),
-}));
+vi.mock("@reactive-resume/import/plain-text", async () => {
+	const actual = await vi.importActual<typeof import("@reactive-resume/import/plain-text")>(
+		"@reactive-resume/import/plain-text",
+	);
+	return {
+		...actual,
+		parseResumeTextWithDiagnostics: (
+			_text: string,
+			options: import("@reactive-resume/import/plain-text").ResumeTextOptions,
+		) => actual.finalizeResumeImport(structuredClone(parsedPdf.value ?? sampleResumeData), options),
+	};
+});
 
 vi.mock("@/libs/orpc/client", () => ({
 	client: { ai: { parseDocx: parseDocxAi } },
@@ -119,6 +128,12 @@ const createWordFile = () =>
 		type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 	});
 
+async function acceptPreparedImport() {
+	await screen.findByText("Check the recognized fields");
+	expect(importResume).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Import and review" }));
+}
+
 // The dialog renders through a portal, so query the document rather than the render container.
 async function selectWordFile() {
 	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
@@ -144,6 +159,7 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		await selectLocalWord();
 		expect(screen.getByRole("switch", { name: "AI-enhanced recognition" })).not.toBeChecked();
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await acceptPreparedImport();
 		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
 		expect(extractWord).toHaveBeenCalledOnce();
 		expect(parseDocxAi).not.toHaveBeenCalled();
@@ -154,6 +170,7 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		renderDialog();
 		await selectLocalWord();
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await acceptPreparedImport();
 		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
 	});
 	it("requires a provider only after opting into AI and can switch back", async () => {
@@ -172,9 +189,10 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		await selectLocalWord();
 		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await acceptPreparedImport();
 		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
 		expect(parseDocxAi).toHaveBeenCalledOnce();
-		expect(extractWord).not.toHaveBeenCalled();
+		expect(extractWord).toHaveBeenCalledOnce();
 	});
 	it.each([false, true])("reviews suspicious local Word fields before creation, accept=%s", async (accepted) => {
 		const data = structuredClone(sampleResumeData);
@@ -232,7 +250,7 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		fireEvent.change(input, { target: { files: [new File(["%PDF"], "new.pdf", { type: "application/pdf" })] } });
 		await screen.findByText(/read the text out of the PDF here in your browser/);
 		resolveHeader(new Uint8Array([0x50, 0x4b, 0x03, 0x04]).buffer);
-		await waitFor(() => expect(screen.getByRole("combobox")).toHaveTextContent("PDF"));
+		await waitFor(() => expect(screen.getByRole("combobox", { name: "Type" })).toHaveTextContent("PDF"));
 		expect(screen.queryByRole("switch")).not.toBeInTheDocument();
 	});
 	it.each([true, false])("shows controlled extraction guidance, safe=%s", async (safe) => {
@@ -346,8 +364,92 @@ describe("ImportResumeDialog — detected files without MIME metadata", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
 
 		await waitFor(() => {
+			expect(screen.getByText("Check the recognized fields")).toBeVisible();
+		});
+		await acceptPreparedImport();
+		await waitFor(() => {
 			expect(importResume).toHaveBeenCalledOnce();
 		});
+	});
+});
+
+describe("ImportResumeDialog — language and prepared results", () => {
+	async function selectWord() {
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("Missing file input");
+		fireEvent.change(input, { target: { files: [createWordFile()] } });
+		await screen.findByText("Basic import is available without AI.");
+	}
+	async function chooseChinese() {
+		await userEvent.click(screen.getByRole("combobox", { name: "Resume language" }));
+		await userEvent.click(await screen.findByRole("option", { name: /zh-CN/ }));
+	}
+	it("changes prepared language without extracting or invoking AI again", async () => {
+		provider.hasUsableProvider = true;
+		parseDocxAi.mockResolvedValue(structuredClone(sampleResumeData));
+		importResume.mockResolvedValue("language-import");
+		renderDialog();
+		await selectWord();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await screen.findByText("Check the recognized fields");
+		await chooseChinese();
+		expect(screen.getByTestId("import-final-locale")).toHaveTextContent("zh-CN");
+		expect(parseDocxAi).toHaveBeenCalledOnce();
+		expect(extractWord).toHaveBeenCalledOnce();
+		await acceptPreparedImport();
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(importResume.mock.calls[0]?.[0].data.metadata.page.locale).toBe("zh-CN");
+	});
+	it("uses actual AI body when local extraction fails", async () => {
+		provider.hasUsableProvider = true;
+		extractWord.mockRejectedValue(new Error("local unavailable"));
+		const data = structuredClone(sampleResumeData);
+		data.basics.name = "张三";
+		data.basics.headline = "";
+		data.basics.location = "";
+		data.summary.content = "负责后台服务开发和接口测试，参与产品上线和技术方案设计。";
+		for (const section of Object.values(data.sections)) section.items = [];
+		data.customSections = [];
+		parseDocxAi.mockResolvedValue(data);
+		renderDialog();
+		await selectWord();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await screen.findByText("Check the recognized fields");
+		expect(screen.getByTestId("import-final-locale")).toHaveTextContent("zh-CN");
+		expect(importResume).not.toHaveBeenCalled();
+	});
+	it("clears prepared data on file and AI changes", async () => {
+		renderDialog();
+		await selectWord();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await screen.findByText("Check the recognized fields");
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		expect(screen.queryByText("Check the recognized fields")).not.toBeInTheDocument();
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("Missing file input");
+		fireEvent.change(input, { target: { files: [createPdfFile()] } });
+		await screen.findByText(/read the text out of the PDF here in your browser/);
+		expect(screen.queryByText("Check the recognized fields")).not.toBeInTheDocument();
+		expect(screen.getByRole("combobox", { name: "Resume language" })).toHaveTextContent("Automatic");
+		expect(importResume).not.toHaveBeenCalled();
+	});
+	it("preserves JSON locale and hides text-import language selection", async () => {
+		importResume.mockResolvedValue("json-locale");
+		renderDialog();
+		const data = structuredClone(sampleResumeData);
+		data.metadata.page.locale = "zh-TW";
+		const input = document.querySelector('input[type="file"]');
+		if (!input) throw new Error("Missing file input");
+		fireEvent.change(input, {
+			target: { files: [new File([JSON.stringify(data)], "resume.json", { type: "application/json" })] },
+		});
+		await screen.findByText("Weekly Resume (JSON)");
+		expect(screen.queryByRole("combobox", { name: "Resume language" })).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(importResume.mock.calls[0]?.[0].data.metadata.page.locale).toBe("zh-TW");
 	});
 });
 

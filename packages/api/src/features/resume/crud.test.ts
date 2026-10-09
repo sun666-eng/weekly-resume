@@ -5,6 +5,7 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const mocks = vi.hoisted(() => ({
 	create: vi.fn(),
+	import: vi.fn(),
 	getById: vi.fn(),
 	update: vi.fn(),
 	snapshot: vi.fn(),
@@ -24,6 +25,7 @@ vi.mock("../../context", async () => {
 vi.mock("./service", () => ({
 	resumeService: {
 		create: mocks.create,
+		import: mocks.import,
 		getById: mocks.getById,
 		update: mocks.update,
 		versions: { snapshot: mocks.snapshot },
@@ -84,7 +86,28 @@ describe("resume write route validation", () => {
 		mocks.create.mockResolvedValue("resume-id");
 		mocks.update.mockResolvedValue({});
 		mocks.snapshot.mockResolvedValue(undefined);
+		mocks.import.mockResolvedValue("imported-id");
 	});
+
+	it.each(["zh-CN", "en-US", "zh-TW"])(
+		"imports %s through the atomic method independently of UI locale",
+		async (locale) => {
+			const client = createRouterClient(crudRouter, {
+				context: { locale: "en-US", reqHeaders: new Headers(), user: { id: "user-id" } } as never,
+			});
+			const data = structuredClone(defaultResumeData);
+			data.metadata.page.locale = locale;
+			expect(await client.import({ data })).toBe("imported-id");
+			expect(mocks.import).toHaveBeenCalledOnce();
+			expect(mocks.import.mock.calls[0]?.[0]).toMatchObject({
+				userId: "user-id",
+				data: { metadata: { page: { locale } } },
+			});
+			expect(mocks.import.mock.calls[0]?.[0]).not.toHaveProperty("locale");
+			expect(mocks.create).not.toHaveBeenCalled();
+			expect(mocks.snapshot).not.toHaveBeenCalled();
+		},
+	);
 
 	it.each(["import", "update"] as const)("rejects invalid %s input before calling persistence", async (operation) => {
 		const client = createRouterClient(crudRouter, {
@@ -99,6 +122,7 @@ describe("resume write route validation", () => {
 		expect(error).toMatchObject({ code: "BAD_REQUEST", status: 400 });
 		expect(error).toHaveProperty("cause.issues.0.path", ["data", "metadata", "page", "marginX"]);
 		expect(mocks.create).not.toHaveBeenCalled();
+		expect(mocks.import).not.toHaveBeenCalled();
 		expect(mocks.update).not.toHaveBeenCalled();
 		expect(mocks.snapshot).not.toHaveBeenCalled();
 	});

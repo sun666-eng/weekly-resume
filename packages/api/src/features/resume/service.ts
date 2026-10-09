@@ -70,8 +70,9 @@ const SNAPSHOT_THROTTLE_MS = 2 * 60 * 1000;
 async function writeResumeVersion(
 	client: DbOrTx,
 	input: { resumeId: string; userId: string; data: ResumeData; label: string },
+	normalized = false,
 ) {
-	const data = parseWritableResumeData(input.data);
+	const data = normalized ? input.data : parseWritableResumeData(input.data);
 
 	await client.insert(schema.resumeVersion).values({
 		resumeId: input.resumeId,
@@ -403,7 +404,7 @@ export const resumeService = {
 				.limit(MAX_VERSIONS_PER_RESUME);
 		},
 
-		// Best-effort checkpoint used by non-transactional milestones (e.g. import).
+		// Best-effort checkpoint used by non-transactional milestones (e.g. before restore).
 		snapshot: async (input: { resumeId: string; userId: string; data: ResumeData; label: string }) => {
 			try {
 				await writeResumeVersion(db, input);
@@ -564,6 +565,32 @@ export const resumeService = {
 		}
 
 		return toSharedResumeResponse(redactResumeForViewer(resume, isOwner(resume, viewer)), resume.hasPassword);
+	},
+
+	import: async (input: { id?: string; userId: string; name: string; slug: string; data: ResumeData }) => {
+		const id = input.id ?? generateId();
+		const data = parseWritableResumeData(structuredClone(input.data));
+		try {
+			await db.transaction(async (tx) => {
+				await tx
+					.insert(schema.resume)
+					.values({ id, name: input.name, slug: input.slug, tags: [], userId: input.userId, data });
+				await writeResumeVersion(tx, { resumeId: id, userId: input.userId, data, label: "Imported" }, true);
+			});
+		} catch (error) {
+			if (get(error, "cause.constraint") === "resume_slug_user_id_unique")
+				throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
+			console.error("Failed to import resume:", error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Failed to import resume. Please retry." });
+		}
+		await notifyResumeUpdated({
+			type: "resume.updated",
+			resumeId: id,
+			userId: input.userId,
+			updatedAt: new Date().toISOString(),
+			mutation: "create",
+		});
+		return id;
 	},
 
 	create: async (input: {

@@ -238,6 +238,15 @@ it("imports", () => {
 });
 
 describe("create", () => {
+	it("keeps the ordinary creation interface-locale contract", async () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.page.locale = "zh-CN";
+		const values = vi.fn((_input: unknown) => Promise.resolve());
+		dbMock.insert.mockReturnValue({ values });
+		await resumeService.create({ userId: "u1", name: "New", slug: "new", tags: [], locale: "en-US", data });
+		expect(values.mock.calls[0]?.[0]).toHaveProperty("data.metadata.page.locale", "en-US");
+		expect(data.metadata.page.locale).toBe("zh-CN");
+	});
 	it("rejects out-of-range values before creating any record", async () => {
 		const data = structuredClone(defaultResumeData);
 		data.metadata.page.marginX = 500;
@@ -318,6 +327,70 @@ describe("create", () => {
 	});
 });
 
+describe("atomic import", () => {
+	function harness(failAt?: number) {
+		const committed: Array<{ data: ResumeData; label?: string }> = [];
+		const staged: typeof committed = [];
+		const values = vi.fn((row: (typeof committed)[number]) => {
+			if (values.mock.calls.length === failAt) throw new Error("simulated write failure");
+			staged.push(structuredClone(row));
+			return Promise.resolve();
+		});
+		const tx = {
+			insert: vi.fn(() => ({ values })),
+			select: vi.fn(() => ({ from: () => ({ where: () => ({ orderBy: () => ({ limit: () => [] }) }) }) })),
+			delete: vi.fn(() => ({ where: () => Promise.resolve() })),
+		};
+		dbMock.transaction.mockImplementation(async (run: (client: typeof tx) => Promise<unknown>) => {
+			const result = await run(tx);
+			expect(publishResumeUpdatedMock).not.toHaveBeenCalled();
+			committed.push(...staged);
+			return result;
+		});
+		return { committed, values, tx };
+	}
+	it.each(["zh-CN", "en-US", "zh-TW", "fr-FR"])(
+		"preserves %s and checkpoints exactly the persisted data",
+		async (locale) => {
+			const { committed } = harness();
+			const data = createOverlappingRendererSafeResumeData();
+			data.metadata.page.locale = locale;
+			data.basics.name = "张三";
+			const before = structuredClone(data);
+			const id = await resumeService.import({ id: "import1", userId: "u1", name: "Imported", slug: "imported", data });
+			expect(id).toBe("import1");
+			expect(committed).toHaveLength(2);
+			expect(committed[0]?.data).toEqual(committed[1]?.data);
+			expect(committed[0]?.data.metadata.page.locale).toBe(locale);
+			expect(committed[1]?.label).toBe("Imported");
+			expect(data).toEqual(before);
+			expect(publishResumeUpdatedMock).toHaveBeenCalledOnce();
+		},
+	);
+	it.each([1, 2])("rolls back failed write %s without publishing", async (failAt) => {
+		const { committed } = harness(failAt);
+		await expect(
+			resumeService.import({
+				userId: "u1",
+				name: "Imported",
+				slug: "imported",
+				data: structuredClone(defaultResumeData),
+			}),
+		).rejects.toMatchObject({ code: "INTERNAL_SERVER_ERROR" });
+		expect(committed).toEqual([]);
+		expect(publishResumeUpdatedMock).not.toHaveBeenCalled();
+	});
+	it("rejects invalid data before opening a transaction", async () => {
+		harness();
+		const data = structuredClone(defaultResumeData);
+		data.metadata.page.marginX = 500;
+		await expect(
+			resumeService.import({ userId: "u1", name: "Imported", slug: "imported", data }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(dbMock.transaction).not.toHaveBeenCalled();
+	});
+});
+
 describe("versions.snapshot", () => {
 	it("persists normalized data in version snapshots", async () => {
 		const values = vi.fn((_input: unknown) => Promise.resolve());
@@ -355,6 +428,25 @@ describe("versions.snapshot", () => {
 });
 
 describe("versions.restore", () => {
+	it.each(["zh-CN", "en-US", "zh-TW"])(
+		"restores the snapshot's %s locale rather than the current locale",
+		async (locale) => {
+			const current = structuredClone(defaultResumeData);
+			current.metadata.page.locale = "fr-FR";
+			const restored = structuredClone(defaultResumeData);
+			restored.metadata.page.locale = locale;
+			const { set } = createRestoreHarness(current, restored);
+			const result = await resumeService.versions.restore({ resumeId: "r1", versionId: "v1", userId: "u1" });
+			expect(result.data.metadata.page.locale).toBe(locale);
+			expect(set).toHaveBeenCalledWith(
+				expect.objectContaining({
+					data: expect.objectContaining({
+						metadata: expect.objectContaining({ page: expect.objectContaining({ locale }) }),
+					}),
+				}),
+			);
+		},
+	);
 	it("does not overwrite a save that lands after reading the pre-restore version", async () => {
 		const { set } = createRestoreHarness(
 			createSemanticResumeData(),

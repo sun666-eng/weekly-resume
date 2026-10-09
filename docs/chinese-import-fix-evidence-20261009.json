@@ -1,0 +1,192 @@
+{
+	"files": [
+		{
+			"file": "word-paragraph.docx",
+			"bytes": 9680,
+			"sha256": "74b5e182dbdc0de3e01170bb61d0b462ad38d7afd21f70ba6945865ffe611acf",
+			"missing": [],
+			"links": ["mailto:import-fixture@example.test", "https://example.test/blog", "https://github.com/example"]
+		},
+		{
+			"file": "word-table.docx",
+			"bytes": 9683,
+			"sha256": "02e64b61265707f70c064351bde59ac7d6bc659a07eabdbdcfb2ebdb1e74fefe",
+			"missing": [],
+			"links": ["mailto:import-fixture@example.test", "https://example.test/blog", "https://github.com/example"]
+		},
+		{
+			"file": "word-paragraph.pdf",
+			"bytes": 33927,
+			"sha256": "49d8ba07bd8b900e4bb7a302215d1442758650953b62720bf1b717649398d32b",
+			"missing": [],
+			"links": []
+		},
+		{
+			"file": "cmap-import.pdf",
+			"bytes": 36279,
+			"sha256": "3a12196f72cd8fcf0400c65ef453afb741c327b709a5087b9d13e3bc0acdd750",
+			"missing": [],
+			"links": []
+		},
+		{
+			"file": "personal-fields.pdf",
+			"bytes": 36062,
+			"sha256": "add9d0047f39528f67f25e519c1122d001395a86c9c35e34f60d32d1fbb1dd65",
+			"missing": [],
+			"links": []
+		},
+		{
+			"file": "english-import.docx",
+			"bytes": 9250,
+			"sha256": "fce05ab76140fecad58126494ed761dda07a6d70a686f1c1c05c2ffa222b50c6",
+			"missing": [],
+			"links": ["mailto:sarah.broad@example.test"]
+		}
+	],
+	"persistence": [
+		{
+			"case": "word-persisted",
+			"id": "01a11f7e-6699-7742-b7e2-6452a5631af4",
+			"equal": true,
+			"locale": "zh-CN"
+		},
+		{
+			"case": "word-table-persisted",
+			"id": "01a11f6f-2b76-76a8-bf1d-d6a6dda7a6d9",
+			"equal": true,
+			"locale": "zh-CN"
+		},
+		{
+			"case": "cmap-persisted",
+			"id": "01a11f7e-8aaf-7094-9c7b-d41c0c94be3e",
+			"equal": true,
+			"locale": "zh-CN"
+		},
+		{
+			"case": "personal-fields-persisted",
+			"id": "01a11f79-d665-72c6-8953-1ca61621278f",
+			"equal": true,
+			"locale": "zh-CN"
+		},
+		{
+			"case": "english-persisted",
+			"id": "01a11f77-e7d5-763e-8ebd-4695d1f14bb4",
+			"equal": true,
+			"locale": "en-US"
+		},
+		{
+			"case": "word-restored",
+			"id": "01a11f7e-6699-7742-b7e2-6452a5631af4",
+			"name": "欧阳明月",
+			"locale": "zh-CN",
+			"equal": true
+		},
+		{
+			"case": "cmap-restored",
+			"id": "01a11f6b-e129-73c0-8bba-511d6da0ccb2",
+			"name": "张三",
+			"locale": "zh-CN",
+			"equal": true
+		}
+	],
+	"resources": [
+		{
+			"path": "cmaps/UniGB-UCS2-H.bcmap",
+			"status": 200,
+			"sha256": "9201569b402e81ad8860650bd86350c4fa28e5dd5971f05fcacaf40f51de18ed",
+			"contentType": "application/octet-stream"
+		},
+		{
+			"path": "cmaps/Adobe-GB1-UCS2.bcmap",
+			"status": 200,
+			"sha256": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641",
+			"contentType": "application/octet-stream"
+		},
+		{
+			"path": "standard_fonts/LiberationSans-Regular.ttf",
+			"status": 200,
+			"sha256": "f8ace1f892b2bd9dc1792ba7f097fa7588f84fed48321480e04de5390828221f",
+			"contentType": "font/ttf"
+		},
+		{
+			"path": "wasm/openjpeg.wasm",
+			"status": 200,
+			"sha256": "004a0e62db930ba9ff2a22212f4554d0bb57a0635a8287caf70f98117cee14ba",
+			"contentType": "application/wasm"
+		}
+	],
+	"tests": {
+		"import": {
+			"passed": 217,
+			"failed": 0,
+			"skipped": 0
+		},
+		"api": {
+			"passed": 420,
+			"failed": 0,
+			"skipped": 7
+		},
+		"web": {
+			"passed": 1123,
+			"failed": 0,
+			"skipped": 0,
+			"stage": "Full package before final English-boundary/sample changes; final affected suite rerun separately"
+		},
+		"web-import": {
+			"passed": 64,
+			"failed": 0,
+			"skipped": 0,
+			"stage": "Final source"
+		}
+	},
+	"inputPdf": {
+		"locale": "en-US",
+		"requiresExternalCMap": true
+	},
+	"status": "candidate_accepted_not_deployed",
+	"createdAt": "2026-10-09T07:20:48.758Z",
+	"branch": "review/release-audit-20261009",
+	"source": {
+		"baseCommit": "10386a428f4ad64fee02d31c207e154a1c28d598",
+		"sha256": "46e64e9a75a2cd3b323723655a30eb64cc1c9febd2bfc60641623f13b11b971e",
+		"files": 1767,
+		"runtimeChangesAfterFreeze": []
+	},
+	"image": {
+		"name": "weekly-resume:chinese-import-20261009-46e64e9a75a2",
+		"manifestId": "sha256:ddf1df841fb0fda92a40e5acb46b814221d58b85137a7c85bb87c0f78385e58a",
+		"architecture": "amd64"
+	},
+	"candidate": {
+		"url": "http://127.0.0.1:3410",
+		"isolatedDatabase": true,
+		"isolatedUploads": true,
+		"health": "healthy",
+		"oomKilled": false,
+		"productionChanged": false
+	},
+	"checks": {
+		"affectedTypechecks": ["import", "api", "web"],
+		"biomeChangedFiles": 13,
+		"packageBoundaries": {
+			"files": 1559,
+			"packages": 20,
+			"issues": 0
+		},
+		"chinaRulesSnapshot": "matches",
+		"productionBuild": "passed",
+		"pdfVisual": "passed",
+		"docxVisual": "not_completed_tool_unavailable",
+		"paidAi": "not_called"
+	},
+	"browser": {
+		"uniqueInputTypes": 5,
+		"successfulImports": 7,
+		"cancelBeforeCreationCount": 0,
+		"explicitLanguageOverride": "passed",
+		"refresh": "passed",
+		"restore": "passed",
+		"finalFrozenWordAndCMapReimport": "passed",
+		"screenshots": "output/playwright/chinese-import-20261009"
+	}
+}
