@@ -8063,3 +8063,223 @@ msgstr "Your session expired. Sign in again to save your changes."
 
 msgid "Sign in again"
 msgstr "Sign in again"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Advanced picture settings"
+msgstr "Advanced picture settings"
+
+#: src/dialogs/resume/import.tsx
+msgid "Cancel import"
+msgstr "Cancel import"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the recognized fields"
+msgstr "Check the recognized fields"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import and review"
+msgstr "Import and review"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Not saved"
+msgstr "Not saved"
+
+#: src/dialogs/resume/import.tsx
+msgid "Position not recognized: {label}"
+msgstr "Position not recognized: {label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+msgid "Position not specified"
+msgstr "Position not specified"
+
+#: src/dialogs/resume/import.tsx
+msgid "Possible body text in a section title: {label}"
+msgstr "Possible body text in a section title: {label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Replace picture"
+msgstr "Replace picture"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Resolve conflict"
+msgstr "Resolve conflict"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Saved locally"
+msgstr "Saved locally"
+
+#: src/dialogs/resume/import.tsx
+msgid "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+msgstr "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your changes are saved to your account."
+msgstr "Your changes are saved to your account."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+msgstr "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are being saved. Wait for “Saved” before closing this page."
+msgstr "Your latest changes are being saved. Wait for “Saved” before closing this page."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are not backed up. Keep this page open until saving succeeds."
+msgstr "Your latest changes are not backed up. Keep this page open until saving succeeds."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Your picture is hidden from the resume."
+msgstr "Your picture is hidden from the resume."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Retry saving"
+msgstr "Retry saving"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
+msgstr "Picture could not be loaded. Replace it or check its URL in advanced settings."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+msgstr "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word file is too large. Please use a file smaller than 15 MB."
+msgstr "This Word file is too large. Please use a file smaller than 15 MB."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+msgstr "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+msgstr "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Basic import is available without AI."
+msgstr "Basic import is available without AI."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+msgstr "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition"
+msgstr "AI-enhanced recognition"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "The document will be sent to your connected AI provider for recognition when you import."
+msgstr "The document will be sent to your connected AI provider for recognition when you import."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+msgstr "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture width"
+msgstr "Picture width"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture shape"
+msgstr "Picture shape"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Portrait 3:4"
+msgstr "Portrait 3:4"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Square 1:1"
+msgstr "Square 1:1"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Original proportions"
+msgstr "Original proportions"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+msgstr "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+
+msgid "China job reference (optional)"
+msgstr "China job reference (optional)"
+
+msgid "No role selected"
+msgstr "No role selected"
+
+msgid "Career stage (optional)"
+msgstr "Career stage (optional)"
+
+msgid "Any stage"
+msgstr "Any stage"
+
+msgid "Campus recruitment"
+msgstr "Campus recruitment"
+
+msgid "Internship"
+msgstr "Internship"
+
+msgid "Experienced"
+msgstr "Experienced"
+
+msgid "Career change"
+msgstr "Career change"
+
+msgid "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+msgstr "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+
+msgid "Human-curated practice"
+msgstr "Human-curated practice"
+
+msgid "Official guidance"
+msgstr "Official guidance"
+
+msgid "Legal reference"
+msgstr "Legal reference"
+
+msgid "Official standard"
+msgstr "Official standard"
+
+msgid "Reviewed: {0}"
+msgstr "Reviewed: {0}"
+
+msgid "No external source; human-curated practice."
+msgstr "No external source; human-curated practice."
+
+msgid "China job reference"
+msgstr "China job reference"
+
+msgid "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+msgstr "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+
+msgid "Appears in the text"
+msgstr "Appears in the text"
+
+msgid "No text evidence found"
+msgstr "No text evidence found"
+
+msgid "Evidence to review"
+msgstr "Evidence to review"
+
+msgid "Truthfulness and privacy constraints ({0})"
+msgstr "Truthfulness and privacy constraints ({0})"
+
+msgid "Reference version: {0}"
+msgstr "Reference version: {0}"
+
+msgid "Inputs changed. Run the check again before requesting an AI review."
+msgstr "Inputs changed. Run the check again before requesting an AI review."
+
+msgid "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+msgstr "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+
+msgid "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+msgstr "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+
+msgid "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+msgstr "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+
+msgid "Role methodology and sources"
+msgstr "Role methodology and sources"
+
+msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+msgstr "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."

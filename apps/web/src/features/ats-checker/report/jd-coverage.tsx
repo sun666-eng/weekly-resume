@@ -16,22 +16,29 @@ type JdCoverageProps = {
 export function JdCoverage({ jd }: JdCoverageProps) {
 	if (jd.totalTerms === 0) {
 		return (
-			<p className="rounded-md border border-dashed p-3 text-muted-foreground text-xs leading-normal">
-				<Trans>
-					No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the
-					requirements section for a more useful comparison.
-				</Trans>
-			</p>
+			<div className="space-y-2 rounded-md border border-dashed p-3 text-muted-foreground text-xs leading-normal">
+				<p>
+					<Trans>
+						No specific terms could be pulled out of that job description, so it may be mostly boilerplate. Paste the
+						requirements section for a more useful comparison.
+					</Trans>
+				</p>
+				<SegmentationNotice segmentation={jd.segmentation} />
+			</div>
 		);
 	}
 
 	const matched = jd.terms.filter((term) => term.resumeCount > 0);
 	const missing = jd.terms.filter((term) => term.resumeCount === 0);
 
-	// The tokenizer is English-oriented (stemming, stop words, Latin n-grams). A predominantly CJK
-	// posting yields few real terms and misleading coverage, so say so instead of implying a score.
+	// Older saved reports predate Chinese segmentation support.
 	const letters = jd.jobDescription?.match(/\p{L}/gu)?.length ?? 0;
-	const cjkLetters = jd.jobDescription?.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu)?.length ?? 0;
+	const cjkLetters =
+		jd.jobDescription?.match(
+			jd.segmentation
+				? /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu
+				: /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu,
+		)?.length ?? 0;
 	const cjkHeavy = letters > 0 && cjkLetters / letters > 0.2;
 	return (
 		<div className="space-y-3 rounded-md border bg-card p-3">
@@ -47,11 +54,17 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 				{cjkHeavy && (
 					<p className="text-muted-foreground text-xs leading-normal">
 						<Trans>
-							Keyword matching currently understands English postings best. For a Chinese job description, treat the
-							terms below as a rough list rather than a coverage measure.
+							Segmentation support for this posting's language is limited. Treat these terms as a rough reference list.
 						</Trans>
 					</p>
 				)}
+				<SegmentationNotice segmentation={jd.segmentation} />
+				<p className="text-muted-foreground text-xs">
+					<Trans>
+						Terms are drawn only from your job description. Text matches do not verify skills or interpret required
+						versus preferred qualifications.
+					</Trans>
+				</p>
 			</div>
 
 			{missing.length > 0 && (
@@ -98,5 +111,18 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 				</p>
 			)}
 		</div>
+	);
+}
+
+type SegmentationNoticeProps = { segmentation: JdMatchReport["segmentation"] };
+function SegmentationNotice({ segmentation }: SegmentationNoticeProps) {
+	if (segmentation !== "dictionary-fallback") return null;
+	return (
+		<p className="text-muted-foreground text-xs">
+			<Trans>
+				This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be
+				incomplete.
+			</Trans>
+		</p>
 	);
 }

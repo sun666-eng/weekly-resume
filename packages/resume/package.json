@@ -4,6 +4,7 @@
 	"type": "module",
 	"private": true,
 	"exports": {
+		"./china-job-rules": "./src/china-job-rules/index.ts",
 		"./editor-sections": "./src/editor-sections.ts",
 		"./skill-groups": "./src/skill-groups.ts",
 		"./merge": "./src/merge.ts",

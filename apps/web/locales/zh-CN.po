@@ -8141,3 +8141,223 @@ msgstr "登录已过期，请重新登录后保存修改。"
 
 msgid "Sign in again"
 msgstr "重新登录"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Advanced picture settings"
+msgstr "照片高级设置"
+
+#: src/dialogs/resume/import.tsx
+msgid "Cancel import"
+msgstr "取消导入"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the recognized fields"
+msgstr "请核对识别结果"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import and review"
+msgstr "导入后核对"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Not saved"
+msgstr "尚未保存"
+
+#: src/dialogs/resume/import.tsx
+msgid "Position not recognized: {label}"
+msgstr "未识别到职位：{label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+msgid "Position not specified"
+msgstr "尚未填写职位"
+
+#: src/dialogs/resume/import.tsx
+msgid "Possible body text in a section title: {label}"
+msgstr "章节标题可能混入正文：{label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Replace picture"
+msgstr "更换照片"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Resolve conflict"
+msgstr "需要处理冲突"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Saved locally"
+msgstr "仅本机备份"
+
+#: src/dialogs/resume/import.tsx
+msgid "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+msgstr "部分字段可能识别不准确。导入为新简历后，请在编辑器核对以下内容；已有简历不会改变。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your changes are saved to your account."
+msgstr "修改已保存到你的账号。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+msgstr "最新修改仅备份在当前浏览器，尚未保存到账号。请保持页面打开并处理保存错误；其他设备暂时看不到这些修改。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are being saved. Wait for “Saved” before closing this page."
+msgstr "正在保存最新修改。请等到显示“已保存”再关闭页面。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are not backed up. Keep this page open until saving succeeds."
+msgstr "最新修改尚未备份。请保持页面打开，直到保存成功。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Your picture is hidden from the resume."
+msgstr "照片已隐藏，不会显示在简历中。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Retry saving"
+msgstr "重试保存"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
+msgstr "照片加载失败。请更换照片，或在高级设置中检查照片 URL。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+msgstr "此文件不是可读取的 DOCX 文档。请另存为未加密的 .docx 文件后重试。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word file is too large. Please use a file smaller than 15 MB."
+msgstr "Word 文件过大。请使用小于 15 MB 的文件。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+msgstr "此 Word 文档没有可读取的文字。基础识别无法导入图片或扫描页中的内容。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+msgstr "暂不支持旧版 .doc 或加密的 Word 文件。请用 Word 或 WPS 打开文件，另存为未加密的 .docx 文件后再导入。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Basic import is available without AI."
+msgstr "基础导入无需配置 AI。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+msgstr "在当前浏览器读取文档文字并识别简历字段。导入后请核对内容；照片和 Word 原有排版不会导入。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition"
+msgstr "AI 增强识别"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "The document will be sent to your connected AI provider for recognition when you import."
+msgstr "导入时，文档将发送给已连接的 AI 服务商进行识别。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+msgstr "AI 增强识别需要连接 AI 服务商。关闭此选项即可使用基础导入。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture width"
+msgstr "照片宽度"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture shape"
+msgstr "照片比例"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Portrait 3:4"
+msgstr "竖版 3:4"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Square 1:1"
+msgstr "正方形 1:1"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Original proportions"
+msgstr "原图比例"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+msgstr "高度根据宽度和比例自动调整。想恢复之前裁掉的内容，请重新上传原图。"
+
+msgid "China job reference (optional)"
+msgstr "中国岗位参考（可选）"
+
+msgid "No role selected"
+msgstr "未选择岗位"
+
+msgid "Career stage (optional)"
+msgstr "求职阶段（可选）"
+
+msgid "Any stage"
+msgstr "不限阶段"
+
+msgid "Campus recruitment"
+msgstr "校园招聘"
+
+msgid "Internship"
+msgstr "实习"
+
+msgid "Experienced"
+msgstr "社会招聘"
+
+msgid "Career change"
+msgstr "转岗"
+
+msgid "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+msgstr "人工整理的初始基线，不代表招聘平台统计结论。目标 JD 优先。"
+
+msgid "Human-curated practice"
+msgstr "人工整理基线"
+
+msgid "Official guidance"
+msgstr "官方就业指导"
+
+msgid "Legal reference"
+msgstr "法律依据参考"
+
+msgid "Official standard"
+msgstr "官方职业标准"
+
+msgid "Reviewed: {0}"
+msgstr "复核日期：{0}"
+
+msgid "No external source; human-curated practice."
+msgstr "无外部来源，属于人工整理实践。"
+
+msgid "China job reference"
+msgstr "中国岗位参考"
+
+msgid "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+msgstr "本清单不参与解析评分。关键词出现不证明具备能力；未出现也不代表缺少技能。"
+
+msgid "Appears in the text"
+msgstr "已出现在文本中"
+
+msgid "No text evidence found"
+msgstr "未见文本证据"
+
+msgid "Evidence to review"
+msgstr "岗位证据审核清单"
+
+msgid "Truthfulness and privacy constraints ({0})"
+msgstr "真实性与隐私约束（{0} 条）"
+
+msgid "Reference version: {0}"
+msgstr "规则库版本：{0}"
+
+msgid "Inputs changed. Run the check again before requesting an AI review."
+msgstr "输入已变更。请重新检测后再进行 AI 审阅。"
+
+msgid "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+msgstr "本次还会发送所选岗位、求职阶段及中国规则库的相关规则，供 AI 审阅参考。"
+
+msgid "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+msgstr "当前浏览器缺少分词器，中文匹配仅覆盖已知术语词典，结果可能不完整。"
+
+msgid "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+msgstr "词项只来自你提供的 JD。文本匹配不核验技能，也不区分必需条件与优先条件。"
+
+msgid "Role methodology and sources"
+msgstr "岗位画像方法与参考来源"
+
+msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+msgstr "该 JD 语言的分词支持有限，请将词项作为粗略参考清单。"

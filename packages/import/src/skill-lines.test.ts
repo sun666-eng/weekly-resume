@@ -4,6 +4,21 @@ import { parseResumeText } from "./plain-text";
 import { parseSkillLines } from "./skill-lines";
 
 describe("skill group import", () => {
+	it("keeps proficiency beside its skill and keyword list", () => {
+		expect(
+			parseSkillLines([
+				"Unity Engine",
+				"Expert",
+				"C#, Editor Tools, Performance Profiling",
+				"Game AI",
+				"Advanced",
+				"FSM, Pathfinding",
+			]),
+		).toEqual([
+			{ name: "Unity Engine", proficiency: "Expert", keywords: ["C#", "Editor Tools", "Performance Profiling"] },
+			{ name: "Game AI", proficiency: "Advanced", keywords: ["FSM", "Pathfinding"] },
+		]);
+	});
 	it("keeps standalone and wrapped lines under an explicit category", () => {
 		expect(parseSkillLines(["硬件与通信", "MQTT", "ESP32-C6", "工具：", "Docker", "SQL"])).toEqual([
 			{ name: "硬件与通信", keywords: ["MQTT", "ESP32-C6"] },

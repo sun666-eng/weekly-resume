@@ -1,5 +1,6 @@
 import type { HarvestProgress, RawExtraction } from "@reactive-resume/resume/ats-pdf";
 import { HARVEST_DEFAULTS, harvestPdfDocument } from "@reactive-resume/resume/ats-pdf";
+import { pdfjsResourceOptions } from "./pdfjs-resources";
 
 /**
  * The only file in the app that talks to PDF.js for the ATS checker.
@@ -75,7 +76,7 @@ export async function extractPdf(file: File, options: ExtractOptions = {}): Prom
 
 	// fontExtraProperties keeps the real font objects reachable through commonObjs, which is the
 	// only honest source for Type 3 / invalid / non-embedded font facts.
-	const loadingTask = getDocument({ data, fontExtraProperties: true });
+	const loadingTask = getDocument({ data, fontExtraProperties: true, ...pdfjsResourceOptions() });
 
 	try {
 		const document = await loadingTask.promise;

@@ -6,6 +6,12 @@ node_modules
 dist
 .vercel
 .wrangler
+/output/
+
+# Local review references and one-off maintenance scripts
+/resume-reference-*
+/tooling/tmp-*.py
+/tooling/*.tmp.mjs
 
 # Environment Variables
 .env*

@@ -1,3 +1,4 @@
+import type { ChinaReferenceOptions } from "@reactive-resume/resume/china-job-rules";
 import type { ReactNode } from "react";
 import type { ExtractProgress } from "./extract-client";
 import type { AtsCheckResult } from "./run-ats-check";
@@ -10,9 +11,10 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
+import { ChinaReferenceControls } from "./china-reference-options";
 import { PdfPasswordRequiredError, PdfTooLargeError, PdfUnreadableError } from "./extract-client";
 import { AtsPdfReportView } from "./report/report-view";
-import { runAtsCheck } from "./run-ats-check";
+import { atsContextChanged, runAtsCheck } from "./run-ats-check";
 import { AtsUploader } from "./uploader";
 
 const MAX_JOB_DESCRIPTION_CHARS = 20_000;
@@ -45,40 +47,46 @@ type AtsCheckerToolProps = {
 export function AtsCheckerTool({ renderAiTier }: AtsCheckerToolProps) {
 	const [file, setFile] = useState<File | null>(null);
 	const [jobDescription, setJobDescription] = useState("");
+	const [chinaOptions, setChinaOptions] = useState<ChinaReferenceOptions>({});
 	const [result, setResult] = useState<AtsCheckResult | null>(null);
 	const [progress, setProgress] = useState<ExtractProgress | null>(null);
 	const [error, setError] = useState<unknown>(null);
 	const [isRunning, setIsRunning] = useState(false);
 
 	const abortRef = useRef<AbortController | null>(null);
+	const stale = result ? atsContextChanged(result, { ...chinaOptions, jobDescription }) : false;
 
-	const run = useCallback(async (selected: File, description: string) => {
-		abortRef.current?.abort();
-		const controller = new AbortController();
-		abortRef.current = controller;
+	const run = useCallback(
+		async (selected: File, description: string) => {
+			abortRef.current?.abort();
+			const controller = new AbortController();
+			abortRef.current = controller;
 
-		setIsRunning(true);
-		setError(null);
-		setResult(null);
-		setProgress(null);
+			setIsRunning(true);
+			setError(null);
+			setResult(null);
+			setProgress(null);
 
-		try {
-			const next = await runAtsCheck(selected, {
-				jobDescription: description,
-				onProgress: setProgress,
-				signal: controller.signal,
-			});
+			try {
+				const next = await runAtsCheck(selected, {
+					...chinaOptions,
+					jobDescription: description,
+					onProgress: setProgress,
+					signal: controller.signal,
+				});
 
-			if (!controller.signal.aborted) setResult(next);
-		} catch (caught) {
-			if (!controller.signal.aborted) setError(caught);
-		} finally {
-			if (!controller.signal.aborted) {
-				setIsRunning(false);
-				setProgress(null);
+				if (!controller.signal.aborted) setResult(next);
+			} catch (caught) {
+				if (!controller.signal.aborted) setError(caught);
+			} finally {
+				if (!controller.signal.aborted) {
+					setIsRunning(false);
+					setProgress(null);
+				}
 			}
-		}
-	}, []);
+		},
+		[chinaOptions],
+	);
 
 	const onSelect = (selected: File) => {
 		setFile(selected);
@@ -103,6 +111,8 @@ export function AtsCheckerTool({ renderAiTier }: AtsCheckerToolProps) {
 				/>
 			</div>
 
+			<ChinaReferenceControls id="ats" value={chinaOptions} onChange={setChinaOptions} disabled={isRunning} />
+
 			{file && !isRunning && (
 				<Button variant="outline" size="sm" onClick={() => void run(file, jobDescription)}>
 					<ArrowClockwiseIcon />
@@ -126,8 +136,13 @@ export function AtsCheckerTool({ renderAiTier }: AtsCheckerToolProps) {
 
 			{result && (
 				<>
+					{stale && (
+						<p role="status" className="text-muted-foreground text-sm">
+							<Trans>Inputs changed. Run the check again before requesting an AI review.</Trans>
+						</p>
+					)}
 					<AtsPdfReportView report={result.report} />
-					{renderAiTier?.({ result, jobDescription })}
+					{!stale && renderAiTier?.({ result, jobDescription: result.context.jobDescription })}
 				</>
 			)}
 		</div>

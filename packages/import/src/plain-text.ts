@@ -112,6 +112,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	技能特长: "skills",
 	技能: "skills",
 	语言能力: "languages",
+	语言: "languages",
 	兴趣爱好: "interests",
 	业余爱好: "interests",
 	获奖情况: "awards",
@@ -119,6 +120,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	荣誉奖项: "awards",
 	奖项: "awards",
 	证书: "certifications",
+	证书信息: "certifications",
 	资格证书: "certifications",
 	技能证书: "certifications",
 	科研经历: "publications",
@@ -128,6 +130,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	志愿经历: "volunteer",
 	志愿者经历: "volunteer",
 	社交账号: "profiles",
+	推荐人: "references",
 	// The Chinese editor keeps internships and campus life as dedicated experience-style sections;
 	// mapping them there preserves the original classification instead of merging them into
 	// work experience or volunteer work.
@@ -141,7 +144,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	社團經歷: "zh-campus",
 };
 
-const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;
+const BULLET_PATTERN = /^\s*(?:[-–—*]\s+|[•◦‣·]\s*)/;
 const EMAIL_PATTERN = /[\w.+-]+@[\w-]+\.[\w.-]*\w/;
 const URL_PATTERN = /\b(?:https?:\/\/|www\.)[^\s,;|•·]+/gi;
 const PHONE_CANDIDATE = /[+(]?\d[\d\s().+-]{5,}\d/g;
@@ -152,7 +155,7 @@ const ENTRY_PREAMBLE_LOOKAHEAD = 4;
 const PERIOD_CANDIDATE =
 	/(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}))\s*(?:[-–—~]|to|until|through)\s*(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4})|\p{L}+)/giu;
 const STRONG_SEPARATOR = /\s*[|•·]\s*|\s{2,}|\s+[–—]\s+/;
-const SENTENCE_END = /[.!?]$/;
+const SENTENCE_END = /[.!?。！？]$/;
 const TRAILING_DATES = [/(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?(?:19|20)\d{2}$/u, /(?:\d{1,2}[/.])?(?:19|20)\d{2}$/];
 
 const escapeHtml = (value: string) =>
@@ -219,8 +222,10 @@ function looksLikeTitleCaseHeading(line: string): boolean {
  */
 function looksLikeEntryHeader(line: string): boolean {
 	const trimmed = line.trim();
-	if (STRONG_SEPARATOR.test(trimmed)) return true;
 	if (SENTENCE_END.test(trimmed)) return false;
+	if (/^View on\s/i.test(trimmed)) return false;
+	if (/^(?:that|which|and|while|with|for|to|of|the|a|an|in|on|through|using|across)\s/.test(trimmed)) return false;
+	if (STRONG_SEPARATOR.test(trimmed)) return true;
 
 	return trimmed.split(/\s+/).length <= MAX_ENTRY_HEADER_WORDS;
 }
@@ -230,6 +235,10 @@ function findPeriod(line: string): string {
 
 	for (const match of line.match(PERIOD_CANDIDATE) ?? []) {
 		if (parsePeriod(match)) return match.trim();
+		// A title word before a year is not a month. Retry the year range while keeping that word
+		// available to the entry title ("Dialogue Framework 2021 - 2023").
+		const yearRange = match.replace(/^[\p{L}.]+\s+(?=\d{4}\b)/u, "");
+		if (yearRange !== match && parsePeriod(yearRange)) return yearRange.trim();
 	}
 
 	return "";
@@ -375,7 +384,25 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 		}
 
 		const isBullet = BULLET_PATTERN.test(line);
-		const leadsToDate = !isBullet && looksLikeEntryHeader(line) && introducesEntry(cleaned, index, allowSingleDate);
+		const issuerAfterDate =
+			allowSingleDate &&
+			current.period &&
+			current.body.length === 0 &&
+			/\b(?:Technologies|University|Institute|Games|Association|Academy)\b/.test(line);
+		const nearbyDate = [1, 2].some((offset) => isDateLine(cleaned[index + offset] ?? "", allowSingleDate));
+		const continuation = Boolean(
+			current.period &&
+				current.body.length > 0 &&
+				/^[a-z][a-z'-]*[.,:]?\s/.test(line) &&
+				!STRONG_SEPARATOR.test(line) &&
+				!nearbyDate,
+		);
+		const leadsToDate =
+			!isBullet &&
+			!issuerAfterDate &&
+			!continuation &&
+			looksLikeEntryHeader(line) &&
+			introducesEntry(cleaned, index, allowSingleDate);
 
 		if (leadsToDate && !current.period && current.body.length === 0) {
 			current.headerParts.push(...splitHeaderParts(line));
@@ -405,6 +432,58 @@ const baseItem = () => ({ id: generateId(), hidden: false });
 
 const emptyWebsite = { url: "", label: "", inlineLink: false };
 
+const isEntryLocation = (part: string) =>
+	/^(?:[\p{Script=Han}]{2,8}(?:省|市|区|县)|北京|上海|天津|重庆|广州|深圳|杭州|南京|成都|武汉|西安|Remote|Hybrid|远程)$|,\s*\p{L}/iu.test(
+		part,
+	);
+
+function experienceFields(entry: RawEntry) {
+	const parts = entry.headerParts.slice(1);
+	const locationIndex = parts.findIndex((part, index) => index < 2 && isEntryLocation(part));
+	if (locationIndex < 0)
+		return { position: parts[0] ?? "", location: parts[1] ?? "", description: entryDescription(entry, 3) };
+	const roleIndex = parts.findIndex((_, index) => index !== locationIndex);
+	return {
+		position: parts[roleIndex] ?? "",
+		location: parts[locationIndex] ?? "",
+		description: toHtml([...parts.filter((_, index) => index !== roleIndex && index !== locationIndex), ...entry.body]),
+	};
+}
+
+function educationFields(entry: RawEntry) {
+	const parts = entry.headerParts.slice(1);
+	const degreeIndex = parts.findIndex((part) =>
+		/^(?:(?:本科|学士|大专|专科|硕士|博士|高中|中专|研究生)(?:学位|学历)?$|(?:Bachelor|Master|Doctor|BSc|MSc|BA|BS|MA|MS|PhD)\b)/i.test(
+			part,
+		),
+	);
+	if (degreeIndex < 0)
+		return { degree: parts[0] ?? "", area: "", location: parts[1] ?? "", description: entryDescription(entry, 3) };
+	const remaining = parts.filter((_, index) => index !== degreeIndex);
+	const locationIndex = remaining.findIndex(isEntryLocation);
+	const gradeIndex = remaining.findIndex((part) =>
+		/^(?:\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)?\s*GPA|GPA\s*[:：]?\s*\d+(?:\.\d+)?)$/i.test(part),
+	);
+	const majorIndex = remaining.findIndex(
+		(part, index) =>
+			index !== locationIndex &&
+			index !== gradeIndex &&
+			/(?:专业|工程|科学|技术|学|设计|管理|艺术|教育|语言|数学|物理|化学|英语|Science|Engineering|Mathematics|Arts|Design|Management)$/i.test(
+				part,
+			),
+	);
+	return {
+		degree: parts[degreeIndex] ?? "",
+		area: remaining[majorIndex] ?? "",
+		grade: remaining[gradeIndex] ?? "",
+		location: remaining[locationIndex] ?? "",
+		description: toHtml([
+			...remaining.filter((_, index) => index !== majorIndex && index !== locationIndex && index !== gradeIndex),
+			...entry.body,
+		]),
+	};
+}
+
 function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	if (key === "skills") {
 		return parseSkillLines(lines).map((group) => ({
@@ -427,18 +506,19 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	}
 
 	if (key === "languages") {
-		return lines
-			.map((line) => line.replace(BULLET_PATTERN, "").trim())
-			.filter(Boolean)
-			.map((line) => {
-				const match = /^(.+?)\s*[([–—-]\s*(.+?)\s*[)\]]?$/.exec(line);
-				return {
-					...baseItem(),
-					language: (match?.[1] ?? line).trim(),
-					fluency: (match?.[2] ?? "").trim(),
-					level: 0,
-				};
-			});
+		const languageLines = lines.map((line) => line.replace(BULLET_PATTERN, "").trim()).filter(Boolean);
+		return languageLines.flatMap((line, index) => {
+			const fluency = /^(?:Native|Fluent|Conversational|Professional|Intermediate|Beginner|母语|流利|熟练)$/i;
+			if (index > 0 && fluency.test(line) && !fluency.test(languageLines[index - 1] ?? "")) return [];
+			const match = /^(.+?)\s*[([–—-]\s*(.+?)\s*[)\]]?$/.exec(line);
+			const next = languageLines[index + 1] ?? "";
+			return {
+				...baseItem(),
+				language: (match?.[1] ?? line).trim(),
+				fluency: (match?.[2] ?? (fluency.test(next) ? next : "")).trim(),
+				level: 0,
+			};
+		});
 	}
 
 	if (key === "profiles") {
@@ -466,11 +546,9 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 		return entries.map((entry) => ({
 			...baseItem(),
 			company: entry.headerParts[0] ?? "",
-			position: entry.headerParts[1] ?? "",
-			location: entry.headerParts[2] ?? "",
 			period: entry.period,
 			website: emptyWebsite,
-			description: entryDescription(entry, 3),
+			...experienceFields(entry),
 			roles: [],
 		}));
 	}
@@ -479,13 +557,10 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 		return entries.map((entry) => ({
 			...baseItem(),
 			school: entry.headerParts[0] ?? "",
-			degree: entry.headerParts[1] ?? "",
-			area: "",
 			grade: "",
-			location: entry.headerParts[2] ?? "",
 			period: entry.period,
 			website: emptyWebsite,
-			description: entryDescription(entry, 3),
+			...educationFields(entry),
 		}));
 	}
 
@@ -522,14 +597,27 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	}
 
 	if (key === "certifications") {
-		return entries.map((entry) => ({
-			...baseItem(),
-			title: entry.headerParts[0] ?? "",
-			issuer: entry.headerParts[1] ?? "",
-			date: entry.period,
-			website: emptyWebsite,
-			description: entryDescription(entry, 2),
-		}));
+		return entries.map((entry) => {
+			const wrappedTitle = /[:：]$/.test(entry.headerParts[0] ?? "");
+			const title = wrappedTitle ? entry.headerParts.join(" ") : (entry.headerParts[0] ?? "");
+			const explicitIssuer = wrappedTitle ? "" : entry.headerParts[1];
+			const firstBodyLine = entry.body[0] ?? "";
+			const issuerInBody =
+				!explicitIssuer &&
+				!SENTENCE_END.test(firstBodyLine) &&
+				firstBodyLine.split(/\s+/).length <= 10 &&
+				/\b(?:Technologies|University|Institute|Games|Association|Academy)\b/.test(firstBodyLine);
+			const issuer = explicitIssuer || (issuerInBody ? firstBodyLine : "");
+			const remaining = issuerInBody ? { ...entry, body: entry.body.slice(1) } : entry;
+			return {
+				...baseItem(),
+				title,
+				issuer,
+				date: entry.period,
+				website: emptyWebsite,
+				description: entryDescription(remaining, wrappedTitle ? entry.headerParts.length : 2),
+			};
+		});
 	}
 
 	if (key === "publications") {
@@ -819,6 +907,11 @@ function applyPersonalInfo(lines: string[], basics: ResumeData["basics"], object
 	}
 
 	return leftover;
+}
+
+/** Shared with PDF reading-order detection; uses the importer's exact section aliases. */
+export function isKnownResumeHeading(line: string): boolean {
+	return knownHeading(line) !== null;
 }
 
 export function parseResumeText(text: string): ResumeData {

@@ -33,5 +33,11 @@ const RECRUITING_BOILERPLATE =
 	"seeking sex sexual skills status team teams thrive time title veteran welcome work working workplace years";
 
 export const JD_STOPWORDS: ReadonlySet<string> = new Set(
-	[...FUNCTION_WORDS.split(" "), ...RECRUITING_BOILERPLATE.split(" ")].filter(Boolean),
+	[
+		...FUNCTION_WORDS.split(" "),
+		...RECRUITING_BOILERPLATE.split(" "),
+		..."熟悉 熟练 掌握 了解 精通 具备 具有 使用 运用 负责 参与 优先 要求 任职 岗位 职位 招聘 工作 职责 能力 经验 相关 以上 以下 本科 学历 专业 年限 公司 团队 我们 你 您 的 和 与 及 或 等 能够 良好 优秀 较强 至少 基本 待遇 福利 薪资 五险一金 双休 加分 有 有限 不限".split(
+			" ",
+		),
+	].filter(Boolean),
 );

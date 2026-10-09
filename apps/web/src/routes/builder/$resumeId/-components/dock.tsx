@@ -37,9 +37,11 @@ import { authClient } from "@/libs/auth/client";
 type BuilderDockProps = {
 	pageLayout: BuilderPreviewPageLayout;
 	onTogglePageLayout: () => void;
+	onFitToView: () => void;
+	onActualSize: () => void;
 };
 
-export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps) {
+export function BuilderDock({ pageLayout, onTogglePageLayout, onFitToView, onActualSize }: BuilderDockProps) {
 	const { data: session } = authClient.useSession();
 	// Narrow slices: selecting the whole resume re-renders the dock on every keystroke.
 	const resumeSlug = useCurrentBuilderResumeSelector((resume) => resume.slug);
@@ -47,14 +49,14 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 	const navigate = useNavigate();
 
 	const [_, copyToClipboard] = useCopyToClipboard();
-	const { zoomIn, zoomOut, resetTransform } = useControls();
+	const { zoomIn, zoomOut } = useControls();
 
 	const canUndo = useResumeStore((state) => state.canUndo);
 	const canRedo = useResumeStore((state) => state.canRedo);
 	const undo = useResumeStore((state) => state.undo);
 	const redo = useResumeStore((state) => state.redo);
 
-	useHotkey("Mod+0", () => resetTransform());
+	useHotkey("Mod+0", onFitToView);
 	// App-level undo/redo of resume state, scoped to the builder. Mod maps to Cmd (mac) / Ctrl (win/linux).
 	// Inside a focused text field, defer to the browser's native input undo; the dock buttons remain
 	// available for resume-level history while editing a field.
@@ -75,19 +77,19 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 		session?.user.username && resumeSlug ? `${window.location.origin}/${session.user.username}/${resumeSlug}` : "";
 
 	return (
-		<div className="fixed inset-x-0 bottom-20 flex items-center justify-center md:bottom-4">
+		<div className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center">
 			<m.div
 				initial={{ opacity: 0, y: -18 }}
 				animate={{ opacity: 0.6, y: 0 }}
 				whileHover={{ opacity: 1, y: -2, scale: 1.01 }}
 				transition={{ duration: 0.2, ease: "easeOut" }}
-				className="flex items-center rounded-r-full rounded-l-full bg-popover px-2 shadow-xl will-change-[transform,opacity]"
+				className="flex max-w-full items-center overflow-x-auto rounded-full bg-popover px-2 shadow-xl will-change-[transform,opacity]"
 			>
 				<DockIcon icon={ArrowUUpLeftIcon} title={t`Undo`} disabled={!canUndo} onClick={() => undo()} />
 				<DockIcon icon={ArrowUUpRightIcon} title={t`Redo`} disabled={!canRedo} onClick={() => redo()} />
 				<div className="mx-1 h-8 w-px bg-border" />
 				<DockIcon icon={MagnifyingGlassMinusIcon} title={t`Zoom out`} onClick={() => zoomOut(0.15)} />
-				<ZoomMenu />
+				<ZoomMenu onFitToView={onFitToView} onActualSize={onActualSize} />
 				<DockIcon icon={MagnifyingGlassPlusIcon} title={t`Zoom in`} onClick={() => zoomIn(0.15)} />
 				<DockIcon
 					icon={pageLayout === "horizontal" ? AlignTopIcon : AlignCenterHorizontalIcon}
@@ -116,9 +118,8 @@ export function BuilderDock({ pageLayout, onTogglePageLayout }: BuilderDockProps
 	);
 }
 
-function ZoomMenu() {
+function ZoomMenu({ onFitToView, onActualSize }: Pick<BuilderDockProps, "onFitToView" | "onActualSize">) {
 	const scale = useTransformComponent((ctx) => ctx.state.scale);
-	const { centerView, resetTransform } = useControls();
 
 	return (
 		<DropdownMenu>
@@ -136,10 +137,10 @@ function ZoomMenu() {
 			/>
 
 			<DropdownMenuContent side="top" align="center">
-				<DropdownMenuItem onClick={() => centerView(1)}>
+				<DropdownMenuItem onClick={onActualSize}>
 					<Trans>Actual size (100%)</Trans>
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => resetTransform()}>
+				<DropdownMenuItem onClick={onFitToView}>
 					<Trans>Fit to view</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

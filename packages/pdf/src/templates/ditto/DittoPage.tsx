@@ -6,10 +6,7 @@ import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
-import {
-	CustomFieldContactItem,
-	renderBasicsContactItems,
-} from "../shared/contact-item";
+import { CustomFieldContactItem, renderBasicsContactItems } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";
@@ -196,7 +193,9 @@ const useDittoTemplate = (): DittoTemplate => {
 				backgroundColor: primary,
 				color: background,
 				flexDirection: r.row,
-				...(hasPicture ? { minHeight: picture.size * 0.6 } : {}),
+				...(hasPicture
+					? { minHeight: picture.size * 0.6 + Math.max(0, picture.size / picture.aspectRatio - picture.size) }
+					: {}),
 			},
 			pictureAnchor: {
 				width: `${metadata.layout.sidebarWidth}%`,

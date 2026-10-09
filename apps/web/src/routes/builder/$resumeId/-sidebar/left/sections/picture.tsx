@@ -11,7 +11,7 @@ import {
 	UploadSimpleIcon,
 } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { pictureSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
@@ -56,25 +56,26 @@ export function PictureSectionBuilder() {
 
 type PicturePreviewControlsProps = {
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
-	form: PictureSettingsForm;
 	normalizedPictureUrl: string;
 	picture: PictureValues;
-	onAutoSave: () => void;
+	isUploading: boolean;
+	onToggleHidden: () => void;
 	onDeletePicture: () => void;
 	onSelectPicture: () => void;
 	onUploadPicture: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-function PicturePreviewControls({
+export function PicturePreviewControls({
 	fileInputRef,
-	form,
 	normalizedPictureUrl,
 	picture,
-	onAutoSave,
+	isUploading,
+	onToggleHidden,
 	onDeletePicture,
 	onSelectPicture,
 	onUploadPicture,
 }: PicturePreviewControlsProps) {
+	const [failedUrl, setFailedUrl] = useState<string | null>(null);
 	return (
 		<div className="flex items-center gap-x-4">
 			<input
@@ -88,61 +89,86 @@ function PicturePreviewControls({
 
 			<button
 				type="button"
-				onClick={picture.url ? onDeletePicture : onSelectPicture}
-				aria-label={picture.url ? t`Delete picture` : t`Upload picture`}
-				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50"
+				onClick={onSelectPicture}
+				aria-label={picture.url ? t`Replace picture` : t`Upload picture`}
+				className="group/picture relative size-18 shrink-0 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50"
 			>
 				{normalizedPictureUrl && (
 					<img
 						alt=""
 						src={normalizedPictureUrl}
+						onError={() => setFailedUrl(normalizedPictureUrl)}
+						onLoad={() => setFailedUrl(null)}
 						style={{ objectFit: picture.fit }}
 						className="fade-in relative z-10 size-full animate-in rounded-md transition-opacity group-hover/picture:opacity-20"
 					/>
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					{picture.url ? <TrashSimpleIcon className="size-6" /> : <UploadSimpleIcon className="size-6" />}
+					<UploadSimpleIcon className="size-6" />
 				</div>
 			</button>
 
-			<form.Field name="url">
-				{(field) => (
-					<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>URL</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-x-2">
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(event) => {
-											field.handleChange(event.target.value);
-											onAutoSave();
-										}}
-									/>
-								}
-							/>
-
-							<Button
-								size="icon"
-								variant="ghost"
-								aria-label={picture.hidden ? t`Show picture` : t`Hide picture`}
-								onClick={() => {
-									form.setFieldValue("hidden", !picture.hidden);
-									onAutoSave();
-								}}
-							>
-								{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
-							</Button>
-						</div>
-					</FormItem>
+			<div className="flex min-w-0 flex-1 flex-wrap gap-2">
+				<Button type="button" variant="outline" size="sm" onClick={onSelectPicture}>
+					<UploadSimpleIcon />
+					{picture.url ? t`Replace picture` : t`Upload picture`}
+				</Button>
+				<Button type="button" variant="ghost" size="sm" disabled={!picture.url} onClick={onToggleHidden}>
+					{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
+					{picture.hidden ? t`Show picture` : t`Hide picture`}
+				</Button>
+				<Button
+					type="button"
+					variant="ghost"
+					size="sm"
+					disabled={!picture.url && !isUploading}
+					onClick={onDeletePicture}
+				>
+					<TrashSimpleIcon />
+					<Trans>Delete picture</Trans>
+				</Button>
+				{picture.url && picture.hidden && (
+					<p className="w-full text-muted-foreground text-xs">
+						<Trans>Your picture is hidden from the resume.</Trans>
+					</p>
 				)}
-			</form.Field>
+				{normalizedPictureUrl && failedUrl === normalizedPictureUrl && (
+					<p role="alert" className="w-full text-destructive text-xs">
+						<Trans>Picture could not be loaded. Replace it or check its URL in advanced settings.</Trans>
+					</p>
+				)}
+			</div>
 		</div>
+	);
+}
+
+function PictureUrlField({ form, onAutoSave }: PictureFieldProps) {
+	return (
+		<form.Field name="url">
+			{(field) => (
+				<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormLabel>
+						<Trans>URL</Trans>
+					</FormLabel>
+					<div className="flex items-center gap-x-2">
+						<FormControl
+							render={
+								<Input
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(event) => {
+										field.handleChange(event.target.value);
+										onAutoSave();
+									}}
+								/>
+							}
+						/>
+					</div>
+				</FormItem>
+			)}
+		</form.Field>
 	);
 }
 
@@ -198,7 +224,7 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 				{(field) => (
 					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 						<FormLabel>
-							<Trans>Size</Trans>
+							<Trans>Picture width</Trans>
 						</FormLabel>
 						<InputGroup>
 							<FormControl
@@ -328,11 +354,11 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 										message: "Portrait",
 									})}
 									onClick={() => {
-										field.handleChange(0.5);
+										field.handleChange(0.75);
 										onAutoSave();
 									}}
 								>
-									<div className="aspect-1/1.5 min-h-3 min-w-3 border border-primary" />
+									<div className="aspect-3/4 min-h-3 min-w-3 border border-primary" />
 								</Button>
 							</ButtonGroup>
 						</div>
@@ -489,10 +515,18 @@ type CropState = {
 	file: File;
 	imageSrc: string;
 	requestId: number;
+	aspectRatio: number;
 };
 
-function PictureSectionForm() {
+export function PictureSectionForm() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const ratioRequest = useRef(0);
+	useEffect(
+		() => () => {
+			ratioRequest.current += 1;
+		},
+		[],
+	);
 	const appOrigin = typeof window === "undefined" ? "" : window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
@@ -504,7 +538,7 @@ function PictureSectionForm() {
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
 	const updateResumeData = useUpdateResumeData();
 
-	const { mutateAsync: uploadFile } = useMutation(
+	const { mutateAsync: uploadFile, isPending: isUploading } = useMutation(
 		orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }),
 	);
 	const uploadTasks = usePictureUploadTasks();
@@ -523,17 +557,20 @@ function PictureSectionForm() {
 
 	const onSelectPicture = () => {
 		if (!fileInputRef.current) return;
+		fileInputRef.current.value = "";
 		fileInputRef.current?.click();
 	};
 
 	const onDeletePicture = () => {
+		ratioRequest.current += 1;
 		uploadTasks.invalidate();
+		if (fileInputRef.current) fileInputRef.current.value = "";
 		// History stores URLs, not file bytes. Keep the resource for undo and saved versions.
 		form.reset(defaultResumeData.picture);
 		persist(defaultResumeData.picture);
 	};
 
-	const uploadPictureFile = async (file: File, requestId: number) => {
+	const uploadPictureFile = async (file: File, requestId: number, aspectRatio?: number) => {
 		if (!uploadTasks.isCurrent(requestId)) return;
 		const toastId = toast.add({ type: "loading", description: t`Uploading picture…` });
 		const finish = uploadTasks.track(() => toast.close(toastId));
@@ -541,10 +578,12 @@ function PictureSectionForm() {
 			const { url } = await uploadFile(file);
 			if (uploadTasks.isCurrent(requestId)) {
 				const normalizedUrl = normalizePictureUrl(url, appOrigin);
+				const savedRatio = aspectRatio ?? form.state.values.aspectRatio;
 				// setFieldValue updates the form asynchronously. Persist the new URL
 				// explicitly so the upload callback cannot save the previous picture.
 				form.setFieldValue("url", normalizedUrl);
-				persist({ ...form.state.values, url: normalizedUrl });
+				form.setFieldValue("aspectRatio", savedRatio);
+				persist({ ...form.state.values, url: normalizedUrl, aspectRatio: savedRatio });
 			}
 		} catch (error) {
 			if (uploadTasks.isCurrent(requestId)) {
@@ -577,7 +616,12 @@ function PictureSectionForm() {
 		}
 
 		// Open the interactive crop step instead of uploading immediately.
-		setCropState({ file, imageSrc: URL.createObjectURL(file), requestId });
+		setCropState({
+			file,
+			imageSrc: URL.createObjectURL(file),
+			requestId,
+			aspectRatio: form.state.values.url ? form.state.values.aspectRatio : 0.75,
+		});
 		setCrop({ x: 0, y: 0 });
 		setZoom(1);
 		setCroppedAreaPixels(null);
@@ -605,11 +649,34 @@ function PictureSectionForm() {
 		}
 
 		if (!uploadTasks.isCurrent(cropState.requestId)) return;
-		void uploadPictureFile(fileToUpload, cropState.requestId);
+		void uploadPictureFile(fileToUpload, cropState.requestId, cropState.aspectRatio);
 		closeCropDialog(false);
 	};
 
-	const cropAspect = Number(form.state.values.aspectRatio) || 1;
+	const cropAspect = cropState?.aspectRatio ?? 0.75;
+	const setPictureRatio = (aspectRatio: number) => {
+		ratioRequest.current += 1;
+		form.setFieldValue("aspectRatio", aspectRatio);
+		persist({ ...form.state.values, aspectRatio });
+	};
+	const useOriginalRatio = () => {
+		const request = ++ratioRequest.current;
+		const url = form.state.values.url;
+		if (!url) return;
+		const image = new Image();
+		image.onload = () => {
+			if (ratioRequest.current !== request || form.state.values.url !== url || !image.naturalHeight) return;
+			const aspectRatio = Math.max(0.5, Math.min(2.5, image.naturalWidth / image.naturalHeight));
+			form.setFieldValue("fit", "contain");
+			form.setFieldValue("aspectRatio", aspectRatio);
+			persist({ ...form.state.values, aspectRatio, fit: "contain" });
+		};
+		image.onerror = () => {
+			if (ratioRequest.current === request && form.state.values.url === url)
+				toast.add({ type: "error", description: t`Picture could not be loaded.` });
+		};
+		image.src = normalizedPictureUrl;
+	};
 
 	return (
 		<>
@@ -628,6 +695,28 @@ function PictureSectionForm() {
 							<Trans>Drag to reposition and use the slider to zoom before uploading.</Trans>
 						</DialogDescription>
 					</DialogHeader>
+					<div className="flex flex-wrap gap-2">
+						<Button
+							variant="outline"
+							aria-pressed={cropAspect === 0.75}
+							onClick={() => {
+								setCropState((state) => state && { ...state, aspectRatio: 0.75 });
+								setCroppedAreaPixels(null);
+							}}
+						>
+							<Trans>Portrait 3:4</Trans>
+						</Button>
+						<Button
+							variant="outline"
+							aria-pressed={cropAspect === 1}
+							onClick={() => {
+								setCropState((state) => state && { ...state, aspectRatio: 1 });
+								setCroppedAreaPixels(null);
+							}}
+						>
+							<Trans>Square 1:1</Trans>
+						</Button>
+					</div>
 
 					{cropState && (
 						<div className="relative h-64 w-full overflow-hidden rounded-md bg-secondary ring-1 ring-border ring-inset">
@@ -678,7 +767,7 @@ function PictureSectionForm() {
 								variant="outline"
 								onClick={() => {
 									if (!cropState) return;
-									void uploadPictureFile(cropState.file, cropState.requestId);
+									void uploadPictureFile(cropState.file, cropState.requestId, cropState.aspectRatio);
 									closeCropDialog(false);
 								}}
 							>
@@ -706,138 +795,194 @@ function PictureSectionForm() {
 			>
 				<PicturePreviewControls
 					fileInputRef={fileInputRef}
-					form={form}
 					normalizedPictureUrl={normalizedPictureUrl}
 					picture={picture}
-					onAutoSave={handleAutoSave}
+					isUploading={isUploading}
+					onToggleHidden={() => {
+						form.setFieldValue("hidden", !picture.hidden);
+						handleAutoSave();
+					}}
 					onDeletePicture={onDeletePicture}
 					onSelectPicture={onSelectPicture}
 					onUploadPicture={onUploadPicture}
 				/>
 
 				<PictureFitField form={form} onAutoSave={handleAutoSave} />
-
-				<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
-					<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
-
-					<div className="flex items-end gap-x-3">
-						<form.Field name="borderColor">
-							{(field) => (
-								<FormItem
-									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+				<div className="space-y-2">
+					<p className="font-medium text-sm">
+						<Trans>Picture shape</Trans>
+					</p>
+					<form.Subscribe selector={(state) => state.values.aspectRatio}>
+						{(ratio) => (
+							<div className="flex flex-wrap gap-2">
+								<Button
+									type="button"
+									size="sm"
+									variant="outline"
+									aria-pressed={ratio === 0.75}
+									onClick={() => setPictureRatio(0.75)}
 								>
-									<FormControl
-										render={
-											<ColorPicker
-												defaultValue={field.state.value}
-												onChange={(color) => {
-													field.handleChange(color);
-													handleAutoSave();
-												}}
-											/>
-										}
-									/>
-								</FormItem>
-							)}
-						</form.Field>
-
-						<form.Field name="borderWidth">
-							{(field) => (
-								<FormItem
-									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+									<Trans>Portrait 3:4</Trans>
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant="outline"
+									aria-pressed={ratio === 1}
+									onClick={() => setPictureRatio(1)}
 								>
-									<FormLabel>
-										<Trans>Border Width</Trans>
-									</FormLabel>
-									<InputGroup>
-										<FormControl
-											render={
-												<InputGroupInput
-													name={field.name}
-													value={field.state.value}
-													type="number"
-													min={0}
-													step={1}
-													onBlur={field.handleBlur}
-													onChange={(e) => {
-														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
-														else field.handleChange(Number(value));
-														handleAutoSave();
-													}}
-												/>
-											}
-										/>
-										<InputGroupAddon align="inline-end">
-											<InputGroupText>pt</InputGroupText>
-										</InputGroupAddon>
-									</InputGroup>
-								</FormItem>
-							)}
-						</form.Field>
-					</div>
-
-					<div className="flex items-end gap-x-3">
-						<form.Field name="shadowColor">
-							{(field) => (
-								<FormItem
-									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormControl
-										render={
-											<ColorPicker
-												defaultValue={field.state.value}
-												onChange={(color) => {
-													field.handleChange(color);
-													handleAutoSave();
-												}}
-											/>
-										}
-									/>
-								</FormItem>
-							)}
-						</form.Field>
-
-						<form.Field name="shadowWidth">
-							{(field) => (
-								<FormItem
-									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-								>
-									<FormLabel>
-										<Trans>Shadow Width</Trans>
-									</FormLabel>
-									<InputGroup>
-										<FormControl
-											render={
-												<InputGroupInput
-													name={field.name}
-													value={field.state.value}
-													type="number"
-													min={0}
-													step={0.5}
-													onBlur={field.handleBlur}
-													onChange={(e) => {
-														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
-														else field.handleChange(Number(value));
-														handleAutoSave();
-													}}
-												/>
-											}
-										/>
-										<InputGroupAddon align="inline-end">
-											<InputGroupText>pt</InputGroupText>
-										</InputGroupAddon>
-									</InputGroup>
-								</FormItem>
-							)}
-						</form.Field>
-					</div>
+									<Trans>Square 1:1</Trans>
+								</Button>
+								<Button type="button" size="sm" variant="outline" disabled={!picture.url} onClick={useOriginalRatio}>
+									<Trans>Original proportions</Trans>
+								</Button>
+							</div>
+						)}
+					</form.Subscribe>
+					<p className="text-muted-foreground text-xs">
+						<Trans>
+							Height follows the selected width and ratio. Re-upload the original to recover content cropped out
+							earlier.
+						</Trans>
+					</p>
 				</div>
+
+				<details className="rounded-md border p-3">
+					<summary className="cursor-pointer font-medium text-sm">
+						<Trans>Advanced picture settings</Trans>
+					</summary>
+					<div className="mt-4 space-y-4">
+						<PictureUrlField
+							form={form}
+							onAutoSave={() => {
+								uploadTasks.invalidate();
+								if (fileInputRef.current) fileInputRef.current.value = "";
+								handleAutoSave();
+							}}
+						/>
+						<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
+							<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
+
+							<div className="flex items-end gap-x-3">
+								<form.Field name="borderColor">
+									{(field) => (
+										<FormItem
+											className="mb-1.5 shrink-0"
+											hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+										>
+											<FormControl
+												render={
+													<ColorPicker
+														defaultValue={field.state.value}
+														onChange={(color) => {
+															field.handleChange(color);
+															handleAutoSave();
+														}}
+													/>
+												}
+											/>
+										</FormItem>
+									)}
+								</form.Field>
+
+								<form.Field name="borderWidth">
+									{(field) => (
+										<FormItem
+											className="flex-1"
+											hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+										>
+											<FormLabel>
+												<Trans>Border Width</Trans>
+											</FormLabel>
+											<InputGroup>
+												<FormControl
+													render={
+														<InputGroupInput
+															name={field.name}
+															value={field.state.value}
+															type="number"
+															min={0}
+															step={1}
+															onBlur={field.handleBlur}
+															onChange={(e) => {
+																const value = e.target.value;
+																if (value === "") field.handleChange("" as unknown as number);
+																else field.handleChange(Number(value));
+																handleAutoSave();
+															}}
+														/>
+													}
+												/>
+												<InputGroupAddon align="inline-end">
+													<InputGroupText>pt</InputGroupText>
+												</InputGroupAddon>
+											</InputGroup>
+										</FormItem>
+									)}
+								</form.Field>
+							</div>
+
+							<div className="flex items-end gap-x-3">
+								<form.Field name="shadowColor">
+									{(field) => (
+										<FormItem
+											className="mb-1.5 shrink-0"
+											hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+										>
+											<FormControl
+												render={
+													<ColorPicker
+														defaultValue={field.state.value}
+														onChange={(color) => {
+															field.handleChange(color);
+															handleAutoSave();
+														}}
+													/>
+												}
+											/>
+										</FormItem>
+									)}
+								</form.Field>
+
+								<form.Field name="shadowWidth">
+									{(field) => (
+										<FormItem
+											className="flex-1"
+											hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+										>
+											<FormLabel>
+												<Trans>Shadow Width</Trans>
+											</FormLabel>
+											<InputGroup>
+												<FormControl
+													render={
+														<InputGroupInput
+															name={field.name}
+															value={field.state.value}
+															type="number"
+															min={0}
+															step={0.5}
+															onBlur={field.handleBlur}
+															onChange={(e) => {
+																const value = e.target.value;
+																if (value === "") field.handleChange("" as unknown as number);
+																else field.handleChange(Number(value));
+																handleAutoSave();
+															}}
+														/>
+													}
+												/>
+												<InputGroupAddon align="inline-end">
+													<InputGroupText>pt</InputGroupText>
+												</InputGroupAddon>
+											</InputGroup>
+										</FormItem>
+									)}
+								</form.Field>
+							</div>
+						</div>
+					</div>
+				</details>
 			</form>
 		</>
 	);

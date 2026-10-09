@@ -14,12 +14,11 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { parseColorString } from "@reactive-resume/utils/color";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { shouldShowResumeHeader } from "./cover-letter";
 import { toSafeDocxLink } from "./link-utils";
-import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
-import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
 
 // --- Color helpers ---
@@ -208,9 +207,7 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 			contactParts.push(
 				new ExternalHyperlink({
 					link,
-					children: [
-						new TextRun({ text: entry.text, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
-					],
+					children: [new TextRun({ text: entry.text, color: colorHex, underline: {}, size: bodySize, font: bodyFont })],
 				}),
 			);
 		} else {
@@ -377,15 +374,18 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		locale: data.metadata.page.locale,
 	};
 	const showHeader = shouldShowResumeHeader(data);
+	const firstPage = data.metadata.layout.pages[0];
+	// A single-column (or empty) layout has no column in which to place a template header.
+	const headerPosition =
+		!firstPage || firstPage.fullWidth || firstPage.sidebar.length === 0 ? "full-width" : templateConfig.headerPosition;
 
-	// Header placement depends on template
-	if (templateConfig.headerPosition === "full-width" && showHeader) {
+	if (headerPosition === "full-width" && showHeader) {
 		setRenderConfig(mainConfig);
 		documentChildren.push(...buildHeader(data, colorHex, textColorHex));
 	}
 
 	// Process each page in the layout
-	for (const layoutPage of data.metadata.layout.pages) {
+	for (const [pageIndex, layoutPage] of data.metadata.layout.pages.entries()) {
 		const isFullWidth = layoutPage.fullWidth || layoutPage.sidebar.length === 0;
 
 		if (isFullWidth) {
@@ -398,7 +398,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig(mainConfig);
 
 			const mainParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "main-only" && showHeader) {
+			if (pageIndex === 0 && headerPosition === "main-only" && showHeader) {
 				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
 			}
 			for (const sectionId of layoutPage.main) {
@@ -409,7 +409,7 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
 
 			const sidebarParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "sidebar-only" && showHeader) {
+			if (pageIndex === 0 && headerPosition === "sidebar-only" && showHeader) {
 				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
 			}
 			for (const sectionId of layoutPage.sidebar) {

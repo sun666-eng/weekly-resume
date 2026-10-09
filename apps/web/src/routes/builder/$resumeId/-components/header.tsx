@@ -2,7 +2,6 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
 	CaretDownIcon,
-	CheckCircleIcon,
 	CircleNotchIcon,
 	CopySimpleIcon,
 	DownloadSimpleIcon,
@@ -12,11 +11,9 @@ import {
 	PencilSimpleLineIcon,
 	SidebarSimpleIcon,
 	TrashSimpleIcon,
-	WarningCircleIcon,
 } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { match } from "ts-pattern";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -27,12 +24,8 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
-import {
-	useCurrentBuilderResumeSelector,
-	useCurrentResume,
-	usePatchResume,
-	useResumeStore,
-} from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
+import { SaveStatusIndicator } from "@/features/resume/builder/save-status";
 import { ResumeDownloadDialog } from "@/features/resume/export/download-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getResumeErrorMessage } from "@/libs/error-message";
@@ -53,7 +46,7 @@ export function BuilderHeader() {
 	// wider Download button on the right.
 	return (
 		<div className="absolute inset-x-0 top-0 z-50 flex h-14 min-w-0 items-center gap-x-2 border-b bg-popover px-1.5">
-			<div className="flex min-w-0 flex-1 items-center justify-start">
+			<div className="hidden min-w-0 flex-1 items-center justify-start md:flex">
 				{/* Hidden below `md`: on mobile the sidebar panels never mount, so `toggleSidebar` no-ops — the bottom tab bar handles this. */}
 				<Button size="icon" variant="ghost" className="hidden md:flex" onClick={() => toggleSidebar("left")}>
 					<SidebarSimpleIcon />
@@ -65,7 +58,7 @@ export function BuilderHeader() {
 				</Button>
 			</div>
 
-			<div className="flex min-w-0 items-center gap-x-1">
+			<div className="flex min-w-0 flex-1 items-center gap-x-1 md:flex-none">
 				<Button
 					size="icon"
 					variant="ghost"
@@ -89,7 +82,7 @@ export function BuilderHeader() {
 				<BuilderHeaderDropdown />
 			</div>
 
-			<div className="flex min-w-0 flex-1 items-center justify-end gap-x-1">
+			<div className="flex shrink-0 items-center justify-end gap-x-1 md:min-w-0 md:flex-1">
 				<ResumeDownloadButton />
 
 				<Button size="icon" variant="ghost" className="hidden md:flex" onClick={() => toggleSidebar("right")}>
@@ -132,34 +125,6 @@ function ResumeDownloadButton() {
 				</Button>
 			)}
 		/>
-	);
-}
-
-function SaveStatusIndicator() {
-	const status = useResumeStore((state) => state.saveStatus);
-	if (status === "idle") return null;
-
-	const { icon, label } = match(status)
-		.with("saving", () => ({
-			icon: <CircleNotchIcon className="animate-spin" />,
-			label: t`Saving…`,
-		}))
-		.with("saved", () => ({ icon: <CheckCircleIcon />, label: t`Saved` }))
-		.with("error", () => ({
-			icon: <WarningCircleIcon className="text-destructive" />,
-			label: t`Couldn't save`,
-		}))
-		.exhaustive();
-
-	return (
-		<span
-			className="ms-1 flex shrink-0 items-center gap-x-1 text-muted-foreground text-xs"
-			aria-live="polite"
-			role="status"
-		>
-			{icon}
-			<span className="hidden md:inline">{label}</span>
-		</span>
 	);
 }
 

@@ -1,0 +1,100 @@
+# Nightly release-audit stack (local only, never deployed).
+# Isolated from production: unique project name, ports 3100/8025, dedicated
+# volumes, Mailpit captures all outbound email, no S3 (local filesystem).
+# Usage:
+#   docker compose -f compose.nightly.yml --env-file .env.nightly up -d --build
+name: nightly_audit
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    mem_limit: 384m
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: weekly_resume
+      POSTGRES_USER: nightly
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missing}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - max_connections=50
+    volumes:
+      - nightly_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nightly -d weekly_resume"]
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    mem_limit: 192m
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - nightly_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    mem_limit: 128m
+    ports:
+      - "127.0.0.1:8025:8025" # web UI
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8025/api/v1/messages || exit 1"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    mem_limit: 896m
+    ports:
+      - "127.0.0.1:3100:3000"
+    env_file:
+      - .env.nightly
+    environment:
+      DATABASE_URL: postgresql://nightly:${POSTGRES_PASSWORD}@postgres:5432/weekly_resume
+      REDIS_URL: redis://redis:6379
+      LOCAL_STORAGE_PATH: /app/data
+    volumes:
+      - nightly_app_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then((r) => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1));
+      start_period: 60s
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  nightly_postgres_data:
+  nightly_redis_data:
+  nightly_app_data:

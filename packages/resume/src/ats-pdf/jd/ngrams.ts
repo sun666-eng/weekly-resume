@@ -29,6 +29,9 @@ export function buildNgrams(tokens: readonly string[], maxLength = MAX_NGRAM_LEN
 			}
 
 			if (size > MAX_FREE_PHRASE_LENGTH) continue;
+			// Chinese compound skills are protected by the tokenizer. Arbitrary adjacent Han words
+			// are prose, not a new multi-word requirement that the resume must repeat verbatim.
+			if (size > 1 && window.some((token) => /\p{Script=Han}/u.test(token))) continue;
 			if (window.some(isNoise)) continue;
 
 			ngrams.push(phrase);
