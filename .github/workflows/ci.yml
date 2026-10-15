@@ -83,7 +83,7 @@ jobs:
         run: |
           package_manager="$(node -p 'require("./package.json").packageManager')"
           test "$package_manager" = 'pnpm@12.4.2'
-          npm install --global "$package_manager" --ignore-scripts
+          npm install --global "$package_manager"
           test "$(pnpm --version)" = '12.4.2'
           pnpm install --frozen-lockfile
           git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
