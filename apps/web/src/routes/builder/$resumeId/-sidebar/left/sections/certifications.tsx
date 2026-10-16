@@ -1,8 +1,8 @@
 import type { certificationItemSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { AnimatePresence, Reorder } from "motion/react";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { cn } from "@reactive-resume/utils/style";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";

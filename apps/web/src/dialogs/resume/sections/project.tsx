@@ -10,11 +10,11 @@ import { FormControl, FormItem, FormLabel } from "@reactive-resume/ui/components
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { PeriodRangeFields } from "./period-range-fields";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
+import { PeriodRangeFields } from "./period-range-fields";
 import { SectionItemDialog } from "./section-item-dialog";
 
 const formSchema = projectItemSchema;
@@ -113,7 +113,10 @@ const ProjectForm = withForm({
 			<>
 				<form.AppField name="name">
 					{(field) => (
-						<field.TextField label={<Trans>Name</Trans>} placeholder={chinese ? t`For example: Order service` : undefined} />
+						<field.TextField
+							label={<Trans>Name</Trans>}
+							placeholder={chinese ? t`For example: Order service` : undefined}
+						/>
 					)}
 				</form.AppField>
 
@@ -136,7 +139,11 @@ const ProjectForm = withForm({
 					)}
 				</form.AppField>
 
-				<PeriodRangeFields period={period} locale={locale} onPeriodChange={(value) => form.setFieldValue("period", value)} />
+				<PeriodRangeFields
+					period={period}
+					locale={locale}
+					onPeriodChange={(value) => form.setFieldValue("period", value)}
+				/>
 
 				<form.AppField name="website">
 					{(field) => (

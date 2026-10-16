@@ -24,6 +24,7 @@ import type { CombinedTextName } from "../../semantic/node-keys";
 import type { StyleInput, TemplatePlacement } from "./styles";
 import type { CustomItemSection, ItemSection } from "./types";
 import { Children, createContext, Fragment, isValidElement, use } from "react";
+import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { getResumeSectionIcon } from "../../section-icon";
@@ -44,7 +45,6 @@ import {
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { ITEM_HEADER_ROW_PART_KEYS } from "../../semantic/shared-parts";
 import { getSectionItemRows, getSectionItemsLayout, shouldUseSectionTimeline } from "./columns";
-import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { getWebsiteDisplayText } from "./contact";
 import {
 	SectionStyleProvider,
@@ -910,9 +910,7 @@ const ExperienceSection = ({ sectionId = "experience", sectionData }: ItemSectio
 					const extraHeader = (
 						<>
 							{item.department?.trim() ? <Text semanticField="department">{item.department}</Text> : null}
-							{item.employmentType?.trim() ? (
-								<Text semanticField="employmentType">{item.employmentType}</Text>
-							) : null}
+							{item.employmentType?.trim() ? <Text semanticField="employmentType">{item.employmentType}</Text> : null}
 						</>
 					);
 
@@ -1084,9 +1082,7 @@ const EducationSection = ({ sectionId = "education", sectionData }: ItemSectionP
 							}
 						/>
 					);
-					const schoolTier = item.schoolTier?.trim() ? (
-						<Text semanticField="schoolTier">{item.schoolTier}</Text>
-					) : null;
+					const schoolTier = item.schoolTier?.trim() ? <Text semanticField="schoolTier">{item.schoolTier}</Text> : null;
 
 					const renderSplitHeader = () => (
 						<>

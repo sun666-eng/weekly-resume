@@ -31,7 +31,8 @@ export function JdCoverage({ jd }: JdCoverageProps) {
 	// The tokenizer is English-oriented (stemming, stop words, Latin n-grams). A predominantly CJK
 	// posting yields few real terms and misleading coverage, so say so instead of implying a score.
 	const letters = jd.jobDescription?.match(/\p{L}/gu)?.length ?? 0;
-	const cjkLetters = jd.jobDescription?.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu)?.length ?? 0;
+	const cjkLetters =
+		jd.jobDescription?.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu)?.length ?? 0;
 	const cjkHeavy = letters > 0 && cjkLetters / letters > 0.2;
 	return (
 		<div className="space-y-3 rounded-md border bg-card p-3">

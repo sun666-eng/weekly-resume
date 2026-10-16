@@ -10,7 +10,10 @@ const ONGOING = String.raw`(?:present|current|currently|now|ongoing|to\s?date|to
 const SEPARATOR = String.raw`\s*(?:[-–—~]|to|through|until)\s*`;
 
 const RANGE_PATTERN = new RegExp(`${ENDPOINT}${SEPARATOR}(?:${ENDPOINT}|${ONGOING})`, "gi");
-const SINGLE_PATTERN = new RegExp(String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4}|\d{4}[./]\d{1,2}|\d{4}年\d{1,2}月)\b`, "gi");
+const SINGLE_PATTERN = new RegExp(
+	String.raw`\b(?:${MONTH_WORD}\s+\d{4}|\d{1,2}/\d{4}|\d{4}[./]\d{1,2}|\d{4}年\d{1,2}月)\b`,
+	"gi",
+);
 
 /** A numeric date whose first two components could each be a month or a day. */
 const AMBIGUOUS_NUMERIC_PATTERN = /\b(0?[1-9]|1[0-2])[/.-](0?[1-9]|[12]\d|3[01])[/.-](\d{2}|\d{4})\b/g;

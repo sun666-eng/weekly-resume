@@ -14,12 +14,11 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { parseColorString } from "@reactive-resume/utils/color";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { shouldShowResumeHeader } from "./cover-letter";
 import { toSafeDocxLink } from "./link-utils";
-import { omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
-import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
 
 // --- Color helpers ---
@@ -208,9 +207,7 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 			contactParts.push(
 				new ExternalHyperlink({
 					link,
-					children: [
-						new TextRun({ text: entry.text, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
-					],
+					children: [new TextRun({ text: entry.text, color: colorHex, underline: {}, size: bodySize, font: bodyFont })],
 				}),
 			);
 		} else {

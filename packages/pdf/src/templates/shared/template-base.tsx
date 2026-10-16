@@ -6,10 +6,7 @@ import { rgbaStringToHex } from "@reactive-resume/utils/color";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { createBaseTemplateStyles } from "./base-template-styles";
-import {
-	CustomFieldContactItem,
-	renderBasicsContactItems,
-} from "./contact-item";
+import { CustomFieldContactItem, renderBasicsContactItems } from "./contact-item";
 import { getTemplateMetrics } from "./metrics";
 import { hasTemplatePicture } from "./picture";
 import { Heading, SemanticContactListView, SemanticHeaderPicture, SemanticHeaderView, Text } from "./primitives";

@@ -48,7 +48,8 @@ for (const [index, rule] of rules.entries()) {
 	requireText(rule.reason, `${path}.reason`);
 	if (seenRuleIds.has(rule.id)) errors.push(`${path}.id 重复: ${rule.id}`);
 	seenRuleIds.add(rule.id);
-	if (!allowedEvidenceLevels.has(rule.evidenceLevel)) errors.push(`${path}.evidenceLevel 不支持: ${rule.evidenceLevel}`);
+	if (!allowedEvidenceLevels.has(rule.evidenceLevel))
+		errors.push(`${path}.evidenceLevel 不支持: ${rule.evidenceLevel}`);
 	if (!allowedSeverities.has(rule.severity)) errors.push(`${path}.severity 不支持: ${rule.severity}`);
 	if (!Array.isArray(rule.audiences) || rule.audiences.length === 0) errors.push(`${path}.audiences 不能为空`);
 	if (!Array.isArray(rule.tags) || rule.tags.length === 0) errors.push(`${path}.tags 不能为空`);
@@ -62,10 +63,19 @@ for (const [index, role] of rolesDocument.roles.entries()) {
 	requireText(role.name, `${path}.name`);
 	if (seenRoleIds.has(role.id)) errors.push(`${path}.id 重复: ${role.id}`);
 	seenRoleIds.add(role.id);
-	for (const field of ["aliases", "audiences", "sectionPriority", "evidencePreferences", "strongSignals", "weakSignals", "jdChecklist"]) {
+	for (const field of [
+		"aliases",
+		"audiences",
+		"sectionPriority",
+		"evidencePreferences",
+		"strongSignals",
+		"weakSignals",
+		"jdChecklist",
+	]) {
 		if (!Array.isArray(role[field]) || role[field].length === 0) errors.push(`${path}.${field} 不能为空`);
 	}
-	if (!role.keywordGroups || Object.keys(role.keywordGroups).length === 0) errors.push(`${path}.keywordGroups 不能为空`);
+	if (!role.keywordGroups || Object.keys(role.keywordGroups).length === 0)
+		errors.push(`${path}.keywordGroups 不能为空`);
 	validateReferences(role.sourceIds, `${path}.sourceIds`);
 }
 

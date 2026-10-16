@@ -6,10 +6,7 @@ import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
-import {
-	CustomFieldContactItem,
-	renderBasicsContactItems,
-} from "../shared/contact-item";
+import { CustomFieldContactItem, renderBasicsContactItems } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";

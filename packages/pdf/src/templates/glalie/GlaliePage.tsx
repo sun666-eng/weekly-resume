@@ -80,10 +80,9 @@ export const GlaliePage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 				)}
 
 				<View
-					style={composeStyles(
-						reserveSidebar ? styles.layout : { flexDirection: "column", minHeight: "100%" },
-						{ marginTop: -metrics.page.paddingVertical },
-					)}
+					style={composeStyles(reserveSidebar ? styles.layout : { flexDirection: "column", minHeight: "100%" }, {
+						marginTop: -metrics.page.paddingVertical,
+					})}
 				>
 					{reserveSidebar ? (
 						<View

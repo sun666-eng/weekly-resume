@@ -359,7 +359,8 @@ export function buildExtractedDocument(raw: RawExtraction): ExtractedDocument {
 	// Whitespace-delimited counting is meaningless for CJK text, where a whole paragraph shares
 	// one "word". Each CJK character counts as a word; everything else splits on whitespace.
 	// A 300-hanzi resume is a full resume and must not read as "very short document".
-	const cjkChars = (fullText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ?? []).length;
+	const cjkChars = (fullText.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) ?? [])
+		.length;
 	const nonCjkWords = fullText
 		.replace(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu, " ")
 		.split(/\s+/)
