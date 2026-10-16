@@ -168,7 +168,7 @@ jobs:
           cat "$diagnostic_log"
           printf '\nDirect pnpm utils typecheck exit: %s\n' "$direct_status"
           printf '::warning title=Direct pnpm typecheck probe::exit=%s; diagnostic only, required Turbo gates remain unchanged\n' "$direct_status"
-          printf '\n### Direct pnpm utils typecheck probe\n\nExit code: `%s`. Required Turbo gates remain unchanged.\n' "$direct_status" >> "$GITHUB_STEP_SUMMARY"
+          printf '\n### Direct pnpm utils typecheck probe\n\nExit code: %s. Required Turbo gates remain unchanged.\n' "$direct_status" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Check TypeScript
         if: matrix.check == 'quality'
