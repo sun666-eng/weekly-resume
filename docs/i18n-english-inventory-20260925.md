@@ -15,11 +15,17 @@
 
 ## 第一组：结构性机制（4 个决策，影响面最大）
 
-### D1. 服务端报错直通机制 【译】标注:
+### D1. 服务端报错直通机制 【译】
+
+标注:
+
 策略：不再逐条翻译服务端 message，而是前端统一改为「错误码 → 中文映射 + 中文兜底」，
 未知错误一律显示中文兜底。受影响的英文原文（toast 直出）共 45 组，见第三组 S 系列。
 
-### D2. 求职阶段标签 STAGES（packages/schema/src/applications/data.ts:11-18）【译】标注:
+### D2. 求职阶段标签 STAGES（packages/schema/src/applications/data.ts:11-18）【译】
+
+标注:
+
 硬编码英文，被看板列头、批量菜单、状态下拉、漏斗图直接渲染——目前页面上面积最大的英文。
 ⚠ 修订：`STAGES.label` 还被洞察漏斗（insights.ts:29）与 CSV 导出（csv.ts:258）消费——
 修复改为「显示/数据分离」：web 层 `stageDisplayLabel()` 仅用于界面渲染；schema 标签与 CSV 导出/导入英文值保持不动。详见文末修订记录第 3 点。
@@ -33,16 +39,23 @@
 | 5 | Offer | 录用（或保留 Offer，中文招聘口语常用） | 同上 |
 | 6 | Rejected | 已拒绝 | 同上 |
 
-### D3. 认证邮件全部英文（packages/auth/src/config.ts:201-235）【译】标注:
+### D3. 认证邮件全部英文（packages/auth/src/config.ts:201-235）【译】
+
+标注:
+
 | # | 邮件 | 现状 | 建议 |
 |---|---|---|---|
 | 7 | 重置密码邮件 | 纯文本英文：主题 `Weekly Resume password reset`，正文 `Open this link to reset your Weekly Resume password: {url}` | 主题「Weekly Resume 密码重置」，正文「请打开以下链接重置你的 Weekly Resume 密码：{url}」 |
 | 8 | 验证邮箱邮件 | 纯文本英文：主题 `Weekly Resume email verification`，正文 `Open this link to verify your Weekly Resume email: {url}` | 主题「Weekly Resume 邮箱验证」，正文「请打开以下链接验证你的 Weekly Resume 邮箱：{url}」 |
 | 9 | 换邮箱确认邮件 | React 模板全英文（Verify your new email / Confirm Email Change / Verify New Email 按钮…） | 模板翻译为中文 |
 
-### D4. better-auth 未映射错误码（约 50 个，登录/注册/2FA/passkey 页面会漏英文）【译】标注:
+### D4. better-auth 未映射错误码（约 50 个，登录/注册/2FA/passkey 页面会漏英文）【译】
+
+标注:
+
 策略建议：高频错误码补中文映射，其余在 `getAuthErrorMessage` 统一中文兜底，保证任何未知码都不漏英文。
 高频优先映射：
+
 | # | 错误码 | 英文原文 | 建议译文 |
 |---|---|---|---|
 | 10 | USERNAME_IS_ALREADY_TAKEN | Username is already taken | 用户名已被占用 |
@@ -90,6 +103,7 @@
 > 标注只需对 D1 表态（逐条翻译 or 统一映射），下面译文供映射表使用。
 
 ### Agent 附件/对话（packages/api/src/features/agent/service.ts）
+
 | # | 原文 | 建议译文 |
 |---|---|---|
 | S1 | Attachment IDs must be an array. | 附件 ID 列表格式不正确。 |
@@ -121,6 +135,7 @@
 | S27 | User answer failed.（messages-merge.ts:93） | 回答提交失败。 |
 
 ### AI 功能（packages/api/src/features/ai/、applications/ai.ts）
+
 | # | 原文 | 建议译文 |
 |---|---|---|
 | S28 | Could not reach the AI provider. | 无法连接 AI 服务商。 |
@@ -135,6 +150,7 @@
 | S37 | Paste the job description into this application first. | 请先为该投递填写岗位描述。 |
 
 ### 求职信 / 简历 / 导出
+
 | # | 原文 | 建议译文 |
 |---|---|---|
 | S38 | This cover letter changed elsewhere. Reload it before saving again.（cover-letters/service.ts:97） | 该求职信已在别处被修改，请刷新后再保存。 |
@@ -151,6 +167,7 @@
 | S49 | JSON Patch 8 条英文（packages/resume/src/patch.ts:49-62，如 `Cannot perform an 'add' operation at the desired path.`） | 统一为「补丁操作无法执行」+ 保留细节到日志，或逐条翻译 |
 
 ### 投递追踪 / 校验
+
 | # | 原文 | 建议译文 |
 |---|---|---|
 | S50 | Date must use YYYY-MM-DD format.（applications/service.ts:22,:37、dto:15） | 日期格式应为 YYYY-MM-DD。 |
@@ -181,7 +198,7 @@
 | 46 | 首页 SEO：`{APP_NAME} — A free and open-source resume builder` + 英文描述 | apps/server/src/static/web.ts:71-74 | 浏览器标签页/搜索结果/分享卡 | 翻译为中文（面向中文搜索引擎） | |
 | 47 | SEO FAQ 6 组问答（Is Weekly Resume really free? 等） | web.ts:76-101 | 搜索结果富摘要 | 翻译为中文 | |
 | 48 | ATS 页 SEO：`ATS Checker - Weekly Resume` 等 | web.ts:164-167 | 搜索结果 | 翻译为中文 | |
-| 49 | Bad Request / Forbidden / Not Found（uploads.ts:8-16、web.ts:282,294） | 图片 404 / 禁止访问 | 【留】HTTP 语义文本（或待） | |
+| 49 | Bad Request / Forbidden / Not Found | uploads.ts:8-16、web.ts:282,294 | 图片 404 / 禁止访问 | 【留】HTTP 语义文本（或待） | |
 | 50 | `Resume`（公开简历 PDF 文件名兜底） | packages/api/src/features/resume/public-pdf.ts:79 | 下载文件名 | 简历 | |
 
 ---
@@ -191,7 +208,7 @@
 | # | 项 | 位置 | 说明 | 标注 |
 |---|---|---|---|---|
 | 51 | 导出文件名后缀 `... Cover Letter` | apps/web/src/features/resume/export/use-resume-export.ts:42 | 求职信导出文件名，可改「求职信」 | |
-| 52 | Markdown 导出固定前缀 `Grade: ` | packages/resume/src/markdown.ts:140 | 成绩条目 | |
+| 52 | Markdown 导出固定前缀 `Grade:`（末尾含一个空格） | packages/resume/src/markdown.ts:140 | 成绩条目 | |
 | 53 | AI 回复/ATS AI 审查的语言 | packages/ai/src/prompts/chat-system.md、ats-review-system.md | 提示词未指定语言，中文用户可能收到英文 AI 回复。建议加「始终使用用户界面语言（当前 zh-CN）回复」 | |
 | 54 | DOCX/PDF/Markdown 节标题 | 已确认走 locale catalog，无硬编码 | 无需修改（简历 locale=英文时输出英文属预期） | |
 
