@@ -371,10 +371,7 @@ export function ChipInput({
 						<div
 							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-border/70 border-b" : "hidden")}
 						>
-							<SortableContext
-								items={chips.map((chip, index) => `${index}:${chip}`)}
-								strategy={rectSortingStrategy}
-							>
+							<SortableContext items={chips.map((chip, index) => `${index}:${chip}`)} strategy={rectSortingStrategy}>
 								<m.div layout className="flex flex-wrap gap-1">
 									<AnimatePresence initial={false} mode="popLayout">
 										{chips.map((chip, idx) => (

@@ -1,9 +1,9 @@
 import type { FixtureLine, FixtureOptions } from "./test-fixtures";
 import type { RawExtraction } from "./types";
 import { describe, expect, it } from "vitest";
-import { analyzePdfResume, buildExtractedDocument } from "./index";
 import { analyzeDates } from "./analyze/dates";
 import { analyzeTextQuality } from "./analyze/text-quality";
+import { analyzePdfResume, buildExtractedDocument } from "./index";
 import { makeRawExtraction } from "./test-fixtures";
 
 const NOW = new Date("2026-09-26T00:00:00Z");
@@ -24,7 +24,8 @@ const heading = (text: string): FixtureLine => ({ text, size: 14 });
 describe("text quality on CJK resumes", () => {
 	it("does not mistake a Chinese resume with English tech words for English", () => {
 		const quality = analyzeTextQuality({
-			fullText: "陈晓东\nJava 后端开发\nchenxiaodong@example.com 138 0000 0000 25岁 杭州\n教育背景\n江城理工大学 本科 GPA 3.7\n专业技能\nSpring Boot, MySQL, Redis, RocketMQ\n工作经历\n星澜科技 Java 后端开发实习生\n使用 EXPLAIN 定位回表和排序开销，重构联合索引与分页。",
+			fullText:
+				"陈晓东\nJava 后端开发\nchenxiaodong@example.com 138 0000 0000 25岁 杭州\n教育背景\n江城理工大学 本科 GPA 3.7\n专业技能\nSpring Boot, MySQL, Redis, RocketMQ\n工作经历\n星澜科技 Java 后端开发实习生\n使用 EXPLAIN 定位回表和排序开销，重构联合索引与分页。",
 			languageTag: "zh-CN",
 			singleCharItemRatio: 0,
 		});

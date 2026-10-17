@@ -4,11 +4,11 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { publicationItemSchema } from "@reactive-resume/schema/resume/data";
 import { FormControl, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { useDialogStore } from "@/dialogs/store";
-import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
@@ -159,9 +159,7 @@ const PublicationForm = withForm({
 							formItemClassName="sm:col-span-full"
 							description={
 								chinese ? (
-									<Trans>
-										Use one entry for a paper, patent, or research report. This hint is not saved.
-									</Trans>
+									<Trans>Use one entry for a paper, patent, or research report. This hint is not saved.</Trans>
 								) : undefined
 							}
 						/>

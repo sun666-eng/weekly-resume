@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "./default";
-import { parseResumeData } from "./data";
-import { parseResumeDataForWrite } from "./write";
+import { applyChineseBlankResume } from "./blank-zh-cn";
 import {
 	ageLabel,
 	formatPeriodRange,
@@ -13,7 +11,9 @@ import {
 	politicalStatusLabel,
 	sameHttpUrl,
 } from "./cn-fields";
-import { applyChineseBlankResume } from "./blank-zh-cn";
+import { parseResumeData } from "./data";
+import { defaultResumeData } from "./default";
+import { parseResumeDataForWrite } from "./write";
 
 describe("Chinese resume field compatibility", () => {
 	it("fills omitted optional fields when an old resume is read or written", () => {

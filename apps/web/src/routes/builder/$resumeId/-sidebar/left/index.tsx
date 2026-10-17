@@ -142,11 +142,14 @@ function SidebarEdge() {
 			.map((section) => [section.id, section.title, section.icon, section.type].join("\u001f"))
 			.join("\u001e"),
 	);
-	const sidebarEntries = sidebarKey.split(",").filter(Boolean).map((token) =>
-		token.startsWith("custom:")
-			? { kind: "custom" as const, id: token.slice("custom:".length) }
-			: { kind: "builtin" as const, section: token as LeftSidebarSection },
-	);
+	const sidebarEntries = sidebarKey
+		.split(",")
+		.filter(Boolean)
+		.map((token) =>
+			token.startsWith("custom:")
+				? { kind: "custom" as const, id: token.slice("custom:".length) }
+				: { kind: "builtin" as const, section: token as LeftSidebarSection },
+		);
 	const customRails = new Map(
 		customRailKey
 			.split("\u001e")

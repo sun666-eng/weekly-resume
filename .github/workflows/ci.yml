@@ -1,0 +1,343 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [chore/github-actions-main-20261014]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CI: "true"
+  # Prevent the existing dependency's installer from installing Git hooks.
+  LEFTHOOK: "0"
+  # Reviewed test workspaces at ef30b1d819044584b0f729d21e5c186cf3935722.
+  # Additions, removals, renames or script changes require reviewing this contract.
+  CI_TEST_WORKSPACES: |
+    {
+      "apps/server": "server",
+      "apps/web": "web",
+      "packages/ai": "@reactive-resume/ai",
+      "packages/api": "@reactive-resume/api",
+      "packages/auth": "@reactive-resume/auth",
+      "packages/db": "@reactive-resume/db",
+      "packages/docx": "@reactive-resume/docx",
+      "packages/dsh-plugin": "dsh-plugin-weekly-resume",
+      "packages/email": "@reactive-resume/email",
+      "packages/env": "@reactive-resume/env",
+      "packages/fonts": "@reactive-resume/fonts",
+      "packages/import": "@reactive-resume/import",
+      "packages/mcp": "@reactive-resume/mcp",
+      "packages/pdf": "@reactive-resume/pdf",
+      "packages/resume": "@reactive-resume/resume",
+      "packages/schema": "@reactive-resume/schema",
+      "packages/ui": "@reactive-resume/ui",
+      "packages/utils": "@reactive-resume/utils",
+      "tooling": "@reactive-resume/tooling"
+    }
+
+jobs:
+  checks:
+    name: CI / ${{ matrix.check }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [quality, tests, build]
+    steps:
+      - name: Checkout tested revision
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up project Node version
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Record identity and reject environment files
+        run: |
+          printf 'Tested Git SHA: %s\n' "$(git rev-parse HEAD)"
+          node -e 'if (process.versions.node.split(".")[0] !== "24") throw new Error("Expected Node 24"); console.log(process.version)'
+          # Env templates are allowed; actual dotenv files must not enter this CI.
+          node --input-type=module <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0');
+          const forbidden = files.filter(file => /(^|\/)\.env(?:\.|$)/.test(file) && !/\.(example|sample|template)$/.test(file));
+          if (forbidden.length) throw new Error(`Tracked environment files are not permitted: ${forbidden.join(', ')}`);
+          NODE
+
+      - name: Install pinned pnpm and frozen dependencies
+        run: |
+          package_manager="$(node -p 'require("./package.json").packageManager')"
+          test "$package_manager" = 'pnpm@12.4.2'
+          npm install --global "$package_manager"
+          test "$(pnpm --version)" = '12.4.2'
+          pnpm install --frozen-lockfile
+          git diff --exit-code -- package.json pnpm-lock.yaml pnpm-workspace.yaml
+
+      - name: Validate source knowledge documents
+        if: matrix.check == 'quality'
+        # Main has source validation only; no generated snapshot check exists at this baseline.
+        run: node knowledge/china-job-rules/validate.mjs
+
+      - name: Diagnose Linux package task launchers
+        if: matrix.check == 'quality'
+        # Temporary observation only: do not change PATH, executables or install policy.
+        run: |
+          if pnpm exec python3 - <<'PY'
+          import json, os, pathlib, shutil, stat, subprocess
+          summary = pathlib.Path(os.environ['GITHUB_STEP_SUMMARY'])
+          def emit(label, value):
+              message = label + ': ' + json.dumps(value, ensure_ascii=True)
+              print(message, flush=True)
+              escaped = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print('::warning title=Temporary CI diagnostic::' + escaped, flush=True)
+              with summary.open('a', encoding='utf-8') as out:
+                  out.write('\n- `' + message.replace('`', '') + '`\n')
+          def run(args):
+              try:
+                  p = subprocess.run(args, capture_output=True, text=True, timeout=30)
+                  return {'exit': p.returncode, 'stdout': p.stdout.strip()[:400], 'stderr': p.stderr.strip()[:400]}
+              except OSError as error:
+                  return {'errno': error.errno, 'error': str(error)}
+              except subprocess.TimeoutExpired:
+                  return {'error': 'timeout after 30 seconds'}
+          def inspect(path):
+              if not path:
+                  return {'error': 'path not found'}
+              p = pathlib.Path(path)
+              try:
+                  info = p.stat()
+                  with p.open('rb') as source:
+                      prefix = source.read(128)
+                  return {'path': str(p), 'realpath': str(p.resolve()), 'symlink': p.is_symlink(),
+                          'mode': oct(stat.S_IMODE(info.st_mode)), 'executable': os.access(p, os.X_OK),
+                          'format': run(['file', '--brief', '--dereference', str(p)]),
+                          'headHex': prefix[:16].hex(),
+                          'shebang': prefix.split(b'\n', 1)[0].decode('ascii', 'backslashreplace') if prefix.startswith(b'#!') else None}
+              except OSError as error:
+                  return {'path': str(p), 'errno': error.errno, 'error': str(error)}
+          emit('runner', {'system': os.uname().sysname, 'release': os.uname().release, 'machine': os.uname().machine})
+          emit('node', run(['node', '-p', 'JSON.stringify({version:process.version,arch:process.arch,execPath:process.execPath})']))
+          emit('versions', {'pnpmViaBash': run(['bash', '--noprofile', '--norc', '-c', 'pnpm --version']),
+                            'turbo': run(['turbo', '--version'])})
+          pm = shutil.which('pnpm')
+          emit('pnpmLauncher', inspect(pm))
+          emit('pnpmDirectExecVersion', run([pm, '--version']) if pm else {'error': 'pnpm not found'})
+          emit('pnpmExecPath', inspect(os.environ.get('npm_execpath')))
+          emit('turboLauncher', inspect(shutil.which('turbo')))
+          emit('utilsTsgoLauncher', inspect('packages/utils/node_modules/.bin/tsgo'))
+          global_root = run(['npm', 'root', '--global'])
+          if global_root.get('exit') == 0:
+              manifest = pathlib.Path(global_root['stdout']) / 'pnpm/package.json'
+              if manifest.is_file():
+                  package = json.loads(manifest.read_text(encoding='utf-8'))
+                  emit('installedPnpmPackage', {'version': package.get('version'), 'bin': package.get('bin'),
+                                               'hasInstallScripts': any(k in package.get('scripts', {}) for k in ['preinstall', 'postinstall'])})
+          PY
+          then
+            printf 'Launcher metadata probe completed.\n'
+          else
+            diagnostic_status=$?
+            printf '::warning title=Temporary CI diagnostic::metadata probe exit=%s; required Turbo gates remain unchanged\n' "$diagnostic_status"
+          fi
+
+      - name: Probe direct pnpm utils typecheck
+        if: matrix.check == 'quality'
+        # Record this probe's real exit code without blocking the unchanged required Turbo gate.
+        run: |
+          diagnostic_log="$RUNNER_TEMP/direct-utils-typecheck.log"
+          if pnpm --filter @reactive-resume/utils run typecheck >"$diagnostic_log" 2>&1; then
+            direct_status=0
+          else
+            direct_status=$?
+          fi
+          cat "$diagnostic_log"
+          printf '\nDirect pnpm utils typecheck exit: %s\n' "$direct_status"
+          printf '::warning title=Direct pnpm typecheck probe::exit=%s; diagnostic only, required Turbo gates remain unchanged\n' "$direct_status"
+          printf '\n### Direct pnpm utils typecheck probe\n\nExit code: %s. Required Turbo gates remain unchanged.\n' "$direct_status" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check TypeScript
+        if: matrix.check == 'quality'
+        run: pnpm exec turbo run typecheck --concurrency=2 --force
+
+      - name: Check package boundaries
+        if: matrix.check == 'quality'
+        run: pnpm exec turbo boundaries
+
+      - name: Check code without applying fixes
+        if: matrix.check == 'quality'
+        run: pnpm exec biome check .
+
+      - name: Check Markdown without applying fixes
+        if: matrix.check == 'quality'
+        run: pnpm exec markdownlint-cli2
+
+      - name: Check workflow syntax and shell scripts
+        if: matrix.check == 'quality'
+        env:
+          # The npm wrapper downloads its binary on first use, outside the pnpm lockfile.
+          ACTIONLINT_RELEASE: "1.7.12"
+          ACTIONLINT_CACHE_DIR: ${{ runner.temp }}/github-actionlint
+          ACTIONLINT_BIN: ""
+        run: |
+          command -v shellcheck
+          pnpm exec github-actionlint -version
+          pnpm exec github-actionlint -shellcheck="$(command -v shellcheck)"
+
+      - name: Verify reviewed test workspace and script contract
+        if: matrix.check == 'tests'
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          import { readFileSync } from 'node:fs';
+          import { resolve, relative, isAbsolute } from 'node:path';
+          const root = process.cwd();
+          const expected = JSON.parse(process.env.CI_TEST_WORKSPACES);
+          const reviewedTest = 'vitest run --passWithNoTests';
+          const reviewedCI = 'vitest run --coverage --reporter=default --reporter=github-actions --reporter=json --reporter=junit --outputFile.json=reports/vitest-results.json --outputFile.junit=reports/vitest-junit.xml --passWithNoTests';
+          // Ask pnpm for the actual workspace membership, including future new locations.
+          const paths = execFileSync('pnpm', ['list', '--recursive', '--depth', '-1', '--parseable'], { encoding: 'utf8' })
+            .trim().split(/\r?\n/).filter(Boolean);
+          const actual = new Map();
+          for (const path of paths) {
+            const dir = relative(root, resolve(path)).replaceAll('\\', '/');
+            if (!dir) continue; // The root test scripts are aggregate entry points.
+            if (dir === '..' || dir.startsWith('../') || isAbsolute(dir)) throw new Error(`Workspace outside checkout: ${dir}`);
+            const pkg = JSON.parse(readFileSync(`${dir}/package.json`, 'utf8'));
+            if (pkg.scripts?.test || pkg.scripts?.['test:ci']) actual.set(dir, pkg);
+          }
+          const errors = [];
+          for (const dir of actual.keys()) {
+            if (!Object.hasOwn(expected, dir)) errors.push(`Unexpected test workspace; review required: ${dir}`);
+          }
+          for (const [dir, name] of Object.entries(expected)) {
+            const pkg = actual.get(dir);
+            if (!pkg) { errors.push(`Missing expected test workspace: ${dir}`); continue; }
+            if (pkg.name !== name) errors.push(`Changed workspace name; review required: ${dir}`);
+            if (pkg.scripts.test !== reviewedTest || pkg.scripts['test:ci'] !== reviewedCI) {
+              errors.push(`Missing or changed test/test:ci script; review required: ${dir}`);
+            }
+          }
+          if (errors.length) throw new Error(errors.join('\n'));
+          console.log(`Verified ${Object.keys(expected).length} reviewed test workspaces and Vitest scripts`);
+          NODE
+
+      - name: Run unit, component and synthetic export suites
+        if: matrix.check == 'tests'
+        env:
+          # Schema-validation placeholders only. No service is started on this port.
+          APP_URL: http://127.0.0.1:3000
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:1/ci_not_a_service
+          AUTH_SECRET: ci-fictional-auth-secret-not-for-production
+          # Keep the existing opt-in real-database suites outside the base CI scope.
+          OAUTH_TEST_DATABASE_URL: ""
+          COVER_LETTER_TEST_DATABASE_URL: ""
+        # Negation avoids duplicating the script's positive --passWithNoTests option.
+        run: pnpm exec turbo run test:ci --concurrency=2 --force -- --maxWorkers=2 --no-passWithNoTests
+
+      - name: Verify executed tests and report every skip
+        if: always() && matrix.check == 'tests'
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, readdirSync, existsSync, appendFileSync } from 'node:fs';
+          import { resolve, relative } from 'node:path';
+          const root = process.cwd();
+          // Never shrink report requirements when a package removes its test script.
+          const packages = Object.keys(JSON.parse(process.env.CI_TEST_WORKSPACES));
+          // These two existing suites require disposable PostgreSQL, separately authorized later.
+          const allowedSkips = new Set([
+            'apps/server/src/http/oauth-flow.integration.test.ts',
+            'packages/api/src/features/cover-letters/service.integration.test.ts',
+          ]);
+          const errors = [];
+          const excludedDirs = new Set(['node_modules', 'dist', '.output', 'coverage', 'reports']);
+          const testFiles = dir => readdirSync(dir, { withFileTypes: true }).flatMap(item => {
+            const path = `${dir}/${item.name}`;
+            return item.isDirectory() ? (excludedDirs.has(item.name) ? [] : testFiles(path))
+              : (/\.(test|spec)\.[cm]?[jt]sx?$/.test(item.name) ? [path] : []);
+          });
+          const summary = ['## Unit/component test execution', '',
+            'Real PostgreSQL and browser E2E are outside this base CI. A skip is not a passed test.', '',
+            '| Package | Passed assertions | Skipped/todo assertions |', '|---|---:|---:|'];
+          if (!packages.length) errors.push('No workspace test:ci scripts were found');
+          for (const dir of packages) {
+            const reportPath = `${dir}/reports/vitest-results.json`;
+            if (!existsSync(reportPath)) { errors.push(`Missing report: ${reportPath}`); continue; }
+            let report;
+            try { report = JSON.parse(readFileSync(reportPath, 'utf8')); }
+            catch { errors.push(`Invalid report: ${reportPath}`); continue; }
+            if (report.success !== true || report.numFailedTests !== 0 || report.numFailedTestSuites !== 0) {
+              errors.push(`Failed test report: ${dir}`);
+            }
+            if (!Array.isArray(report.testResults) || !report.testResults.length) {
+              errors.push(`No test files discovered: ${dir}`); continue;
+            }
+            const discovered = new Set(report.testResults.map(suite => resolve(suite.name)));
+            // Match the existing src/** include; tooling deliberately includes its full tree.
+            const sourceDir = dir === 'tooling' ? dir : `${dir}/src`;
+            for (const file of testFiles(sourceDir)) {
+              if (!discovered.has(resolve(file))) errors.push(`Test file missing from report: ${file}`);
+            }
+            let passed = 0;
+            let skipped = 0;
+            for (const suite of report.testResults) {
+              const file = relative(root, resolve(suite.name)).replaceAll('\\', '/');
+              const assertions = Array.isArray(suite.assertionResults) ? suite.assertionResults : [];
+              const executed = assertions.filter(test => test.status === 'passed').length;
+              passed += executed;
+              if (!assertions.length) errors.push(`No assertions discovered: ${file}`);
+              if (!executed && !allowedSkips.has(file)) errors.push(`No passed assertions: ${file}`);
+              for (const test of assertions) {
+                if (test.status === 'passed') continue;
+                if (['pending', 'skipped', 'todo', 'disabled'].includes(test.status)) {
+                  skipped++;
+                  const note = `Skipped: ${file} :: ${test.fullName ?? test.title ?? '(unnamed)'}`;
+                  console.log(note);
+                  summary.push(`\n${note}`);
+                  if (!allowedSkips.has(file)) errors.push(`Unapproved skip/todo: ${file}`);
+                } else errors.push(`Non-passing assertion (${test.status}): ${file}`);
+              }
+            }
+            summary.splice(6, 0, `| ${dir} | ${passed} | ${skipped} |`);
+            if (!passed) errors.push(`Zero executed/passed assertions: ${dir}`);
+          }
+          summary.push('', '## Report gate errors', ...errors.map(error => `- ${error}`));
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary.join('\n')}\n`);
+          if (errors.length) throw new Error(errors.join('\n'));
+          NODE
+
+      - name: Preserve test reports even on failure
+        if: always() && matrix.check == 'tests'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: unit-component-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            apps/*/reports/vitest-results.json
+            apps/*/reports/vitest-junit.xml
+            packages/*/reports/vitest-results.json
+            packages/*/reports/vitest-junit.xml
+            tooling/reports/vitest-results.json
+            tooling/reports/vitest-junit.xml
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false
+
+      - name: Validate production build without starting the application
+        if: matrix.check == 'build'
+        run: pnpm run build --force
+        # The existing build generates translation/route assets and dist on this disposable runner.
+        # It does not run server start, migrations, image publishing or deployment.

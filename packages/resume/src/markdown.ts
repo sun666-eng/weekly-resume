@@ -36,7 +36,9 @@ function markdownGradeLabel(): string {
 
 export function buildMarkdown(data: ResumeData, resolveTitle?: SectionTitleResolver): string {
 	markdownDocumentLocale = data.metadata.page.locale;
-	const blocks: string[] = isCoverLetterOnlyDocument(data) ? [] : [...renderHeader(data.basics, data.metadata.page.locale)];
+	const blocks: string[] = isCoverLetterOnlyDocument(data)
+		? []
+		: [...renderHeader(data.basics, data.metadata.page.locale)];
 
 	for (const page of data.metadata.layout.pages) {
 		for (const sectionId of [...page.main, ...page.sidebar]) {
@@ -91,7 +93,9 @@ function renderHeader(basics: ResumeData["basics"], locale: string): string[] {
 	if (basics.headline) blocks.push(`_${basics.headline}_`);
 
 	const contact = [
-		...listBasicsContactEntries(basics, locale).map((entry) => (entry.href ? link(entry.text, entry.href) : entry.text)),
+		...listBasicsContactEntries(basics, locale).map((entry) =>
+			entry.href ? link(entry.text, entry.href) : entry.text,
+		),
 		...basics.customFields.map((field) => (field.link ? link(field.text, field.link) : field.text)),
 	].filter(Boolean);
 
