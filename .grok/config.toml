@@ -1,0 +1,50 @@
+# Weekly Resume independent review profile.
+# Documented syntax checked against Grok Build 1.0.52 (0920c8169e27), stable.
+# Historical syntax review only; current project loading and enforcement remain
+# deferred and UNVERIFIED. Do not infer current trust or loaded state from it.
+# Keep the reviewed permission policy unchanged; report version doubts rather
+# than inventing keys, upgrading Grok, or changing trust/global permissions.
+# A user-authorized external report path does not override Edit/Bash denial.
+# Both task authorization and actual tool permission are required; if denied,
+# return the report in the conversation for an authorized executor to save.
+# Native project scope supports [permission]; other settings such as [ui]
+# permission_mode, tool filters, and administrator bypass locks are NOT set here.
+# Sources: bundled docs/user-guide/22-permissions-and-safety.md,
+# 12-project-rules.md, 14-headless-mode.md, and 26-config-reference.md.
+# https://github.com/xai-org/grok-build/tree/main/crates/codegen/xai-grok-pager/docs/user-guide
+#
+# Default role: local reading/search only. Deny has precedence across scopes.
+# Bare Bash blocks ALL shell commands, including apparently read-only Git.
+# Bare Edit also covers Write. MCP and web tools cannot supply another write path.
+# The allow list is NOT a deny-by-default perimeter for unspecified tool classes.
+# Use the headless launch contract in docs/ai-collaboration-release.md:
+# --permission-mode dontAsk --no-subagents --tools read_file,list_dir,grep
+# Tool filtering is headless-only; do not assume it works in the interactive TUI.
+# Never use always-approve, bypassPermissions, acceptEdits, auto, or a yolo option
+# for this reviewer. A non-switchable bypass lock belongs in administrator-owned
+# requirements.toml, outside this phase's scope; no such lock is claimed here.
+# Windows prompts and tool rules do not replace verified read-only filesystem
+# access. Unsupported/unverified isolation must stop review of protected data.
+# Config changes apply to NEW sessions. Inspect/discovery is not enforcement proof.
+
+[permission]
+allow = ["Read(./**)", "Grep(./**)"]
+deny = [
+  "Bash",
+  "Edit",
+  "MCPTool",
+  "WebFetch",
+  "WebSearch",
+  "Read(**/.env)",
+  "Read(**/.env.*)",
+  "Read(**/candidate.env)",
+  "Read(**/*.dump)",
+  "Read(**/*.pem)",
+  "Read(**/*.key)",
+  "Read(**/.ssh/**)",
+  "Read(**/.aws/**)",
+  "Read(**/auth.json)",
+  "Read(**/credentials)",
+  "Read(**/credentials.json)",
+  "Read(**/data/**)",
+]
