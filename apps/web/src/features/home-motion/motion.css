@@ -1,0 +1,126 @@
+.motion-hero,
+.motion-crowd {
+	pointer-events: none;
+	color: var(--home-ink);
+}
+
+.motion-hero {
+	position: absolute;
+	inset: 0 0 auto;
+	height: 850px;
+}
+
+.motion-hero > canvas,
+.motion-hero-static {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, black 77%, transparent 100%);
+	mask-image: linear-gradient(to bottom, black 0%, black 77%, transparent 100%);
+}
+
+.motion-hero-static {
+	background-image: radial-gradient(
+		circle,
+		color-mix(in srgb, var(--home-ink) 9%, transparent) 0.7px,
+		transparent 0.9px
+	);
+	background-size: 12px 12px;
+	-webkit-mask-image: radial-gradient(ellipse at 50% 42%, transparent 40%, black 90%);
+	mask-image: radial-gradient(ellipse at 50% 42%, transparent 40%, black 90%);
+}
+
+.motion-crowd {
+	position: relative;
+	isolation: isolate;
+	height: 310px;
+	margin-top: 24px;
+	overflow: clip;
+}
+
+.motion-crowd > canvas,
+.motion-crowd-fallback {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, black 91%, transparent 100%);
+	mask-image: linear-gradient(to bottom, black 0%, black 91%, transparent 100%);
+}
+
+.motion-crowd-fallback img {
+	position: absolute;
+	bottom: 0;
+	left: var(--actor-x);
+	z-index: var(--actor-depth);
+	width: auto;
+	height: calc(83% + var(--actor-depth) * 5%);
+	max-width: none;
+	transform: translateX(-50%);
+}
+
+.motion-hero:not([data-ready="true"]) > canvas,
+.motion-crowd:not([data-ready="true"]) > canvas,
+.motion-hero[data-ready="true"] .motion-hero-static,
+.motion-crowd[data-ready="true"] .motion-crowd-fallback {
+	visibility: hidden;
+}
+
+.motion-toggle {
+	position: absolute;
+	right: clamp(16px, 3vw, 56px);
+	bottom: 12px;
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	min-height: 34px;
+	padding: 5px 10px;
+	border: 1px solid var(--home-line);
+	border-radius: 4px;
+	background: var(--home-bg);
+	color: var(--home-muted);
+	font: inherit;
+	font-size: 11px;
+	line-height: 1.4;
+	pointer-events: auto;
+	transition:
+		color 160ms ease,
+		border-color 160ms ease;
+}
+
+.motion-toggle:hover {
+	border-color: var(--home-muted);
+	color: var(--home-ink);
+}
+
+.motion-toggle:disabled {
+	cursor: default;
+}
+
+.motion-toggle-icon {
+	width: 12px;
+	text-align: center;
+}
+
+.motion-crowd .motion-toggle {
+	top: 8px;
+	bottom: auto;
+}
+
+@media (width < 600px) {
+	.motion-crowd {
+		height: 220px;
+	}
+	.motion-hero-static {
+		background-size: 16px 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.motion-toggle {
+		transition: none;
+	}
+}

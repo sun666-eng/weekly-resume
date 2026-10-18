@@ -1,0 +1,282 @@
+{
+	"author": "Pablo Stanley",
+	"collection": "Open Peeps",
+	"source": "https://www.openpeeps.com/",
+	"license": "CC0-1.0",
+	"licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+	"totalBytes": 619279,
+	"assets": [
+		{
+			"id": 68,
+			"path": "apps/web/public/home-motion/peep-68.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535997e35d380ada67ad80_peep-68.svg",
+			"sourceSha256": "2e15c74ef77f14099295fd8e2b79b37274463f8971a8018d26a67983554c6735",
+			"sourceBytes": 34373,
+			"sha256": "d8339f08e660a59cb4e99a72362d1219774ef2ad5862ccdec6266d9d9225df32",
+			"bytes": 33569,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 10,
+				"top": 45,
+				"width": 230,
+				"height": 237
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 8,
+			"path": "apps/web/public/home-motion/peep-8.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e53510f2b568ad72715a304_peep-8.svg",
+			"sourceSha256": "dc3277d1bf70f32f3d8ddfb71395096c0dc9fd88a09e353ff51cc35d6a8c6ed8",
+			"sourceBytes": 33756,
+			"sha256": "5faf44751f45efaa0150491dfc54d34b2efe93a40def5bce71e5422eea979b24",
+			"bytes": 32835,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 29,
+				"top": 50,
+				"width": 177,
+				"height": 243
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 16,
+			"path": "apps/web/public/home-motion/peep-16.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535216550b76cb4af21e3d_peep-16.svg",
+			"sourceSha256": "671d435db6c76964b3f3f2e9c154e8799313ef9f2402b5e91613a50c5048a9d7",
+			"sourceBytes": 35781,
+			"sha256": "9ac16827e6aafa7853a88c8b61ea6362f162c65c032f1c627c1aa15784d40b30",
+			"bytes": 34984,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 37,
+				"top": 28,
+				"width": 161,
+				"height": 257
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 42,
+			"path": "apps/web/public/home-motion/peep-42.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535686f5fa1a3aa6f812cb_peep-42.svg",
+			"sourceSha256": "f3ba02944d5ebec18d09aa30cb204d436964f688fce45684aae45e667cdabe17",
+			"sourceBytes": 33118,
+			"sha256": "612734450697944c14ab57b7f8a16ba5cca5fd586d109ea960c37af9c8bc2471",
+			"bytes": 32178,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 31,
+				"top": 47,
+				"width": 173,
+				"height": 244
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 13,
+			"path": "apps/web/public/home-motion/peep-13.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e5351b17371bb6c489ad0cc_peep-13.svg",
+			"sourceSha256": "e143c3cd87c5ed316d19d8e7e349ff675eee385778e4be1c3a2d21b0fd9f9a05",
+			"sourceBytes": 32740,
+			"sha256": "b28be6869326788c7c9247cc0ca356dd577bea703809b2856b4cc60516f2602d",
+			"bytes": 31930,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 34,
+				"top": 49,
+				"width": 172,
+				"height": 243
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 39,
+			"path": "apps/web/public/home-motion/peep-39.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535637d87131637b0e4379_peep-39.svg",
+			"sourceSha256": "1fbfccdcb909e1fc1bd0cb8abf3ad880dbee6c71179408e0037774fbe6aac929",
+			"sourceBytes": 65754,
+			"sha256": "b220aa9b735dc9756de57da3eb0d974ad53cd9f5acd4952eab8330ad15af467f",
+			"bytes": 64840,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 36,
+				"top": 40,
+				"width": 168,
+				"height": 248
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 90,
+			"path": "apps/web/public/home-motion/peep-90.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535c225197058c80a6eabc_peep-90.svg",
+			"sourceSha256": "ffe157e4ff4b99ae3e9681060d11ba84e516333a2375b65a1ce0c1a9d1dc6655",
+			"sourceBytes": 59482,
+			"sha256": "57fc3e39165d1d09517e9ce445d3f50788560412883dcd2c885f0594767706c7",
+			"bytes": 58667,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 39,
+				"top": 43,
+				"width": 199,
+				"height": 242
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 29,
+			"path": "apps/web/public/home-motion/peep-29.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e53543d8e2493ff6d04cae9_peep-29.svg",
+			"sourceSha256": "fd5fee7f5d5b11afea57f38d074e1c5dc58f40a62c9500dc71ea332c6592610d",
+			"sourceBytes": 24893,
+			"sha256": "c8da3916d64f332084fa4b29c43e1f07448d6b1422b8dd42413252d85d145ad0",
+			"bytes": 24023,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 33,
+				"top": 48,
+				"width": 169,
+				"height": 241
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 72,
+			"path": "apps/web/public/home-motion/peep-72.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535a0dd3992316ad553c2e_peep-72.svg",
+			"sourceSha256": "49eec3ef0226ea4fb8310fe347b2a219bd98a5f11421269e4995e4a3989da332",
+			"sourceBytes": 26388,
+			"sha256": "7647b3c2e92dc1720a5fdd54c1b2002250fecc37182b11be26e616693407619d",
+			"bytes": 25531,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 32,
+				"top": 43,
+				"width": 175,
+				"height": 247
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 85,
+			"path": "apps/web/public/home-motion/peep-85.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535b9746008059478ec0d0_peep-85.svg",
+			"sourceSha256": "23e3d31cd6c11f576f956b31d79c932745fb9fdaf3f0b6f8c53b91e4ad0c0593",
+			"sourceBytes": 40353,
+			"sha256": "a966d0ff9687bea365e0eed770ba8c87112f3683a49c77cd15989d3ef358b45f",
+			"bytes": 39429,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 30,
+				"top": 36,
+				"width": 175,
+				"height": 256
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 45,
+			"path": "apps/web/public/home-motion/peep-45.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e5356df7371bb368f9e42af_peep-45.svg",
+			"sourceSha256": "89a0ec1a62cb8c7499626ee0a0ab80dea0bc4795211f6a6ec6253807983b4891",
+			"sourceBytes": 53228,
+			"sha256": "9e7decb0deb7246a8f92371c6d0a66119deffd24b422897bc16dc39d351d2aee",
+			"bytes": 52362,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 39,
+				"top": 37,
+				"width": 162,
+				"height": 250
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 41,
+			"path": "apps/web/public/home-motion/peep-41.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e53566767293a5a435c41a7_peep-41.svg",
+			"sourceSha256": "e11c76e55a4dc097f32c1f9d8f2c62fdf5eb6162b1a19132614d5c69c470e553",
+			"sourceBytes": 29375,
+			"sha256": "28809183a1521767c8f7a79bc3723bead41029f78d3fb121a6b7bc6624a237a7",
+			"bytes": 28505,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 31,
+				"top": 39,
+				"width": 173,
+				"height": 252
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 25,
+			"path": "apps/web/public/home-motion/peep-25.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535398d87131adfd0c974a_peep-25.svg",
+			"sourceSha256": "8825f2937e7e09ffad1f23b50a03903595cb0d3c8684f04e438807b5d06853af",
+			"sourceBytes": 56342,
+			"sha256": "259a34b2a0a2c53f527cde69d7c0cecfcc735d3d5afc8fcb2382ae1df16498f3",
+			"bytes": 55476,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 35,
+				"top": 36,
+				"width": 162,
+				"height": 251
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 82,
+			"path": "apps/web/public/home-motion/peep-82.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535b3ad399233aa855d221_peep-82.svg",
+			"sourceSha256": "1a4a29e76a6eee07dd6061fde9778fec2acf0f84bd950a5cd31303c24b94e645",
+			"sourceBytes": 25543,
+			"sha256": "aea1664a220f7d5c8f4d455612a9f5a2badbe104f77d8fc468f87ad5d9580614",
+			"bytes": 24736,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 33,
+				"top": 39,
+				"width": 170,
+				"height": 248
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 86,
+			"path": "apps/web/public/home-motion/peep-86.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e535bb6e35d38cae7684f8c_peep-86.svg",
+			"sourceSha256": "038f7f7cccdc7403f3840045356bb613369c1bf56ab25b4889779c2fc4192a1b",
+			"sourceBytes": 24018,
+			"sha256": "965d3fa0072cddb1b7367b36666fd60b7945ffd3ff9f05326f5afee3e40023dd",
+			"bytes": 23139,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 33,
+				"top": 44,
+				"width": 169,
+				"height": 245
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		},
+		{
+			"id": 32,
+			"path": "apps/web/public/home-motion/peep-32.svg",
+			"sourceUrl": "https://cdn.prod.website-files.com/5e51c674258ffe10d286d30a/5e5354c88e249320e005285e_peep-32.svg",
+			"sourceSha256": "b7da23e1085f504f0286bbc7bd0dae071c7109df759bfc698b4a0cb04bdb35ca",
+			"sourceBytes": 57999,
+			"sha256": "9a535348e4ddb799e013264f61603021d44f219c02421e8f7999624f6e5f915d",
+			"bytes": 57075,
+			"originalViewBox": "0 0 240 324",
+			"crop": {
+				"left": 36,
+				"top": 10,
+				"width": 168,
+				"height": 278
+			},
+			"processing": "Offline alpha bounds at original resolution plus 2px transparent padding; adjust SVG viewBox/size; remove editor IDs, title/desc, XML header, inter-element whitespace. Keep path precision and all black/white fills."
+		}
+	]
+}
