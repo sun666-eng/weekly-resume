@@ -11,6 +11,7 @@ import { lazy, Suspense, useRef, useState } from "react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
 import { GithubStarsButton } from "@/components/input/github-stars-button";
+import { HeroMotion } from "@/features/home-motion/decorations";
 import { section, sectionHeading, sectionText, sectionTitle, textLink, wrap } from "./classes";
 import { CommunityStats } from "./community-stats";
 import { FeatureExplorer } from "./feature-explorer";
@@ -89,6 +90,7 @@ export function Homepage() {
 					</Link>
 				</nav>
 			</header>
+			<HeroMotion />
 			<main id="main-content" className="relative z-1">
 				<section
 					className={cn(

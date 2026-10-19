@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
+import { CrowdMotion } from "@/features/home-motion/decorations";
 import { wrap } from "./classes";
 
 type FooterLink = { label: string } & ({ anchor: string } | { to: "/dashboard" | "/ats-checker" });
@@ -106,6 +107,7 @@ export function SiteFooter() {
 					{APP_NAME}
 				</m.p>
 			</div>
+			<CrowdMotion />
 		</footer>
 	);
 }
