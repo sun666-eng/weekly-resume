@@ -76,10 +76,11 @@ describe("builder field labels", () => {
 	it("names and focuses Picture Size while preserving numeric edits", async () => {
 		const user = userEvent.setup();
 		renderSection(<PictureSectionBuilder />);
+		await user.click(screen.getByText("Advanced picture settings"));
 
-		const input = screen.getByRole("spinbutton", { name: "Size" });
-		expect(screen.getByLabelText("Size")).toBe(input);
-		await user.click(screen.getByText("Size", { selector: "label" }));
+		const input = screen.getByRole("spinbutton", { name: "Picture width" });
+		expect(screen.getByLabelText("Picture width")).toBe(input);
+		await user.click(screen.getByText("Picture width", { selector: "label" }));
 		expect(input).toHaveFocus();
 
 		fireEvent.change(input, { target: { value: "144" } });
@@ -99,7 +100,11 @@ describe("builder field labels", () => {
 
 		await waitFor(() => expect(state.uploadFile).toHaveBeenCalledOnce());
 		expect(state.uploadFile.mock.calls[0]?.[0]).toBe(file);
-		const preview = screen.getByRole("button", { name: "Delete picture" }).querySelector("img");
+		const preview = await waitFor(() => {
+			const image = screen.getAllByRole("button", { name: "Replace picture" })[0].querySelector("img");
+			expect(image).toBeInTheDocument();
+			return image;
+		});
 		expect(preview).toBeInTheDocument();
 		expect(getComputedStyle(preview as HTMLImageElement).objectFit).toBe("contain");
 		expect(screen.queryByRole("dialog", { name: "Crop picture" })).not.toBeInTheDocument();

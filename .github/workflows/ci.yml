@@ -55,6 +55,20 @@ jobs:
       fail-fast: false
       matrix:
         check: [quality, tests, build]
+    services:
+      guest_postgres:
+        # Temporary authorization is limited to PR #4's tests job on a hosted runner.
+        # An empty image leaves the other matrix jobs and events without this service.
+        image: ${{ matrix.check == 'tests' && github.event_name == 'pull_request' && github.event.number == 4 && 'postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826' || '' }}
+        env:
+          POSTGRES_USER: guest_ci
+          POSTGRES_PASSWORD: guest-ci-disposable-only
+          POSTGRES_DB: guest_test_pr4
+        ports:
+          - "127.0.0.1:35412:5432"
+        options: >-
+          --health-cmd "pg_isready -U guest_ci -d guest_test_pr4"
+          --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout tested revision
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -236,6 +250,84 @@ jobs:
           console.log(`Verified ${Object.keys(expected).length} reviewed test workspaces and Vitest scripts`);
           NODE
 
+      - name: Verify and prepare PR 4 disposable guest database
+        if: matrix.check == 'tests' && github.event_name == 'pull_request' && github.event.number == 4
+        env:
+          GUEST_CI_CONTAINER: ${{ job.services.guest_postgres.id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+          import { createRequire } from 'node:module';
+          import { isAbsolute, relative, resolve } from 'node:path';
+          assert.equal(process.env.GITHUB_ACTIONS, 'true');
+          assert.equal(process.env.RUNNER_ENVIRONMENT, 'github-hosted');
+          assert.equal(process.env.GITHUB_REPOSITORY, 'sun666-eng/weekly-resume');
+          assert.equal(process.env.GITHUB_EVENT_NAME, 'pull_request');
+          assert.equal(JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')).number, 4);
+          const image = 'postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826';
+          const id = process.env.GUEST_CI_CONTAINER;
+          assert.match(id ?? '', /^[a-f0-9]{64}$/);
+          const [container] = JSON.parse(execFileSync('docker', ['inspect', id], { encoding: 'utf8' }));
+          assert.equal(container.Id, id);
+          assert.equal(container.Config.Image, image);
+          assert.equal(container.State.Health.Status, 'healthy');
+          assert.equal(container.Mounts.some(mount => mount.Type === 'bind'), false);
+          assert.deepEqual(container.NetworkSettings.Ports['5432/tcp'], [{ HostIp: '127.0.0.1', HostPort: '35412' }]);
+          const databaseUrl = new URL('postgresql://guest_ci:guest-ci-disposable-only@127.0.0.1:35412/guest_test_pr4');
+          assert.equal(databaseUrl.hostname, '127.0.0.1');
+          assert.equal(databaseUrl.port, '35412');
+          assert.equal(databaseUrl.pathname, '/guest_test_pr4');
+          const require = createRequire(resolve('packages/db/package.json'));
+          const { Pool } = require('pg');
+          const { drizzle } = require('drizzle-orm/node-postgres');
+          const { migrate } = require('drizzle-orm/node-postgres/migrator');
+          const { readMigrationFiles } = require('drizzle-orm/migrator');
+          const migrations = readMigrationFiles({ migrationsFolder: resolve('migrations') });
+          assert.equal(migrations.length, 32);
+          const pool = new Pool({ connectionString: databaseUrl.href, connectionTimeoutMillis: 10_000 });
+          try {
+            const { rows: [identity] } = await pool.query('SELECT current_database() AS database, current_user AS role, inet_server_addr()::text AS address, inet_server_port() AS port, system_identifier::text AS cluster FROM pg_control_system()');
+            assert.equal(identity.database, 'guest_test_pr4');
+            assert.equal(identity.role, 'guest_ci');
+            assert.equal(identity.port, 5432);
+            // Compare the actual cluster reached through the published port, not
+            // the address spelling returned by Docker versus PostgreSQL.
+            const containerCluster = execFileSync('docker', ['exec', id, 'psql', '-U', 'guest_ci', '-d', 'guest_test_pr4', '-Atc', 'SELECT system_identifier::text FROM pg_control_system()'], { encoding: 'utf8' }).trim();
+            assert.match(containerCluster, /^\d+$/);
+            assert.equal(identity.cluster, containerCluster);
+            const { rows: [before] } = await pool.query("SELECT count(*)::int AS tables FROM information_schema.tables WHERE table_schema = 'public'");
+            assert.equal(before.tables, 0, 'The runner database must be empty before its first migration');
+            await migrate(drizzle({ client: pool }), { migrationsFolder: resolve('migrations') });
+            const { rows: [after] } = await pool.query(`SELECT
+              to_regclass('public.guest_draft_claim')::text AS claims,
+              to_regclass('public.guest_photo_attempt')::text AS photos,
+              to_regclass('public.resume_user_id_index')::text AS resume_index,
+              (SELECT count(*)::int FROM drizzle.__drizzle_migrations) AS migrations,
+              (SELECT count(*)::int FROM public."user") AS users`);
+            assert.equal(after.claims, 'guest_draft_claim');
+            assert.equal(after.photos, 'guest_photo_attempt');
+            assert.equal(after.resume_index, 'resume_user_id_index');
+            assert.equal(after.migrations, migrations.length);
+            const { rows: ledger } = await pool.query('SELECT name, hash FROM drizzle.__drizzle_migrations ORDER BY name');
+            assert.deepEqual(ledger, migrations.map(({ name, hash }) => ({ name, hash })));
+            assert.equal(after.users, 0);
+            const storage = resolve(process.env.RUNNER_TEMP, 'guest-integration-20261022', `guest-validation-pr4-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
+            const storageRelative = relative(process.env.RUNNER_TEMP, storage);
+            assert.ok(storageRelative && !storageRelative.startsWith('..') && !isAbsolute(storageRelative));
+            mkdirSync(storage, { recursive: true });
+            // Only these opt-in variables reach the API test task; no application DB is substituted.
+            appendFileSync(process.env.GITHUB_ENV, `GUEST_TEST_DATABASE_URL=${databaseUrl.href}\nGUEST_TEST_STORAGE_PATH=${storage}\n`);
+            const proof = { container: id, image, identity, containerCluster, ledger, dockerAddresses: Object.values(container.NetworkSettings.Networks).map(network => network.IPAddress), before, after, storageRelative, testedSha: process.env.GITHUB_SHA };
+            mkdirSync('packages/api/reports', { recursive: true });
+            writeFileSync('packages/api/reports/guest-ci-resource-proof.json', `${JSON.stringify(proof, null, 2)}\n`);
+            console.log(JSON.stringify(proof));
+          } finally {
+            await pool.end();
+          }
+          NODE
+
       - name: Run unit, component and synthetic export suites
         if: matrix.check == 'tests'
         env:
@@ -271,7 +363,7 @@ jobs:
               : (/\.(test|spec)\.[cm]?[jt]sx?$/.test(item.name) ? [path] : []);
           });
           const summary = ['## Unit/component test execution', '',
-            'Real PostgreSQL and browser E2E are outside this base CI. A skip is not a passed test.', '',
+            'PR #4 guest claims use disposable PostgreSQL; other opt-in DB suites and browser E2E remain outside this CI. A skip is not a passed test.', '',
             '| Package | Passed assertions | Skipped/todo assertions |', '|---|---:|---:|'];
           if (!packages.length) errors.push('No workspace test:ci scripts were found');
           for (const dir of packages) {
@@ -332,6 +424,7 @@ jobs:
             packages/*/reports/vitest-junit.xml
             tooling/reports/vitest-results.json
             tooling/reports/vitest-junit.xml
+            packages/api/reports/guest-ci-resource-proof.json
           if-no-files-found: error
           retention-days: 7
           include-hidden-files: false

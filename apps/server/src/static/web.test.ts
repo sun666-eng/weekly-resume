@@ -43,6 +43,23 @@ const { handleWebApp } = await import("./web");
 const staticOptions = mocks.serveStatic.mock.calls[0]?.[0] as StaticOptions | undefined;
 
 describe("web app fallback classification", () => {
+	it.each(["normal-public-slug", "4d273d61-12ab-4e2b-9b0d-c12a50cc9cc3"])(
+		"keeps /guest/%s in the public resume lookup path",
+		async (slug) => {
+			const response = await handleWebApp(new Request(`https://example.com/guest/${slug}`));
+			expect(response.status).toBe(200);
+			expect(mocks.getPublicResumeSocialMeta).toHaveBeenCalledExactlyOnceWith({ username: "guest", slug });
+		},
+	);
+	it("serves the new three-segment editor while preserving two-segment local-draft public URLs", async () => {
+		const editor = await handleWebApp(
+			new Request("https://example.com/local-draft/edit/4d273d61-12ab-4e2b-9b0d-c12a50cc9cc3"),
+		);
+		expect(editor.status).toBe(200);
+		expect(mocks.getPublicResumeSocialMeta).not.toHaveBeenCalled();
+		await handleWebApp(new Request("https://example.com/local-draft/edit"));
+		expect(mocks.getPublicResumeSocialMeta).toHaveBeenCalledWith({ username: "local-draft", slug: "edit" });
+	});
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mocks.env.ROOT_RESUME_ID = undefined;

@@ -88,6 +88,17 @@ describe("extractPdf", () => {
 			expect.objectContaining({ data: expect.any(Uint8Array), fontExtraProperties: true }),
 		);
 	});
+	it("loads Chinese auxiliary resources from the same origin", async () => {
+		await extractPdf(pdfFile(PDF_HEADER));
+		expect(pdfjsMock.legacyModule.getDocument).toHaveBeenCalledWith(
+			expect.objectContaining({
+				cMapUrl: expect.stringContaining("/pdfjs/6.3.289/cmaps/"),
+				cMapPacked: true,
+				standardFontDataUrl: expect.stringContaining("/standard_fonts/"),
+				wasmUrl: expect.stringContaining("/wasm/"),
+			}),
+		);
+	});
 
 	it("destroys the loading task once it is done", async () => {
 		await extractPdf(pdfFile(PDF_HEADER));

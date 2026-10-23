@@ -1,9 +1,11 @@
 // @vitest-environment happy-dom
 
+import type { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { GuestContext } from "../guest/context";
 import { useResumeExport } from "./use-resume-export";
 
 const mocks = vi.hoisted(() => ({
@@ -41,6 +43,54 @@ beforeEach(() => {
 	mocks.toastAdd.mockClear();
 	mocks.recordDownload.mockClear();
 	vi.stubGlobal("fetch", mocks.fetch);
+});
+
+describe("local formal export gate", () => {
+	it("requires an explicit guest action for each formal format and never treats a download as a local save", async () => {
+		const requestAction = vi.fn(async (_action: string) => undefined);
+		const context = {
+			status: "local",
+			requestAction,
+			backup: vi.fn(),
+			replaceData: vi.fn(),
+			clear: vi.fn(),
+			showHelp: vi.fn(),
+			photoBusy: vi.fn(),
+		};
+		const { result } = renderHook(
+			() => useResumeExport({ name: "Guest", slug: "local", persistence: "local", data: sampleResumeData }),
+			{
+				wrapper: ({ children }: { children: ReactNode }) => (
+					<GuestContext.Provider value={context}>{children}</GuestContext.Provider>
+				),
+			},
+		);
+		await act(async () => {
+			result.current.onDownloadJSON();
+			await result.current.onDownloadMarkdown();
+			await result.current.onDownloadDOCX();
+			await result.current.onDownloadPDF();
+			await result.current.onPrint();
+		});
+		expect(requestAction.mock.calls.map(([action]) => action)).toEqual(["json", "markdown", "docx", "pdf", "print"]);
+		expect(mocks.downloadWithAnchor).not.toHaveBeenCalled();
+		expect(mocks.fetch).not.toHaveBeenCalled();
+		expect(mocks.recordDownload).not.toHaveBeenCalled();
+	});
+	it("fails closed for a local resume outside the guest provider", async () => {
+		const { result } = renderHook(() =>
+			useResumeExport({ name: "Guest", slug: "local", persistence: "local", data: sampleResumeData }),
+		);
+		await act(async () => {
+			result.current.onDownloadJSON();
+			await result.current.onDownloadMarkdown();
+			await result.current.onDownloadDOCX();
+			await result.current.onDownloadPDF();
+			await result.current.onPrint();
+		});
+		expect(mocks.downloadWithAnchor).not.toHaveBeenCalled();
+		expect(mocks.fetch).not.toHaveBeenCalled();
+	});
 });
 
 describe("useResumeExport public PDF", () => {

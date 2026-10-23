@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@r
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { cn } from "@reactive-resume/utils/style";
 import { getPdfCategoryDescription, getPdfCategoryLabel } from "../messages";
+import { ChinaReferenceView } from "./china-reference";
 import { FindingRow } from "./finding-row";
 import { JdCoverage } from "./jd-coverage";
 import { ScoreHeader } from "./score-header";
@@ -63,6 +64,7 @@ export function AtsPdfReportView({ report, className }: ReportViewProps) {
 			</Accordion>
 
 			{report.jd && <JdCoverage jd={report.jd} />}
+			{report.chinaReference && <ChinaReferenceView reference={report.chinaReference} />}
 
 			<p className="text-muted-foreground text-xs leading-normal">
 				<Trans>

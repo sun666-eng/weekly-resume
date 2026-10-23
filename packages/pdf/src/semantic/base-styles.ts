@@ -94,7 +94,7 @@ export function buildPdfBaseStyles({
 		if (node.kind === "picture") {
 			Object.assign(style, {
 				width: data.picture.size,
-				height: data.picture.size,
+				height: data.picture.size / data.picture.aspectRatio,
 				"object-fit": "cover",
 				"aspect-ratio": data.picture.aspectRatio,
 				"border-radius": data.picture.borderRadius,

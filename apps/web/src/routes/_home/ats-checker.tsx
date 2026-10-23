@@ -2,12 +2,13 @@ import { Trans } from "@lingui/react/macro";
 import { CheckCircleIcon, ProhibitIcon, ShieldCheckIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { m } from "motion/react";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Spotlight } from "@/components/animation/spotlight";
 import { AiReviewCard } from "@/features/ats-checker/ai-review/ai-review-card";
 import { LockedAiCard } from "@/features/ats-checker/ai-review/locked-card";
 import { ParsePreview } from "@/features/ats-checker/parse-preview";
+import { useTemporaryInputGuard } from "@/features/temporary-input/use-temporary-input-guard";
 import { Footer } from "./-sections/footer";
 
 const PAGE_TITLE = "ATS Checker - Weekly Resume";
@@ -48,6 +49,8 @@ export const Route = createFileRoute("/_home/ats-checker")({
 
 function RouteComponent() {
 	const { session } = Route.useRouteContext();
+	const [hasTemporaryInput, setHasTemporaryInput] = useState(false);
+	useTemporaryInputGuard({ hasTemporaryInput, loginRequired: !session });
 
 	return (
 		// The marketing header is `fixed` and 65px tall. The homepage clears it with a full-height
@@ -61,6 +64,7 @@ function RouteComponent() {
 						<section className="border-border p-4 md:p-8 lg:border-e">
 							<Suspense fallback={<ToolSkeleton />}>
 								<AtsCheckerTool
+									onTemporaryInputChange={setHasTemporaryInput}
 									renderAiTier={({ result, jobDescription }) =>
 										session ? (
 											<AiReviewCard report={result.report} fullText={result.fullText} jobDescription={jobDescription} />

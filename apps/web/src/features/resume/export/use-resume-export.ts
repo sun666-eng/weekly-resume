@@ -12,6 +12,8 @@ import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/fil
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
 import { client } from "@/libs/orpc/client";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
+import { useGuestEditor } from "../guest/context";
+import { prepareDocxPhoto } from "./docx-photo";
 import { createResumePdfBlob } from "./pdf-document";
 
 /**
@@ -27,6 +29,7 @@ const createSectionTitleResolver = async (data: ResumeData) => {
 
 // ponytail: loosened from Resume to Pick so public-resume (where name may be "" for non-owners) can reuse
 type ExportableResume = {
+	persistence?: "local";
 	id?: string;
 	name: string;
 	slug: string;
@@ -50,46 +53,64 @@ type DownloadPdfOptions = {
  * between the builder dock and the right-panel Export section (#17).
  */
 export function useResumeExport(resume: ExportableResume | undefined, exportOptions: UseResumeExportOptions = {}) {
+	const guest = useGuestEditor();
 	const [isExporting, setIsExporting] = useState(false);
-	const hasCoverLetter = resume ? resumeHasCoverLetter(resume.data) : false;
+	const hasCoverLetter =
+		!guest && resume?.persistence !== "local" && resume ? resumeHasCoverLetter(resume.data) : false;
 
 	const onDownloadJSON = useCallback(() => {
-		if (!resume) return;
+		if (guest) {
+			void guest.requestAction("json");
+			return;
+		}
+		if (!resume || resume.persistence === "local") return;
 		const blob = new Blob([JSON.stringify(resume.data, null, 2)], { type: "application/json" });
 		downloadWithAnchor(blob, generateFilename(getExportName(resume), "json"));
-	}, [resume]);
+	}, [resume, guest]);
 
 	const onDownloadMarkdown = useCallback(
 		async (target: ResumeExportTarget = "resume") => {
-			if (!resume) return;
+			if (guest) {
+				await guest.requestAction("markdown");
+				return;
+			}
+			if (!resume || resume.persistence === "local") return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
 			const data = getResumeExportData(resume.data, target);
 			const resolveTitle = await createSectionTitleResolver(data);
 			const blob = new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
 			downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "md"));
 		},
-		[resume],
+		[resume, guest],
 	);
 
 	const onDownloadDOCX = useCallback(
 		async (target: ResumeExportTarget = "resume") => {
-			if (!resume) return;
+			if (guest) {
+				await guest.requestAction("docx");
+				return;
+			}
+			if (!resume || resume.persistence === "local") return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
 			try {
 				const data = getResumeExportData(resume.data, target);
 				const resolveTitle = await createSectionTitleResolver(data);
-				const blob = await buildDocx(data, resolveTitle);
+				const blob = await buildDocx(data, resolveTitle, await prepareDocxPhoto(data));
 				downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "docx"));
 			} catch {
 				toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
 			}
 		},
-		[resume],
+		[resume, guest],
 	);
 
 	const onDownloadPDF = useCallback(
 		async (target: ResumeExportTarget = "resume", downloadOptions?: DownloadPdfOptions) => {
-			if (!resume) return;
+			if (guest) {
+				await guest.requestAction("pdf");
+				return;
+			}
+			if (!resume || resume.persistence === "local") return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
 			const toastId = toast.add({
 				type: "loading",
@@ -121,11 +142,15 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 				toast.close(toastId);
 			}
 		},
-		[exportOptions.publicResumePdf, resume],
+		[exportOptions.publicResumePdf, resume, guest],
 	);
 
 	const onPrint = useCallback(async () => {
-		if (!resume) return;
+		if (guest) {
+			await guest.requestAction("print");
+			return;
+		}
+		if (!resume || resume.persistence === "local") return;
 		const toastId = toast.add({ type: "loading", description: t`Preparing your resume for printing...` });
 		setIsExporting(true);
 		try {
@@ -160,7 +185,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			setIsExporting(false);
 			toast.close(toastId);
 		}
-	}, [exportOptions.publicResumePdf, resume]);
+	}, [exportOptions.publicResumePdf, resume, guest]);
 
 	return { onDownloadJSON, onDownloadMarkdown, onDownloadDOCX, onDownloadPDF, onPrint, isExporting, hasCoverLetter };
 }

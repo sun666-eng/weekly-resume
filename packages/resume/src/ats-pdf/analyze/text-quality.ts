@@ -62,6 +62,8 @@ export function analyzeTextQuality(input: TextQualityInput): TextQuality {
 	const puaCount = countCharsIn(fullText, isPrivateUse);
 	const ligatureCount = countCharsIn(fullText, isLigature);
 	const latinCount = (fullText.match(/[A-Za-z]/g) ?? []).length;
+	const hanCount = (fullText.match(/\p{Script=Han}/gu) ?? []).length;
+	const predominantlyChinese = hanCount > 0 && hanCount > latinCount;
 
 	const tokens = fullText.split(/[^\p{L}\p{N}'-]+/u).filter(Boolean);
 	const alphabetic = tokens.filter((token) => ALPHABETIC_TOKEN.test(token));
@@ -88,7 +90,8 @@ export function analyzeTextQuality(input: TextQualityInput): TextQuality {
 		ligatureCount,
 		vowellessRatio: alphabetic.length === 0 ? 0 : vowelless / alphabetic.length,
 		lexiconHitRatio,
-		isEnglish: declaresEnglish || (looksLatin && lexiconHitRatio >= ENGLISH_LEXICON_THRESHOLD),
+		isEnglish:
+			!predominantlyChinese && (declaresEnglish || (looksLatin && lexiconHitRatio >= ENGLISH_LEXICON_THRESHOLD)),
 		runOnTokenRatio: alphabetic.length === 0 ? 0 : runOn / alphabetic.length,
 		singleCharItemRatio: input.singleCharItemRatio,
 	};

@@ -8063,3 +8063,404 @@ msgstr "Your session expired. Sign in again to save your changes."
 
 msgid "Sign in again"
 msgstr "Sign in again"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Advanced picture settings"
+msgstr "Advanced picture settings"
+
+#: src/dialogs/resume/import.tsx
+msgid "Cancel import"
+msgstr "Cancel import"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the recognized fields"
+msgstr "Check the recognized fields"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import and review"
+msgstr "Import and review"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Not saved"
+msgstr "Not saved"
+
+#: src/dialogs/resume/import.tsx
+msgid "Position not recognized: {label}"
+msgstr "Position not recognized: {label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+msgid "Position not specified"
+msgstr "Position not specified"
+
+#: src/dialogs/resume/import.tsx
+msgid "Possible body text in a section title: {label}"
+msgstr "Possible body text in a section title: {label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Replace picture"
+msgstr "Replace picture"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Resolve conflict"
+msgstr "Resolve conflict"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Saved locally"
+msgstr "Saved locally"
+
+#: src/dialogs/resume/import.tsx
+msgid "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+msgstr "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your changes are saved to your account."
+msgstr "Your changes are saved to your account."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+msgstr "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are being saved. Wait for “Saved” before closing this page."
+msgstr "Your latest changes are being saved. Wait for “Saved” before closing this page."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are not backed up. Keep this page open until saving succeeds."
+msgstr "Your latest changes are not backed up. Keep this page open until saving succeeds."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Your picture is hidden from the resume."
+msgstr "Your picture is hidden from the resume."
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Retry saving"
+msgstr "Retry saving"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
+msgstr "Picture could not be loaded. Replace it or check its URL in advanced settings."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+msgstr "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word file is too large. Please use a file smaller than 15 MB."
+msgstr "This Word file is too large. Please use a file smaller than 15 MB."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+msgstr "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+msgstr "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Basic import is available without AI."
+msgstr "Basic import is available without AI."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+msgstr "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition"
+msgstr "AI-enhanced recognition"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "The document will be sent to your connected AI provider for recognition when you import."
+msgstr "The document will be sent to your connected AI provider for recognition when you import."
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+msgstr "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture width"
+msgstr "Picture width"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture shape"
+msgstr "Picture shape"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Portrait 3:4"
+msgstr "Portrait 3:4"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Square 1:1"
+msgstr "Square 1:1"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Original proportions"
+msgstr "Original proportions"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+msgstr "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+
+msgid "China job reference (optional)"
+msgstr "China job reference (optional)"
+
+msgid "No role selected"
+msgstr "No role selected"
+
+msgid "Career stage (optional)"
+msgstr "Career stage (optional)"
+
+msgid "Any stage"
+msgstr "Any stage"
+
+msgid "Campus recruitment"
+msgstr "Campus recruitment"
+
+msgid "Internship"
+msgstr "Internship"
+
+msgid "Experienced"
+msgstr "Experienced"
+
+msgid "Career change"
+msgstr "Career change"
+
+msgid "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+msgstr "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+
+msgid "Human-curated practice"
+msgstr "Human-curated practice"
+
+msgid "Official guidance"
+msgstr "Official guidance"
+
+msgid "Legal reference"
+msgstr "Legal reference"
+
+msgid "Official standard"
+msgstr "Official standard"
+
+msgid "Reviewed: {0}"
+msgstr "Reviewed: {0}"
+
+msgid "No external source; human-curated practice."
+msgstr "No external source; human-curated practice."
+
+msgid "China job reference"
+msgstr "China job reference"
+
+msgid "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+msgstr "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+
+msgid "Appears in the text"
+msgstr "Appears in the text"
+
+msgid "No text evidence found"
+msgstr "No text evidence found"
+
+msgid "Evidence to review"
+msgstr "Evidence to review"
+
+msgid "Truthfulness and privacy constraints ({0})"
+msgstr "Truthfulness and privacy constraints ({0})"
+
+msgid "Reference version: {0}"
+msgstr "Reference version: {0}"
+
+msgid "Inputs changed. Run the check again before requesting an AI review."
+msgstr "Inputs changed. Run the check again before requesting an AI review."
+
+msgid "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+msgstr "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+
+msgid "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+msgstr "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+
+msgid "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+msgstr "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+
+msgid "Role methodology and sources"
+msgstr "Role methodology and sources"
+
+msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+msgstr "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "This is a temporary sample preview, not a saved resume. It will not be restored after leaving or refreshing."
+msgstr "This is a temporary sample preview, not a saved resume. It will not be restored after leaving or refreshing."
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your PDF is only processed on this page, never uploaded or saved. Select it again after leaving or refreshing."
+msgstr "Your PDF is only processed on this page, never uploaded or saved. Select it again after leaving or refreshing."
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your file, job description and results are only used on this page and are not automatically saved. Select your file and enter the job description again after leaving or refreshing."
+msgstr "Your file, job description and results are only used on this page and are not automatically saved. Select your file and enter the job description again after leaving or refreshing."
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Leave this page?"
+msgstr "Leave this page?"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Signing in will not carry over this sample or analysis. Your temporary inputs and results are not saved and will not be restored after leaving. Continue to sign in?"
+msgstr "Signing in will not carry over this sample or analysis. Your temporary inputs and results are not saved and will not be restored after leaving. Continue to sign in?"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your temporary inputs and results are not saved and will not be restored after leaving or refreshing. Leave this page?"
+msgstr "Your temporary inputs and results are not saved and will not be restored after leaving or refreshing. Leave this page?"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Stay on this page"
+msgstr "Stay on this page"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Leave anyway"
+msgstr "Leave anyway"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Reset this analysis"
+msgstr "Reset this analysis"
+
+
+#. js-lingui-explicit-id
+msgid "guest.disclosure"
+msgstr "Create without registering. Saving to an account and formal export require sign-in. Local backups do not."
+
+#. js-lingui-explicit-id
+msgid "guest.storageNotice"
+msgstr "Stored only in this browser. Clearing browser data, private browsing, storage eviction, changing device or site address can prevent recovery. Back up important work."
+
+#. js-lingui-explicit-id
+msgid "guest.status.restoring"
+msgstr "Restoring"
+
+#. js-lingui-explicit-id
+msgid "guest.status.saving"
+msgstr "Saving in this browser"
+
+#. js-lingui-explicit-id
+msgid "guest.status.saved"
+msgstr "Saved in this browser"
+
+#. js-lingui-explicit-id
+msgid "guest.status.failed"
+msgstr "Local save failed — retrieve a backup"
+
+#. js-lingui-explicit-id
+msgid "guest.status.claiming"
+msgstr "Saving to account"
+
+#. js-lingui-explicit-id
+msgid "guest.status.claimed"
+msgstr "Saved to account"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.failed"
+msgstr "Recovery did not finish. Existing data has not been replaced."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.configFailed"
+msgstr "The entry settings could not be loaded. Retry without changing your draft."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.unknown"
+msgstr "This draft format cannot be recovered here. The original record is preserved and can be retrieved."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.unavailable"
+msgstr "Browser storage could not be read or saved. No existing draft has been replaced. Keep this page open if it contains unsaved content."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.disabled"
+msgstr "New guest drafts are currently disabled. Existing drafts can still be recovered; you can also restore a local backup."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.origin"
+msgstr "Open the configured site before creating a draft. Browser drafts are not shared across site addresses."
+
+#. js-lingui-explicit-id
+msgid "guest.entry.loading"
+msgstr "Checking and restoring the draft in this browser…"
+
+#. js-lingui-explicit-id
+msgid "guest.original"
+msgstr "Retrieve original record"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.memory"
+msgstr "Continue with the unsaved draft on this page"
+
+#. js-lingui-explicit-id
+msgid "guest.backupWarning"
+msgstr "This backup includes personal information, photos and private notes. Keep it safe."
+
+#. js-lingui-explicit-id
+msgid "guest.backupFailed"
+msgstr "Backup failed. Your content is still on this page and has not been protected. Keep this page open."
+
+#. js-lingui-explicit-id
+msgid "guest.backup"
+msgstr "Retrieve local backup"
+
+#. js-lingui-explicit-id
+msgid "guest.retry"
+msgstr "Retry recovery"
+
+#. js-lingui-explicit-id
+msgid "guest.restore"
+msgstr "Restore local backup"
+
+#. js-lingui-explicit-id
+msgid "guest.canonical"
+msgstr "Open configured site"
+
+#. js-lingui-explicit-id
+msgid "guest.home"
+msgstr "Back to home"
+
+#. js-lingui-explicit-id
+msgid "guest.help"
+msgstr "About local drafts"
+
+#. js-lingui-explicit-id
+msgid "guest.local"
+msgstr "Local draft"
+
+#. js-lingui-explicit-id
+msgid "guest.saveAccount"
+msgstr "Save to account"
+
+#. js-lingui-explicit-id
+msgid "guest.formalExport"
+msgstr "Formal export"
+
+#. js-lingui-explicit-id
+msgid "guest.more"
+msgstr "More draft actions"
+
+#. js-lingui-explicit-id
+msgid "guest.print"
+msgstr "Print"
+
+#. js-lingui-explicit-id
+msgid "guest.import"
+msgstr "Import"
+
+#. js-lingui-explicit-id
+msgid "guest.clear"
+msgstr "Clear local draft"
+
+#. js-lingui-explicit-id
+msgid "guest.start"
+msgstr "Create a resume now"
+
+#. js-lingui-explicit-id
+msgid "guest.restoreConfirm"
+msgstr "Restore this backup as a local draft? It will not be uploaded or claimed automatically."
+
+#. js-lingui-explicit-id
+msgid "guest.sampleNotCarried"
+msgstr "The sample and PDF trial below will not be carried into your local draft."
+
+#. js-lingui-explicit-id
+msgid "guest.importReview"
+msgstr "Some fields may need correcting. Review them in the editor after confirming replacement of the local draft. You can take a local backup first."

@@ -14,7 +14,9 @@
 		"tooling"
 	],
 	"scripts": {
-		"build": "pnpm pdf:translations && turbo run build",
+		"build": "pnpm knowledge:check && pnpm pdf:translations && turbo run build",
+		"knowledge:generate": "node tooling/china-job-rules/generate.mjs",
+		"knowledge:check": "node tooling/china-job-rules/generate.mjs --check",
 		"check": "pnpm pdf:translations && biome check --write --unsafe . && markdownlint-cli2 --fix && github-actionlint -shellcheck= -pyflakes=",
 		"docs:gen": "pnpm --filter server docs:gen && pnpm --filter @reactive-resume/tooling docs:gen",
 		"db:generate": "turbo run db:generate --filter=@reactive-resume/db",

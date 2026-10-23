@@ -1,6 +1,6 @@
 import { splitSkillKeywords as splitKeywords } from "@reactive-resume/resume/skill-groups";
 
-type SkillGroup = { name: string; keywords: string[] };
+type SkillGroup = { name: string; keywords: string[]; proficiency?: string };
 
 const bullet = /^\s*[•●▪◦*-]\s*/u;
 // Only recognizable category labels establish a group without a colon. Never
@@ -27,6 +27,17 @@ export function parseSkillLines(lines: string[]): SkillGroup[] {
 		const raw = cleaned[index];
 		if (!raw) continue;
 		const line = raw.replace(bullet, "").trim();
+		const next = cleaned[index + 1];
+		if (
+			next &&
+			/^(?:Expert|Advanced|Intermediate|Beginner|熟练|精通|入门)$/i.test(next) &&
+			splitKeywords(cleaned[index + 2] ?? "").length >= 2
+		) {
+			active = { name: line, keywords: splitKeywords(cleaned[index + 2] ?? ""), proficiency: next };
+			result.push(active);
+			index += 2;
+			continue;
+		}
 		// A URL or C++ namespace is not a category delimiter.
 		const labeled = /^(?!.*:\/\/)([^:：]{1,32})[:：](?!:)(.*)$/u.exec(line);
 		if (labeled?.[1] && labeled[2] !== undefined) {
@@ -34,7 +45,6 @@ export function parseSkillLines(lines: string[]): SkillGroup[] {
 			result.push(active);
 			continue;
 		}
-		const next = cleaned[index + 1];
 		if (category.test(line) && next && !isSkillCategory(next)) {
 			active = { name: line, keywords: [] };
 			result.push(active);

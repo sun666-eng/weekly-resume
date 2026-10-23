@@ -1,4 +1,10 @@
-import type { CoverLetterItem, CustomSection, SectionItem, SummaryItem } from "@reactive-resume/schema/resume/data";
+import type {
+	CoverLetterItem,
+	CustomSection,
+	ResumeData,
+	SectionItem,
+	SummaryItem,
+} from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
 
 type EmptyDialog<T extends string> = { [K in T]: { type: K; data?: undefined } }[T];
@@ -39,9 +45,9 @@ export type DialogSchema =
 			| "auth.two-factor.disable"
 			| "api-key.create"
 			| "resume.create"
-			| "resume.import"
 			| "resume.template.gallery"
 	  >
+	| { type: "resume.import"; data?: { onPrepared: (data: ResumeData) => Promise<void> } }
 	| {
 			type: "resume.update";
 			data: { id: string; name: string; slug: string; tags: string[] };
