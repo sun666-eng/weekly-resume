@@ -248,9 +248,7 @@ describe("Gengar skill rating placement (#2611)", () => {
 		// Full-width Gengar draws the header as a page-wide red band. The rating is the narrower
 		// red row under the skill name, not that header.
 		const nameRasterY = raster.height - nameY * 1.5;
-		const ratingBand = rows.findIndex(
-			(pixels, y) => pixels > 40 && pixels < raster.width * 0.5 && y > nameRasterY + 2,
-		);
+		const ratingBand = rows.findIndex((pixels, y) => pixels > 40 && pixels < raster.width * 0.5 && y > nameRasterY + 2);
 		const ratingY = (raster.height - ratingBand) / 1.5;
 		expect(ratingBand).toBeGreaterThan(nameRasterY);
 		expect(ratingY).toBeLessThan(nameY);

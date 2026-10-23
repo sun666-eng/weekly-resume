@@ -49,12 +49,10 @@ export const resumeDto = {
 	},
 
 	create: {
-		input: resumeSchema
-			.pick({ name: true, slug: true, tags: true })
-			.extend({
-				withSampleData: z.boolean().default(false),
-				scenario: z.enum(["general", "graduate", "experienced", "academic"]).optional(),
-			}),
+		input: resumeSchema.pick({ name: true, slug: true, tags: true }).extend({
+			withSampleData: z.boolean().default(false),
+			scenario: z.enum(["general", "graduate", "experienced", "academic"]).optional(),
+		}),
 		output: z.string().describe("The ID of the created resume."),
 	},
 

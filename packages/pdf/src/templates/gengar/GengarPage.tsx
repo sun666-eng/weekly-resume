@@ -7,10 +7,7 @@ import { useRender } from "../../context";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { getPrimaryTint } from "../shared/color-helpers";
-import {
-	CustomFieldContactItem,
-	renderBasicsContactItems,
-} from "../shared/contact-item";
+import { CustomFieldContactItem, renderBasicsContactItems } from "../shared/contact-item";
 import { TemplateProvider } from "../shared/context";
 import { getFeaturedSummaryLayout } from "../shared/featured-summary";
 import { filterSections } from "../shared/filtering";

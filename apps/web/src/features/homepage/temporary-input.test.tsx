@@ -4,9 +4,16 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { orpc } from "@/libs/orpc/client";
 import { Homepage } from "./page";
 
-const mocks = vi.hoisted(() => ({ guard: vi.fn(), parse: vi.fn() }));
+const mocks = vi.hoisted(() => {
+	// Better Auth captures fetch when its module loads, before beforeEach runs.
+	const fetch = vi.fn();
+	vi.stubGlobal("fetch", fetch);
+	return { guard: vi.fn(), parse: vi.fn(), fetch };
+});
 vi.mock("@/features/temporary-input/use-temporary-input-guard", () => ({ useTemporaryInputGuard: mocks.guard }));
 vi.mock("@/features/ats-checker/run-ats-check", () => ({ runAtsCheck: mocks.parse }));
 vi.mock("@tanstack/react-router", () => ({
@@ -27,12 +34,20 @@ vi.mock("./page-background", () => ({ PageBackground: () => null }));
 vi.mock("./export-playground", () => ({ default: () => <button type="button">Sample export</button> }));
 
 const dirty = () => mocks.guard.mock.lastCall?.[0].hasTemporaryInput;
+let queryClient: QueryClient;
+const guestConfig = { enabled: true, origin: window.location.origin };
 async function setup() {
 	render(
-		<I18nProvider i18n={i18n}>
-			<Homepage />
-		</I18nProvider>,
+		<QueryClientProvider client={queryClient}>
+			<I18nProvider i18n={i18n}>
+				<Homepage />
+			</I18nProvider>
+		</QueryClientProvider>,
 	);
+	await waitFor(() =>
+		expect(queryClient.getQueryData(orpc.resume.guestConfig.queryOptions().queryKey)).toEqual(guestConfig),
+	);
+	expect(screen.getByRole("link", { name: "Create a resume now" })).toHaveAttribute("href", "/local-draft");
 	await screen.findByLabelText("Try your PDF");
 }
 
@@ -40,10 +55,22 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	mocks.guard.mockClear();
 	mocks.parse.mockReset();
-	vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(new Blob(["%PDF synthetic sample"]))));
+	queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	// Exercise the real query and oRPC decoding; only the HTTP boundary is synthetic.
+	vi.stubGlobal("fetch", mocks.fetch);
+	mocks.fetch.mockReset().mockImplementation((input: RequestInfo | URL) => {
+		const url = new URL(typeof input === "string" || input instanceof URL ? input : input.url, window.location.href);
+		if (url.pathname === "/api/rpc/resume/guestConfig") return Promise.resolve(Response.json({ json: guestConfig }));
+		if (url.pathname === "/api/auth/get-session") return Promise.resolve(Response.json(null));
+		if (url.pathname.startsWith("/templates/pdf/") && url.pathname.endsWith("/rhyhorn.pdf")) {
+			return Promise.resolve(new Response(new Blob(["%PDF synthetic sample"])));
+		}
+		throw new Error(`Unexpected test request: ${url.pathname}`);
+	});
 });
 afterEach(() => {
 	cleanup();
+	queryClient.clear();
 	vi.unstubAllGlobals();
 });
 

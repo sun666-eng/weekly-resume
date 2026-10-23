@@ -260,8 +260,8 @@ describe("section checks", () => {
 		);
 
 		// Non-English resumes skip section assertions unless the multilingual alias list recognised
-	// their headings; a German resume with German headings cannot be assessed for absence.
-	expect(skipReasonOf(report(german), "NO_EXPERIENCE_SECTION")).toBe("unrecognized-language");
+		// their headings; a German resume with German headings cannot be assessed for absence.
+		expect(skipReasonOf(report(german), "NO_EXPERIENCE_SECTION")).toBe("unrecognized-language");
 	});
 
 	it("flags a document too thin to have extracted properly", () => {

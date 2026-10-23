@@ -19,9 +19,9 @@ import type {
 	VolunteerItem,
 } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
-import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { t } from "@lingui/core/macro";
 import { Fragment } from "react";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { stripHtml } from "@reactive-resume/utils/string";
 import { useResumeData } from "@/features/resume/builder/draft";
 import { getSectionTitle } from "@/libs/resume/section";
@@ -384,14 +384,20 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 	const { basics, summary, sections, customSections } = resumeData;
 	const summaryText = summary && !summary.hidden ? summary.content : "";
 
-	const contact: ReactNode[] = listBasicsContactEntries(basics, resumeData.metadata.page.locale).map((entry) => {
+	const contact: { id: string; content: ReactNode }[] = listBasicsContactEntries(
+		basics,
+		resumeData.metadata.page.locale,
+	).map((entry) => {
 		const href = entry.href ? isSafeHref(entry.href) : undefined;
-		return href ? <a href={href}>{entry.text}</a> : entry.text;
+		return { id: `basic:${entry.name}`, content: href ? <a href={href}>{entry.text}</a> : entry.text };
 	});
 	for (const field of basics.customFields ?? []) {
 		if (!field.text?.trim()) continue;
 		const fieldLink = isSafeHref(field.link);
-		contact.push(fieldLink ? <a href={fieldLink}>{field.text}</a> : field.text);
+		contact.push({
+			id: `custom:${field.id}`,
+			content: fieldLink ? <a href={fieldLink}>{field.text}</a> : field.text,
+		});
 	}
 
 	return (
@@ -401,8 +407,8 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 				{basics.headline ? <p>{basics.headline}</p> : null}
 				{contact.length > 0 ? (
 					<ul>
-						{contact.map((entry, index) => (
-							<li key={index}>{entry}</li>
+						{contact.map((entry) => (
+							<li key={entry.id}>{entry.content}</li>
 						))}
 					</ul>
 				) : null}

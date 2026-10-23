@@ -80,7 +80,7 @@ function stubSseResponse() {
 					'data: {"id":"chatcmpl-sse","model":"test-model","choices":[{"index":0,"delta":{"role":"assistant","content":"1"},"finish_reason":null}]}',
 					'data: {"choices":[{"index":0,"delta":{"content":""},"finish_reason":"stop"}]}',
 					"data: [DONE]",
-			].join("\n\n"),
+				].join("\n\n"),
 				{ headers: { "Content-Type": "text/event-stream" } },
 			),
 		),

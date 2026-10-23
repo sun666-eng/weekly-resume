@@ -1,11 +1,11 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CircleNotchIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { LoadingScreen } from "@/components/layout/loading-screen";
