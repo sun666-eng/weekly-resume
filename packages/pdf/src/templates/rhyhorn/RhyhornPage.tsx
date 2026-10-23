@@ -3,13 +3,16 @@ import type { ReactNode } from "react";
 import type { TemplatePageProps } from "../../document";
 import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
-import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
+import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { useRender } from "../../context";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
 import { useRenderedSectionIds, useResolvedNode, useSemanticNodeVisible } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
-import { CustomFieldContactItem, renderBasicsContactItem } from "../shared/contact-item";
+import {
+	CustomFieldContactItem,
+	renderBasicsContactItem,
+} from "../shared/contact-item";
 import { TemplateProvider, useTemplatePageNodeKey } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";

@@ -9,7 +9,11 @@ import { buildDocument } from "./builder";
  * locale-aware section headings (titles are stored empty and resolved at render time).
  */
 // biome-ignore lint/suspicious/useAwait: keep synchronous renderer errors on the public Promise rejection path.
-export async function buildDocx(data: ResumeData, resolveTitle?: SectionTitleResolver): Promise<Blob> {
-	const doc = buildDocument(parseResumeData(data), resolveTitle);
+export async function buildDocx(
+	data: ResumeData,
+	resolveTitle?: SectionTitleResolver,
+	photo?: Uint8Array,
+): Promise<Blob> {
+	const doc = buildDocument(parseResumeData(data), resolveTitle, photo);
 	return Packer.toBlob(doc);
 }

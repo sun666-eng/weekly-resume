@@ -142,9 +142,7 @@ export function isChineseResumeLocale(locale: string | undefined | null): boolea
 export function isTraditionalChineseLocale(locale: string | undefined | null): boolean {
 	if (!locale) return false;
 	const value = locale.trim().toLowerCase();
-	return (
-		value.startsWith("zh-tw") || value.startsWith("zh-hk") || value.startsWith("zh-mo") || value.startsWith("zh-hant")
-	);
+	return value.startsWith("zh-tw") || value.startsWith("zh-hk") || value.startsWith("zh-mo") || value.startsWith("zh-hant");
 }
 
 function labelsFor(locale: string | undefined): LabelSet {
@@ -236,11 +234,7 @@ export function listBasicsContactEntries(basics: BasicsLike, locale: string | un
 	const gender = genderLabel(basics.gender, locale);
 	const age = ageLabel(basics.age, locale);
 	const political = politicalStatusLabel(basics.politicalStatus, basics.politicalStatusOther, locale);
-	const blogLabel = isChineseResumeLocale(locale)
-		? isTraditionalChineseLocale(locale)
-			? "個人博客"
-			: "个人博客"
-		: "Blog";
+	const blogLabel = isChineseResumeLocale(locale) ? (isTraditionalChineseLocale(locale) ? "個人博客" : "个人博客") : "Blog";
 	const blog = linkEntry("blog", basics.blog, blogLabel);
 	const github = linkEntry("github", basics.github, "GitHub");
 	const website = linkEntry("website", basics.website, "");

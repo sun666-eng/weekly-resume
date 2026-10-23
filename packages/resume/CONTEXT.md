@@ -1,5 +1,14 @@
 # Resume
 
+## China job reference
+
+Human-curated role profiles and review checklists derived from `knowledge/china-job-rules`.
+Generated runtime snapshot is exported at `@reactive-resume/resume/china-job-rules`; it contains
+no platform statistics. Role references are opt-in and remain outside ATS checks, scores,
+and JD term denominators. Only terms present in the user's JD enter JD coverage. Textual
+keyword presence never proves ability. `pnpm knowledge:generate` refreshes the typed snapshot;
+`pnpm knowledge:check` validates source schema, provenance references, and snapshot freshness.
+
 ## Section heading
 
 The visible label and its associated icon and separator for a resume section. Hiding the heading retains section content and its name in the builder; an empty title still means the localized default title. Heading visibility affects visual preview and exports while the screen-reader outline retains the section label.

@@ -1,8 +1,8 @@
 import type { Style } from "@react-pdf/types";
-import type { BasicsContactEntry } from "@reactive-resume/schema/resume/cn-fields";
-import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
-import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import type { ReactNode } from "react";
+import type { Basics, CustomField } from "@reactive-resume/schema/resume/data";
+import type { BasicsContactEntry } from "@reactive-resume/schema/resume/cn-fields";
+import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { View } from "#react-pdf-renderer";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
@@ -285,7 +285,13 @@ export function renderBasicsContactItem(
 	}
 
 	if ((entry.name === "blog" || entry.name === "github" || entry.name === "website") && entry.href) {
-		return <WebsiteContactItem key={entry.name} website={{ url: entry.href, label: entry.text }} {...shared} />;
+		return (
+			<WebsiteContactItem
+				key={entry.name}
+				website={{ url: entry.href, label: entry.text }}
+				{...shared}
+			/>
+		);
 	}
 
 	return (

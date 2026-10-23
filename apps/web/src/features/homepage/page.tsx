@@ -5,13 +5,18 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowDownIcon, ArrowRightIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useInView } from "motion/react";
 import { lazy, Suspense, useRef, useState } from "react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
 import { GithubStarsButton } from "@/components/input/github-stars-button";
 import { HeroMotion } from "@/features/home-motion/decorations";
+import { useTemporaryInputGuard } from "@/features/temporary-input/use-temporary-input-guard";
+import { authClient } from "@/libs/auth/client";
+import { orpc } from "@/libs/orpc/client";
+import { guestDisclosure } from "../resume/guest/copy";
 import { section, sectionHeading, sectionText, sectionTitle, textLink, wrap } from "./classes";
 import { CommunityStats } from "./community-stats";
 import { FeatureExplorer } from "./feature-explorer";
@@ -50,6 +55,11 @@ function DeferredDemo({ children }: DeferredDemoProps) {
 }
 
 export function Homepage() {
+	const { data: guestConfig } = useQuery(orpc.resume.guestConfig.queryOptions());
+	const root = useRouteContext({ from: "__root__" });
+	const { data: authSession, isPending } = authClient.useSession();
+	const currentSession = isPending ? root.session : authSession;
+	const startPath = guestConfig?.enabled && !currentSession?.user ? "/local-draft" : "/dashboard";
 	const { i18n } = useLingui();
 	const chinese = i18n.locale === "zh-CN";
 	const [name, setName] = useState(() => (chinese ? "林志远" : "Alex Morgan"));
@@ -57,6 +67,18 @@ export function Homepage() {
 	const [typeface, setTypeface] = useState<"sans" | "serif">("sans");
 	const [template, setTemplate] = useState<Template>(() => (chinese ? "meowth" : "ditgar"));
 	const [heroTemplate, setHeroTemplate] = useState<SculptureTemplate>(() => (chinese ? "bronzor" : "ditgar"));
+	const [initialSample] = useState({ name, accent, typeface, template, heroTemplate });
+	const [hasPdfInput, setHasPdfInput] = useState(false);
+	useTemporaryInputGuard({
+		loginRequired: !currentSession,
+		hasTemporaryInput:
+			hasPdfInput ||
+			name !== initialSample.name ||
+			accent !== initialSample.accent ||
+			typeface !== initialSample.typeface ||
+			template !== initialSample.template ||
+			heroTemplate !== initialSample.heroTemplate,
+	});
 	return (
 		<div className="homepage scheme-dark relative isolate overflow-clip bg-(--home-bg) font-[IBM_Plex_Sans_Variable,IBM_Plex_Sans,sans-serif] text-(--home-ink) text-[16px] leading-[1.5] [--home-accent:#c4a68c] [--home-bg:#101011] [--home-ink:#f1f0eb] [--home-line:#323235] [--home-muted:#a5a5ab] [--home-panel:#19191b] selection:bg-[#d5c2df] selection:text-[#101011]">
 			<PageBackground />
@@ -85,7 +107,7 @@ export function Homepage() {
 				>
 					<GithubStarsButton className="h-[38px] rounded-[4px] border-[#3d444d] bg-[#161b22] px-[11px] text-[#f0f6fc] text-[13px] shadow-[inset_0_1px_0_#ffffff0d,0_3px_0_#09090966] hover:border-[#6e7681] hover:bg-[#21262d] hover:text-[#f0f6fc] max-[540px]:gap-1 max-[540px]:px-2 max-[540px]:text-[11px]" />
 
-					<Link to="/dashboard" className="inline-flex min-h-[38px] items-center hover:text-(--home-ink)">
+					<Link to={startPath} className="inline-flex min-h-[38px] items-center hover:text-(--home-ink)">
 						<Trans>Get Started</Trans>
 					</Link>
 				</nav>
@@ -117,8 +139,12 @@ export function Homepage() {
 							</Trans>
 						</p>
 						<div className="mt-[30px] flex flex-wrap items-center gap-9 max-[540px]:mt-[25px] max-[1100px]:gap-7 max-[540px]:gap-7 max-[900px]:gap-9">
-							<Link to="/dashboard" className={buttonClass}>
-								<Trans>Get Started</Trans>
+							<Link to={startPath} className={buttonClass}>
+								{startPath === "/local-draft" ? (
+									<Trans id="guest.start">Create a resume now</Trans>
+								) : (
+									<Trans>Get Started</Trans>
+								)}
 								<ArrowRightIcon size={20} aria-hidden="true" />
 							</Link>
 							<a
@@ -130,6 +156,16 @@ export function Homepage() {
 							</a>
 						</div>
 						<p className="mt-[17px] text-[#a5a5ab] text-[12px] leading-[1.9] max-[540px]:mt-[15px] max-[540px]:text-[11px]">
+							{startPath === "/local-draft" && (
+								<>
+									{i18n._(guestDisclosure)}
+									<br />
+									<Trans id="guest.sampleNotCarried">
+										The sample and PDF trial below will not be carried into your local draft.
+									</Trans>
+									<br />
+								</>
+							)}
 							<Trans>
 								<strong className="font-medium text-[#d4d3cf]">Free forever and open source.</strong>
 								<br />
@@ -208,7 +244,7 @@ export function Homepage() {
 							</p>
 						</div>
 						<DeferredDemo>
-							<AtsPlayground />
+							<AtsPlayground onTemporaryInputChange={setHasPdfInput} />
 						</DeferredDemo>
 					</div>
 				</section>
@@ -240,7 +276,7 @@ export function Homepage() {
 					<p className="font-[Manrope_Variable,sans-serif] font-semibold text-[clamp(23px,2.4vw,33px)] leading-[1.3] tracking-[-0.045em] max-[540px]:text-[25px]">
 						<Trans>Ready to put your name on it?</Trans>
 					</p>
-					<Link to="/dashboard" className={buttonClass}>
+					<Link to={startPath} className={buttonClass}>
 						<Trans>Create a resume</Trans>
 						<ArrowRightIcon size={20} aria-hidden="true" />
 					</Link>

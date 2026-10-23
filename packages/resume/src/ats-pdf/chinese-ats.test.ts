@@ -22,6 +22,15 @@ const withLines = (lines: readonly (string | FixtureLine)[], overrides: FixtureO
 const heading = (text: string): FixtureLine => ({ text, size: 14 });
 
 describe("text quality on CJK resumes", () => {
+	it("does not trust an English metadata tag over Chinese body text", () => {
+		expect(
+			analyzeTextQuality({
+				fullText: "教育背景与工作经历，负责订单接口性能优化和单元测试。",
+				languageTag: "en-US",
+				singleCharItemRatio: 0,
+			}).isEnglish,
+		).toBe(false);
+	});
 	it("does not mistake a Chinese resume with English tech words for English", () => {
 		const quality = analyzeTextQuality({
 			fullText:
@@ -148,6 +157,25 @@ describe("Chinese and mixed date formats", () => {
 });
 
 describe("Chinese resume end to end", () => {
+	it.each(["张三", "陈晓东", "欧阳明月", "姓名：张三"])("recognizes Chinese name %s", (name) => {
+		const raw = withLines(
+			[
+				name,
+				"教育背景",
+				"工作经历",
+				"负责接口开发和单元测试，参与订单系统数据库性能优化与日志分析，协同团队完成业务系统建设。",
+			],
+			{ metadata: { language: "zh-CN" } },
+		);
+		expect(report(raw).checks.find((check) => check.code === "NO_NAME_LINE")?.status).toBe("pass");
+	});
+	it.each(["个人简历", "前端开发", "教育背景", "数据分析"])("does not treat %s as a name", (text) => {
+		const raw = withLines(
+			[text, "项目经历", "负责接口开发和单元测试，参与订单系统数据库性能优化与日志分析，协同团队完成业务系统建设。"],
+			{ metadata: { language: "zh-CN" } },
+		);
+		expect(codesOf(raw)).toContain("NO_NAME_LINE");
+	});
 	it("does not report full CJK resumes as very short or section-less", () => {
 		const raw = withLines(
 			[

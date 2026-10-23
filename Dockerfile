@@ -19,6 +19,7 @@ ENV TURBO_TELEMETRY_DISABLED=1
 
 FROM base AS pruner
 COPY . .
+RUN node tooling/china-job-rules/generate.mjs --check
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm dlx turbo@2.9.12 prune web server --docker
 

@@ -6,15 +6,16 @@ import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { educationItemSchema } from "@reactive-resume/schema/resume/data";
+import { useCurrentBuilderResumeSelector } from "@/features/resume/builder/draft";
+import { PeriodRangeFields } from "./period-range-fields";
 import { FormControl, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
-import { PeriodRangeFields } from "./period-range-fields";
 import { SectionItemDialog } from "./section-item-dialog";
 
 const formSchema = educationItemSchema;
@@ -153,10 +154,7 @@ const EducationForm = withForm({
 				<div style={slot(40, 30)}>
 					<form.AppField name="degree">
 						{(field) => (
-							<field.TextField
-								label={<Trans>Degree</Trans>}
-								placeholder={chinese ? t`For example: Bachelor` : undefined}
-							/>
+							<field.TextField label={<Trans>Degree</Trans>} placeholder={chinese ? t`For example: Bachelor` : undefined} />
 						)}
 					</form.AppField>
 				</div>
@@ -173,9 +171,7 @@ const EducationForm = withForm({
 				</div>
 
 				<div style={slot(60, 50)}>
-					<form.AppField name="location">
-						{(field) => <field.TextField label={<Trans>Location</Trans>} />}
-					</form.AppField>
+					<form.AppField name="location">{(field) => <field.TextField label={<Trans>Location</Trans>} />}</form.AppField>
 				</div>
 
 				<div style={slot(70, 60)}>
@@ -198,55 +194,55 @@ const EducationForm = withForm({
 				</div>
 
 				<div className="sm:col-span-full" style={slot(90, 80)}>
-					<form.AppField name="website">
-						{(field) => (
-							<field.WebsiteField
-								label={<Trans>Website</Trans>}
-								formItemClassName="sm:col-span-full"
-								hideLabelButton={inlineLink}
-							/>
-						)}
-					</form.AppField>
+				<form.AppField name="website">
+					{(field) => (
+						<field.WebsiteField
+							label={<Trans>Website</Trans>}
+							formItemClassName="sm:col-span-full"
+							hideLabelButton={inlineLink}
+						/>
+					)}
+				</form.AppField>
 				</div>
 
 				<div className="sm:col-span-full" style={slot(100, 90)}>
-					<form.Field name="website.inlineLink">
-						{(field) => (
-							<FormItem className="flex items-center gap-x-2 sm:col-span-full">
-								<FormControl
-									render={
-										<Switch
-											checked={field.state.value}
-											onCheckedChange={(checked: boolean) => {
-												field.handleChange(checked);
-											}}
-										/>
-									}
-								/>
-								<FormLabel className="mt-0!">
-									<Trans>Show link in title</Trans>
-								</FormLabel>
-							</FormItem>
-						)}
-					</form.Field>
+				<form.Field name="website.inlineLink">
+					{(field) => (
+						<FormItem className="flex items-center gap-x-2 sm:col-span-full">
+							<FormControl
+								render={
+									<Switch
+										checked={field.state.value}
+										onCheckedChange={(checked: boolean) => {
+											field.handleChange(checked);
+										}}
+									/>
+								}
+							/>
+							<FormLabel className="mt-0!">
+								<Trans>Show link in title</Trans>
+							</FormLabel>
+						</FormItem>
+					)}
+				</form.Field>
 				</div>
 
 				<div className="sm:col-span-full" style={slot(110, 100)}>
-					<form.AppField name="description">
-						{(field) => (
-							<field.RichTextField
-								label={chinese ? <Trans>Major courses</Trans> : <Trans>Description</Trans>}
-								formItemClassName="sm:col-span-full"
-								description={
-									chinese ? (
-										<Trans>
-											You can list major courses here. This hint is not saved, and nothing is filled in for you.
-										</Trans>
-									) : undefined
-								}
-							/>
-						)}
-					</form.AppField>
+				<form.AppField name="description">
+					{(field) => (
+						<field.RichTextField
+							label={chinese ? <Trans>Major courses</Trans> : <Trans>Description</Trans>}
+							formItemClassName="sm:col-span-full"
+							description={
+								chinese ? (
+									<Trans>
+										You can list major courses here. This hint is not saved, and nothing is filled in for you.
+									</Trans>
+								) : undefined
+							}
+						/>
+					)}
+				</form.AppField>
 				</div>
 			</>
 		);

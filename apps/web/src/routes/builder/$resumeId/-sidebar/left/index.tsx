@@ -22,6 +22,7 @@ import {
 	focusLeftSidebarSection,
 	SectionEditorList,
 } from "@/features/resume/builder/section-recovery";
+import { useGuestEditor } from "@/features/resume/guest/context";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -128,6 +129,7 @@ function LockBanner() {
 }
 
 function SidebarEdge() {
+	const guest = useGuestEditor();
 	const { toggleSidebar } = useBuilderSidebar();
 	const coverLetterSectionId = useCurrentBuilderResumeSelector(
 		(resume) => resume.data.customSections.find((section) => section.type === "cover-letter")?.id ?? null,
@@ -254,16 +256,18 @@ function SidebarEdge() {
 					</div>
 				</div>
 
-				<UserDropdownMenu>
-					{({ session }) => (
-						<Button size="icon" variant="ghost" aria-label={t`Account menu`}>
-							<Avatar className="size-6">
-								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback className="text-[0.5rem]">{getInitials(session.user.name)}</AvatarFallback>
-							</Avatar>
-						</Button>
-					)}
-				</UserDropdownMenu>
+				{!guest && (
+					<UserDropdownMenu>
+						{({ session }) => (
+							<Button size="icon" variant="ghost" aria-label={t`Account menu`}>
+								<Avatar className="size-6">
+									<AvatarImage src={session.user.image ?? undefined} />
+									<AvatarFallback className="text-[0.5rem]">{getInitials(session.user.name)}</AvatarFallback>
+								</Avatar>
+							</Button>
+						)}
+					</UserDropdownMenu>
+				)}
 			</div>
 		</BuilderSidebarEdge>
 	);

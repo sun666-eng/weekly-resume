@@ -1,8 +1,10 @@
+import type { Template } from "@reactive-resume/schema/templates";
 import { describe, expect, it } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { act, createElement } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { templateSchema } from "@reactive-resume/schema/templates";
 import { ResumeDocument } from "../../document";
 import { rasterizePdf } from "../../semantic/test/rasterize-pdf";
 
@@ -68,6 +70,8 @@ async function rasterPicture(
 	fit: Fit,
 	stylesheet = "@version 1;",
 	frame = { borderWidth: 6, shadowWidth: 8 },
+	aspectRatio = 1,
+	template: Template = "onyx",
 ) {
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = "Picture fit";
@@ -80,16 +84,14 @@ async function rasterPicture(
 		hidden: false,
 		fit,
 		size: 100,
-		aspectRatio: 1,
+		aspectRatio,
 		borderRadius: 0,
 		borderColor: "rgba(255, 0, 255, 1)",
 		borderWidth: frame.borderWidth,
 		shadowColor: "rgba(0, 255, 255, 1)",
 		shadowWidth: frame.shadowWidth,
 	});
-	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<
-		typeof renderToBuffer
-	>[0];
+	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof renderToBuffer>[0];
 	let bytes = new Uint8Array();
 	await act(async () => {
 		bytes = new Uint8Array(await renderToBuffer(element));
@@ -185,6 +187,20 @@ function expectedContainBounds(orientation: Orientation, borderWidth: number): B
 }
 
 describe("picture fit geometry (#2782)", () => {
+	it.each(templateSchema.options)("renders a 3:4 frame on %s instead of a square", async (template) => {
+		const page = await rasterPicture(
+			"portrait",
+			"cover",
+			"@version 1;",
+			{ borderWidth: 0, shadowWidth: 0 },
+			0.75,
+			template,
+		);
+		const bounds = mergedBounds(Object.entries(marker).map(([name, color]) => requiredColorBounds(page, color, name)));
+		// Raster edge antialiasing can consume one pixel; verify both dimensions, not a rounded ratio.
+		expect(Math.abs(bounds.right - bounds.left + 1 - 150)).toBeLessThanOrEqual(1);
+		expect(Math.abs(bounds.bottom - bounds.top + 1 - 200)).toBeLessThanOrEqual(1);
+	});
 	it.each(["square", "landscape", "portrait"] as const)(
 		"keeps every %s source edge visible and centered in contain mode",
 		async (orientation) => {

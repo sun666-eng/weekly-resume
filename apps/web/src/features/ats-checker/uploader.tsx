@@ -1,13 +1,14 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { FilePdfIcon, UploadSimpleIcon } from "@phosphor-icons/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { hasPdfMagicBytes, MAX_UPLOAD_BYTES } from "./extract-client";
 
 type UploaderProps = {
 	onSelect: (file: File) => void;
+	onSelectionPendingChange?: (pending: boolean) => void;
 	disabled?: boolean;
 	selectedFileName?: string | null;
 };
@@ -16,9 +17,16 @@ type UploaderProps = {
  * PDF only, and decided from the bytes rather than the extension: a `.docx` renamed `.pdf` is
  * rejected here rather than failing deep inside PDF.js with an unhelpful error.
  */
-export function AtsUploader({ onSelect, disabled, selectedFileName }: UploaderProps) {
+export function AtsUploader({ onSelect, onSelectionPendingChange, disabled, selectedFileName }: UploaderProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isChecking, setIsChecking] = useState(false);
+	const mounted = useRef(false);
+	useEffect(() => {
+		mounted.current = true;
+		return () => {
+			mounted.current = false;
+		};
+	}, []);
 
 	const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const selected = event.target.files?.[0];
@@ -27,6 +35,7 @@ export function AtsUploader({ onSelect, disabled, selectedFileName }: UploaderPr
 		if (!selected) return;
 
 		setIsChecking(true);
+		onSelectionPendingChange?.(true);
 		try {
 			if (selected.size > MAX_UPLOAD_BYTES) {
 				toast.add({ type: "error", description: t`That file is too large to check in the browser.` });
@@ -41,9 +50,12 @@ export function AtsUploader({ onSelect, disabled, selectedFileName }: UploaderPr
 				return;
 			}
 
-			onSelect(selected);
+			if (mounted.current) onSelect(selected);
 		} finally {
-			setIsChecking(false);
+			if (mounted.current) {
+				setIsChecking(false);
+				onSelectionPendingChange?.(false);
+			}
 		}
 	};
 

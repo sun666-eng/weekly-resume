@@ -3,7 +3,7 @@ import { canonicalize, surfaceFormsOf } from "./aliases";
 import { buildNgrams, isKnownSkillForm, MAX_NGRAM_LENGTH } from "./ngrams";
 import { normalizeForMatching } from "./normalize";
 import { stemFreeText } from "./stem";
-import { splitIntoRuns, tokenize } from "./tokenize";
+import { hasWordSegmenter, splitIntoRuns, tokenize } from "./tokenize";
 
 /** Terms drawn from a requirements section count for more than terms from the company blurb. */
 const REQUIREMENTS_BOOST = 1.5;
@@ -12,7 +12,7 @@ const KNOWN_SKILL_BOOST = 2;
 /** Each additional word makes a phrase more specific, and slightly more worth matching. */
 const PHRASE_BONUS_PER_WORD = 0.4;
 const REQUIREMENTS_HEADING =
-	/\b(?:requirement|qualification|must[- ]have|nice[- ]to[- ]have|what you(?:'| a|)ll (?:need|bring|do)|about you|we(?:'| a|)re looking for|your (?:profile|background)|you (?:have|bring)|minimum|preferred)\b/;
+	/\b(?:requirement|qualification|must[- ]have|nice[- ]to[- ]have|what you(?:'| a|)ll (?:need|bring|do)|about you|we(?:'| a|)re looking for|your (?:profile|background)|you (?:have|bring)|minimum|preferred)\b|^(?:任职要求|岗位要求|职位要求|任职资格|任职条件|基本要求|优先条件|加分项)$/;
 
 const DEFAULT_MAX_TERMS = 35;
 
@@ -46,7 +46,10 @@ function collectJdTerms(jobDescription: string): Map<string, JdTerm> {
 
 	for (const run of runs) {
 		// A heading flips the section on; it does not itself contribute terms worth counting.
-		if (REQUIREMENTS_HEADING.test(run)) inRequirements = true;
+		if (REQUIREMENTS_HEADING.test(run)) {
+			inRequirements = true;
+			if (/^(?:任职要求|岗位要求|职位要求|任职资格|任职条件|基本要求|优先条件|加分项)$/.test(run)) continue;
+		}
 
 		for (const ngram of buildNgrams(tokenize(run))) {
 			const term = canonicalize(ngram);
@@ -123,7 +126,9 @@ function selectTerms(entries: readonly JdTerm[], maxTerms: number): JdTerm[] {
 		if (selected.length >= maxTerms) break;
 
 		const subsumed = selected.some(
-			(chosen) => (chosen.term.includes(entry.term) || entry.term.includes(chosen.term)) && entry.count <= chosen.count,
+			(chosen) =>
+				(` ${chosen.term} `.includes(` ${entry.term} `) || ` ${entry.term} `.includes(` ${chosen.term} `)) &&
+				entry.count <= chosen.count,
 		);
 		if (subsumed) continue;
 
@@ -178,6 +183,7 @@ export function matchJobDescription(options: JdMatchOptions): JdMatchReport {
 			)
 			.map((term) => term.term),
 		jobDescription: options.jobDescription,
+		segmentation: hasWordSegmenter() ? "intl" : "dictionary-fallback",
 		documentHasHiddenText: options.documentHasHiddenText ?? false,
 	};
 }

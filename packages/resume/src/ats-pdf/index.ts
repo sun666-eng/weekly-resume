@@ -1,3 +1,4 @@
+import type { ChinaReferenceOptions } from "../china-job-rules";
 import type { PdfRuleCode } from "./catalog";
 import type {
 	PdfAtsReport,
@@ -8,6 +9,7 @@ import type {
 	PdfSeverity,
 	RawExtraction,
 } from "./types";
+import { buildChinaReference } from "../china-job-rules";
 import { buildResumeSemantics } from "./analyze/semantics";
 import { pdfRuleCategory, pdfRuleSeverity } from "./catalog";
 import { buildExtractedDocument } from "./extract";
@@ -15,7 +17,7 @@ import { matchJobDescription } from "./jd/match";
 import { PDF_CHECKS } from "./rules";
 import { scoreChecks } from "./score";
 
-export type AnalyzePdfOptions = {
+export type AnalyzePdfOptions = ChinaReferenceOptions & {
 	/** Injected so a report is reproducible: the same bytes and the same clock give the same report. */
 	now?: Date;
 	/** BCP-47 tag used for date parsing; defaults to the document's own declared language. */
@@ -119,6 +121,7 @@ export function analyzePdfResume(raw: RawExtraction, options: AnalyzePdfOptions 
 					documentHasHiddenText: hiddenTextPresent(raw),
 				})
 			: null,
+		chinaReference: buildChinaReference(doc.fullText, options, semantics.sectionTypes, jobDescription),
 		file: raw.file,
 		document: {
 			pageCount: raw.pageCount,

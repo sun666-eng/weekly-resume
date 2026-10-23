@@ -205,6 +205,11 @@ export function ResumeSculpture({
 				))}
 			</fieldset>
 			<div className="grid @max-[300px]:grid-cols-1 @max-[450px]:grid-cols-[1fr_auto] grid-cols-[minmax(120px,1fr)_auto_auto] @max-[450px]:gap-[17px] gap-5 rounded-[4px] border border-[#363638] bg-[#1b1b1d] @max-[450px]:p-[17px] px-[21px] py-[19px] shadow-[0_15px_30px_rgb(0_0_0/16%),inset_0_1px_0_rgb(255_255_255/3%)]">
+				<p className="col-span-full text-(--home-muted) text-[13px] leading-relaxed">
+					<Trans>
+						This is a temporary sample preview, not a saved resume. It will not be restored after leaving or refreshing.
+					</Trans>
+				</p>
 				<div className="@max-[450px]:col-span-full">
 					<label htmlFor={nameId} className={dockLabel}>
 						<Trans>Your name</Trans>

@@ -19,9 +19,9 @@ import type {
 	VolunteerItem,
 } from "@reactive-resume/schema/resume/data";
 import type { ReactNode } from "react";
+import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { t } from "@lingui/core/macro";
 import { Fragment } from "react";
-import { listBasicsContactEntries, omitDuplicateGithubProfiles } from "@reactive-resume/schema/resume/cn-fields";
 import { stripHtml } from "@reactive-resume/utils/string";
 import { useResumeData } from "@/features/resume/builder/draft";
 import { getSectionTitle } from "@/libs/resume/section";
@@ -386,13 +386,7 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 
 	const contact: ReactNode[] = listBasicsContactEntries(basics, resumeData.metadata.page.locale).map((entry) => {
 		const href = entry.href ? isSafeHref(entry.href) : undefined;
-		return href ? (
-			<a key={entry.name} href={href}>
-				{entry.text}
-			</a>
-		) : (
-			entry.text
-		);
+		return href ? <a href={href}>{entry.text}</a> : entry.text;
 	});
 	for (const field of basics.customFields ?? []) {
 		if (!field.text?.trim()) continue;

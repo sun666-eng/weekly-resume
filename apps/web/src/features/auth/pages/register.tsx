@@ -19,11 +19,7 @@ import { getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 export const registerFormSchema = z.object({
 	// Trimmed so an all-whitespace name cannot pass the minimum; the server stores what we send.
 	// Min 2 so common two-character Chinese names (e.g. 王芳) can register.
-	name: z
-		.string()
-		.trim()
-		.min(2, { error: () => t`Name must be at least 2 characters.` })
-		.max(64),
+	name: z.string().trim().min(2, { error: () => t`Name must be at least 2 characters.` }).max(64),
 	username: z
 		.string()
 		.min(3, { error: () => t`Username must be at least 3 characters.` })
@@ -34,12 +30,10 @@ export const registerFormSchema = z.object({
 			// Resolved lazily at validation time so the active locale is used.
 			error: () => t`Username can only contain lowercase letters, numbers, dots, hyphens and underscores.`,
 		}),
-	email: z
-		.email({
-			// Resolved lazily at validation time so the active locale is used.
-			error: () => t`Enter a valid email address.`,
-		})
-		.toLowerCase(),
+	email: z.email({
+		// Resolved lazily at validation time so the active locale is used.
+		error: () => t`Enter a valid email address.`,
+	}).toLowerCase(),
 	password: z
 		.string()
 		.min(8, { error: () => t`Password must be at least 8 characters.` })

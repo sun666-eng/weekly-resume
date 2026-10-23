@@ -6,6 +6,8 @@ import {
 	Document,
 	ExternalHyperlink,
 	HeadingLevel,
+	ImageRun,
+	LineRuleType,
 	Paragraph,
 	ShadingType,
 	Table,
@@ -149,8 +151,26 @@ function renderSection(
 
 // --- Header ---
 
-function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): Paragraph[] {
+function buildHeader(data: ResumeData, colorHex: string, textColorHex: string, photo?: Uint8Array): Paragraph[] {
 	const paragraphs: Paragraph[] = [];
+	if (photo && !data.picture.hidden) {
+		const width = data.picture.size * (96 / 72);
+		paragraphs.push(
+			new Paragraph({
+				keepNext: true,
+				// Inline pictures need their own minimum line height in Word and LibreOffice.
+				spacing: { line: ptToTwips(data.picture.size / data.picture.aspectRatio + 4), lineRule: LineRuleType.AT_LEAST },
+				children: [
+					new ImageRun({
+						type: "png",
+						data: photo,
+						transformation: { width, height: width / data.picture.aspectRatio, rotation: data.picture.rotation },
+						altText: { title: "Resume photo", description: "Resume photo", name: "Resume photo" },
+					}),
+				],
+			}),
+		);
+	}
 	const { basics } = data;
 	const headingFont = data.metadata.typography.heading.fontFamily || "Calibri";
 	const bodyFont = data.metadata.typography.body.fontFamily || "Calibri";
@@ -324,7 +344,7 @@ function buildTwoColumnTable(
  * - Page margins and fixed DOCX page format from `metadata.page`; free-form exports as A4
  * - Primary, text, and background colors from `metadata.design.colors`
  */
-export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResolver): Document {
+export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResolver, photo?: Uint8Array): Document {
 	const colorHex = getColorHex(data.metadata.design.colors.primary, "DC2626");
 	const textColorHex = getColorHex(data.metadata.design.colors.text, "000000");
 	const bgColorHex = getColorHex(data.metadata.design.colors.background, "FFFFFF");
@@ -374,15 +394,18 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		locale: data.metadata.page.locale,
 	};
 	const showHeader = shouldShowResumeHeader(data);
+	const firstPage = data.metadata.layout.pages[0];
+	// A single-column (or empty) layout has no column in which to place a template header.
+	const headerPosition =
+		!firstPage || firstPage.fullWidth || firstPage.sidebar.length === 0 ? "full-width" : templateConfig.headerPosition;
 
-	// Header placement depends on template
-	if (templateConfig.headerPosition === "full-width" && showHeader) {
+	if (headerPosition === "full-width" && showHeader) {
 		setRenderConfig(mainConfig);
-		documentChildren.push(...buildHeader(data, colorHex, textColorHex));
+		documentChildren.push(...buildHeader(data, colorHex, textColorHex, photo));
 	}
 
 	// Process each page in the layout
-	for (const layoutPage of data.metadata.layout.pages) {
+	for (const [pageIndex, layoutPage] of data.metadata.layout.pages.entries()) {
 		const isFullWidth = layoutPage.fullWidth || layoutPage.sidebar.length === 0;
 
 		if (isFullWidth) {
@@ -395,8 +418,8 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig(mainConfig);
 
 			const mainParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "main-only" && showHeader) {
-				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
+			if (pageIndex === 0 && headerPosition === "main-only" && showHeader) {
+				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex, photo));
 			}
 			for (const sectionId of layoutPage.main) {
 				mainParagraphs.push(...renderSection(sectionId, data, colorHex, resolveTitle));
@@ -406,8 +429,8 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
 
 			const sidebarParagraphs: Paragraph[] = [];
-			if (templateConfig.headerPosition === "sidebar-only" && showHeader) {
-				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
+			if (pageIndex === 0 && headerPosition === "sidebar-only" && showHeader) {
+				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex, photo));
 			}
 			for (const sectionId of layoutPage.sidebar) {
 				sidebarParagraphs.push(...renderSection(sectionId, data, sidebarHeadingColorHex, resolveTitle));

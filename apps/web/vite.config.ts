@@ -8,6 +8,7 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { pdfjsAssetsPlugin } from "./pdfjs-assets.ts";
 
 const rootPackageJsonPath = new URL("../../package.json", import.meta.url);
 const rootPackageJson = JSON.parse(readFileSync(rootPackageJsonPath, "utf-8")) as { version: string | undefined };
@@ -55,6 +56,7 @@ export default defineConfig({
 	},
 
 	plugins: [
+		pdfjsAssetsPlugin(),
 		{
 			name: "cloudflare-rocket-loader-bootstrap",
 			transformIndexHtml: {

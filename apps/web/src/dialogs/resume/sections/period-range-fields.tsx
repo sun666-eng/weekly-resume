@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useState } from "react";
-import { formatPeriodRange, type PeriodRangeMode, parsePeriodRange } from "@reactive-resume/schema/resume/cn-fields";
+import { formatPeriodRange, parsePeriodRange, type PeriodRangeMode } from "@reactive-resume/schema/resume/cn-fields";
 import { FormDescription, FormItem, FormLabel } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 
@@ -80,8 +80,8 @@ export function PeriodRangeFields({ period, locale, onPeriodChange }: PeriodRang
 			</div>
 			<FormDescription>
 				<Trans>
-					The period text above is what gets saved. This helper fills it only when both dates are complete, and leaves
-					an existing period unchanged if it cannot be read.
+					The period text above is what gets saved. This helper fills it only when both dates are complete, and leaves an
+					existing period unchanged if it cannot be read.
 				</Trans>
 			</FormDescription>
 		</FormItem>

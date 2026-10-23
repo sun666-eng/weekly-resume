@@ -50,16 +50,7 @@ function resume(fullWidth: boolean): ResumeData {
 		},
 	];
 	data.sections.skills.items = [
-		{
-			id: "skill",
-			hidden: false,
-			icon: "",
-			iconColor: "",
-			name: "SidebarSkill",
-			proficiency: "",
-			level: 0,
-			keywords: [],
-		},
+		{ id: "skill", hidden: false, icon: "", iconColor: "", name: "SidebarSkill", proficiency: "", level: 0, keywords: [] },
 	];
 	return data;
 }

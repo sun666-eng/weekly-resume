@@ -231,9 +231,7 @@ export function getModel(input: GetModelInput) {
 		.with("gemini", () => createGoogleGenerativeAI({ apiKey, baseURL }).languageModel(model))
 		.with("vercel-ai-gateway", () => createGateway({ apiKey, baseURL }).languageModel(model))
 		.with("openrouter", () =>
-			createOpenAICompatible({ name: "openrouter", apiKey, baseURL, fetch: openAICompatibleFetch }).languageModel(
-				model,
-			),
+			createOpenAICompatible({ name: "openrouter", apiKey, baseURL, fetch: openAICompatibleFetch }).languageModel(model),
 		)
 		.with("mistral", () => createMistral({ apiKey, baseURL }).languageModel(model))
 		.with("cohere", () => createCohere({ apiKey, baseURL }).languageModel(model))

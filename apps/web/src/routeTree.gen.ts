@@ -32,6 +32,7 @@ import { Route as AuthVerify2faBackupRouteImport } from "./routes/auth/verify-2f
 import { Route as BuilderResumeIdRouteRouteImport } from "./routes/builder/$resumeId/route";
 import { Route as DashboardIndexRouteImport } from "./routes/dashboard/index";
 import { Route as DashboardCoverLettersRouteImport } from "./routes/dashboard/cover-letters";
+import { Route as LocalDraftIndexRouteImport } from "./routes/local-draft/index";
 import { Route as TemplatesSplatRouteImport } from "./routes/templates/$";
 import { Route as BuilderResumeIdIndexRouteImport } from "./routes/builder/$resumeId/index";
 import { Route as DashboardApplicationsIndexRouteImport } from "./routes/dashboard/applications/index";
@@ -42,7 +43,9 @@ import { Route as DashboardSettingsIntegrationsRouteRouteImport } from "./routes
 import { Route as DashboardSettingsJobSearchRouteImport } from "./routes/dashboard/settings/job-search";
 import { Route as DashboardSettingsPreferencesRouteImport } from "./routes/dashboard/settings/preferences";
 import { Route as DashboardSettingsProfileRouteImport } from "./routes/dashboard/settings/profile";
+import { Route as LocalDraftEditResumeIdRouteRouteImport } from "./routes/local-draft/edit/$resumeId/route";
 import { Route as DashboardSettingsAuthenticationIndexRouteImport } from "./routes/dashboard/settings/authentication/index";
+import { Route as LocalDraftEditResumeIdIndexRouteImport } from "./routes/local-draft/edit/$resumeId/index";
 
 const HomeRouteRoute = HomeRouteRouteImport.update({
   id: "/_home",
@@ -158,6 +161,11 @@ const DashboardCoverLettersRoute = DashboardCoverLettersRouteImport.update({
   path: "/cover-letters",
   getParentRoute: () => DashboardRouteRoute,
 } as any);
+const LocalDraftIndexRoute = LocalDraftIndexRouteImport.update({
+  id: "/local-draft/",
+  path: "/local-draft/",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const TemplatesSplatRoute = TemplatesSplatRouteImport.update({
   id: "/templates/$",
   path: "/templates/$",
@@ -215,11 +223,23 @@ const DashboardSettingsProfileRoute =
     path: "/settings/profile",
     getParentRoute: () => DashboardRouteRoute,
   } as any);
+const LocalDraftEditResumeIdRouteRoute =
+  LocalDraftEditResumeIdRouteRouteImport.update({
+    id: "/local-draft/edit/$resumeId",
+    path: "/local-draft/edit/$resumeId",
+    getParentRoute: () => rootRouteImport,
+  } as any);
 const DashboardSettingsAuthenticationIndexRoute =
   DashboardSettingsAuthenticationIndexRouteImport.update({
     id: "/settings/authentication/",
     path: "/settings/authentication/",
     getParentRoute: () => DashboardRouteRoute,
+  } as any);
+const LocalDraftEditResumeIdIndexRoute =
+  LocalDraftEditResumeIdIndexRouteImport.update({
+    id: "/",
+    path: "/",
+    getParentRoute: () => LocalDraftEditResumeIdRouteRoute,
   } as any);
 
 export interface FileRoutesByFullPath {
@@ -246,7 +266,9 @@ export interface FileRoutesByFullPath {
   "/agent/": typeof AgentIndexRoute;
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
+  "/local-draft/": typeof LocalDraftIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/local-draft/edit/$resumeId": typeof LocalDraftEditResumeIdRouteRouteWithChildren;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
@@ -256,6 +278,7 @@ export interface FileRoutesByFullPath {
   "/dashboard/applications/": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
   "/dashboard/settings/authentication/": typeof DashboardSettingsAuthenticationIndexRoute;
+  "/local-draft/edit/$resumeId/": typeof LocalDraftEditResumeIdIndexRoute;
 }
 export interface FileRoutesByTo {
   "/$username/$slug": typeof UsernameSlugRoute;
@@ -277,6 +300,7 @@ export interface FileRoutesByTo {
   "/agent": typeof AgentIndexRoute;
   "/auth": typeof AuthIndexRoute;
   "/dashboard": typeof DashboardIndexRoute;
+  "/local-draft": typeof LocalDraftIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
@@ -287,6 +311,7 @@ export interface FileRoutesByTo {
   "/dashboard/applications": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes": typeof DashboardResumesIndexRoute;
   "/dashboard/settings/authentication": typeof DashboardSettingsAuthenticationIndexRoute;
+  "/local-draft/edit/$resumeId": typeof LocalDraftEditResumeIdIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -314,7 +339,9 @@ export interface FileRoutesById {
   "/agent/": typeof AgentIndexRoute;
   "/auth/": typeof AuthIndexRoute;
   "/dashboard/": typeof DashboardIndexRoute;
+  "/local-draft/": typeof LocalDraftIndexRoute;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
+  "/local-draft/edit/$resumeId": typeof LocalDraftEditResumeIdRouteRouteWithChildren;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/api-keys": typeof DashboardSettingsApiKeysRoute;
   "/dashboard/settings/job-search": typeof DashboardSettingsJobSearchRoute;
@@ -324,6 +351,7 @@ export interface FileRoutesById {
   "/dashboard/applications/": typeof DashboardApplicationsIndexRoute;
   "/dashboard/resumes/": typeof DashboardResumesIndexRoute;
   "/dashboard/settings/authentication/": typeof DashboardSettingsAuthenticationIndexRoute;
+  "/local-draft/edit/$resumeId/": typeof LocalDraftEditResumeIdIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
@@ -351,7 +379,9 @@ export interface FileRouteTypes {
     | "/agent/"
     | "/auth/"
     | "/dashboard/"
+    | "/local-draft/"
     | "/dashboard/settings/integrations"
+    | "/local-draft/edit/$resumeId"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
@@ -360,7 +390,8 @@ export interface FileRouteTypes {
     | "/builder/$resumeId/"
     | "/dashboard/applications/"
     | "/dashboard/resumes/"
-    | "/dashboard/settings/authentication/";
+    | "/dashboard/settings/authentication/"
+    | "/local-draft/edit/$resumeId/";
   fileRoutesByTo: FileRoutesByTo;
   to:
     | "/$username/$slug"
@@ -382,6 +413,7 @@ export interface FileRouteTypes {
     | "/agent"
     | "/auth"
     | "/dashboard"
+    | "/local-draft"
     | "/dashboard/settings/integrations"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
@@ -391,7 +423,8 @@ export interface FileRouteTypes {
     | "/builder/$resumeId"
     | "/dashboard/applications"
     | "/dashboard/resumes"
-    | "/dashboard/settings/authentication";
+    | "/dashboard/settings/authentication"
+    | "/local-draft/edit/$resumeId";
   id:
     | "__root__"
     | "/_home"
@@ -418,7 +451,9 @@ export interface FileRouteTypes {
     | "/agent/"
     | "/auth/"
     | "/dashboard/"
+    | "/local-draft/"
     | "/dashboard/settings/integrations"
+    | "/local-draft/edit/$resumeId"
     | "/dashboard/settings/account"
     | "/dashboard/settings/api-keys"
     | "/dashboard/settings/job-search"
@@ -427,7 +462,8 @@ export interface FileRouteTypes {
     | "/builder/$resumeId/"
     | "/dashboard/applications/"
     | "/dashboard/resumes/"
-    | "/dashboard/settings/authentication/";
+    | "/dashboard/settings/authentication/"
+    | "/local-draft/edit/$resumeId/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -438,6 +474,8 @@ export interface RootRouteChildren {
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
   UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
+  LocalDraftIndexRoute: typeof LocalDraftIndexRoute;
+  LocalDraftEditResumeIdRouteRoute: typeof LocalDraftEditResumeIdRouteRouteWithChildren;
 }
 
 declare module "@tanstack/react-router" {
@@ -603,6 +641,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DashboardCoverLettersRouteImport;
       parentRoute: typeof DashboardRouteRoute;
     };
+    "/local-draft/": {
+      id: "/local-draft/";
+      path: "/local-draft";
+      fullPath: "/local-draft/";
+      preLoaderRoute: typeof LocalDraftIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/templates/$": {
       id: "/templates/$";
       path: "/templates/$";
@@ -673,12 +718,26 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DashboardSettingsProfileRouteImport;
       parentRoute: typeof DashboardRouteRoute;
     };
+    "/local-draft/edit/$resumeId": {
+      id: "/local-draft/edit/$resumeId";
+      path: "/local-draft/edit/$resumeId";
+      fullPath: "/local-draft/edit/$resumeId";
+      preLoaderRoute: typeof LocalDraftEditResumeIdRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/dashboard/settings/authentication/": {
       id: "/dashboard/settings/authentication/";
       path: "/settings/authentication";
       fullPath: "/dashboard/settings/authentication/";
       preLoaderRoute: typeof DashboardSettingsAuthenticationIndexRouteImport;
       parentRoute: typeof DashboardRouteRoute;
+    };
+    "/local-draft/edit/$resumeId/": {
+      id: "/local-draft/edit/$resumeId/";
+      path: "/";
+      fullPath: "/local-draft/edit/$resumeId/";
+      preLoaderRoute: typeof LocalDraftEditResumeIdIndexRouteImport;
+      parentRoute: typeof LocalDraftEditResumeIdRouteRoute;
     };
   }
 }
@@ -788,6 +847,20 @@ const BuilderResumeIdRouteRouteChildren: BuilderResumeIdRouteRouteChildren = {
 const BuilderResumeIdRouteRouteWithChildren =
   BuilderResumeIdRouteRoute._addFileChildren(BuilderResumeIdRouteRouteChildren);
 
+interface LocalDraftEditResumeIdRouteRouteChildren {
+  LocalDraftEditResumeIdIndexRoute: typeof LocalDraftEditResumeIdIndexRoute;
+}
+
+const LocalDraftEditResumeIdRouteRouteChildren: LocalDraftEditResumeIdRouteRouteChildren =
+  {
+    LocalDraftEditResumeIdIndexRoute: LocalDraftEditResumeIdIndexRoute,
+  };
+
+const LocalDraftEditResumeIdRouteRouteWithChildren =
+  LocalDraftEditResumeIdRouteRoute._addFileChildren(
+    LocalDraftEditResumeIdRouteRouteChildren,
+  );
+
 const rootRouteChildren: RootRouteChildren = {
   HomeRouteRoute: HomeRouteRouteWithChildren,
   AgentRouteRoute: AgentRouteRouteWithChildren,
@@ -796,6 +869,9 @@ const rootRouteChildren: RootRouteChildren = {
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
   UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,
+  LocalDraftIndexRoute: LocalDraftIndexRoute,
+  LocalDraftEditResumeIdRouteRoute:
+    LocalDraftEditResumeIdRouteRouteWithChildren,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

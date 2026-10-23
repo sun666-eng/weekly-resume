@@ -1,3 +1,5 @@
+import { CHINA_SKILL_TERMS } from "../../china-job-rules";
+
 /**
  * Surface form -> canonical form.
  *
@@ -213,6 +215,7 @@ const SURFACES_BY_CANONICAL = (() => {
  * stemmed. "kubernetes" stems to "kubernet", which matches nothing a recruiter would ever type.
  */
 export const SKILL_SURFACE_FORMS: ReadonlySet<string> = new Set([
+	...CHINA_SKILL_TERMS.map((term) => term.normalize("NFKC").toLowerCase()),
 	...Object.keys(ALIASES),
 	...SURFACES_BY_CANONICAL.keys(),
 ]);
