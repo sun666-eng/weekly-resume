@@ -283,16 +283,23 @@ jobs:
           const { Pool } = require('pg');
           const { drizzle } = require('drizzle-orm/node-postgres');
           const { migrate } = require('drizzle-orm/node-postgres/migrator');
+          const { readMigrationFiles } = require('drizzle-orm/migrator');
+          const migrations = readMigrationFiles({ migrationsFolder: resolve('migrations') });
+          assert.equal(migrations.length, 32);
           const pool = new Pool({ connectionString: databaseUrl.href, connectionTimeoutMillis: 10_000 });
           try {
-            const { rows: [identity] } = await pool.query('SELECT current_database() AS database, current_user AS role, inet_server_addr()::text AS address, inet_server_port() AS port');
+            const { rows: [identity] } = await pool.query('SELECT current_database() AS database, current_user AS role, inet_server_addr()::text AS address, inet_server_port() AS port, system_identifier::text AS cluster FROM pg_control_system()');
             assert.equal(identity.database, 'guest_test_pr4');
             assert.equal(identity.role, 'guest_ci');
             assert.equal(identity.port, 5432);
-            assert.ok(Object.values(container.NetworkSettings.Networks).some(network => network.IPAddress === identity.address));
+            // Compare the actual cluster reached through the published port, not
+            // the address spelling returned by Docker versus PostgreSQL.
+            const containerCluster = execFileSync('docker', ['exec', id, 'psql', '-U', 'guest_ci', '-d', 'guest_test_pr4', '-Atc', 'SELECT system_identifier::text FROM pg_control_system()'], { encoding: 'utf8' }).trim();
+            assert.match(containerCluster, /^\d+$/);
+            assert.equal(identity.cluster, containerCluster);
             const { rows: [before] } = await pool.query("SELECT count(*)::int AS tables FROM information_schema.tables WHERE table_schema = 'public'");
             assert.equal(before.tables, 0, 'The runner database must be empty before its first migration');
-            await migrate(drizzle(pool), { migrationsFolder: resolve('migrations') });
+            await migrate(drizzle({ client: pool }), { migrationsFolder: resolve('migrations') });
             const { rows: [after] } = await pool.query(`SELECT
               to_regclass('public.guest_draft_claim')::text AS claims,
               to_regclass('public.guest_photo_attempt')::text AS photos,
@@ -302,7 +309,9 @@ jobs:
             assert.equal(after.claims, 'guest_draft_claim');
             assert.equal(after.photos, 'guest_photo_attempt');
             assert.equal(after.resume_index, 'resume_user_id_index');
-            assert.equal(after.migrations, JSON.parse(readFileSync('migrations/meta/_journal.json', 'utf8')).entries.length);
+            assert.equal(after.migrations, migrations.length);
+            const { rows: ledger } = await pool.query('SELECT name, hash FROM drizzle.__drizzle_migrations ORDER BY name');
+            assert.deepEqual(ledger, migrations.map(({ name, hash }) => ({ name, hash })));
             assert.equal(after.users, 0);
             const storage = resolve(process.env.RUNNER_TEMP, 'guest-integration-20261022', `guest-validation-pr4-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
             const storageRelative = relative(process.env.RUNNER_TEMP, storage);
@@ -310,7 +319,7 @@ jobs:
             mkdirSync(storage, { recursive: true });
             // Only these opt-in variables reach the API test task; no application DB is substituted.
             appendFileSync(process.env.GITHUB_ENV, `GUEST_TEST_DATABASE_URL=${databaseUrl.href}\nGUEST_TEST_STORAGE_PATH=${storage}\n`);
-            const proof = { container: id, image, identity, before, after, storageRelative, testedSha: process.env.GITHUB_SHA };
+            const proof = { container: id, image, identity, containerCluster, ledger, dockerAddresses: Object.values(container.NetworkSettings.Networks).map(network => network.IPAddress), before, after, storageRelative, testedSha: process.env.GITHUB_SHA };
             mkdirSync('packages/api/reports', { recursive: true });
             writeFileSync('packages/api/reports/guest-ci-resource-proof.json', `${JSON.stringify(proof, null, 2)}\n`);
             console.log(JSON.stringify(proof));
