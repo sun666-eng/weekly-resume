@@ -434,3 +434,24 @@ jobs:
         run: pnpm run build --force
         # The existing build generates translation/route assets and dist on this disposable runner.
         # It does not run server start, migrations, image publishing or deployment.
+
+      - name: Build final runtime Docker image
+        if: matrix.check == 'build'
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          revision="$(git rev-parse HEAD)"
+          tree="$(git rev-parse 'HEAD^{tree}')"
+          printf 'PR head: %s\nTested checkout: %s\nGit tree: %s\n' "$PR_HEAD_SHA" "$revision" "$tree"
+          context="$(mktemp -d "$RUNNER_TEMP/weekly-resume-docker.XXXXXX")"
+          git archive "$revision" | tar -x -C "$context"
+          test ! -e "$context/node_modules"
+          test ! -e "$context/apps/web/dist"
+          test ! -e "$context/apps/server/dist"
+          image="weekly-resume:ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          docker build --platform linux/amd64 --target runtime --progress plain \
+            --label "org.opencontainers.image.revision=$revision" \
+            --label "com.weeklyresume.source-tree=$tree" \
+            --tag "$image" "$context"
+          docker image inspect "$image" --format 'ImageID={{.Id}} OS={{.Os}} Architecture={{.Architecture}} User={{.Config.User}}'
+          test "$(docker image inspect "$image" --format '{{.Config.User}}')" = node
