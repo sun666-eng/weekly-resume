@@ -258,6 +258,27 @@ function leave(action = "BACK", targetIndex = 0) {
 }
 
 describe("guest navigation transaction barrier (component tests, not browser evidence)", () => {
+	it.each(["zh-CN", "fr-FR"])(
+		"claims the confirmed %s snapshot without rewriting language or content",
+		async (locale) => {
+			// The snapshot is the latest confirmed choice, including a language changed after import.
+			original.snapshot.data.metadata.page.locale = locale;
+			original.snapshot.data.metadata.notes = "After import: explicit user choice";
+			fixture.record = structuredClone(original);
+			operation.snapshot = structuredClone(original.snapshot);
+			operation.fingerprint = await fingerprintGuestSnapshot(operation.snapshot);
+			fixture.operations.set(operationId, structuredClone(operation));
+			fixture.claim.mockResolvedValue(claimResult());
+			await mountEditor();
+			await clickClaim();
+			expect(fixture.claim.mock.calls[0]?.[0]).toMatchObject({
+				snapshot: original.snapshot,
+				fingerprint: operation.fingerprint,
+			});
+			expect(fixture.claim.mock.calls[0]?.[0].snapshot.data).toEqual(original.snapshot.data);
+		},
+	);
+
 	it("requires explicit confirmation for the current signed-in account before claiming or exporting", async () => {
 		render(<GuestEditor resumeId={draftId} operationId={operationId} />);
 		await screen.findByRole("button", { name: "保存到此账号并继续" });

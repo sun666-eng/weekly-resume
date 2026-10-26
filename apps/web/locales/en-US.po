@@ -8464,3 +8464,27 @@ msgstr "The sample and PDF trial below will not be carried into your local draft
 #. js-lingui-explicit-id
 msgid "guest.importReview"
 msgstr "Some fields may need correcting. Review them in the editor after confirming replacement of the local draft. You can take a local backup first."
+
+#. js-lingui-explicit-id
+msgid "template.gallery.keepFormatting"
+msgstr "Changing template style keeps your existing layout, colors, and fonts."
+
+#. js-lingui-explicit-id
+msgid "template.gallery.sampleCards"
+msgstr "The cards show sample content and sample layout."
+
+#. js-lingui-explicit-id
+msgid "template.gallery.viewSample"
+msgstr "View sample content and layout"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.applyStyle"
+msgstr "Use this template style"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.ownPreview"
+msgstr "Previewing my content with my existing layout, colors, and fonts."
+
+#. js-lingui-explicit-id
+msgid "template.gallery.samplePreview"
+msgstr "Sample content and sample layout. Applying this style keeps your existing layout, colors, and fonts."

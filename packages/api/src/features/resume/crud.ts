@@ -111,6 +111,7 @@ export const crudRouter = {
 				slug,
 				tags: [],
 				data,
+				source: "import",
 				locale: context.locale,
 				userId: context.user.id,
 			});

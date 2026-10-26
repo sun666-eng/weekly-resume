@@ -24,7 +24,7 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 	const selectedTemplate = resume.data.metadata.template;
 	const updateResumeData = useUpdateResumeData();
 	const [preview, setPreview] = useState<Template | null>(null);
-	const [ownContent, setOwnContent] = useState(false);
+	const [ownContent, setOwnContent] = useState(true);
 	const previewData = useMemo(
 		() => (preview ? { ...resume.data, metadata: { ...resume.data.metadata, template: preview } } : resume.data),
 		[resume.data, preview],
@@ -45,7 +45,7 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 		closeDialog();
 
 		toast.add({
-			description: t`Switched to the ${getTemplateDisplayName(template, i18n.locale, templates[template].name)} template.`,
+			description: `${t`Switched to the ${getTemplateDisplayName(template, i18n.locale, templates[template].name)} template.`} ${t({ id: "template.gallery.keepFormatting", message: "Changing template style keeps your existing layout, colors, and fonts." })}`,
 			actionProps: {
 				children: t`Undo`,
 				onClick: () => {
@@ -65,7 +65,12 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 					<Trans>Template Gallery</Trans>
 				</DialogTitle>
 				<DialogDescription className="leading-relaxed">
-					<Trans>Resume templates for different professions and tastes. Pick the one that suits you.</Trans>
+					<Trans>Resume templates for different professions and tastes. Pick the one that suits you.</Trans>{" "}
+					{t({
+						id: "template.gallery.keepFormatting",
+						message: "Changing template style keeps your existing layout, colors, and fonts.",
+					})}{" "}
+					{t({ id: "template.gallery.sampleCards", message: "The cards show sample content and sample layout." })}
 				</DialogDescription>
 			</DialogHeader>
 
@@ -77,13 +82,29 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 								{zh ? "返回模板库" : "Back to gallery"}
 							</Button>
 							<Button type="button" variant="outline" onClick={() => setOwnContent(!ownContent)}>
-								{ownContent ? (zh ? "查看示例" : "View sample") : zh ? "用我的内容预览" : "Preview my content"}
+								{ownContent
+									? t({ id: "template.gallery.viewSample", message: "View sample content and layout" })
+									: zh
+										? "用我的内容预览"
+										: "Preview my content"}
 							</Button>
 							<Button type="button" onClick={() => onSelectTemplate(preview)}>
-								{zh ? "使用此模板" : "Use this template"}
+								{t({ id: "template.gallery.applyStyle", message: "Use this template style" })}
 							</Button>
 						</div>
 						<h3 className="font-medium">{getTemplateDisplayName(preview, i18n.locale)}</h3>
+						<p className="text-muted-foreground text-sm">
+							{ownContent
+								? t({
+										id: "template.gallery.ownPreview",
+										message: "Previewing my content with my existing layout, colors, and fonts.",
+									})
+								: t({
+										id: "template.gallery.samplePreview",
+										message:
+											"Sample content and sample layout. Applying this style keeps your existing layout, colors, and fonts.",
+									})}
+						</p>
 						{ownContent ? (
 							<ResumePreview data={previewData} pageLayout="vertical" pageScale={0.6} />
 						) : (
@@ -98,7 +119,7 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 					<TemplateBrowser
 						selected={selectedTemplate}
 						onPreview={(id) => {
-							setOwnContent(false);
+							setOwnContent(true);
 							setPreview(id);
 						}}
 					/>

@@ -8542,3 +8542,27 @@ msgstr "下方样例与 PDF 试读内容不会自动带入本机草稿。"
 #. js-lingui-explicit-id
 msgid "guest.importReview"
 msgstr "部分字段可能需要修正。确认替换本机草稿后可在编辑器核对；如需保留当前内容，请先取回本机备份。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.keepFormatting"
+msgstr "切换模板样式会保留已有布局、颜色和字体。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.sampleCards"
+msgstr "卡片展示的是示例内容与示例排版。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.viewSample"
+msgstr "查看示例内容与排版"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.applyStyle"
+msgstr "使用此模板样式"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.ownPreview"
+msgstr "正在用我的内容预览，保留已有布局、颜色和字体。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.samplePreview"
+msgstr "示例内容与示例排版。使用此样式会保留你的已有布局、颜色和字体。"

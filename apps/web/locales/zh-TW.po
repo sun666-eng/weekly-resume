@@ -8322,3 +8322,27 @@ msgstr "職位畫像方法與參考來源"
 
 msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
 msgstr "該 JD 語言的分詞支援有限，請將詞項作為粗略參考清單。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.keepFormatting"
+msgstr "切換範本樣式會保留現有版面配置、顏色和字型。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.sampleCards"
+msgstr "卡片展示的是範例內容與範例版面配置。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.viewSample"
+msgstr "查看範例內容與版面配置"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.applyStyle"
+msgstr "使用此範本樣式"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.ownPreview"
+msgstr "正在用我的內容預覽，保留現有版面配置、顏色和字型。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.samplePreview"
+msgstr "範例內容與範例版面配置。使用此樣式會保留你的現有版面配置、顏色和字型。"

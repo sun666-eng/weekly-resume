@@ -78,10 +78,11 @@ vi.mock("@/libs/orpc/client", () => ({
 const { ImportResumeDialog } = await import("./import");
 
 beforeAll(() => {
-	i18n.loadAndActivate({ locale: "en", messages: {} });
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 
 afterEach(() => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	parsedPdf.value = null;
 	provider.hasUsableProvider = false;
 	provider.isLoading = false;
@@ -285,6 +286,82 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 
 const createPdfFile = () =>
 	new File([new Uint8Array([0x25, 0x50, 0x44, 0x46])], "resume.pdf", { type: "application/pdf" });
+
+function importFileInput() {
+	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+	if (!input) throw new Error("Missing import file input");
+	return input;
+}
+
+describe("F03 import language sources", () => {
+	it.each([
+		["de-DE", "de-DE"],
+		["unsupported", "zh-CN"],
+	] as const)("uses UI locale %s or the existing UI fallback", async (uiLocale, expectedLocale) => {
+		i18n.loadAndActivate({ locale: uiLocale, messages: {} });
+		const prepared = vi.fn(async () => undefined);
+		renderDialog(prepared);
+		fireEvent.change(importFileInput(), { target: { files: [createWordFile()] } });
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		const expected = structuredClone(sampleResumeData);
+		expected.metadata.page.locale = expectedLocale;
+		await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(expected));
+	});
+
+	it.each(["docx", "pdf"])("initializes guest and account %s from the supported UI locale", async (format) => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+		const prepared = vi.fn(async () => undefined);
+		const view = renderDialog(prepared);
+		fireEvent.change(importFileInput(), {
+			target: { files: [format === "docx" ? createWordFile() : createPdfFile()] },
+		});
+		await screen.findByRole("combobox");
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		const expected = structuredClone(sampleResumeData);
+		expected.metadata.page.locale = "zh-CN";
+		await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(expected));
+		view.unmount();
+		importResume.mockResolvedValue("f03-account");
+		renderDialog();
+		fireEvent.change(importFileInput(), {
+			target: { files: [format === "docx" ? createWordFile() : createPdfFile()] },
+		});
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(importResume.mock.calls[0]?.[0]).toEqual({ data: expected });
+	});
+	it.each(["guest", "account"])("preserves foreign JSON and schema fallback values for %s", async (identity) => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+		for (const [sourceLocale, expectedLocale] of [
+			["fr-FR", "fr-FR"],
+			[undefined, "en-US"],
+			[123, "en-US"],
+			["unsupported", "unsupported"],
+		] as const) {
+			const data = structuredClone(sampleResumeData);
+			const input = JSON.parse(JSON.stringify(data));
+			input.metadata.page.locale = sourceLocale;
+			const prepared = vi.fn(async () => undefined);
+			importResume.mockReset().mockResolvedValue("f03-json");
+			const view = renderDialog(identity === "guest" ? prepared : undefined);
+			fireEvent.change(importFileInput(), {
+				target: { files: [new File([JSON.stringify(input)], "locale.json", { type: "application/json" })] },
+			});
+			await screen.findByText("Weekly Resume (JSON)");
+			fireEvent.click(screen.getByRole("button", { name: "Import" }));
+			data.metadata.page.locale = expectedLocale;
+			if (identity === "guest") await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(data));
+			else {
+				await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+				expect(importResume.mock.calls[0]?.[0]).toEqual({ data });
+			}
+			view.unmount();
+		}
+	});
+});
 
 describe("ImportResumeDialog — PDF without a provider", () => {
 	it.each([false, true])("requires review for suspicious fields, confirmation=%s", async (accepted) => {

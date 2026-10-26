@@ -155,6 +155,14 @@ const ENTRY_PREAMBLE_LOOKAHEAD = 4;
 const PERIOD_CANDIDATE =
 	/(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}))\s*(?:[-–—~]|to|until|through)\s*(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4})|\p{L}+)/giu;
 const STRONG_SEPARATOR = /\s*[|•·]\s*|\s{2,}|\s+[–—]\s+/;
+const ENTRY_SEPARATOR = /\s*[|｜•·]\s*|\s{2,}|\s+[–—]\s+/;
+const CITY_HEADER_FIELD = /(^|[|｜]\s*)((?:所\s*在\s*)?城\s*市\s*[:：]\s*([^|｜]*))/gu;
+const isLabeledCity = (value: string) =>
+	value.trim().length > 0 &&
+	value.trim().length <= 40 &&
+	!/[。！？!?;；:：|｜]/u.test(value) &&
+	!EMAIL_PATTERN.test(value) &&
+	!extractPhone(value);
 const SENTENCE_END = /[.!?。！？]$/;
 const TRAILING_DATES = [/(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?(?:19|20)\d{2}$/u, /(?:\d{1,2}[/.])?(?:19|20)\d{2}$/];
 
@@ -225,7 +233,7 @@ function looksLikeEntryHeader(line: string): boolean {
 	if (SENTENCE_END.test(trimmed)) return false;
 	if (/^View on\s/i.test(trimmed)) return false;
 	if (/^(?:that|which|and|while|with|for|to|of|the|a|an|in|on|through|using|across)\s/.test(trimmed)) return false;
-	if (STRONG_SEPARATOR.test(trimmed)) return true;
+	if (ENTRY_SEPARATOR.test(trimmed)) return true;
 
 	return trimmed.split(/\s+/).length <= MAX_ENTRY_HEADER_WORDS;
 }
@@ -302,11 +310,21 @@ function headerBoundary(lines: string[]): number {
 	return boundary;
 }
 
-function splitHeaderParts(text: string): string[] {
+function splitHeaderParts(text: string, separator = STRONG_SEPARATOR): string[] {
 	return text
-		.split(STRONG_SEPARATOR)
+		.split(separator)
 		.map((part) => part.replace(/^[\s,;|•·–—-]+|[\s,;|•·–—-]+$/g, "").trim())
 		.filter(Boolean);
+}
+
+function splitEntryHeaderParts(text: string): string[] {
+	if (!text.includes("｜") || URL_TEST.test(text) || text.includes("`")) return splitHeaderParts(text);
+	const candidates = splitHeaderParts(text, ENTRY_SEPARATOR);
+	// An unspaced bar can be part of a company/project name. Require recognizable entry
+	// fields or explicit spacing before treating it as structure; keep ambiguous text intact.
+	const supported =
+		/\s｜|｜\s/u.test(text.trim()) || candidates.some(isEntryLocation) || candidates.some(isEntryDegree);
+	return supported ? candidates : splitHeaderParts(text);
 }
 
 function toHtml(lines: string[]): string {
@@ -344,7 +362,7 @@ function withHeaderText(entry: RawEntry): RawEntry {
 	if (entry.headerParts.length > 0) return entry;
 
 	const [first, ...rest] = entry.body;
-	return { ...entry, headerParts: splitHeaderParts(first ?? ""), body: rest };
+	return { ...entry, headerParts: splitEntryHeaderParts(first ?? ""), body: rest };
 }
 
 function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
@@ -365,7 +383,11 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 		const date = dateOf(line);
 
 		if (date) {
-			const remainder = splitHeaderParts(line.replace(date, " "));
+			const dateIndex = line.indexOf(date);
+			// Only remove a fullwidth bar immediately adjacent to the date that was consumed.
+			const before = line.slice(0, dateIndex).replace(/｜\s*$/u, "");
+			const after = line.slice(dateIndex + date.length).replace(/^\s*｜/u, "");
+			const remainder = splitEntryHeaderParts(`${before} ${after}`);
 
 			if (current && !current.period) {
 				current.period = date;
@@ -379,7 +401,7 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 		}
 
 		if (!current) {
-			current = { period: "", headerParts: splitHeaderParts(line), body: [] };
+			current = { period: "", headerParts: splitEntryHeaderParts(line), body: [] };
 			continue;
 		}
 
@@ -405,13 +427,13 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 			introducesEntry(cleaned, index, allowSingleDate);
 
 		if (leadsToDate && !current.period && current.body.length === 0) {
-			current.headerParts.push(...splitHeaderParts(line));
+			current.headerParts.push(...splitEntryHeaderParts(line));
 			continue;
 		}
 
 		if (leadsToDate) {
 			entries.push(current);
-			current = { period: "", headerParts: splitHeaderParts(line), body: [] };
+			current = { period: "", headerParts: splitEntryHeaderParts(line), body: [] };
 			continue;
 		}
 
@@ -437,6 +459,11 @@ const isEntryLocation = (part: string) =>
 		part,
 	);
 
+const isEntryDegree = (part: string) =>
+	/^(?:(?:本科|学士|大专|专科|硕士|博士|高中|中专|研究生)(?:学位|学历)?$|(?:Bachelor|Master|Doctor|BSc|MSc|BA|BS|MA|MS|PhD)\b)/i.test(
+		part,
+	);
+
 function experienceFields(entry: RawEntry) {
 	const parts = entry.headerParts.slice(1);
 	const locationIndex = parts.findIndex((part, index) => index < 2 && isEntryLocation(part));
@@ -452,11 +479,7 @@ function experienceFields(entry: RawEntry) {
 
 function educationFields(entry: RawEntry) {
 	const parts = entry.headerParts.slice(1);
-	const degreeIndex = parts.findIndex((part) =>
-		/^(?:(?:本科|学士|大专|专科|硕士|博士|高中|中专|研究生)(?:学位|学历)?$|(?:Bachelor|Master|Doctor|BSc|MSc|BA|BS|MA|MS|PhD)\b)/i.test(
-			part,
-		),
-	);
+	const degreeIndex = parts.findIndex(isEntryDegree);
 	if (degreeIndex < 0)
 		return { degree: parts[0] ?? "", area: "", location: parts[1] ?? "", description: entryDescription(entry, 3) };
 	const remaining = parts.filter((_, index) => index !== degreeIndex);
@@ -700,9 +723,20 @@ function parseHeader(lines: string[]) {
 		return result.replace(/\s+/g, " ").trim();
 	};
 
-	const remaining = lines.map(strip).filter(Boolean);
+	const cityFields = lines.flatMap((line) => [...line.matchAll(CITY_HEADER_FIELD)]);
+	const explicitLocation = cityFields.map((match) => match[3]?.trim() ?? "").find(isLabeledCity);
+	const locationRemainder = cityFields
+		.filter((match) => match[3]?.trim() !== explicitLocation)
+		.map((match) => match[2] ?? "");
+	const remaining = lines
+		.map((line) => line.replace(CITY_HEADER_FIELD, "$1"))
+		.map(strip)
+		.filter(Boolean);
 	const name = remaining[0] ?? "";
-	const rest = remaining.slice(1).flatMap(splitHeaderParts).filter(Boolean);
+	const rest = remaining
+		.slice(1)
+		.flatMap((line) => splitHeaderParts(line))
+		.filter(Boolean);
 	const locationIndex = rest.findIndex((part) => /,/.test(part) && !/\d{4}/.test(part));
 	const stripObjectiveLabel = (value: string) =>
 		value.replace(
@@ -713,7 +747,8 @@ function parseHeader(lines: string[]) {
 	return {
 		name,
 		headline: stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
-		location: locationIndex === -1 ? "" : (rest[locationIndex] ?? ""),
+		location: explicitLocation ?? (locationIndex === -1 ? "" : (rest[locationIndex] ?? "")),
+		locationRemainder,
 		email,
 		phone,
 		website: urls[0] ?? "",
@@ -739,40 +774,43 @@ const PERSONAL_INFO_TITLES = new Set([
 const isPersonalInfoHeading = (title: string) => PERSONAL_INFO_TITLES.has(normalizeHeading(title));
 
 const PERSONAL_FIELD_LABEL =
-	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective)\s*[:：]/gi;
+	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective|(?<![\p{L}\p{N}])所\s*在\s*城\s*市|(?<![\p{L}\p{N}])城\s*市)\s*[:：]/giu;
 
-const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline">> = {
-	姓名: "name",
-	名字: "name",
-	name: "name",
-	电子邮箱: "email",
-	电子邮件: "email",
-	邮箱: "email",
-	"e-mail": "email",
-	email: "email",
-	手机号码: "phone",
-	手机号: "phone",
-	手机: "phone",
-	电话号码: "phone",
-	电话: "phone",
-	tel: "phone",
-	telephone: "phone",
-	phone: "phone",
-	mobile: "phone",
-	网址: "website",
-	主页: "website",
-	网站: "website",
-	website: "website",
-	homepage: "website",
-	url: "website",
-	求职意向: "headline",
-	求职目标: "headline",
-	目标职位: "headline",
-	"job objective": "headline",
-	"desired position": "headline",
-	"target position": "headline",
-	objective: "headline",
-};
+const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline" | "location">> =
+	{
+		城市: "location",
+		所在城市: "location",
+		姓名: "name",
+		名字: "name",
+		name: "name",
+		电子邮箱: "email",
+		电子邮件: "email",
+		邮箱: "email",
+		"e-mail": "email",
+		email: "email",
+		手机号码: "phone",
+		手机号: "phone",
+		手机: "phone",
+		电话号码: "phone",
+		电话: "phone",
+		tel: "phone",
+		telephone: "phone",
+		phone: "phone",
+		mobile: "phone",
+		网址: "website",
+		主页: "website",
+		网站: "website",
+		website: "website",
+		homepage: "website",
+		url: "website",
+		求职意向: "headline",
+		求职目标: "headline",
+		目标职位: "headline",
+		"job objective": "headline",
+		"desired position": "headline",
+		"target position": "headline",
+		objective: "headline",
+	};
 
 // A bare line under 求职意向 is a target role, not prose, only while it stays short and free of
 // sentence or enumeration punctuation; anything else keeps flowing into the summary text.
@@ -787,14 +825,19 @@ const trimEdgeSeparators = (value: string) => value.replace(/^[\s,;，；、。]
  * and an identical value is treated as a duplicate and consumed without any loss.
  */
 function assignPersonalField(
-	type: "email" | "name" | "phone" | "website" | "headline",
+	type: "email" | "name" | "phone" | "website" | "headline" | "location",
 	value: string,
 	basics: ResumeData["basics"],
 ): string {
-	if (type === "name" || type === "headline") {
-		const field = type === "name" ? "name" : "headline";
+	if (type === "name" || type === "headline" || type === "location") {
+		const field = type;
 		const normalizedValue = value.trim();
 		if (!normalizedValue) return value;
+		if (type === "location" && !isLabeledCity(normalizedValue)) {
+			// Extract recognizable contacts, but keep the complete uncertain city field for review.
+			consumeInlineContact(value, basics);
+			return value;
+		}
 		if (!basics[field] || basics[field] === normalizedValue) {
 			basics[field] ||= normalizedValue;
 			return "";
@@ -928,6 +971,10 @@ export function parseResumeText(text: string): ResumeData {
 	data.basics.phone = contact.phone;
 	data.basics.location = contact.location;
 	data.basics.website = { url: contact.website, label: "" };
+	if (contact.locationRemainder.length > 0) {
+		data.summary.content = toHtml(contact.locationRemainder);
+		order.push("summary");
+	}
 
 	for (const item of segments) {
 		if (item.lines.length === 0) continue;

@@ -3,6 +3,7 @@ import type { DialogProps } from "../store";
 import type { ImportType } from "./import.utils";
 import type { ResumeJsonFormat } from "./parse-json";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, FileIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
@@ -30,6 +31,7 @@ import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/u
 import { useConfirm } from "@/hooks/use-confirm";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getLocalizedErrorMessage } from "@/libs/error-message";
+import { resolveLocale } from "@/libs/locale";
 import { client, orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
@@ -127,6 +129,7 @@ async function detectImportType(file: File): Promise<ImportType> {
 }
 
 export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"resume.import">["data"] }) {
+	const { i18n } = useLingui();
 	const confirm = useConfirm();
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
@@ -230,6 +233,10 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 						}),
 					);
 				}
+
+				// Local text has no authored resume locale. Resolve it here, before either guest
+				// replacement or account import. Structured JSON keeps the parser's existing rules.
+				if (isLocalImport) data.metadata.page.locale = resolveLocale(i18n.locale);
 
 				// PDF/Word recognition is inherently ambiguous. Warn before creating the new resume;
 				// JSON round-trips retain deliberate user-authored titles without an extra prompt.
