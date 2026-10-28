@@ -8096,6 +8096,18 @@ msgstr "Position not specified"
 msgid "Possible body text in a section title: {label}"
 msgstr "Possible body text in a section title: {label}"
 
+#: src/dialogs/resume/import.tsx
+msgid "Name may include an objective or contact field: {label}"
+msgstr "Name may include an objective or contact field: {label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "No name was recognized; check the name and objective: {label}"
+msgstr "No name was recognized; check the name and objective: {label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the boundary between name and objective: {label}"
+msgstr "Check the boundary between name and objective: {label}"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Replace picture"
 msgstr "Replace picture"

@@ -97,6 +97,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	联系方式: "summary",
 	求职目标: "summary",
 	求职意向: "summary",
+	意向岗位: "summary",
 	自我评价: "summary",
 	个人评价: "summary",
 	教育背景: "education",
@@ -709,6 +710,89 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 	return { header, segments };
 }
 
+const OBJECTIVE_LABEL_CORE =
+	"(?:意\\s*向\\s*岗\\s*位|求\\s*职\\s*意\\s*向|求\\s*职\\s*目\\s*标|目\\s*标\\s*职\\s*位|job objective|desired position|target position|objective)";
+const OBJECTIVE_HEADINGS = new Set(["求职意向", "求职目标", "意向岗位"]);
+const HEADER_CONTACT_LABEL =
+	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|网\s*址|主\s*页|网\s*站|website|homepage|url)\s*[:：]/giu;
+const EMPTY_HEADER_CONTACT_LINE =
+	/^(?:(?:电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile)\s*[:：]?\s*[|｜•·,;，；\s]*)+$/iu;
+const HEADER_CONTACT_SEPARATORS = /^[\s|｜•·,;，；]+|[\s|｜•·,;，；]+$/g;
+
+/** Drops A/B empty contact labels; keeps C residue for summary instead of name/headline. */
+function peelHeaderContactResidue(
+	text: string,
+	extracted: { email: string; phone: string; urls: string[] },
+): { rest: string; leftover: { text: string; offset: number }[] } {
+	const leftover: { text: string; offset: number }[] = [];
+	const fields = [...text.matchAll(PERSONAL_FIELD_LABEL)];
+	const isContactLabel = new RegExp(HEADER_CONTACT_LABEL.source, "iu");
+	if (fields.length === 0) return { rest: text.replace(/\s+/g, " ").trim(), leftover };
+
+	let rest = text.slice(0, fields[0]?.index ?? 0);
+	let cursor = fields[0]?.index ?? 0;
+	for (const [index, match] of fields.entries()) {
+		const start = match.index ?? 0;
+		if (start > cursor) rest += text.slice(cursor, start);
+		const valueEnd = fields[index + 1]?.index ?? text.length;
+		const value = text.slice(start + match[0].length, valueEnd);
+		cursor = valueEnd;
+		if (!isContactLabel.test(match[0])) {
+			rest += text.slice(start, valueEnd);
+			continue;
+		}
+		// Keep offsets aligned with the unconsumed fields on this line.
+		rest += " ".repeat(valueEnd - start);
+		const trimmed = value.replace(HEADER_CONTACT_SEPARATORS, "").trim();
+		if (!trimmed) continue;
+
+		const emailHit = value.match(EMAIL_PATTERN)?.[0] ?? "";
+		const phoneHit = extractPhone(value);
+		const urlHit = value.match(URL_PATTERN)?.[0] ?? "";
+		const extractedHit =
+			(emailHit && extracted.email.toLowerCase() === emailHit.toLowerCase() ? emailHit : "") ||
+			(phoneHit && extracted.phone === phoneHit ? phoneHit : "") ||
+			(urlHit && extracted.urls.some((url) => url.toLowerCase() === urlHit.toLowerCase()) ? urlHit : "");
+		if (extractedHit) {
+			const residue = value.replace(extractedHit, "").replace(HEADER_CONTACT_SEPARATORS, "").trim();
+			if (residue) leftover.push({ text: `${match[0]}${residue}`.replace(/\s+/g, " ").trim(), offset: start });
+			continue;
+		}
+
+		leftover.push({ text: `${match[0]}${trimmed}`.replace(/\s+/g, " ").trim(), offset: start });
+	}
+	rest += text.slice(cursor);
+	return { rest: rest.replace(HEADER_CONTACT_SEPARATORS, (value) => " ".repeat(value.length)), leftover };
+}
+
+const stripObjectiveLabel = (value: string) =>
+	value.replace(new RegExp(`^${OBJECTIVE_LABEL_CORE}\\s*[:：]\\s*`, "iu"), "");
+
+/** Reuses explicit personal-field boundaries; ordinary name spaces are never separators. */
+function takeLabeledHeaderFields(text: string) {
+	const fieldType = (label: string) =>
+		PERSONAL_FIELD_TYPES[label.toLowerCase()] ?? PERSONAL_FIELD_TYPES[label.replace(/\s+/g, "").toLowerCase()];
+	const fields = [...text.matchAll(PERSONAL_FIELD_LABEL)].filter((match) => {
+		const type = fieldType(match[1] ?? "");
+		return type === "name" || type === "headline";
+	});
+	if (fields.length === 0) return null;
+	return {
+		rest: text
+			.slice(0, fields[0]?.index ?? 0)
+			.replace(/\s+/g, " ")
+			.trim(),
+		fields: fields.map((match, index) => ({
+			type: fieldType(match[1] ?? ""),
+			value: text
+				.slice((match.index ?? 0) + match[0].length, fields[index + 1]?.index)
+				.replace(/\s+/g, " ")
+				.trim(),
+			offset: match.index ?? 0,
+		})),
+	};
+}
+
 function parseHeader(lines: string[]) {
 	const joined = lines.join(" ");
 	const email = joined.match(EMAIL_PATTERN)?.[0] ?? "";
@@ -723,32 +807,61 @@ function parseHeader(lines: string[]) {
 		return result.replace(/\s+/g, " ").trim();
 	};
 
-	const cityFields = lines.flatMap((line) => [...line.matchAll(CITY_HEADER_FIELD)]);
-	const explicitLocation = cityFields.map((match) => match[3]?.trim() ?? "").find(isLabeledCity);
-	const locationRemainder = cityFields
-		.filter((match) => match[3]?.trim() !== explicitLocation)
-		.map((match) => match[2] ?? "");
+	const cityFields = lines.flatMap((line, index) =>
+		[...line.matchAll(CITY_HEADER_FIELD)].map((match) => ({ match, index })),
+	);
+	const explicitLocation = cityFields.map(({ match }) => match[3]?.trim() ?? "").find(isLabeledCity);
+	const leftover = cityFields
+		.filter(({ match }) => match[3]?.trim() !== explicitLocation)
+		.map(({ match, index }) => ({ text: match[2] ?? "", index, offset: match.index ?? 0 }));
 	const remaining = lines
-		.map((line) => line.replace(CITY_HEADER_FIELD, "$1"))
-		.map(strip)
-		.filter(Boolean);
-	const name = remaining[0] ?? "";
-	const rest = remaining
-		.slice(1)
-		.flatMap((line) => splitHeaderParts(line))
-		.filter(Boolean);
+		.flatMap((source, index) => {
+			const line = strip(source.replace(CITY_HEADER_FIELD, "$1"));
+			const peeled = peelHeaderContactResidue(line, { email, phone, urls });
+			leftover.push(...peeled.leftover.map((fragment) => ({ ...fragment, index })));
+			return peeled.rest.trim() ? [{ text: peeled.rest, index, offset: 0 }] : [];
+		})
+		.filter(({ text }) => !EMPTY_HEADER_CONTACT_LINE.test(text));
+
+	let extractedHeadline = "";
+	let extractedName = "";
+	const remainingForName: { text: string; index: number; offset: number }[] = [];
+	for (const line of remaining) {
+		const labeled = takeLabeledHeaderFields(line.text);
+		if (!labeled) {
+			remainingForName.push({ ...line, text: line.text.replace(/\s+/g, " ").trim() });
+			continue;
+		}
+		if (labeled.rest) remainingForName.push({ text: labeled.rest, index: line.index, offset: 0 });
+		for (const { type, value, offset } of labeled.fields) {
+			if (!value) continue;
+			if (type === "headline" && !extractedHeadline) extractedHeadline = value;
+			else if (type === "name" && !extractedName) {
+				extractedName = remainingForName.shift()?.text ?? value;
+				if (value !== extractedName) leftover.push({ text: value, index: line.index, offset });
+			} else if (value !== (type === "name" ? extractedName : extractedHeadline)) {
+				leftover.push({ text: value, index: line.index, offset });
+			}
+		}
+	}
+
+	const name = extractedName || remainingForName.shift()?.text || "";
+	const rest = remainingForName.flatMap(({ text }) => splitHeaderParts(text)).filter(Boolean);
 	const locationIndex = rest.findIndex((part) => /,/.test(part) && !/\d{4}/.test(part));
-	const stripObjectiveLabel = (value: string) =>
-		value.replace(
-			/^(?:求职意向|求职目标|目标职位|job objective|desired position|target position|objective)\s*[:：]\s*/i,
-			"",
-		);
+	if (extractedHeadline) {
+		for (const line of remainingForName) {
+			const text = splitHeaderParts(line.text)
+				.filter((part) => explicitLocation || part !== rest[locationIndex])
+				.join(" ");
+			if (text) leftover.push({ ...line, text });
+		}
+	}
 
 	return {
 		name,
-		headline: stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
+		headline: extractedHeadline || stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
 		location: explicitLocation ?? (locationIndex === -1 ? "" : (rest[locationIndex] ?? "")),
-		locationRemainder,
+		locationRemainder: leftover.sort((a, b) => a.index - b.index || a.offset - b.offset).map(({ text }) => text),
 		email,
 		phone,
 		website: urls[0] ?? "",
@@ -763,6 +876,7 @@ const PERSONAL_INFO_TITLES = new Set([
 	"联系方式",
 	"求职意向",
 	"求职目标",
+	"意向岗位",
 	"personal information",
 	"personal details",
 	"basic information",
@@ -774,7 +888,7 @@ const PERSONAL_INFO_TITLES = new Set([
 const isPersonalInfoHeading = (title: string) => PERSONAL_INFO_TITLES.has(normalizeHeading(title));
 
 const PERSONAL_FIELD_LABEL =
-	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective|(?<![\p{L}\p{N}])所\s*在\s*城\s*市|(?<![\p{L}\p{N}])城\s*市)\s*[:：]/giu;
+	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|意\s*向\s*岗\s*位|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective|(?<![\p{L}\p{N}])所\s*在\s*城\s*市|(?<![\p{L}\p{N}])城\s*市)\s*[:：]/giu;
 
 const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline" | "location">> =
 	{
@@ -806,6 +920,7 @@ const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" |
 		求职意向: "headline",
 		求职目标: "headline",
 		目标职位: "headline",
+		意向岗位: "headline",
 		"job objective": "headline",
 		"desired position": "headline",
 		"target position": "headline",
@@ -981,7 +1096,7 @@ export function parseResumeText(text: string): ResumeData {
 
 		if (item.key === "summary") {
 			if (isPersonalInfoHeading(item.title)) {
-				const objective = normalizeHeading(item.title) === "求职意向" || normalizeHeading(item.title) === "求职目标";
+				const objective = OBJECTIVE_HEADINGS.has(normalizeHeading(item.title));
 				const leftover = applyPersonalInfo(item.lines, data.basics, objective);
 				const content = toHtml(leftover);
 				data.summary.content = data.summary.content ? `${data.summary.content}${content}` : content;

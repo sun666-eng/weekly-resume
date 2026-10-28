@@ -223,6 +223,30 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 			expect(importResume).not.toHaveBeenCalled();
 		}
 	});
+	it.each([false, true])(
+		"reviews a contaminated name through the real review function, accept=%s",
+		async (accepted) => {
+			const data = structuredClone(sampleResumeData);
+			data.basics.name = "林知行 意向岗位：物联网技术支持/实施运维";
+			parsedPdf.value = data;
+			importResume.mockResolvedValue("name-review");
+			renderDialog();
+			await selectLocalWord();
+			fireEvent.click(screen.getByRole("button", { name: "Import" }));
+			expect(await screen.findByText("Check the recognized fields")).toBeVisible();
+			expect(screen.getByText(/Name may include an objective or contact field/)).toBeVisible();
+			expect(importResume).not.toHaveBeenCalled();
+			fireEvent.click(screen.getByRole("button", { name: accepted ? "Import and review" : "Cancel import" }));
+			if (accepted) {
+				await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+				expect(importResume.mock.calls[0]?.[0]).toEqual({ data });
+			} else {
+				await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+				expect(importResume).not.toHaveBeenCalled();
+				expect(navigate).not.toHaveBeenCalled();
+			}
+		},
+	);
 	it.each(["old.doc", "encrypted.docx"])("blocks OLE file %s even with a provider", async (name) => {
 		provider.hasUsableProvider = true;
 		renderDialog();
@@ -434,6 +458,34 @@ describe("ImportResumeDialog — detected files without MIME metadata", () => {
 			to: "/builder/$resumeId",
 			params: { resumeId: "imported-resume-id" },
 		});
+	});
+
+	it("does not open Word/PDF review for JSON whose name still contains an objective label", async () => {
+		importResume.mockResolvedValue("json-contaminated");
+		renderDialog();
+		const data = structuredClone(sampleResumeData);
+		data.basics.name = "林知行 意向岗位：物联网技术支持/实施运维";
+		data.basics.headline = "Authored Headline C++";
+		data.metadata.page.locale = "zh-CN";
+		data.metadata.template = "ditgar";
+		data.metadata.design.colors.primary = "rgba(56, 91, 132, 1)";
+		const firstPage = data.metadata.layout.pages[0];
+		if (!firstPage) throw new Error("missing layout page");
+		firstPage.fullWidth = false;
+		fireEvent.change(importFileInput(), {
+			target: { files: [new File([JSON.stringify(data)], "resume.json", { type: "application/json" })] },
+		});
+		await screen.findByText("Weekly Resume (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(screen.queryByText("Check the recognized fields")).not.toBeInTheDocument();
+		const imported = importResume.mock.calls[0]?.[0] as { data: typeof sampleResumeData };
+		expect(imported.data.basics.name).toBe("林知行 意向岗位：物联网技术支持/实施运维");
+		expect(imported.data.basics.headline).toBe("Authored Headline C++");
+		expect(imported.data.metadata.page.locale).toBe("zh-CN");
+		expect(imported.data.metadata.template).toBe("ditgar");
+		expect(imported.data.metadata.design.colors.primary).toBe("rgba(56, 91, 132, 1)");
+		expect(imported.data.metadata.layout.pages[0]?.fullWidth).toBe(false);
 	});
 
 	it("imports a valid PDF detected from its magic bytes", async () => {

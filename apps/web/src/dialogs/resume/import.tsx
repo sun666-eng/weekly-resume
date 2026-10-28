@@ -245,9 +245,11 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 					toast.close(toastId);
 					const details = issues.slice(0, 5).map((issue) => {
 						const label = issue.label.slice(0, 80);
-						return issue.kind === "prose-title"
-							? t`Possible body text in a section title: ${label}`
-							: t`Position not recognized: ${label}`;
+						if (issue.kind === "prose-title") return t`Possible body text in a section title: ${label}`;
+						if (issue.kind === "contaminated-name") return t`Name may include an objective or contact field: ${label}`;
+						if (issue.kind === "missing-name") return t`No name was recognized; check the name and objective: ${label}`;
+						if (issue.kind === "ambiguous-header") return t`Check the boundary between name and objective: ${label}`;
+						return t`Position not recognized: ${label}`;
 					});
 					const accepted = await confirm(t`Check the recognized fields`, {
 						description: `${dialogData?.onPrepared ? t({ id: "guest.importReview", message: "Some fields may need correcting. Review them in the editor after confirming replacement of the local draft. You can take a local backup first." }) : t`Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged.`} ${details.join(" · ")}`,

@@ -8135,6 +8135,18 @@ msgstr "尚未填寫職位"
 msgid "Possible body text in a section title: {label}"
 msgstr "章節標題可能混入內文：{label}"
 
+#: src/dialogs/resume/import.tsx
+msgid "Name may include an objective or contact field: {label}"
+msgstr "姓名可能包含求職意向或聯絡方式，請核對：{label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "No name was recognized; check the name and objective: {label}"
+msgstr "未辨識到姓名，請核對姓名與求職意向：{label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the boundary between name and objective: {label}"
+msgstr "姓名與求職意向的邊界待核對：{label}"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Replace picture"
 msgstr "更換相片"
