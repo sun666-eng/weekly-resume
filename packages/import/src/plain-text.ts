@@ -100,6 +100,9 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	意向岗位: "summary",
 	自我评价: "summary",
 	个人评价: "summary",
+	个人总结: "summary",
+	自我介绍: "summary",
+	个人优势: "summary",
 	教育背景: "education",
 	教育经历: "education",
 	学习经历: "education",
@@ -674,6 +677,20 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 	const header: string[] = [];
 	const segments: Segment[] = [];
 	let current: Segment | null = null;
+	let currentSource = "";
+
+	// An unrecognized heading with nothing under it (an uppercase "JAVA SPRING MYSQL" or
+	// "AWS CERTIFIED" line) was content, not a section. Return its line to whatever it followed
+	// instead of dropping it with the empty segment.
+	const closeCurrent = () => {
+		if (!current) return;
+		if (current.key === null && current.lines.length === 0) {
+			const previous = segments.at(-1);
+			(previous ? previous.lines : header).push(currentSource);
+			return;
+		}
+		segments.push(current);
+	};
 
 	for (const [index, { line, precededByBlank }] of records.entries()) {
 		const key = knownHeading(line);
@@ -696,8 +713,9 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 			(current === null || isolatedTitleCase || !introducesEntry(cleaned, index));
 
 		if ((key !== null || unknown) && !holdsInSkills) {
-			if (current) segments.push(current);
+			closeCurrent();
 			current = { key, title: line.replace(/[:：]\s*$/, "").trim(), lines: [] };
+			currentSource = line;
 			continue;
 		}
 
@@ -705,7 +723,7 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 		else header.push(line);
 	}
 
-	if (current) segments.push(current);
+	closeCurrent();
 
 	return { header, segments };
 }
@@ -848,18 +866,25 @@ function parseHeader(lines: string[]) {
 	const name = extractedName || remainingForName.shift()?.text || "";
 	const rest = remainingForName.flatMap(({ text }) => splitHeaderParts(text)).filter(Boolean);
 	const locationIndex = rest.findIndex((part) => /,/.test(part) && !/\d{4}/.test(part));
-	if (extractedHeadline) {
-		for (const line of remainingForName) {
-			const text = splitHeaderParts(line.text)
-				.filter((part) => explicitLocation || part !== rest[locationIndex])
-				.join(" ");
-			if (text) leftover.push({ ...line, text });
-		}
+	const headlineIndex = extractedHeadline ? -1 : locationIndex === 0 ? 1 : 0;
+	// Header parts that become neither the headline nor the location go to the summary, so an
+	// unlabeled third header line is kept rather than dropped.
+	let partIndex = 0;
+	for (const line of remainingForName) {
+		const text = splitHeaderParts(line.text)
+			.filter(Boolean)
+			.filter(() => {
+				const index = partIndex++;
+				if (index === headlineIndex) return false;
+				return explicitLocation || index !== locationIndex;
+			})
+			.join(" ");
+		if (text) leftover.push({ ...line, text });
 	}
 
 	return {
 		name,
-		headline: extractedHeadline || stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
+		headline: extractedHeadline || stripObjectiveLabel(rest[headlineIndex] ?? ""),
 		location: explicitLocation ?? (locationIndex === -1 ? "" : (rest[locationIndex] ?? "")),
 		locationRemainder: leftover.sort((a, b) => a.index - b.index || a.offset - b.offset).map(({ text }) => text),
 		email,

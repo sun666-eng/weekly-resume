@@ -624,3 +624,56 @@ describe("parseResumeText skill categories colliding with section aliases", () =
 		]);
 	});
 });
+
+describe("parseResumeText content conservation", () => {
+	it.each([
+		["a summary", "Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED", "AWS CERTIFIED"],
+		[
+			"a summary before the next section",
+			"Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED\n\nEXPERIENCE\nAcme 2020 - 2022\nEngineer",
+			"AWS CERTIFIED",
+		],
+		["a Chinese summary", "林知行\n电话：13800138000\n\n自我评价\n热爱编程\nJAVA SPRING MYSQL", "JAVA SPRING MYSQL"],
+		["an empty Chinese summary", "林知行\n电话：13800138000\n\n自我评价\nEMPTY-CONTROL", "EMPTY-CONTROL"],
+		[
+			"an experience entry",
+			"林知行\n电话：13800138000\n\n工作经历\nACME 公司 2020-2022\n负责后端开发\nDATE-BODY",
+			"DATE-BODY",
+		],
+		["a skills list", "Ada Lovelace\nada@example.com\n\nSKILLS\nTypeScript, React\nKUBERNETES", "KUBERNETES"],
+	])("keeps a trailing uppercase line in %s", (_, text, line) => {
+		expect(JSON.stringify(parseResumeText(text))).toContain(line);
+	});
+
+	it("keeps the uppercase line in the section it followed", () => {
+		const data = parseResumeText("Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED");
+
+		expect(data.summary.content).toBe("<p>Built systems.</p><p>AWS CERTIFIED</p>");
+		expect(data.customSections).toEqual([]);
+	});
+
+	it("keeps unlabeled header lines beyond the name and headline", () => {
+		const data = parseResumeText("林知行\n电话：13800138000\n后端工程师\n热爱编程\n乐于分享");
+
+		expect(data.basics.name).toBe("林知行");
+		expect(data.basics.headline).toBe("后端工程师");
+		expect(data.summary.content).toBe("<p>热爱编程</p><p>乐于分享</p>");
+	});
+
+	it("does not repeat the headline or location in the summary", () => {
+		const data = parseResumeText(
+			"Ada Lovelace\nLondon, UK\nSoftware Engineer\nada@example.com\n\nEXPERIENCE\nAcme 2020 - 2022\nEngineer",
+		);
+
+		expect(data.basics.headline).toBe("Software Engineer");
+		expect(data.basics.location).toBe("London, UK");
+		expect(data.summary.content).toBe("");
+	});
+
+	it.each(["个人总结", "自我介绍", "个人优势"])("reads %s as a summary heading", (heading) => {
+		const data = parseResumeText(`林知行\n电话：13800138000\n\n${heading}\n热爱编程`);
+
+		expect(data.basics.headline).toBe("");
+		expect(data.summary.content).toBe("<p>热爱编程</p>");
+	});
+});
