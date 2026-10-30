@@ -66,7 +66,7 @@ async function renderText(options: FixtureOptions): Promise<TextRun[]> {
 	}
 }
 
-function assertAligned(runs: TextRun[], rtl = false, expectedOffset = 0) {
+function assertAligned(runs: TextRun[], rtl = false, expectedOffset = 0, websiteInHeader = true) {
 	for (let index = 0; index < 3; index++) {
 		const title = runs.find((run) => run.text.startsWith(`Project${index}`));
 		const description = runs.find((run) => run.text.startsWith(`Description${index}`));
@@ -74,9 +74,17 @@ function assertAligned(runs: TextRun[], rtl = false, expectedOffset = 0) {
 		if (!title || !description || !website) throw new Error(`Missing project ${index} text`);
 		const edge = rtl ? "right" : "x";
 		expect(title[edge] - description[edge]).toBeCloseTo(expectedOffset, 3);
-		// Ditgar's separate website links stay left-aligned in RTL layouts.
-		if (!rtl) expect(title.x - website.x).toBeCloseTo(expectedOffset, 3);
-		else expect(website.right).toBeLessThanOrEqual(title.right);
+		if (websiteInHeader) {
+			// Project websites follow the title in its header row, ahead of the description.
+			if (!rtl) expect(website.x).toBeGreaterThanOrEqual(title.x);
+			else expect(website.right).toBeLessThanOrEqual(title.right);
+			expect(website.y).toBeGreaterThan(description.y);
+		} else if (!rtl) {
+			expect(title.x - website.x).toBeCloseTo(expectedOffset, 3);
+		} else {
+			// Ditgar's separate website links stay left-aligned in RTL layouts.
+			expect(website.right).toBeLessThanOrEqual(title.right);
+		}
 		expect(title.y).toBeGreaterThan(description.y);
 	}
 }
@@ -92,7 +100,7 @@ describe("Ditgar item-header alignment (#3068)", () => {
 			assertAligned(await renderText({ mode, columns: 2, gapX: 4, longTitle: true }));
 		});
 		it(`aligns the shared ${mode} Experience header`, async () => {
-			assertAligned(await renderText({ mode, columns: 2, gapX: 4, experience: true }));
+			assertAligned(await renderText({ mode, columns: 2, gapX: 4, experience: true }), false, 0, false);
 		});
 		it(`preserves ${mode} sidebar alignment`, async () => {
 			assertAligned(await renderText({ mode, columns: 1, gapX: 4, sidebar: true }));
