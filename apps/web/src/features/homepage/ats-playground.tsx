@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, ArrowUpRightIcon, FilePdfIcon, SpinnerGapIcon } from "@phosphor-icons/react";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { templatePreviewImage, templatePreviewPdf } from "@/libs/template-assets";
 import "./ats-playground.css";
@@ -9,7 +10,11 @@ import "./ats-playground.css";
 const focusRing = "focus-visible:outline-2 focus-visible:outline-(--home-accent) focus-visible:outline-offset-4";
 const message = "max-w-[300px] text-[14px] leading-[1.8]";
 
-export default function AtsPlayground() {
+type AtsPlaygroundProps = {
+	onTemporaryInputChange?: (hasInput: boolean) => void;
+};
+
+export default function AtsPlayground({ onTemporaryInputChange }: AtsPlaygroundProps) {
 	const { i18n } = useLingui();
 	const inputId = useId();
 	const controllerRef = useRef<AbortController | null>(null);
@@ -19,6 +24,11 @@ export default function AtsPlayground() {
 	const [error, setError] = useState("");
 
 	useEffect(() => () => controllerRef.current?.abort(), []);
+	useEffect(() => {
+		// A bundled sample result is not user input. Keep using File state after the input is cleared.
+		onTemporaryInputChange?.(file !== null);
+	}, [file, onTemporaryInputChange]);
+	useEffect(() => () => onTemporaryInputChange?.(false), [onTemporaryInputChange]);
 
 	const reset = () => {
 		controllerRef.current?.abort();
@@ -97,6 +107,12 @@ export default function AtsPlayground() {
 				<span className="mt-[5px] block text-(--home-muted) text-[12px]">
 					{file ? t`Stays in your browser` : t`A real sample PDF`}
 				</span>
+				<p className="mt-3 text-(--home-muted) text-[13px] leading-relaxed">
+					<Trans>
+						Your PDF is only processed on this page, never uploaded or saved. Select it again after leaving or
+						refreshing.
+					</Trans>
+				</p>
 			</div>
 			<div className="flex flex-col items-center gap-[15px] max-[900px]:col-[1] max-[600px]:row-auto max-[900px]:row-[2] max-[600px]:flex-row max-[600px]:flex-wrap max-[600px]:justify-center max-[600px]:gap-2.5">
 				<button
@@ -189,12 +205,12 @@ export default function AtsPlayground() {
 						</p>
 					)}
 				</section>
-				<a
+				<Link
 					className={`flex items-center justify-between gap-[15px] border-(--home-line) border-t px-[22px] py-[18px] text-(--home-ink) text-[12px] hover:underline hover:underline-offset-4 ${focusRing}`}
-					href="/ats-checker"
+					to="/ats-checker"
 				>
 					<Trans>Open the full ATS checker</Trans> <ArrowUpRightIcon size={17} aria-hidden="true" />
-				</a>
+				</Link>
 			</div>
 		</div>
 	);

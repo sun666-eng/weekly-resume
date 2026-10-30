@@ -227,6 +227,47 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		expect(values).not.toContain("Hidden run");
 	});
 
+	it("renders a project website after the name and before its description", async () => {
+		const data = semanticFixture("");
+		data.sections.projects.items = [
+			{
+				id: "project-website",
+				hidden: false,
+				name: "Linked project",
+				period: "2026",
+				website: { url: "https://project.example", label: "Project site", inlineLink: false },
+				description: "<p>Project description</p>",
+			},
+		];
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+
+		const values = await renderTextValues(data, "onyx");
+
+		expectBefore(values, "Linked project", "Project site");
+		expectBefore(values, "Project site", "Project description");
+		expect(values.filter((value) => value === "Project site")).toHaveLength(1);
+	});
+
+	it("keeps an inline project website on the name without repeating its label", async () => {
+		const data = semanticFixture("");
+		data.sections.projects.items = [
+			{
+				id: "project-inline-website",
+				hidden: false,
+				name: "Inline project",
+				period: "2026",
+				website: { url: "https://project.example", label: "Project site", inlineLink: true },
+				description: "<p>Project description</p>",
+			},
+		];
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+
+		const values = await renderTextValues(data, "onyx");
+
+		expect(values.filter((value) => value === "Inline project")).toHaveLength(1);
+		expect(values).not.toContain("Project site");
+	});
+
 	it.each([
 		["en-US", "list-marker { display: none; }", "List content", "•"],
 		["ar-SA", "list-marker { order: -1; }", "•", "List content"],

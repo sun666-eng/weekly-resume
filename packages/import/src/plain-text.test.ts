@@ -116,6 +116,28 @@ describe("parseResumeText", () => {
 });
 
 describe("parseResumeText Chinese headings", () => {
+	it("preserves unknown education details and identifies a labeled Chinese location", () => {
+		const data = parseResumeText("测试姓名\n教育背景\n示例大学  本科  软件工程  杭州市  联合培养  2020.09 - 2024.06");
+		expect(data.sections.education.items[0]).toMatchObject({
+			degree: "本科",
+			area: "软件工程",
+			location: "杭州市",
+			description: "<p>联合培养</p>",
+		});
+	});
+	it.each(["示例大学  软件工程  本科  2020.09 - 2024.06", "示例大学  本科  软件工程  2020.09 - 2024.06"])(
+		"recognizes degree and major by meaning: %s",
+		(header) => {
+			const data = parseResumeText(`测试姓名\n教育背景\n${header}`);
+			expect(data.sections.education.items[0]).toMatchObject({
+				school: "示例大学",
+				degree: "本科",
+				area: "软件工程",
+				location: "",
+				period: "2020.09 - 2024.06",
+			});
+		},
+	);
 	it("imports common Chinese resume sections and year-month periods", () => {
 		const data = parseResumeText(
 			[
@@ -208,6 +230,12 @@ describe("parseResumeText edge cases", () => {
 });
 
 describe("parseResumeText review findings", () => {
+	it("preserves lowercase company names followed by a role and date", () => {
+		const data = parseResumeText(
+			"EXPERIENCE\nFirst Corp\nEngineer\n2020 - 2022\nBuilt services.\nacme studios\nSenior Engineer\n2022 - Present\nMaintained services.",
+		);
+		expect(data.sections.experience.items.map((item) => item.company)).toEqual(["First Corp", "acme studios"]);
+	});
 	it("keeps a section whose heading is the first one in the document", () => {
 		const data = parseResumeText(
 			"Ada Lovelace\nada@example.com\n\nCAREER HIGHLIGHTS\nShipped the difference engine\nMentored the team\n",
@@ -470,6 +498,30 @@ describe("parseResumeText four-line entry preambles", () => {
 });
 
 describe("parseResumeText keeps content the layout hides", () => {
+	it.each(["•实现 WAL 日志恢复。", "实现 WAL 日志恢复。", "实现日志恢复！", "恢复完整吗？"])(
+		"keeps Chinese prose %s with its original project before a dated project",
+		(line) => {
+			const data = parseResumeText(
+				[
+					"测试用户",
+					"项目经历",
+					"MiniKV",
+					"2024 - 2025",
+					"• 完成存储引擎",
+					line,
+					"订单系统",
+					"2022 - 2023",
+					"• 完成订单服务",
+				].join("\n"),
+			);
+			expect(data.sections.projects.items).toHaveLength(2);
+			expect(data.sections.projects.items[0]).toMatchObject({ name: "MiniKV", period: "2024 - 2025" });
+			expect(data.sections.projects.items[0]?.description).toContain(line.replace(/^•/, ""));
+			expect(data.sections.projects.items[1]).toMatchObject({ name: "订单系统", period: "2022 - 2023" });
+			expect(data.customSections).toHaveLength(0);
+		},
+	);
+
 	it("recognizes isolated title-case custom section headings", () => {
 		const initial = parseResumeText(
 			"Ada Lovelace\nada@example.com\n\nConferences\nReactConf\nBerlin\n2021\nSpoke about parsers\n",
@@ -570,5 +622,58 @@ describe("parseResumeText skill categories colliding with section aliases", () =
 			{ language: "English", fluency: "Native" },
 			{ language: "German", fluency: "B2" },
 		]);
+	});
+});
+
+describe("parseResumeText content conservation", () => {
+	it.each([
+		["a summary", "Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED", "AWS CERTIFIED"],
+		[
+			"a summary before the next section",
+			"Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED\n\nEXPERIENCE\nAcme 2020 - 2022\nEngineer",
+			"AWS CERTIFIED",
+		],
+		["a Chinese summary", "林知行\n电话：13800138000\n\n自我评价\n热爱编程\nJAVA SPRING MYSQL", "JAVA SPRING MYSQL"],
+		["an empty Chinese summary", "林知行\n电话：13800138000\n\n自我评价\nEMPTY-CONTROL", "EMPTY-CONTROL"],
+		[
+			"an experience entry",
+			"林知行\n电话：13800138000\n\n工作经历\nACME 公司 2020-2022\n负责后端开发\nDATE-BODY",
+			"DATE-BODY",
+		],
+		["a skills list", "Ada Lovelace\nada@example.com\n\nSKILLS\nTypeScript, React\nKUBERNETES", "KUBERNETES"],
+	])("keeps a trailing uppercase line in %s", (_, text, line) => {
+		expect(JSON.stringify(parseResumeText(text))).toContain(line);
+	});
+
+	it("keeps the uppercase line in the section it followed", () => {
+		const data = parseResumeText("Ada Lovelace\nada@example.com\n\nSUMMARY\nBuilt systems.\nAWS CERTIFIED");
+
+		expect(data.summary.content).toBe("<p>Built systems.</p><p>AWS CERTIFIED</p>");
+		expect(data.customSections).toEqual([]);
+	});
+
+	it("keeps unlabeled header lines beyond the name and headline", () => {
+		const data = parseResumeText("林知行\n电话：13800138000\n后端工程师\n热爱编程\n乐于分享");
+
+		expect(data.basics.name).toBe("林知行");
+		expect(data.basics.headline).toBe("后端工程师");
+		expect(data.summary.content).toBe("<p>热爱编程</p><p>乐于分享</p>");
+	});
+
+	it("does not repeat the headline or location in the summary", () => {
+		const data = parseResumeText(
+			"Ada Lovelace\nLondon, UK\nSoftware Engineer\nada@example.com\n\nEXPERIENCE\nAcme 2020 - 2022\nEngineer",
+		);
+
+		expect(data.basics.headline).toBe("Software Engineer");
+		expect(data.basics.location).toBe("London, UK");
+		expect(data.summary.content).toBe("");
+	});
+
+	it.each(["个人总结", "自我介绍", "个人优势"])("reads %s as a summary heading", (heading) => {
+		const data = parseResumeText(`林知行\n电话：13800138000\n\n${heading}\n热爱编程`);
+
+		expect(data.basics.headline).toBe("");
+		expect(data.summary.content).toBe("<p>热爱编程</p>");
 	});
 });

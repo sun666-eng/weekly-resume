@@ -22,7 +22,7 @@ export const resumeDialogRenderers: readonly AnyDialogRendererEntry[] = [
 	{ type: "resume.create", render: () => <CreateResumeDialog /> },
 	{ type: "resume.update", render: ({ data }) => <UpdateResumeDialog data={data} /> },
 	{ type: "resume.duplicate", render: ({ data }) => <DuplicateResumeDialog data={data} /> },
-	{ type: "resume.import", render: () => <ImportResumeDialog /> },
+	{ type: "resume.import", render: ({ data }) => <ImportResumeDialog data={data} /> },
 	{ type: "resume.template.gallery", render: () => <TemplateGalleryDialog /> },
 	{ type: "resume.sections.profiles.create", render: ({ data }) => <CreateProfileDialog data={data} /> },
 	{ type: "resume.sections.profiles.update", render: ({ data }) => <UpdateProfileDialog data={data} /> },

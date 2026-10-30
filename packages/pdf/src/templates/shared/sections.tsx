@@ -122,10 +122,12 @@ type ItemTitleProps = {
 	website: ItemWebsite;
 	field: string;
 	bold?: boolean;
+	style?: StyleInput;
 };
 
 type ItemWebsiteLinkProps = {
 	website: ItemWebsite;
+	style?: StyleInput;
 };
 
 type SummarySectionProps = {
@@ -651,6 +653,9 @@ const wrappingItemTitleStyle = {} satisfies Style;
 /** True while rendering inside an item header row a stylesheet turned into a single line. */
 const ItemHeaderRowNowrapContext = createContext(false);
 
+/** True while rendering inside an item header row stacked into a column (e.g. sidebar headers). */
+const ItemHeaderRowColumnContext = createContext(false);
+
 /**
  * The title/date row inside a section item header, exposed to Semantic CSS as
  * `template-part[name="item-header-row"]`.
@@ -663,12 +668,13 @@ const ItemHeaderRow = ({ children, style }: ItemHeaderRowProps) => {
 	const ownerNodeKey = useSemanticNodeKey();
 	const resolved = useResolvedNode(semanticTemplatePartNodeKey(ownerNodeKey, ...ITEM_HEADER_ROW_PART_KEYS));
 	// Same order the rendered row composes in, so a template that ships `nowrap` counts too.
-	const { flexWrap } = mergeStyles(style, resolved.style);
+	const { flexWrap, flexDirection } = mergeStyles(style, resolved.style);
+	const isColumn = flexDirection === "column" || flexDirection === "column-reverse";
 
 	return (
 		<SemanticTemplatePartView partKeys={ITEM_HEADER_ROW_PART_KEYS} style={composeStyles(style)}>
 			<ItemHeaderRowNowrapContext.Provider value={flexWrap === "nowrap"}>
-				{children}
+				<ItemHeaderRowColumnContext.Provider value={isColumn}>{children}</ItemHeaderRowColumnContext.Provider>
 			</ItemHeaderRowNowrapContext.Provider>
 		</SemanticTemplatePartView>
 	);
@@ -697,9 +703,12 @@ const SectionItemHeader = ({ children }: SectionItemHeaderProps) => {
 	);
 };
 
-const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps) => {
+const ItemTitle = ({ children, website, field, bold = true, style: customStyle }: ItemTitleProps) => {
 	const inlineWebsiteUrl = getInlineItemWebsiteUrl(website);
-	const style = use(ItemHeaderRowNowrapContext) ? nowrapItemTitleStyle : wrappingItemTitleStyle;
+	const style = composeStyles(
+		use(ItemHeaderRowNowrapContext) ? nowrapItemTitleStyle : wrappingItemTitleStyle,
+		customStyle,
+	);
 	const title = bold ? (
 		<Bold style={style} semanticField={field}>
 			{children}
@@ -719,11 +728,58 @@ const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps) =>
 	);
 };
 
-const ItemWebsiteLink = ({ website }: ItemWebsiteLinkProps) => {
+const projectTitleGroupStyle = {
+	flexDirection: "row",
+	flexWrap: "wrap",
+	alignItems: "flex-start",
+	flexShrink: 1,
+	minWidth: 0,
+	columnGap: 2,
+} satisfies Style;
+// In a horizontal header row the zero basis sizes the group before its text is measured (see
+// nowrapItemTitleStyle). In a stacked column the main axis is height, so a zero basis would collapse
+// the group and let the date below draw over it.
+const projectTitleGroupRowStyle = { flexGrow: 1, flexBasis: 0 } satisfies Style;
+const projectTitleGroupColumnStyle = { maxWidth: "100%" } satisfies Style;
+const projectTitleGroupRtlStyle = { flexDirection: "row-reverse" } satisfies Style;
+const projectTitlePartStyle = { flexShrink: 1, minWidth: 0 } satisfies Style;
+const projectWebsiteLinkStyle = { flexShrink: 1, minWidth: 0 } satisfies Style;
+const projectTitleSeparatorStyle = { marginHorizontal: 2 } satisfies Style;
+
+const ProjectTitle = ({ item }: { item: ProjectItem }) => {
+	const isColumn = use(ItemHeaderRowColumnContext);
+	const { rtl } = useRender();
+
+	if (!shouldRenderSeparateItemWebsite(item.website)) {
+		return (
+			<ItemTitle field="name" website={item.website} style={projectTitlePartStyle}>
+				{item.name}
+			</ItemTitle>
+		);
+	}
+
+	return (
+		<View
+			style={composeStyles(
+				projectTitleGroupStyle,
+				isColumn ? projectTitleGroupColumnStyle : projectTitleGroupRowStyle,
+				rtl ? projectTitleGroupRtlStyle : undefined,
+			)}
+		>
+			<ItemTitle field="name" website={item.website} style={projectTitlePartStyle}>
+				{item.name}
+			</ItemTitle>
+			<Text style={projectTitleSeparatorStyle}> | </Text>
+			<ItemWebsiteLink website={item.website} style={projectWebsiteLinkStyle} />
+		</View>
+	);
+};
+
+const ItemWebsiteLink = ({ website, style }: ItemWebsiteLinkProps) => {
 	if (!shouldRenderSeparateItemWebsite(website)) return null;
 
 	return (
-		<Link semanticRole="website" src={website.url}>
+		<Link {...(style ? { style } : {})} semanticRole="website" src={website.url}>
 			{getWebsiteDisplayText(website)}
 		</Link>
 	);
@@ -1165,9 +1221,7 @@ const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionPro
 					<SectionItem key={item.id} itemId={item.id}>
 						<SectionItemHeader>
 							<ItemHeaderRow style={composeStyles(splitRowStyle)}>
-								<ItemTitle field="name" website={item.website}>
-									{item.name}
-								</ItemTitle>
+								<ProjectTitle item={item} />
 								<Text semanticField="period" style={composeStyles(alignEndStyle)}>
 									{item.period}
 								</Text>
@@ -1176,8 +1230,6 @@ const ProjectsSection = ({ sectionId = "projects", sectionData }: ItemSectionPro
 						</SectionItemHeader>
 
 						<RichText semanticField="description">{item.description}</RichText>
-
-						<ItemWebsiteLink website={item.website} />
 					</SectionItem>
 				))}
 			</SectionItems>

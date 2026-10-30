@@ -3,14 +3,14 @@ import type { DialogProps } from "../store";
 import type { ImportType } from "./import.utils";
 import type { ResumeJsonFormat } from "./parse-json";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon, FileIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import z from "zod";
-import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DialogContent,
@@ -22,12 +22,16 @@ import {
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
+import { ResumeImportError } from "@/features/resume/import/errors";
+import { getImportReviewIssues } from "@/features/resume/import/review";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { getLocalizedErrorMessage } from "@/libs/error-message";
+import { resolveLocale } from "@/libs/locale";
 import { client, orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { useDialogStore } from "../store";
@@ -57,6 +61,10 @@ const formSchema = z.discriminatedUnion("type", [
 					file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 				{ error: () => t`File must be a Microsoft Word document` },
 			),
+	}),
+	z.object({
+		type: z.literal("doc"),
+		file: z.instanceof(File),
 	}),
 	z.object({
 		type: z.literal("reactive-resume-json"),
@@ -102,15 +110,12 @@ async function detectImportType(file: File): Promise<ImportType> {
 	const isZip = header[0] === 0x50 && header[1] === 0x4b && header[2] === 0x03 && header[3] === 0x04; // "PK\x03\x04"
 
 	if (isPdf || mime === "application/pdf" || name.endsWith(".pdf")) return "pdf";
-	if (
-		isZip ||
-		mime === "application/msword" ||
-		mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-		name.endsWith(".docx") ||
-		name.endsWith(".doc")
-	) {
+	if (isZip) return "docx";
+	// Encrypted OOXML also uses OLE, so explain how to save an unencrypted copy rather than calling AI.
+	const isOle = header[0] === 0xd0 && header[1] === 0xcf && header[2] === 0x11 && header[3] === 0xe0;
+	if (isOle || mime === "application/msword" || name.endsWith(".doc")) return "doc";
+	if (mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || name.endsWith(".docx"))
 		return "docx";
-	}
 
 	if (mime === "application/json" || name.endsWith(".json")) {
 		try {
@@ -123,16 +128,20 @@ async function detectImportType(file: File): Promise<ImportType> {
 	return "";
 }
 
-export function ImportResumeDialog(_: DialogProps<"resume.import">) {
+export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"resume.import">["data"] }) {
+	const { i18n } = useLingui();
 	const confirm = useConfirm();
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [isImporting, setIsImporting] = useState<boolean>(false);
+	const [useAiForWord, setUseAiForWord] = useState(false);
+	const wordAiSwitchId = useId();
+	const selectionSequence = useRef(0);
 
 	const { mutateAsync: importResume } = useMutation(orpc.resume.import.mutationOptions());
-	const { hasUsableProvider, isLoading: isLoadingAiProviders } = useHasUsableAiProvider();
+	const { hasUsableProvider, isLoading: isLoadingAiProviders } = useHasUsableAiProvider(!dialogData?.onPrepared);
 
 	const form = useAppForm({
 		defaultValues: {
@@ -142,16 +151,17 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
 			if (value.type === "" || !value.file) return;
+			if (value.type === "doc") return;
 
 			setIsImporting(true);
 
 			// A PDF parsed in the browser never touches a provider, so promising one would be a lie.
-			const isLocalPdf = value.type === "pdf" && !hasUsableProvider;
+			const isLocalImport = (value.type === "pdf" && !hasUsableProvider) || (value.type === "docx" && !useAiForWord);
 
 			const toastId = toast.add({
 				type: "loading",
 				title: t`Importing your resume...`,
-				description: isLocalPdf
+				description: isLocalImport
 					? t`This may take a moment. Please do not close the window or refresh the page.`
 					: t`This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page.`,
 			});
@@ -197,21 +207,22 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				}
 
 				if (value.type === "docx") {
-					if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
-					if (!hasUsableProvider)
-						throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
-
-					const base64 = await fileToBase64(value.file);
-
-					const mediaType =
-						value.file.type === "application/msword"
-							? ("application/msword" as const)
-							: ("application/vnd.openxmlformats-officedocument.wordprocessingml.document" as const);
-
-					data = await client.ai.parseDocx({
-						mediaType,
-						file: { name: value.file.name, data: base64 },
-					});
+					if (useAiForWord) {
+						if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
+						if (!hasUsableProvider)
+							throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
+						const base64 = await fileToBase64(value.file);
+						data = await client.ai.parseDocx({
+							mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+							file: { name: value.file.name, data: base64 },
+						});
+					} else {
+						const [{ extractDocxText }, { parseResumeText }] = await Promise.all([
+							import("@/features/resume/import/docx-text"),
+							import("@reactive-resume/import/plain-text"),
+						]);
+						data = parseResumeText(await extractDocxText(value.file));
+					}
 				}
 
 				if (!data) {
@@ -223,6 +234,37 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					);
 				}
 
+				// Local text has no authored resume locale. Resolve it here, before either guest
+				// replacement or account import. Structured JSON keeps the parser's existing rules.
+				if (isLocalImport) data.metadata.page.locale = resolveLocale(i18n.locale);
+
+				// PDF/Word recognition is inherently ambiguous. Warn before creating the new resume;
+				// JSON round-trips retain deliberate user-authored titles without an extra prompt.
+				const issues = value.type === "pdf" || value.type === "docx" ? getImportReviewIssues(data) : [];
+				if (issues.length > 0) {
+					toast.close(toastId);
+					const details = issues.slice(0, 5).map((issue) => {
+						const label = issue.label.slice(0, 80);
+						if (issue.kind === "prose-title") return t`Possible body text in a section title: ${label}`;
+						if (issue.kind === "contaminated-name") return t`Name may include an objective or contact field: ${label}`;
+						if (issue.kind === "missing-name") return t`No name was recognized; check the name and objective: ${label}`;
+						if (issue.kind === "ambiguous-header") return t`Check the boundary between name and objective: ${label}`;
+						return t`Position not recognized: ${label}`;
+					});
+					const accepted = await confirm(t`Check the recognized fields`, {
+						description: `${dialogData?.onPrepared ? t({ id: "guest.importReview", message: "Some fields may need correcting. Review them in the editor after confirming replacement of the local draft. You can take a local backup first." }) : t`Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged.`} ${details.join(" · ")}`,
+						confirmText: t`Import and review`,
+						cancelText: t`Cancel import`,
+					});
+					if (!accepted) return;
+				}
+
+				if (dialogData?.onPrepared) {
+					await dialogData.onPrepared(data);
+					toast.close(toastId);
+					closeDialog();
+					return;
+				}
 				const id = await importResume({ data });
 				toast.add({
 					type: "success",
@@ -236,23 +278,26 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				toast.add({
 					type: "error",
 					title: null,
-					description: getLocalizedErrorMessage(
-						error,
-						t({
-							comment: "Fallback toast when importing a resume fails for an unknown reason",
-							message: "An unknown error occurred while importing your resume.",
-						}),
-						{
-							AI_REQUEST_INVALID: t({
-								comment: "Error shown when AI parsing returns invalid resume structure during import",
-								message: "The imported file could not be parsed into a valid resume.",
-							}),
-							AI_PROVIDER_UNREACHABLE: t({
-								comment: "Error shown when AI provider is unreachable during PDF/DOCX resume import",
-								message: "Could not reach the AI provider. Please try again.",
-							}),
-						},
-					),
+					description:
+						error instanceof ResumeImportError
+							? error.message
+							: getLocalizedErrorMessage(
+									error,
+									t({
+										comment: "Fallback toast when importing a resume fails for an unknown reason",
+										message: "An unknown error occurred while importing your resume.",
+									}),
+									{
+										AI_REQUEST_INVALID: t({
+											comment: "Error shown when AI parsing returns invalid resume structure during import",
+											message: "The imported file could not be parsed into a valid resume.",
+										}),
+										AI_PROVIDER_UNREACHABLE: t({
+											comment: "Error shown when AI provider is unreachable during PDF/DOCX resume import",
+											message: "Could not reach the AI provider. Please try again.",
+										}),
+									},
+								),
 					id: toastId,
 				});
 			} finally {
@@ -263,7 +308,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 
 	const type = useStore(form.store, (s) => s.values.type);
 	const file = useStore(form.store, (s) => s.values.file);
-	const aiRequired = type === "docx";
+	const aiRequired = type === "docx" && useAiForWord;
 	const pdfWithoutAi = type === "pdf" && !isLoadingAiProviders && !hasUsableProvider;
 
 	const onSelectFile = () => {
@@ -274,9 +319,13 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 	const onUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const selected = e.target.files?.[0];
 		if (!selected) return;
+		const sequence = ++selectionSequence.current;
+		setUseAiForWord(false);
 		form.setFieldValue("file", selected);
+		form.setFieldValue("type", "");
 		// #7: pre-select the source format from the file's content; the user can still override below.
-		form.setFieldValue("type", await detectImportType(selected));
+		const detected = await detectImportType(selected);
+		if (sequence === selectionSequence.current) form.setFieldValue("type", detected);
 	};
 
 	// #6: only warn about unsaved changes once a file has actually been chosen — not on a bare type selection.
@@ -337,6 +386,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 								<Input type="file" className="hidden" ref={inputRef} onChange={onUploadFile} />
 
 								<Button
+									disabled={isImporting}
 									variant="outline"
 									className="h-auto w-full flex-col border-dashed py-8 font-normal"
 									onClick={onSelectFile}
@@ -370,6 +420,7 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 									render={
 										<Combobox
 											showClear={false}
+											disabled={isImporting || type === "doc"}
 											value={field.state.value}
 											onValueChange={(value) => field.handleChange(value as ImportType)}
 											options={[
@@ -406,16 +457,9 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 														comment: "File format label in import source selector",
 														message: "Microsoft Word",
 													}),
-													label: (
-														<div className="flex items-center gap-x-2">
-															{t({
-																comment: "File format label in import source selector",
-																message: "Microsoft Word",
-															})}{" "}
-															<Badge>{t`AI`}</Badge>
-														</div>
-													),
+													label: t`Microsoft Word`,
 												},
+												{ value: "doc", label: "Word (.doc)" },
 											]}
 										/>
 									}
@@ -431,10 +475,47 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					</form.Field>
 				)}
 
+				{type === "doc" && (
+					<p role="alert" className="rounded-md border border-dashed p-3 text-sm">
+						<Trans>
+							Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an
+							unencrypted .docx copy, then import it again.
+						</Trans>
+					</p>
+				)}
+				{type === "docx" && (
+					<div className="space-y-3 rounded-md border p-3 text-sm">
+						<p className="font-medium">
+							<Trans>Basic import is available without AI.</Trans>
+						</p>
+						<p className="text-muted-foreground">
+							<Trans>
+								We read the document text in your browser and recognize resume fields. Review the result; photos and
+								Word formatting are not imported.
+							</Trans>
+						</p>
+						{!dialogData?.onPrepared && (
+							<label htmlFor={wordAiSwitchId} className="flex cursor-pointer items-center gap-3">
+								<Switch
+									id={wordAiSwitchId}
+									checked={useAiForWord}
+									disabled={isImporting}
+									onCheckedChange={setUseAiForWord}
+								/>
+								<Trans>AI-enhanced recognition</Trans>
+							</label>
+						)}
+						{useAiForWord && (
+							<p className="text-muted-foreground">
+								<Trans>The document will be sent to your connected AI provider for recognition when you import.</Trans>
+							</p>
+						)}
+					</div>
+				)}
 				{aiRequired && !isLoadingAiProviders && !hasUsableProvider && (
 					<div className="flex flex-col gap-3 rounded-md border border-dashed p-3 text-sm lg:flex-row lg:items-center lg:justify-between">
 						<span className="text-muted-foreground">
-							<Trans>Importing from Word requires a connected AI provider.</Trans>
+							<Trans>AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import.</Trans>
 						</span>
 						<Button
 							size="sm"
@@ -459,7 +540,16 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				)}
 
 				<DialogFooter>
-					<Button type="submit" disabled={!type || !file || isImporting || (aiRequired && !hasUsableProvider)}>
+					<Button
+						type="submit"
+						disabled={
+							!type ||
+							!file ||
+							type === "doc" ||
+							isImporting ||
+							(aiRequired && (!hasUsableProvider || isLoadingAiProviders))
+						}
+					>
 						{isImporting ? <Spinner /> : null}
 						{isImporting ? t`Importing…` : t`Import`}
 					</Button>

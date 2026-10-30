@@ -20,7 +20,7 @@ function resolveWebDistPath() {
 
 const staticRoot = resolveWebDistPath();
 const indexHtmlPath = `${staticRoot}/index.html`;
-const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/agent", "/templates"];
+const noindexShellPrefixes = ["/auth", "/dashboard", "/builder", "/local-draft", "/agent", "/templates"];
 /**
  * Marketing pages the SPA owns that search engines should index.
  *

@@ -1,6 +1,6 @@
 import type { experienceItemSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
-import { plural } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, Reorder } from "motion/react";
 import { cn } from "@reactive-resume/utils/style";
@@ -29,7 +29,12 @@ export function ExperienceSectionBuilder() {
 								type="experience"
 								item={item}
 								title={item.company}
-								subtitle={item.position || plural(item.roles.length, { one: "# role", other: "# roles" })}
+								subtitle={
+									item.position ||
+									(item.roles.length > 0
+										? plural(item.roles.length, { one: "# role", other: "# roles" })
+										: t`Position not specified`)
+								}
 							/>
 						);
 					})}

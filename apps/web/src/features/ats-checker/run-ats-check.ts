@@ -1,4 +1,5 @@
 import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
+import type { ChinaReferenceOptions } from "@reactive-resume/resume/china-job-rules";
 import type { ExtractProgress } from "./extract-client";
 import { extractPdf } from "./extract-client";
 
@@ -6,9 +7,11 @@ export type AtsCheckResult = {
 	report: PdfAtsReport;
 	/** Extracted text in reading order. Kept for the optional AI tier; never sent anywhere on its own. */
 	fullText: string;
+	/** Immutable inputs used by this report and its optional AI request. */
+	context: { jobDescription: string; targetRoleId?: string; audience?: ChinaReferenceOptions["audience"] };
 };
 
-export type RunAtsCheckOptions = {
+export type RunAtsCheckOptions = ChinaReferenceOptions & {
 	jobDescription?: string;
 	onProgress?: (progress: ExtractProgress) => void;
 	signal?: AbortSignal;
@@ -27,12 +30,28 @@ export async function runAtsCheck(file: File, options: RunAtsCheckOptions = {}):
 	});
 
 	const { analyzePdfResume, buildExtractedDocument } = await import("@reactive-resume/resume/ats-pdf");
+	const context = {
+		jobDescription: options.jobDescription?.trim() ?? "",
+		...(options.targetRoleId ? { targetRoleId: options.targetRoleId } : {}),
+		...(options.audience ? { audience: options.audience } : {}),
+	};
 
 	const report = analyzePdfResume(raw, {
-		...(options.jobDescription?.trim() ? { jobDescription: options.jobDescription } : {}),
+		...context,
 	});
 
-	return { report, fullText: buildExtractedDocument(raw).fullText };
+	return { report, fullText: buildExtractedDocument(raw).fullText, context };
+}
+
+export function atsContextChanged(
+	result: AtsCheckResult,
+	options: ChinaReferenceOptions & { jobDescription?: string },
+): boolean {
+	return (
+		result.context.jobDescription !== (options.jobDescription?.trim() ?? "") ||
+		(result.context.targetRoleId ?? "") !== (options.targetRoleId ?? "") ||
+		(result.context.audience ?? "all") !== (options.audience ?? "all")
+	);
 }
 
 /** Wraps a rendered PDF blob so the builder's deep check runs through exactly the same path. */

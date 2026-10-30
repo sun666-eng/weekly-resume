@@ -31,6 +31,13 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile
 
 COPY --from=pruner /app/out/full/ ./
+# Prune omits these non-workspace inputs used by the locked snapshot check.
+COPY --from=pruner /app/knowledge/china-job-rules ./knowledge/china-job-rules
+COPY --from=pruner /app/tooling/china-job-rules ./tooling/china-job-rules
+COPY --from=pruner /app/tooling/grit ./tooling/grit
+COPY --from=pruner /app/biome.json /app/.gitignore ./
+RUN node node_modules/@biomejs/biome/bin/biome --version && \
+    node tooling/china-job-rules/generate.mjs --check
 RUN rm -rf apps/web/dist apps/server/dist && pnpm turbo run build --filter=web --filter=server --force
 
 FROM base AS runtime-pruner

@@ -17,6 +17,38 @@ function renderAccessibleText(data: typeof sampleResumeData) {
 		</I18nProvider>,
 	);
 }
+it("keeps contact identities when an earlier field is removed and custom fields are reordered", () => {
+	const data = structuredClone(defaultResumeData);
+	data.basics.email = "synthetic@example.invalid";
+	data.basics.phone = "+86 13800000000";
+	data.basics.customFields = [
+		{ id: "portfolio", icon: "", text: "Portfolio", link: "https://example.invalid/portfolio" },
+		{ id: "notes", icon: "", text: "Notes", link: "javascript:alert(1)" },
+	];
+	const view = renderAccessibleText(data);
+	const phone = screen.getByRole("link", { name: data.basics.phone });
+	const portfolio = screen.getByRole("link", { name: "Portfolio" });
+	const phoneItem = phone.parentElement;
+	const portfolioItem = portfolio.parentElement;
+	expect(screen.queryByRole("link", { name: "Notes" })).not.toBeInTheDocument();
+	const changed = structuredClone(data);
+	changed.basics.email = "";
+	changed.basics.customFields.reverse();
+	changed.basics.customFields[1].text = "Updated portfolio";
+	view.rerender(
+		<I18nProvider i18n={i18n}>
+			<ResumeAccessibleText data={changed} />
+		</I18nProvider>,
+	);
+	expect(screen.queryByRole("link", { name: data.basics.email })).not.toBeInTheDocument();
+	expect(screen.getByRole("link", { name: data.basics.phone })).toBe(phone);
+	expect(phone.parentElement).toBe(phoneItem);
+	expect(screen.getByRole("link", { name: "Updated portfolio" })).toBe(portfolio);
+	expect(portfolio.parentElement).toBe(portfolioItem);
+	expect(portfolio).toHaveAttribute("href", "https://example.invalid/portfolio");
+	expect(screen.getByText("Notes").nextElementSibling).toBe(portfolioItem);
+});
+
 it.each([false, true])("exposes keyword list semantics for custom=%s", (custom) => {
 	const data = structuredClone(defaultResumeData);
 	Object.assign(data.sections.skills, { keywordLayout: "list" });
