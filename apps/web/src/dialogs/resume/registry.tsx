@@ -1,22 +1,103 @@
 import type { AnyDialogRendererEntry } from "../schemas";
-import { CreateResumeDialog, DuplicateResumeDialog, UpdateResumeDialog } from ".";
-import { ImportResumeDialog } from "./import";
-import { CreateAwardDialog, UpdateAwardDialog } from "./sections/award";
-import { CreateCertificationDialog, UpdateCertificationDialog } from "./sections/certification";
-import { CreateCoverLetterDialog, UpdateCoverLetterDialog } from "./sections/cover-letter";
-import { CreateCustomSectionDialog, UpdateCustomSectionDialog } from "./sections/custom";
-import { CreateEducationDialog, UpdateEducationDialog } from "./sections/education";
-import { CreateExperienceDialog, UpdateExperienceDialog } from "./sections/experience";
-import { CreateInterestDialog, UpdateInterestDialog } from "./sections/interest";
-import { CreateLanguageDialog, UpdateLanguageDialog } from "./sections/language";
-import { CreateProfileDialog, UpdateProfileDialog } from "./sections/profile";
-import { CreateProjectDialog, UpdateProjectDialog } from "./sections/project";
-import { CreatePublicationDialog, UpdatePublicationDialog } from "./sections/publication";
-import { CreateReferenceDialog, UpdateReferenceDialog } from "./sections/reference";
-import { CreateSkillDialog, UpdateSkillDialog } from "./sections/skill";
-import { CreateSummaryItemDialog, UpdateSummaryItemDialog } from "./sections/summary-item";
-import { CreateVolunteerDialog, UpdateVolunteerDialog } from "./sections/volunteer";
-import { TemplateGalleryDialog } from "./template/gallery";
+import { lazy } from "react";
+
+const CreateResumeDialog = lazy(() => import(".").then((module) => ({ default: module.CreateResumeDialog })));
+const DuplicateResumeDialog = lazy(() => import(".").then((module) => ({ default: module.DuplicateResumeDialog })));
+const UpdateResumeDialog = lazy(() => import(".").then((module) => ({ default: module.UpdateResumeDialog })));
+const ImportResumeDialog = lazy(() => import("./import").then((module) => ({ default: module.ImportResumeDialog })));
+const CreateAwardDialog = lazy(() =>
+	import("./sections/award").then((module) => ({ default: module.CreateAwardDialog })),
+);
+const UpdateAwardDialog = lazy(() =>
+	import("./sections/award").then((module) => ({ default: module.UpdateAwardDialog })),
+);
+const CreateCertificationDialog = lazy(() =>
+	import("./sections/certification").then((module) => ({ default: module.CreateCertificationDialog })),
+);
+const UpdateCertificationDialog = lazy(() =>
+	import("./sections/certification").then((module) => ({ default: module.UpdateCertificationDialog })),
+);
+const CreateCoverLetterDialog = lazy(() =>
+	import("./sections/cover-letter").then((module) => ({ default: module.CreateCoverLetterDialog })),
+);
+const UpdateCoverLetterDialog = lazy(() =>
+	import("./sections/cover-letter").then((module) => ({ default: module.UpdateCoverLetterDialog })),
+);
+const CreateCustomSectionDialog = lazy(() =>
+	import("./sections/custom").then((module) => ({ default: module.CreateCustomSectionDialog })),
+);
+const UpdateCustomSectionDialog = lazy(() =>
+	import("./sections/custom").then((module) => ({ default: module.UpdateCustomSectionDialog })),
+);
+const CreateEducationDialog = lazy(() =>
+	import("./sections/education").then((module) => ({ default: module.CreateEducationDialog })),
+);
+const UpdateEducationDialog = lazy(() =>
+	import("./sections/education").then((module) => ({ default: module.UpdateEducationDialog })),
+);
+const CreateExperienceDialog = lazy(() =>
+	import("./sections/experience").then((module) => ({ default: module.CreateExperienceDialog })),
+);
+const UpdateExperienceDialog = lazy(() =>
+	import("./sections/experience").then((module) => ({ default: module.UpdateExperienceDialog })),
+);
+const CreateInterestDialog = lazy(() =>
+	import("./sections/interest").then((module) => ({ default: module.CreateInterestDialog })),
+);
+const UpdateInterestDialog = lazy(() =>
+	import("./sections/interest").then((module) => ({ default: module.UpdateInterestDialog })),
+);
+const CreateLanguageDialog = lazy(() =>
+	import("./sections/language").then((module) => ({ default: module.CreateLanguageDialog })),
+);
+const UpdateLanguageDialog = lazy(() =>
+	import("./sections/language").then((module) => ({ default: module.UpdateLanguageDialog })),
+);
+const CreateProfileDialog = lazy(() =>
+	import("./sections/profile").then((module) => ({ default: module.CreateProfileDialog })),
+);
+const UpdateProfileDialog = lazy(() =>
+	import("./sections/profile").then((module) => ({ default: module.UpdateProfileDialog })),
+);
+const CreateProjectDialog = lazy(() =>
+	import("./sections/project").then((module) => ({ default: module.CreateProjectDialog })),
+);
+const UpdateProjectDialog = lazy(() =>
+	import("./sections/project").then((module) => ({ default: module.UpdateProjectDialog })),
+);
+const CreatePublicationDialog = lazy(() =>
+	import("./sections/publication").then((module) => ({ default: module.CreatePublicationDialog })),
+);
+const UpdatePublicationDialog = lazy(() =>
+	import("./sections/publication").then((module) => ({ default: module.UpdatePublicationDialog })),
+);
+const CreateReferenceDialog = lazy(() =>
+	import("./sections/reference").then((module) => ({ default: module.CreateReferenceDialog })),
+);
+const UpdateReferenceDialog = lazy(() =>
+	import("./sections/reference").then((module) => ({ default: module.UpdateReferenceDialog })),
+);
+const CreateSkillDialog = lazy(() =>
+	import("./sections/skill").then((module) => ({ default: module.CreateSkillDialog })),
+);
+const UpdateSkillDialog = lazy(() =>
+	import("./sections/skill").then((module) => ({ default: module.UpdateSkillDialog })),
+);
+const CreateSummaryItemDialog = lazy(() =>
+	import("./sections/summary-item").then((module) => ({ default: module.CreateSummaryItemDialog })),
+);
+const UpdateSummaryItemDialog = lazy(() =>
+	import("./sections/summary-item").then((module) => ({ default: module.UpdateSummaryItemDialog })),
+);
+const CreateVolunteerDialog = lazy(() =>
+	import("./sections/volunteer").then((module) => ({ default: module.CreateVolunteerDialog })),
+);
+const UpdateVolunteerDialog = lazy(() =>
+	import("./sections/volunteer").then((module) => ({ default: module.UpdateVolunteerDialog })),
+);
+const TemplateGalleryDialog = lazy(() =>
+	import("./template/gallery").then((module) => ({ default: module.TemplateGalleryDialog })),
+);
 
 export const resumeDialogRenderers: readonly AnyDialogRendererEntry[] = [
 	{ type: "resume.create", render: () => <CreateResumeDialog /> },

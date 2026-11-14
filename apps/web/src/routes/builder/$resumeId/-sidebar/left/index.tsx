@@ -1,3 +1,4 @@
+import "./phosphor.css";
 import type { LeftSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";

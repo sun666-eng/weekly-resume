@@ -1,7 +1,12 @@
+import type { Context, MiddlewareHandler } from "hono";
 import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
+import { resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
+import { brotliCompress, constants, gzip } from "node:zlib";
 import { serveStatic } from "@hono/node-server/serve-static";
+import { getMimeType } from "hono/utils/mime";
 import { env } from "@reactive-resume/env/server";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 
@@ -72,7 +77,6 @@ const ROOT_TITLE = `${APP_NAME} — A free and open-source resume builder`;
 // Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines.
 const ROOT_DESCRIPTION =
 	"Free, open-source resume builder. Create, update, and share your resume, with no ads and no paywall.";
-const ROOT_POSTER_PATH = "/videos/timelapse-v1.webp";
 const ROOT_FAQ_ITEMS = [
 	{
 		question: `Is ${APP_NAME} really free?`,
@@ -146,7 +150,6 @@ function createRootSeoMarkup(canonicalUrl: string) {
 
 	return `
 		<link rel="canonical" href="${canonicalUrl}">
-		<link rel="preload" href="${ROOT_POSTER_PATH}" as="image" fetchpriority="high">
 		<meta property="og:type" content="website">
 		<meta property="og:site_name" content="${APP_NAME}">
 		<meta property="og:title" content="${ROOT_TITLE}">
@@ -243,14 +246,108 @@ async function createPublicResumeSeoMarkup(pathname: string, origin: string) {
 	};
 }
 
-export const serveWebDistStatic = serveStatic({
-	root: staticRoot,
-	onFound: (_path, context) => {
-		if (/^\/videos\/.*-v\d+\.(?:mp4|webp)$/.test(context.req.path)) {
-			context.header("Cache-Control", "public, max-age=31536000, immutable");
+type Encoding = "br" | "gzip";
+const brotliAsync = promisify(brotliCompress);
+const gzipAsync = promisify(gzip);
+const isStreamingPath = (path: string) => path.startsWith("/api/rpc") || path.startsWith("/mcp");
+const isCompressibleAsset = (path: string) =>
+	/^\/assets\/.*\.(?:js|css|svg|json)$/.test(path) ||
+	/^\/pdfjs\/.*\.(?:mjs|js|css)$/.test(path) ||
+	/^\/fonts\/.*\.ttf$/.test(path);
+
+function acceptedEncodings(header: string | null): Encoding[] {
+	if (!header) return [];
+	const quality = new Map<string, number>();
+	for (const item of header.toLowerCase().split(",")) {
+		const [name, ...parameters] = item.trim().split(";");
+		const q = parameters
+			.find((parameter) => parameter.trim().startsWith("q="))
+			?.trim()
+			.slice(2);
+		const value = q === undefined ? 1 : Number(q);
+		if (name) quality.set(name.trim(), Number.isFinite(value) && value > 0 && value <= 1 ? value : 0);
+	}
+	const score = (encoding: string) => quality.get(encoding) ?? quality.get("*") ?? 0;
+	return (["br", "gzip"] as Encoding[]).filter((encoding) => score(encoding) > 0).sort((a, b) => score(b) - score(a));
+}
+
+function varyByEncoding(headers: Headers) {
+	const vary = headers.get("Vary");
+	if (!vary?.split(",").some((value) => ["*", "accept-encoding"].includes(value.trim().toLowerCase()))) {
+		headers.set("Vary", vary ? `${vary}, Accept-Encoding` : "Accept-Encoding");
+	}
+}
+
+function staticCacheHeaders(path: string, context: Context) {
+	if (path.startsWith("/assets/") || /^\/videos\/.*-v\d+\.(?:mp4|webp)$/.test(path)) {
+		context.header("Cache-Control", "public, max-age=31536000, immutable");
+	} else if (path.startsWith("/pdfjs/") || path.startsWith("/fonts/")) {
+		context.header("Cache-Control", "public, max-age=2592000, stale-while-revalidate=86400");
+	}
+	if (isCompressibleAsset(path)) {
+		const headers = new Headers(context.res.headers);
+		varyByEncoding(headers);
+		context.header("Vary", headers.get("Vary") ?? "Accept-Encoding");
+	}
+}
+
+/** A root parameter allows real filesystem HTTP tests without loading the application/database. */
+export function createWebDistStatic(root = staticRoot): MiddlewareHandler {
+	const absoluteRoot = resolve(root);
+	const uncompressed = serveStatic({
+		root,
+		onFound: (_path, context) => staticCacheHeaders(context.req.path, context),
+	});
+	return async (context, next) => {
+		if (!["GET", "HEAD"].includes(context.req.method) || isStreamingPath(context.req.path)) return next();
+		let path: string;
+		try {
+			path = decodeURIComponent(context.req.path);
+		} catch {
+			return next();
 		}
-	},
-});
+		if (!context.req.header("Range") && isCompressibleAsset(path) && !path.includes("\\") && !path.includes("\0")) {
+			const original = resolve(absoluteRoot, `.${path}`);
+			if (original.startsWith(`${absoluteRoot}${sep}`) && (await fs.stat(original).catch(() => null))?.isFile()) {
+				for (const encoding of acceptedEncodings(context.req.header("Accept-Encoding") ?? null)) {
+					const sidecar = `${original}.${encoding === "br" ? "br" : "gz"}`;
+					const stat = await fs.stat(sidecar).catch(() => null);
+					if (!stat?.isFile()) continue;
+					staticCacheHeaders(path, context);
+					context.header("Content-Encoding", encoding);
+					context.header("Content-Type", getMimeType(path) ?? "application/octet-stream");
+					context.header("Content-Length", String(stat.size));
+					context.header("Last-Modified", stat.mtime.toUTCString());
+					if (context.req.method === "HEAD") return context.body(null);
+					const file = await fs.open(sidecar, "r");
+					return new Response(file.readableWebStream({ autoClose: true }) as unknown as ReadableStream<Uint8Array>, {
+						headers: context.res.headers,
+					});
+				}
+			}
+		}
+		return uncompressed(context, next);
+	};
+}
+
+export const serveWebDistStatic = createWebDistStatic();
+
+async function htmlResponse(request: Request, html: string, initialHeaders: HeadersInit) {
+	const headers = new Headers(initialHeaders);
+	varyByEncoding(headers);
+	const encoding =
+		request.method === "GET" && !request.headers.has("Range") && !isStreamingPath(new URL(request.url).pathname)
+			? acceptedEncodings(request.headers.get("Accept-Encoding"))[0]
+			: undefined;
+	if (!encoding) return new Response(html, { headers });
+	const bytes =
+		encoding === "br"
+			? await brotliAsync(html, { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } })
+			: await gzipAsync(html, { level: 6 });
+	headers.set("Content-Encoding", encoding);
+	headers.set("Content-Length", String(bytes.length));
+	return new Response(new Uint8Array(bytes), { headers });
+}
 
 function getFallbackResponseHeaders(pathname: string) {
 	if (pathname === "/" && env.ROOT_RESUME_ID?.trim()) {
@@ -289,6 +386,7 @@ function notFoundResponse(options: { head?: boolean; noindex?: boolean } = {}) {
 export async function handleWebApp(request: Request) {
 	const isHead = request.method === "HEAD";
 	const pathname = new URL(request.url).pathname;
+	if (isStreamingPath(pathname)) return notFoundResponse({ head: isHead, noindex: true });
 
 	if (!isNoindexShellPath(pathname) && isAssetPath(pathname)) {
 		return new Response(isHead ? null : "Not Found", { status: 404 });
@@ -297,7 +395,7 @@ export async function handleWebApp(request: Request) {
 	const headers = getFallbackResponseHeaders(pathname);
 	if (!headers) return notFoundResponse({ head: isHead, noindex: true });
 
-	if (isHead) return new Response(null, { status: 200, headers });
+	if (isHead) return new Response(null, { status: 200, headers: { ...headers, Vary: "Accept-Encoding" } });
 
 	const html = await fs.readFile(indexHtmlPath, "utf-8");
 	const canonicalUrl = new URL("/", env.APP_URL).toString();
@@ -309,11 +407,11 @@ export async function handleWebApp(request: Request) {
 			.replace(/<title>[^<]*<\/title>/, `<title>${APP_NAME}</title>`)
 			.replace(/<meta\s+name="description"[^>]*>/, '<meta name="description" content="">');
 		const markup = `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" data-root-resume-shell><meta name="robots" content="noindex, follow" data-root-resume-shell>`;
-		return new Response(shell.replace("</head>", `${markup}</head>`), { headers });
+		return htmlResponse(request, shell.replace("</head>", `${markup}</head>`), headers);
 	}
 
 	if (pathname === "/") {
-		return new Response(html.replace("</head>", `${createRootSeoMarkup(canonicalUrl)}</head>`), { headers });
+		return htmlResponse(request, html.replace("</head>", `${createRootSeoMarkup(canonicalUrl)}</head>`), headers);
 	}
 
 	if (pathname === "/ats-checker") {
@@ -322,7 +420,7 @@ export async function handleWebApp(request: Request) {
 			.replace(/<title>[^<]*<\/title>/, `<title>${ATS_CHECKER_TITLE}</title>`)
 			.replace(/<meta\s+name="description"[^>]*>/, `<meta name="description" content="${ATS_CHECKER_DESCRIPTION}">`);
 
-		return new Response(withTitle.replace("</head>", `${createAtsCheckerSeoMarkup(origin)}</head>`), { headers });
+		return htmlResponse(request, withTitle.replace("</head>", `${createAtsCheckerSeoMarkup(origin)}</head>`), headers);
 	}
 
 	if (isPublicResumePath(pathname)) {
@@ -334,9 +432,9 @@ export async function handleWebApp(request: Request) {
 				.replace(/<title>[^<]*<\/title>/, `<title>${resumeSeo.pageTitle}</title>`)
 				.replace(/<meta\s+name="description"[^>]*>/, `<meta name="description" content="${resumeSeo.description}">`);
 
-			return new Response(withTitle.replace("</head>", `${resumeSeo.markup}</head>`), { headers });
+			return htmlResponse(request, withTitle.replace("</head>", `${resumeSeo.markup}</head>`), headers);
 		}
 	}
 
-	return new Response(html, { headers });
+	return htmlResponse(request, html, headers);
 }

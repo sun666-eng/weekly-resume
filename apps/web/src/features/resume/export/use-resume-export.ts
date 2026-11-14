@@ -3,7 +3,6 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { PublicResumePdfOptions } from "@/features/resume/public/public-pdf";
 import { t } from "@lingui/core/macro";
 import { useCallback, useState } from "react";
-import { buildDocx } from "@reactive-resume/docx";
 import { getResumeSectionTitle } from "@reactive-resume/pdf/section-title";
 import { getResumeExportData, resumeHasCoverLetter } from "@reactive-resume/resume/export-sections";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
@@ -93,6 +92,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			if (!resume || resume.persistence === "local") return;
 			if (target === "cover-letter" && !resumeHasCoverLetter(resume.data)) return;
 			try {
+				const { buildDocx } = await import("@reactive-resume/docx");
 				const data = getResumeExportData(resume.data, target);
 				const resolveTitle = await createSectionTitleResolver(data);
 				const blob = await buildDocx(data, resolveTitle, await prepareDocxPhoto(data));

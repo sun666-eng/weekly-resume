@@ -1,7 +1,15 @@
 import type { AnyDialogRendererEntry } from "../schemas";
-import { ChangePasswordDialog } from "./change-password";
-import { DisableTwoFactorDialog } from "./disable-two-factor";
-import { EnableTwoFactorDialog } from "./enable-two-factor";
+import { lazy } from "react";
+
+const ChangePasswordDialog = lazy(() =>
+	import("./change-password").then((module) => ({ default: module.ChangePasswordDialog })),
+);
+const DisableTwoFactorDialog = lazy(() =>
+	import("./disable-two-factor").then((module) => ({ default: module.DisableTwoFactorDialog })),
+);
+const EnableTwoFactorDialog = lazy(() =>
+	import("./enable-two-factor").then((module) => ({ default: module.EnableTwoFactorDialog })),
+);
 
 export const authDialogRenderers: readonly AnyDialogRendererEntry[] = [
 	{ type: "auth.change-password", render: () => <ChangePasswordDialog /> },

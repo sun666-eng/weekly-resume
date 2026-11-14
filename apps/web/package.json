@@ -4,7 +4,7 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"build": "vite build",
+		"build": "vite build && node ../../tooling/precompress-web.mjs",
 		"dev": "vite dev",
 		"serve": "vite preview",
 		"start": "vite preview",

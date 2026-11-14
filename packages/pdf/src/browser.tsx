@@ -7,6 +7,9 @@ import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { normalizePictureUrl } from "@reactive-resume/utils/picture-url";
 import { pdf } from "#react-pdf-renderer";
 import { ResumeDocument } from "./document";
+import { preloadResumePdfIcons } from "./templates/shared/pdf-icons";
+
+export { preloadResumePdfIcons } from "./templates/shared/pdf-icons";
 
 export type CreateResumePdfBlobOptions = {
 	data: ResumeData;
@@ -25,6 +28,7 @@ export const createResumePdfBlob = async ({
 	if (typeof window !== "undefined") {
 		data.picture.url = normalizePictureUrl(data.picture.url, window.location.origin);
 	}
+	await preloadResumePdfIcons(data);
 	const document = createElement(ResumeDocument, {
 		data,
 		template: template ?? data.metadata.template,

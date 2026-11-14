@@ -26,6 +26,27 @@ const cjkLetterRegex = cjkLetters().toRegExp();
 const fontWeightValues = new Set<FontWeight>(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
 const preferredFallbackFontWeights = ["400", "700", "600", "500"] satisfies FontWeight[];
 
+// FontFamily resolves styles independently. An absent italic face must still resolve,
+// but it must share the normal FontSource (including its load promise and decoded data).
+const sharedFontStateKey = Symbol.for("weekly-resume.pdf.shared-font-sources");
+type SharedFontState = { getFont: typeof Font.getFont; aliases: Set<string> };
+const sharedStore = Font as typeof Font & { [sharedFontStateKey]?: SharedFontState };
+sharedStore[sharedFontStateKey] ??= { getFont: Font.getFont.bind(Font), aliases: new Set() };
+const sharedFonts = sharedStore[sharedFontStateKey];
+Font.getFont = (descriptor) => {
+	if (descriptor.fontStyle === "italic" && sharedFonts.aliases.has(descriptor.fontFamily)) {
+		const normal = sharedFonts.getFont({ ...descriptor, fontStyle: "normal" });
+		if (sharedFonts.aliases.has(`${descriptor.fontFamily}:${normal.fontWeight}`)) return normal;
+	}
+	return sharedFonts.getFont(descriptor);
+};
+
+let resolveFontSource = (source: string) => source;
+/** Installed by the Node-only adapter; browser registration keeps same-origin URLs. */
+export function setPdfFontSourceResolver(resolver: (source: string) => string) {
+	resolveFontSource = resolver;
+}
+
 // `fontFamily` is widened to `string | string[]` so react-pdf can do
 // glyph-level font fallback for CJK characters (#2986).
 type PdfTypography = Omit<Typography, "body" | "heading"> & {
@@ -256,7 +277,12 @@ export const registerFonts = (
 		const source = getWebFontSource(family, normalizedWeight, italic);
 		if (!source) return;
 
-		Font.register({ family, src: source, fontWeight: Number(normalizedWeight), fontStyle });
+		if (italic && source === getWebFontSource(family, normalizedWeight, false)) {
+			sharedFonts.aliases.add(family);
+			sharedFonts.aliases.add(`${family}:${Number(normalizedWeight)}`);
+		} else {
+			Font.register({ family, src: resolveFontSource(source), fontWeight: Number(normalizedWeight), fontStyle });
+		}
 		registeredFontVariants.add(key);
 	};
 

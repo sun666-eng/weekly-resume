@@ -95,7 +95,7 @@ describe("web app fallback classification", () => {
 		const html = await response.text();
 
 		expect(html).toContain('<link rel="canonical" href="https://weekly-resume.example.com/">');
-		expect(html).toContain('<link rel="preload" href="/videos/timelapse-v1.webp" as="image" fetchpriority="high">');
+		expect(html).not.toContain("/videos/timelapse-v1.webp");
 		expect(html).toContain('<meta property="og:url" content="https://weekly-resume.example.com/">');
 		expect(html).toContain(
 			'<meta property="og:image" content="https://weekly-resume.example.com/opengraph/banner.jpg">',

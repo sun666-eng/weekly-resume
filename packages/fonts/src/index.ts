@@ -5,7 +5,7 @@ import { getLocaleScript, isCjkScript } from "@reactive-resume/utils/locale";
 const unique = <T>(items: T[]): T[] => [...new Set(items)];
 
 import localFontsJSON from "./local-fonts.json";
-import webFontListJSON from "./webfontlist.json";
+import compactWebFonts from "./webfonts.compact.json";
 
 type FontCategory = "display" | "handwriting" | "monospace" | "serif" | "sans-serif";
 export type FontWeight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
@@ -97,7 +97,30 @@ const punctuationFallbackFonts = {
 	sansSerif: "Noto Sans",
 } as const;
 
-const webFontList = webFontListJSON as WebFont[];
+type CompactWebFont = [string, FontCategory, FontWeight[], string, string, [FontFileWeight, string][]];
+const expandFontUrl = (url: string) => (/^https?:/.test(url) ? url : `https://fonts.gstatic.com/${url}`);
+const webFontList: WebFont[] = (compactWebFonts as CompactWebFont[]).map(
+	([family, category, weights, preview, prefix, entries]) => {
+		let files: WebFont["files"] | undefined;
+		return {
+			type: "web",
+			family,
+			category,
+			weights,
+			preview: expandFontUrl(preview),
+			// Keep the synchronous public API, but expand URL maps only for requested families.
+			get files() {
+				files ??= Object.fromEntries(
+					entries.map(([weight, suffix]) => [weight, expandFontUrl(prefix) + suffix]),
+				) as WebFont["files"];
+				return files;
+			},
+			set files(value: WebFont["files"]) {
+				files = value;
+			},
+		};
+	},
+);
 const webFontMap = new Map<string, WebFont>(webFontList.map((font) => [font.family, font]));
 const standardFontList = standardPdfFontList.filter((font) => !webFontMap.has(font.family));
 

@@ -11,6 +11,12 @@ export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
 	const { theme, locale, session, flags } = await loadRootContext();
+	let initialContext = { theme, locale, session, flags } as Awaited<ReturnType<typeof loadRootContext>> | undefined;
+	const resolveRootContext = () => {
+		const bootstrap = initialContext;
+		initialContext = undefined;
+		return bootstrap ? Promise.resolve(bootstrap) : loadRootContext();
+	};
 
 	const router = createRouter({
 		routeTree,
@@ -20,7 +26,7 @@ export const getRouter = async () => {
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,
 		defaultNotFoundComponent: NotFoundScreen,
-		context: { orpc, queryClient, theme, locale, session, flags },
+		context: { orpc, queryClient, theme, locale, session, flags, resolveRootContext },
 	});
 
 	return router;
