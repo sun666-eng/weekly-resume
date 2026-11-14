@@ -383,7 +383,7 @@ function notFoundResponse(options: { head?: boolean; noindex?: boolean } = {}) {
 }
 
 // ponytail: GET and HEAD share the same routing logic; method determines body presence
-export async function handleWebApp(request: Request) {
+export async function handleWebApp(request: Request, options: { indexHtmlPath?: string } = {}) {
 	const isHead = request.method === "HEAD";
 	const pathname = new URL(request.url).pathname;
 	if (isStreamingPath(pathname)) return notFoundResponse({ head: isHead, noindex: true });
@@ -397,7 +397,7 @@ export async function handleWebApp(request: Request) {
 
 	if (isHead) return new Response(null, { status: 200, headers: { ...headers, Vary: "Accept-Encoding" } });
 
-	const html = await fs.readFile(indexHtmlPath, "utf-8");
+	const html = await fs.readFile(options.indexHtmlPath ?? indexHtmlPath, "utf-8");
 	const canonicalUrl = new URL("/", env.APP_URL).toString();
 
 	if (pathname === "/" && env.ROOT_RESUME_ID?.trim()) {

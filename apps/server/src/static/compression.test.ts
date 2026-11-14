@@ -8,11 +8,14 @@ import { Hono } from "hono";
 vi.mock("@reactive-resume/env/server", () => ({ env: { APP_URL: "http://fixture.invalid" } }));
 const { createWebDistStatic, handleWebApp } = await import("./web");
 const source = "export const test = 'synthetic static payload';\n".repeat(30);
+const htmlFixture =
+	"<!doctype html><html><head><title>Fixture</title></head><body>temporary HTML fixture</body></html>";
 let root: string;
 const app = new Hono();
 
 beforeAll(async () => {
 	root = await mkdtemp(join(tmpdir(), "weekly-resume-compression-"));
+	await writeFile(join(root, "index.html"), htmlFixture);
 	for (const folder of ["assets", "fonts", "pdfjs"]) await mkdir(join(root, folder));
 	for (const file of [
 		"assets/test.js",
@@ -127,14 +130,18 @@ describe("precompressed static HTTP responses", () => {
 
 describe("HTML-only dynamic compression", () => {
 	it.each(["br", "gzip"])("compresses HTML using %s without changing its contents", async (encoding) => {
-		const plain = await handleWebApp(new Request("http://fixture.invalid/"));
+		const options = { indexHtmlPath: join(root, "index.html") };
+		const plain = await handleWebApp(new Request("http://fixture.invalid/"), options);
 		const compressed = await handleWebApp(
 			new Request("http://fixture.invalid/", { headers: { "Accept-Encoding": encoding } }),
+			options,
 		);
+		const plainHtml = await plain.text();
+		expect(plainHtml).toContain("temporary HTML fixture");
 		expect(compressed.headers.get("Content-Encoding")).toBe(encoding);
 		expect(compressed.headers.get("Vary")).toContain("Accept-Encoding");
 		const bytes = Buffer.from(await compressed.arrayBuffer());
-		expect((encoding === "br" ? brotliDecompressSync(bytes) : gunzipSync(bytes)).toString()).toBe(await plain.text());
+		expect((encoding === "br" ? brotliDecompressSync(bytes) : gunzipSync(bytes)).toString()).toBe(plainHtml);
 	});
 	it.each(["/api/rpc/stream", "/mcp/events"])("never buffers streaming route %s", async (path) => {
 		const response = await handleWebApp(
