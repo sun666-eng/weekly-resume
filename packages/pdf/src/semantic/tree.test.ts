@@ -614,6 +614,50 @@ describe("buildSemanticTree", () => {
 		]);
 	});
 
+	it("routes a project website into the project title row before the period", () => {
+		const data = structuredClone(defaultResumeData);
+		data.sections.projects.items = [
+			{
+				id: "project-website",
+				hidden: false,
+				name: "Linked project",
+				period: "2026",
+				website: { url: "https://project.example", label: "Project site", inlineLink: false },
+				description: "<p>Project description</p>",
+			},
+		];
+		const tree = buildSemanticTree({
+			data,
+			template: "onyx",
+			page: { fullWidth: true, main: ["projects"], sidebar: [] },
+			pageNumber: 1,
+			showHeader: false,
+		});
+		const project = required(
+			findNode(tree, (node) => node.kind === "item" && node.id === "project-website"),
+			"project",
+		);
+		const header = required(
+			findNode(project, (node) => node.kind === "item-header"),
+			"project header",
+		);
+		const row = required(
+			findNode(header, (node) => node.kind === "template-part" && node.attributes.name === "item-header-row"),
+			"project title row",
+		);
+
+		expect(row.children.map(({ kind, attributes }) => [kind, attributes.name])).toEqual([
+			["field", "name"],
+			["link", undefined],
+			["field", "period"],
+		]);
+		expect(findParent(tree, row.children[1]?.key ?? "")).toBe(row);
+		expect(row.children[1]?.key).toContain("link-website");
+		expect(findNode(project, (node) => node.kind === "link" && node.key.includes("link-website"))?.key).toContain(
+			"item-header/link-website",
+		);
+	});
+
 	it("models Chikorita's two physical contact rows and routes contacts to their real row parent", () => {
 		const data = structuredClone(defaultResumeData);
 		data.basics.email = "ada@example.com";

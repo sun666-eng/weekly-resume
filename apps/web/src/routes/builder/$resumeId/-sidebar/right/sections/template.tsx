@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { SwapIcon } from "@phosphor-icons/react";
 import { Badge } from "@reactive-resume/ui/components/badge";
@@ -25,6 +26,15 @@ function TemplateSectionForm() {
 
 	const metadata = templates[template];
 	const displayName = getTemplateDisplayName(template, i18n.locale, metadata.name);
+	const sampleMark = t({
+		id: "template.gallery.sampleCards",
+		message: "The cards show sample content and sample layout.",
+	});
+	const keepFormatting = t({
+		id: "template.gallery.keepFormatting",
+		message: "Changing template style keeps your existing layout, colors, and fonts.",
+	});
+	const imageAlt = `${displayName} — ${sampleMark}`;
 
 	const onOpenTemplateGallery = () => {
 		openDialog("resume.template.gallery", undefined);
@@ -38,7 +48,7 @@ function TemplateSectionForm() {
 				className="group/preview relative h-auto w-40 shrink-0 cursor-pointer p-0"
 			>
 				<div className="relative z-10 aspect-page size-full overflow-hidden rounded-md opacity-100 transition-opacity group-hover/preview:opacity-50">
-					<img src={templatePreviewImage(template, i18n.locale)} alt={displayName} className="size-full object-cover" />
+					<img src={templatePreviewImage(template, i18n.locale)} alt={imageAlt} className="size-full object-cover" />
 				</div>
 
 				<div className="absolute inset-0 flex items-center justify-center">
@@ -50,6 +60,8 @@ function TemplateSectionForm() {
 				<div className="space-y-1">
 					<h3 className="font-semibold text-2xl capitalize tracking-tight">{displayName}</h3>
 					<p className="text-muted-foreground text-sm">{i18n.t(metadata.description)}</p>
+					<p className="text-muted-foreground text-sm">{sampleMark}</p>
+					<p className="text-muted-foreground text-sm">{keepFormatting}</p>
 				</div>
 
 				<div className="flex flex-wrap gap-2.5">

@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
 import type { ExperienceItem, ResumeData } from "@reactive-resume/schema/resume/data";
+import type { RunAtsCheckOptions } from "@/features/ats-checker/run-ats-check";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
@@ -13,7 +14,7 @@ const sectionState = vi.hoisted(() => ({ setCollapsed: vi.fn() }));
 
 const deepCheckMocks = vi.hoisted(() => ({
 	createResumePdfBlob: vi.fn(async () => new Blob(["%PDF"], { type: "application/pdf" })),
-	runAtsCheck: vi.fn(async () => ({
+	runAtsCheck: vi.fn(async (_file: File, options: RunAtsCheckOptions) => ({
 		report: {
 			version: 1 as const,
 			score: 91,
@@ -31,6 +32,11 @@ const deepCheckMocks = vi.hoisted(() => ({
 			document: { pageCount: 1, truncated: false, wordCount: 320, operatorsAvailable: true },
 		},
 		fullText: "Ada Lovelace",
+		context: {
+			jobDescription: options.jobDescription ?? "",
+			...(options.targetRoleId ? { targetRoleId: options.targetRoleId } : {}),
+			...(options.audience ? { audience: options.audience } : {}),
+		},
 	})),
 }));
 
@@ -41,7 +47,8 @@ type SectionStoreSelector = (state: { setCollapsed: typeof sectionState.setColla
 vi.mock("@/features/resume/export/pdf-document", () => ({
 	createResumePdfBlob: deepCheckMocks.createResumePdfBlob,
 }));
-vi.mock("@/features/ats-checker/run-ats-check", () => ({
+vi.mock("@/features/ats-checker/run-ats-check", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/features/ats-checker/run-ats-check")>()),
 	runAtsCheck: deepCheckMocks.runAtsCheck,
 	blobToPdfFile: (blob: Blob, name: string) => new File([blob], name, { type: "application/pdf" }),
 }));
@@ -217,6 +224,21 @@ describe("the deep check tier", () => {
 			expect(deepCheckMocks.runAtsCheck).toHaveBeenCalledWith(expect.any(File), { jobDescription: "Kubernetes" }),
 		);
 	});
+	it("uses the selected role and blocks the AI card after inputs change", async () => {
+		renderPanel();
+		fireEvent.change(screen.getByLabelText("China job reference (optional)"), {
+			target: { value: "role-java-backend" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: /Run deep check/ }));
+		await waitFor(() => expect(screen.getByText("AI review card")).toBeTruthy());
+		expect(deepCheckMocks.runAtsCheck).toHaveBeenCalledWith(expect.any(File), {
+			jobDescription: "",
+			targetRoleId: "role-java-backend",
+		});
+		fireEvent.change(screen.getByLabelText("Career stage (optional)"), { target: { value: "campus" } });
+		expect(screen.getByRole("status").textContent).toMatch(/Inputs changed/);
+		expect(screen.queryByText("AI review card")).toBeNull();
+	});
 
 	it("says so plainly when the check cannot finish", async () => {
 		deepCheckMocks.createResumePdfBlob.mockRejectedValueOnce(new Error("render failed"));
@@ -225,6 +247,23 @@ describe("the deep check tier", () => {
 		fireEvent.click(screen.getByRole("button", { name: /Run deep check/ }));
 
 		await waitFor(() => expect(screen.getByText(/could not finish/)).toBeTruthy());
+	});
+	it("requires another deep check after the resume itself is edited", async () => {
+		const panel = renderPanel();
+		fireEvent.click(screen.getByRole("button", { name: /Run deep check/ }));
+		await waitFor(() => expect(screen.getByText("AI review card")).toBeTruthy());
+		resumeState.data = makeResume((data) => {
+			data.basics.name = "Grace Hopper";
+		});
+		panel.rerender(
+			<I18nProvider i18n={i18n}>
+				<AtsCheckSectionBuilder />
+			</I18nProvider>,
+		);
+		expect(screen.queryByText("AI review card")).toBeNull();
+		expect(screen.getByRole("status").textContent).toMatch(/Inputs changed/);
+		fireEvent.click(screen.getByRole("button", { name: /Run again/ }));
+		await waitFor(() => expect(screen.getByText("AI review card")).toBeTruthy());
 	});
 });
 

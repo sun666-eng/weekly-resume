@@ -43,6 +43,23 @@ const { handleWebApp } = await import("./web");
 const staticOptions = mocks.serveStatic.mock.calls[0]?.[0] as StaticOptions | undefined;
 
 describe("web app fallback classification", () => {
+	it.each(["normal-public-slug", "4d273d61-12ab-4e2b-9b0d-c12a50cc9cc3"])(
+		"keeps /guest/%s in the public resume lookup path",
+		async (slug) => {
+			const response = await handleWebApp(new Request(`https://example.com/guest/${slug}`));
+			expect(response.status).toBe(200);
+			expect(mocks.getPublicResumeSocialMeta).toHaveBeenCalledExactlyOnceWith({ username: "guest", slug });
+		},
+	);
+	it("serves the new three-segment editor while preserving two-segment local-draft public URLs", async () => {
+		const editor = await handleWebApp(
+			new Request("https://example.com/local-draft/edit/4d273d61-12ab-4e2b-9b0d-c12a50cc9cc3"),
+		);
+		expect(editor.status).toBe(200);
+		expect(mocks.getPublicResumeSocialMeta).not.toHaveBeenCalled();
+		await handleWebApp(new Request("https://example.com/local-draft/edit"));
+		expect(mocks.getPublicResumeSocialMeta).toHaveBeenCalledWith({ username: "local-draft", slug: "edit" });
+	});
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mocks.env.ROOT_RESUME_ID = undefined;
@@ -78,7 +95,7 @@ describe("web app fallback classification", () => {
 		const html = await response.text();
 
 		expect(html).toContain('<link rel="canonical" href="https://weekly-resume.example.com/">');
-		expect(html).toContain('<link rel="preload" href="/videos/timelapse-v1.webp" as="image" fetchpriority="high">');
+		expect(html).not.toContain("/videos/timelapse-v1.webp");
 		expect(html).toContain('<meta property="og:url" content="https://weekly-resume.example.com/">');
 		expect(html).toContain(
 			'<meta property="og:image" content="https://weekly-resume.example.com/opengraph/banner.jpg">',

@@ -1,4 +1,5 @@
 import type { AtsFinding, AtsSeverity } from "@reactive-resume/resume/ats";
+import type { ChinaReferenceOptions } from "@reactive-resume/resume/china-job-rules";
 import type { AtsCheckResult } from "@/features/ats-checker/run-ats-check";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -15,8 +16,9 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
 import { AiReviewCard } from "@/features/ats-checker/ai-review/ai-review-card";
+import { ChinaReferenceControls } from "@/features/ats-checker/china-reference-options";
 import { AtsPdfReportView } from "@/features/ats-checker/report/report-view";
-import { blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
+import { atsContextChanged, blobToPdfFile, runAtsCheck } from "@/features/ats-checker/run-ats-check";
 import { useResumeData } from "@/features/resume/builder/draft";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import {
@@ -190,19 +192,24 @@ function DeepCheckTier() {
 	const data = useResumeData();
 
 	const [jobDescription, setJobDescription] = useState("");
+	const [chinaOptions, setChinaOptions] = useState<ChinaReferenceOptions>({});
 	const [result, setResult] = useState<AtsCheckResult | null>(null);
+	const [checkedData, setCheckedData] = useState(data);
 	const [isRunning, setIsRunning] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const stale = result ? checkedData !== data || atsContextChanged(result, { ...chinaOptions, jobDescription }) : false;
 
 	const onRun = async () => {
 		if (!data || isRunning) return;
 
 		setIsRunning(true);
 		setError(null);
+		setResult(null);
 
 		try {
 			const blob = await createResumePdfBlob(data);
-			setResult(await runAtsCheck(blobToPdfFile(blob, "resume.pdf"), { jobDescription }));
+			setResult(await runAtsCheck(blobToPdfFile(blob, "resume.pdf"), { ...chinaOptions, jobDescription }));
+			setCheckedData(data);
 		} catch {
 			setError(t`The deep check could not finish. Please try again.`);
 		} finally {
@@ -240,6 +247,7 @@ function DeepCheckTier() {
 					/>
 				</div>
 
+				<ChinaReferenceControls id="builder-ats" value={chinaOptions} onChange={setChinaOptions} disabled={isRunning} />
 				<Button size="sm" disabled={isRunning} onClick={() => void onRun()}>
 					{isRunning ? <Spinner /> : <MagnifyingGlassIcon />}
 					{isRunning ? <Trans>Checking…</Trans> : result ? <Trans>Run again</Trans> : <Trans>Run deep check</Trans>}
@@ -255,8 +263,20 @@ function DeepCheckTier() {
 
 			{result && (
 				<>
+					{stale && (
+						<p role="status" className="text-muted-foreground text-sm">
+							<Trans>Inputs changed. Run the check again before requesting an AI review.</Trans>
+						</p>
+					)}
 					<AtsPdfReportView report={result.report} />
-					<AiReviewCard report={result.report} fullText={result.fullText} jobDescription={jobDescription} />
+					{!stale && (
+						<AiReviewCard
+							key={JSON.stringify(result.context)}
+							report={result.report}
+							fullText={result.fullText}
+							jobDescription={result.context.jobDescription}
+						/>
+					)}
 				</>
 			)}
 		</div>

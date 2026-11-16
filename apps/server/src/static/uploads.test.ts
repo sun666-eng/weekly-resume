@@ -17,6 +17,14 @@ vi.mock("@reactive-resume/env/server", () => ({
 const { handleUpload } = await import("./uploads");
 
 describe("handleUpload", () => {
+	it.each(["/api/uploads/user-1/guest/photo.png", "/uploads/user-1/guest/photo.png"])(
+		"denies private guest bytes on public path %s",
+		async (path) => {
+			const response = await handleUpload(new Request(`https://example.com${path}`));
+			expect(response.status).toBe(404);
+			expect(readMock).not.toHaveBeenCalled();
+		},
+	);
 	beforeEach(() => {
 		readMock.mockReset();
 	});

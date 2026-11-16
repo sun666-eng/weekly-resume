@@ -53,6 +53,79 @@ function rawExtraction(pages: FixtureItem[][]): RawExtraction {
 const linesOf = (...pages: FixtureItem[][]) => documentToLines(buildExtractedDocument(rawExtraction(pages)));
 
 describe("documentToLines", () => {
+	it("does not treat right-aligned dates as a separate column", () => {
+		const rows = [
+			"EXPERIENCE",
+			"Example Corp",
+			"Engineer",
+			"A long description spanning the middle of the page",
+			"Another Company",
+			"Engineer",
+			"More details spanning the middle of the page",
+		];
+		const items = rows.map((text, index) => ({
+			text,
+			x: 40,
+			y: 40 + index * 20,
+			width: index === 3 || index === 6 ? 380 : 90,
+		}));
+		items.push(
+			{ text: "2020 - Present", x: 430, y: 60, width: 90 },
+			{ text: "2018 - 2020", x: 430, y: 120, width: 90 },
+		);
+		expect(linesOf(items)).toEqual([
+			"EXPERIENCE",
+			"Example Corp  2020 - Present",
+			"Engineer",
+			rows[3],
+			"Another Company  2018 - 2020",
+			"Engineer",
+			rows[6],
+		]);
+	});
+	it("keeps a full-width header before independently reading both columns", () => {
+		const left = ["SKILLS", "Unity", "C++", "SQL", "MQTT", "Docker"];
+		const right = ["EDUCATION", "Example University", "BSc", "2020 - 2024", "EXPERIENCE", "Example Corp"];
+		expect(
+			linesOf([
+				{ text: "Full-width name and contact details", x: 40, y: 20, width: 500 },
+				...left.map((text, index) => ({ text, x: 40, y: 60 + index * 20 })),
+				...right.map((text, index) => ({ text, x: 220, y: 70 + index * 20 })),
+			]),
+		).toEqual(["Full-width name and contact details", ...left, ...right]);
+	});
+	it("reads a continuing sidebar across pages before the continuing main column", () => {
+		const left = ["SKILLS", "Unity", "C++", "SQL", "MQTT", "Docker"];
+		const right = ["EXPERIENCE", "Example Corp", "Engineer", "2020 - Present", "Built services", "Maintained services"];
+		const page = (l: string[], r: string[]) => [
+			...l.map((text, index) => ({ text, x: 40, y: 60 + index * 20 })),
+			...r.map((text, index) => ({ text, x: 220, y: 70 + index * 20 })),
+		];
+		expect(
+			linesOf(
+				page(left, right),
+				page(
+					["Python", "Linux", "Git", "Redis", "Kafka", "Tools"],
+					["Led teams", "Released apps", "EDUCATION", "University", "BSc", "2014 - 2018"],
+				),
+			),
+		).toEqual([
+			...left,
+			"Python",
+			"Linux",
+			"Git",
+			"Redis",
+			"Kafka",
+			"Tools",
+			...right,
+			"Led teams",
+			"Released apps",
+			"EDUCATION",
+			"University",
+			"BSc",
+			"2014 - 2018",
+		]);
+	});
 	it("groups items on the same baseline into one line", () => {
 		expect(
 			linesOf([

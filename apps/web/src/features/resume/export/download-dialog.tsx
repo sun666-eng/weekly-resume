@@ -24,6 +24,7 @@ import {
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
+import { useGuestEditor } from "../guest/context";
 import { useResumeExport } from "./use-resume-export";
 
 type DownloadableResume = Parameters<typeof useResumeExport>[0];
@@ -62,6 +63,7 @@ function FormatRow({ action, description, disabled, icon, title }: FormatRowProp
 }
 
 export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogProps) {
+	const guest = useGuestEditor();
 	const [open, setOpen] = useState(false);
 	const [scope, setScope] = useState<ResumeExportTarget>("resume");
 	const [includeCoverLetterHeader, setIncludeCoverLetterHeader] = useState(false);
@@ -83,7 +85,9 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 
 	const run = (action: () => void | Promise<void>) => {
 		setOpen(false);
-		void action();
+		// Let the format chooser close before the guest snapshot barrier checks for unfinished dialogs.
+		if (guest) setTimeout(() => void action(), 0);
+		else void action();
 	};
 
 	return (
@@ -95,7 +99,11 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						<Trans>Download</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>Pick a format for your resume or cover letter.</Trans>
+						{guest ? (
+							"登录后将当前草稿及照片保存为你的私人简历，并继续下载。"
+						) : (
+							<Trans>Pick a format for your resume or cover letter.</Trans>
+						)}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -202,7 +210,12 @@ export function ResumeDownloadDialog({ resume, trigger }: ResumeDownloadDialogPr
 						disabled={jsonDisabled}
 						icon={<FileJsIcon className="size-5" />}
 						title="JSON"
-						description={<Trans>Full resume data for backup or import.</Trans>}
+						description={
+							<>
+								<Trans>Full resume data for backup or import.</Trans>{" "}
+								可能包含隐藏内容和私人备注；照片地址不等于完整本机备份。
+							</>
+						}
 						action={
 							<Button
 								size="sm"

@@ -1,9 +1,21 @@
 // @vitest-environment happy-dom
 
 import type { CustomSection, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
+import { Packer } from "docx";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { getDefaultSectionIconName } from "@reactive-resume/schema/resume/section-icons";
+import { buildDocument } from "./builder";
+import { documentXml, xmlNodes, xmlTexts } from "./builder.test-helpers";
 import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
+
+const jszipRequire = createRequire(createRequire(import.meta.url).resolve("docx"));
+const JSZip = jszipRequire("jszip") as {
+	loadAsync: (archive: Buffer) => Promise<{
+		file: (path: string) => { async: (type: "string") => Promise<string> } | null;
+	}>;
+};
 
 const baseConfig = {
 	headingFont: "Inter",
@@ -121,6 +133,119 @@ describe("renderBuiltInSection", () => {
 
 	it("returns [] for an unknown section type", () => {
 		expect(renderBuiltInSection("not-a-section" as never, emptySection("experience"), HEX)).toEqual([]);
+	});
+
+	it("places a project website in the title paragraph before the description", () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+		data.sections.projects.items = [
+			{
+				id: "project-website",
+				hidden: false,
+				name: "Linked project",
+				period: "2026",
+				website: { url: "https://project.example", label: "Project site", inlineLink: false },
+				description: "<p>Project description</p>",
+			},
+		];
+
+		const texts = xmlTexts(documentXml(data));
+		expect(texts.indexOf("Linked project")).toBeLessThan(texts.indexOf("Project site"));
+		expect(texts.indexOf("Project site")).toBeLessThan(texts.indexOf("Project description"));
+		expect(texts.filter((text) => text === "Project site")).toHaveLength(1);
+	});
+
+	it("uses the project name as the only link text when inlineLink is enabled", () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+		data.sections.projects.items = [
+			{
+				id: "project-inline-website",
+				hidden: false,
+				name: "Inline project",
+				period: "2026",
+				website: { url: "https://project.example", label: "Project site", inlineLink: true },
+				description: "<p>Project description</p>",
+			},
+		];
+
+		const hyperlinks = xmlNodes(documentXml(data), "w:hyperlink");
+		expect(hyperlinks.map((node) => xmlTexts(node))).toContainEqual(["Inline project"]);
+		expect(xmlTexts(documentXml(data))).not.toContain("Project site");
+	});
+
+	it("keeps the link color on an inline project name when a text color is set", () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+		data.metadata.design.colors.text = "rgba(17, 17, 17, 1)";
+		data.metadata.design.colors.primary = "rgba(220, 38, 38, 1)";
+		data.sections.projects.items = [
+			{
+				id: "project-inline-website",
+				hidden: false,
+				name: "Inline project",
+				period: "2026",
+				website: { url: "https://project.example", label: "", inlineLink: true },
+				description: "",
+			},
+		];
+
+		const hyperlink = xmlNodes(documentXml(data), "w:hyperlink").find((node) =>
+			xmlTexts(node).includes("Inline project"),
+		);
+		const colors = JSON.stringify(xmlNodes(hyperlink, "w:color")).toLowerCase();
+		expect(colors).toContain("dc2626");
+		expect(colors).not.toContain("111111");
+	});
+
+	it("writes project website relationships inside their title paragraphs", async () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: true, main: ["projects"], sidebar: [] }];
+		data.sections.projects.items = [
+			{
+				id: "project-website",
+				hidden: false,
+				name: "Linked project",
+				period: "2026",
+				website: { url: "https://project.example/regular", label: "Project site", inlineLink: false },
+				description: "<p>Project description</p>",
+			},
+			{
+				id: "project-inline-website",
+				hidden: false,
+				name: "Inline project",
+				period: "2026",
+				website: { url: "https://project.example/inline", label: "Inline label", inlineLink: true },
+				description: "",
+			},
+		];
+
+		const zip = await JSZip.loadAsync(await Packer.toBuffer(buildDocument(data)));
+		const documentPart = await zip.file("word/document.xml")?.async("string");
+		const relationshipsPart = await zip.file("word/_rels/document.xml.rels")?.async("string");
+		if (!documentPart || !relationshipsPart) throw new Error("Missing DOCX document or relationship part");
+		const paragraphs = documentPart.match(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>/gu) ?? [];
+		const regularParagraph = paragraphs.find((paragraph) => paragraph.includes("Linked project"));
+		const inlineParagraph = paragraphs.find((paragraph) => paragraph.includes("Inline project"));
+		if (!regularParagraph || !inlineParagraph) throw new Error("Missing project title paragraphs");
+
+		expect(regularParagraph).toContain("Project site");
+		expect(inlineParagraph).not.toContain("Inline label");
+		expect(paragraphs.filter((paragraph) => paragraph.includes("Project site"))).toHaveLength(1);
+		expect(paragraphs.findIndex((paragraph) => paragraph.includes("Linked project"))).toBeLessThan(
+			paragraphs.findIndex((paragraph) => paragraph.includes("Project description")),
+		);
+		for (const [paragraph, target] of [
+			[regularParagraph, "https://project.example/regular"],
+			[inlineParagraph, "https://project.example/inline"],
+		] as const) {
+			const relationshipId = paragraph.match(/<w:hyperlink\b[^>]*r:id="([^"]+)"/u)?.[1];
+			if (!relationshipId) throw new Error(`Missing DOCX hyperlink relationship for ${target}`);
+			const relationship = relationshipsPart
+				.split("<Relationship")
+				.find((candidate) => candidate.includes(`Id="${relationshipId}"`));
+			expect(relationship).toContain(`Target="${target}"`);
+		}
 	});
 });
 

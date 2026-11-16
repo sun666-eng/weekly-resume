@@ -1,11 +1,14 @@
 import type { Website } from "@reactive-resume/schema/resume/data";
-import type * as React from "react";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+import * as React from "react";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { InputGroupInput } from "@reactive-resume/ui/components/input-group";
-import { RichInput } from "@/components/input/rich-input";
 import { URLInput } from "@/components/input/url-input";
+
+const RichInput = React.lazy(() =>
+	import("@/components/input/rich-input").then((module) => ({ default: module.RichInput })),
+);
 
 type FieldFrameProps = {
 	label?: React.ReactNode;
@@ -146,7 +149,9 @@ function RichTextField({ label, description, formItemClassName }: RichTextFieldP
 	return (
 		<FormItem hasError={hasError} className={formItemClassName}>
 			<FormLabel>{label}</FormLabel>
-			<FormControl render={<RichInput value={field.state.value} onChange={(value) => field.handleChange(value)} />} />
+			<React.Suspense fallback={null}>
+				<FormControl render={<RichInput value={field.state.value} onChange={(value) => field.handleChange(value)} />} />
+			</React.Suspense>
 			<FormMessage errors={field.state.meta.errors} />
 			{description ? <FormDescription>{description}</FormDescription> : null}
 		</FormItem>

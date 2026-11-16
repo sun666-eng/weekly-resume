@@ -56,6 +56,42 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 };
 
 describe("createResumePdfBlob", () => {
+	it("awaits the custom icon shard before invoking the synchronous renderer", async () => {
+		const { createResumePdfBlob } = await import("./browser");
+		const { PdfIcon } = await import("./templates/shared/pdf-icons");
+		const { iconShards, shardLoaders } = await import("./templates/shared/pdf-icons/generated/registry");
+		const name = "windmill";
+		const shard = iconShards[name];
+		if (!shard) throw new Error("Missing custom icon shard fixture");
+		const original = shardLoaders[shard];
+		if (!original) throw new Error("Missing custom icon loader fixture");
+		let release: (() => void) | undefined;
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const started = vi.fn();
+		shardLoaders[shard] = async () => {
+			started();
+			await gate;
+			return original();
+		};
+		const data = createLegacyRendererSafeResumeData();
+		data.basics.customFields = [{ id: "synthetic-icon", icon: name, text: "Synthetic", link: "" }];
+		const rendering = createResumePdfBlob({ data });
+		try {
+			await vi.waitFor(() => expect(started).toHaveBeenCalledOnce());
+			expect(rendererMock.pdf).not.toHaveBeenCalled();
+			if (!release) throw new Error("Missing icon load gate");
+			release();
+			await rendering;
+			expect(PdfIcon({ name })).not.toBeNull();
+			expect(rendererMock.pdf).toHaveBeenCalledOnce();
+		} finally {
+			release?.();
+			shardLoaders[shard] = original;
+		}
+	});
+
 	beforeEach(() => {
 		rendererMock.pdf.mockClear();
 	});

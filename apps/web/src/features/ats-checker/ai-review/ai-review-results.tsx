@@ -2,8 +2,10 @@ import type { RouterOutput } from "@/libs/orpc/client";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { match } from "ts-pattern";
+import { getChinaRule } from "@reactive-resume/resume/china-job-rules";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { cn } from "@reactive-resume/utils/style";
+import { ChinaRuleDetails } from "../report/china-reference";
 
 export type AtsAiReview = RouterOutput["ai"]["atsReview"];
 
@@ -68,6 +70,10 @@ export function AiReviewResults({ review }: AiReviewResultsProps) {
 										{suggestion.rewrite}
 									</p>
 								)}
+								{suggestion.ruleIds?.map((id) => {
+									const rule = getChinaRule(id);
+									return rule ? <ChinaRuleDetails key={id} rule={rule} /> : null;
+								})}
 							</li>
 						))}
 					</ul>

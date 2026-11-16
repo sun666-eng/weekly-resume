@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { createMemoryHistory, createRootRoute, createRouter, RouterContextProvider } from "@tanstack/react-router";
 import AtsPlayground from "./ats-playground";
 
 const { parse } = vi.hoisted(() => ({ parse: vi.fn() }));
@@ -12,9 +13,12 @@ vi.mock("@/features/ats-checker/run-ats-check", () => ({ runAtsCheck: parse }));
 i18n.loadAndActivate({ locale: "en", messages: {} });
 
 function Playground() {
+	const router = createRouter({ routeTree: createRootRoute(), history: createMemoryHistory() });
 	return (
 		<I18nProvider i18n={i18n}>
-			<AtsPlayground />
+			<RouterContextProvider router={router}>
+				<AtsPlayground />
+			</RouterContextProvider>
 		</I18nProvider>
 	);
 }

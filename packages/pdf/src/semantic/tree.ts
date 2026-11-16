@@ -316,14 +316,20 @@ const buildItem = ({
 	}
 
 	if (website && type !== "profiles") {
-		const parent = website.inlineLink ? headerKey : key;
-		(parent === headerKey ? headerChildren : bodyChildren).push(
-			semanticNode({
-				key: semanticNodeKeys.link(parent, website.inlineLink ? "inline-website" : "website"),
-				kind: "link",
-				roles: ["structured-link"],
-			}),
-		);
+		const linkNode = semanticNode({
+			key: semanticNodeKeys.link(headerKey, website.inlineLink ? "inline-website" : "website"),
+			kind: "link",
+			roles: ["structured-link"],
+		});
+
+		if (type === "projects") {
+			const nameIndex = headerChildren.findIndex((child) => child.kind === "field" && child.attributes.name === "name");
+			headerChildren.splice(nameIndex < 0 ? headerChildren.length : nameIndex + 1, 0, linkNode);
+		} else if (website.inlineLink) {
+			headerChildren.push(linkNode);
+		} else {
+			bodyChildren.push({ ...linkNode, key: semanticNodeKeys.link(key, "website") });
+		}
 	}
 
 	if (type === "profiles") {

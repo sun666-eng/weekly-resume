@@ -16,6 +16,7 @@ import { orpc, streamClient } from "@/libs/orpc/client";
 import { clearRecoverableDraft, loadRecoverableDraft, saveRecoverableDraft } from "./draft-recovery";
 
 export type Resume = {
+	persistence?: "local";
 	id: string;
 	name: string;
 	slug: string;
@@ -39,6 +40,8 @@ type ResumeStoreState = {
 	resumeId?: string;
 	isReady: boolean;
 	saveStatus: SaveStatus;
+	// Refers to the newest visible draft, never an older retained recovery snapshot.
+	draftBackupStatus: "none" | "saved" | "unavailable";
 	saveConflict: { baseData?: ResumeData; server: Resume } | null;
 	// Client-side undo/redo stacks holding whole-`ResumeData` snapshots (see recordHistory helpers below).
 	undoStack: ResumeData[];
@@ -98,6 +101,10 @@ const HISTORY_COALESCE_MS = 500;
 // Bounded stacks: keep undo/redo memory (whole-resume snapshots) predictable during a long session.
 const MAX_HISTORY_ENTRIES = 50;
 const runtimes = new Map<string, Runtime>();
+let localResumeSink: ((resume: Resume) => void) | undefined;
+export function bindLocalResumeSink(sink: ((resume: Resume) => void) | undefined) {
+	localResumeSink = sink;
+}
 
 // Coalescing bookkeeping. Not reactive — only decides whether the next edit opens a new undo step.
 let historyLastEditAt = 0;
@@ -208,6 +215,7 @@ function stashRecoverableDraft(id: string) {
 		baseData: runtime.baseData,
 		data: current.data,
 	});
+	useResumeStore.setState({ draftBackupStatus: saved ? "saved" : "unavailable" });
 	if (saved) {
 		if (runtime.stashedDraft) clearRecoverableDraft(runtime.userId, id, runtime.stashedDraft.draftId);
 		runtime.stashedDraft = saved;
@@ -225,6 +233,9 @@ function stashRecoverableDraft(id: string) {
 }
 
 function clearStashedDraft(id: string) {
+	if (useResumeStore.getState().resume?.id === id) {
+		useResumeStore.setState({ draftBackupStatus: "none" });
+	}
 	const runtime = runtimes.get(id);
 	if (!runtime?.userId) return;
 	for (const draft of [runtime.stashedDraft, runtime.recoveredDraft]) {
@@ -553,9 +564,26 @@ function cleanupRuntime(id: string) {
 function syncCurrentResume(id: string) {
 	const resume = useResumeStore.getState().resume;
 	if (!resume || resume.id !== id) return;
+	if (resume.persistence === "local") {
+		localResumeSink?.(resume);
+		return;
+	}
 
 	stashRecoverableDraft(id);
 	getRuntime(id).syncResume(resume);
+}
+
+/** Retries the newest visible draft through the same optimistic-lock/merge path as autosave. */
+export function retryResumeSave() {
+	const { resume, saveConflict } = useResumeStore.getState();
+	if (!resume || resume.isLocked || saveConflict) return;
+	const runtime = runtimes.get(resume.id);
+	if (!runtime?.hasPendingLocalChanges || runtime.isSaving) return;
+	runtime.syncResume.cancel();
+	runtime.pendingResume = cloneResume(resume);
+	useResumeStore.getState().setSaveStatus("saving");
+	stashRecoverableDraft(resume.id);
+	void flushResumeSave(resume.id);
 }
 
 export const useResumeStore = create<ResumeStore>()(
@@ -564,6 +592,7 @@ export const useResumeStore = create<ResumeStore>()(
 		resumeId: undefined,
 		isReady: false,
 		saveStatus: "idle",
+		draftBackupStatus: "none",
 		saveConflict: null,
 		undoStack: [],
 		redoStack: [],
@@ -571,7 +600,7 @@ export const useResumeStore = create<ResumeStore>()(
 		canRedo: false,
 
 		initialize: (resume) => {
-			if (resume) {
+			if (resume && resume.persistence !== "local") {
 				setRuntimeBaseline(resume);
 				markRuntimeSynced(resume.id, resume);
 			}
@@ -582,6 +611,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resumeId = resume?.id;
 				state.isReady = resume !== null;
 				state.saveStatus = "idle";
+				state.draftBackupStatus = "none";
 				state.saveConflict = null;
 				state.undoStack = [];
 				state.redoStack = [];
@@ -600,6 +630,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resumeId = undefined;
 				state.isReady = false;
 				state.saveStatus = "idle";
+				state.draftBackupStatus = "none";
 				state.saveConflict = null;
 				state.undoStack = [];
 				state.redoStack = [];
@@ -625,6 +656,13 @@ export const useResumeStore = create<ResumeStore>()(
 		replaceResumeFromServer: (resume) => {
 			setRuntimeBaseline(resume);
 			markRuntimeSynced(resume.id, resume);
+			clearStashedDraft(resume.id);
+			const runtime = getRuntime(resume.id);
+			for (const toastId of [runtime.syncErrorToastId, runtime.backupErrorToastId]) {
+				if (toastId !== undefined) toast.close(toastId);
+			}
+			runtime.syncErrorToastId = undefined;
+			runtime.backupErrorToastId = undefined;
 
 			// This runs both for the echo of our own autosave (identical data → keep history) and for
 			// external/cross-tab/AI rebases (different data → local undo history no longer applies).
@@ -636,6 +674,9 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume = resume;
 				state.resumeId = resume.id;
 				state.isReady = true;
+				state.saveStatus = "saved";
+				state.saveConflict = null;
+				state.draftBackupStatus = "none";
 
 				if (isRebase) {
 					state.undoStack = [];
@@ -711,7 +752,7 @@ export const useResumeStore = create<ResumeStore>()(
 				state.canRedo = state.redoStack.length > 0;
 			});
 
-			getRuntime(currentResume.id).hasPendingLocalChanges = true;
+			if (currentResume.persistence !== "local") getRuntime(currentResume.id).hasPendingLocalChanges = true;
 			syncCurrentResume(currentResume.id);
 		},
 
@@ -769,7 +810,7 @@ function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "red
 		draft.canRedo = draft.redoStack.length > 0;
 	});
 
-	getRuntime(currentResume.id).hasPendingLocalChanges = true;
+	if (currentResume.persistence !== "local") getRuntime(currentResume.id).hasPendingLocalChanges = true;
 	syncCurrentResume(currentResume.id);
 }
 
@@ -833,7 +874,7 @@ export function useUpdateResumeData() {
 	return useCallback(
 		(fn: (draft: WritableDraft<ResumeData>) => void) => {
 			if (!resumeId) return;
-			bindRuntimeQueryClient(resumeId, queryClient);
+			if (useResumeStore.getState().resume?.persistence !== "local") bindRuntimeQueryClient(resumeId, queryClient);
 			updateResumeData(fn);
 		},
 		[queryClient, resumeId, updateResumeData],

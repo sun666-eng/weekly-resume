@@ -193,7 +193,9 @@ const useDittoTemplate = (): DittoTemplate => {
 				backgroundColor: primary,
 				color: background,
 				flexDirection: r.row,
-				...(hasPicture ? { minHeight: picture.size * 0.6 } : {}),
+				...(hasPicture
+					? { minHeight: picture.size * 0.6 + Math.max(0, picture.size / picture.aspectRatio - picture.size) }
+					: {}),
 			},
 			pictureAnchor: {
 				width: `${metadata.layout.sidebarWidth}%`,

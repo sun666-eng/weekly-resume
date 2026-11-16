@@ -1,4 +1,6 @@
 import type { ContactEntities, ExtractedDocument, RawExtraction, TextLine } from "../types";
+import { PDF_SECTION_HEADING_LOOKUP } from "../../ats/section-aliases";
+import { CHINA_JOB_KNOWLEDGE } from "../../china-job-rules";
 
 const EMAIL_PATTERN = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 /** Same shape without `g`: a stateful `lastIndex` would make `.test()` alternate between calls. */
@@ -13,6 +15,16 @@ const PROFESSIONAL_HOSTS = ["linkedin.com", "github.com", "gitlab.com", "behance
 /** Lines this far down page one are past where a parser expects contact details. */
 const FIRST_PAGE_CONTACT_LINES = 12;
 const MAX_NAME_WORDS = 5;
+const NON_NAMES = new Set([
+	...PDF_SECTION_HEADING_LOOKUP.keys(),
+	"个人简历",
+	"求职简历",
+	"简历",
+	"姓名",
+	"基本信息",
+	"个人信息",
+	...CHINA_JOB_KNOWLEDGE.roles.flatMap((role) => [role.name, ...role.aliases]),
+]);
 
 function uniqueStrings(values: readonly string[]): string[] {
 	return [...new Set(values)];
@@ -105,9 +117,14 @@ function findLinkMismatches(raw: RawExtraction, document: ExtractedDocument): { 
 	return mismatches;
 }
 
-function looksLikeName(line: TextLine): boolean {
+function looksLikeName(line: TextLine, index: number): boolean {
 	const text = line.text.trim();
 	if (text.length === 0 || text.length > 60) return false;
+	if (NON_NAMES.has(text) || /(?:工程师|开发|分析师|经理|运营|设计师|实习生|求职|简历)/.test(text)) return false;
+	// Conservative header-only support. Labels permit longer Chinese names; standalone prose
+	// never qualifies merely because it contains Han characters.
+	if (/^姓名\s*[:：]\s*[\p{Script=Han}·]{2,8}$/u.test(text)) return true;
+	if (index < 3 && /^[\p{Script=Han}]{2,4}$/u.test(text)) return true;
 	if (EMAIL_TEST.test(text)) return false;
 	if (/\d/.test(text)) return false;
 

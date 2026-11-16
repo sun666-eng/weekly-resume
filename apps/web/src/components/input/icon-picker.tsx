@@ -3,7 +3,7 @@ import type { CellComponentProps } from "react-window";
 import { t } from "@lingui/core/macro";
 import { ProhibitIcon } from "@phosphor-icons/react";
 import Fuse from "fuse.js";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Grid } from "react-window";
 import { icons } from "@reactive-resume/schema/icons";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -79,6 +79,9 @@ type IconPickerProps = Omit<React.ComponentProps<typeof Button>, "value" | "onCh
 };
 
 export function IconPicker({ value, onChange, popoverProps, ...props }: IconPickerProps) {
+	useEffect(() => {
+		void import("@/routes/builder/$resumeId/-sidebar/left/phosphor.css");
+	}, []);
 	const [search, setSearch] = useState("");
 
 	const searchedIcons = useMemo(() => searchIcons(search), [search]);

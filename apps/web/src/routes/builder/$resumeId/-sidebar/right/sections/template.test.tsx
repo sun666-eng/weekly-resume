@@ -14,9 +14,11 @@ type SectionBaseProps = {
 vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
 }));
+const current = vi.hoisted(() => ({ template: "ditto" }));
+
 vi.mock("@/features/resume/builder/draft", () => ({
 	useCurrentResume: () => ({
-		data: { metadata: { template: "ditto" } },
+		data: { metadata: { template: current.template } },
 	}),
 }));
 
@@ -27,6 +29,8 @@ beforeAll(() => {
 });
 
 afterEach(() => {
+	current.template = "ditto";
+	i18n.loadAndActivate({ locale: "en", messages: {} });
 	useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });
 });
 
@@ -52,7 +56,7 @@ describe("TemplateSectionBuilder", () => {
 	it("opens the template gallery dialog when the preview is clicked", () => {
 		renderTemplate();
 
-		const preview = screen.getByAltText("Ditto").closest("button") as HTMLButtonElement;
+		const preview = screen.getByRole("img").closest("button") as HTMLButtonElement;
 		fireEvent.click(preview);
 
 		const state = useDialogStore.getState();
@@ -62,8 +66,9 @@ describe("TemplateSectionBuilder", () => {
 
 	it("renders the template preview image with the data-mapped URL", () => {
 		renderTemplate();
-		const img = screen.getByAltText("Ditto") as HTMLImageElement;
+		const img = screen.getByRole("img") as HTMLImageElement;
 		expect(img.src).toContain("/templates/jpg/ditto.jpg");
+		expect(img.alt).toMatch(/Ditto/);
 	});
 
 	it("keeps the template preview inline instead of mounting a hover card", () => {
@@ -71,5 +76,25 @@ describe("TemplateSectionBuilder", () => {
 
 		expect(source).not.toContain("@reactive-resume/ui/components/hover-card");
 		expect(source).not.toContain("HoverCardContent");
+	});
+
+	it("marks the card as sample layout and restates keep-formatting", () => {
+		renderTemplate();
+		expect(screen.getByText("The cards show sample content and sample layout.")).toBeInTheDocument();
+		expect(
+			screen.getByText("Changing template style keeps your existing layout, colors, and fonts."),
+		).toBeInTheDocument();
+		expect(screen.getByAltText(/Ditto/).getAttribute("alt")).toMatch(/sample/i);
+	});
+
+	it("maps zh-CN ditgar to the academic name and Chinese sample image", () => {
+		current.template = "ditgar";
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+		renderTemplate();
+		expect(screen.getByRole("heading", { level: 3 }).textContent).toBe("学术·科研成果");
+		const img = screen.getByRole("img") as HTMLImageElement;
+		expect(img.src).toContain("/templates/zh-CN/jpg/ditgar.jpg");
+		expect(img.alt).toMatch(/学术·科研成果/);
+		expect(img.alt).toMatch(/sample|示例/i);
 	});
 });

@@ -574,10 +574,13 @@ export const resumeService = {
 		tags: string[];
 		locale: Locale;
 		data?: ResumeData;
+		source?: "import";
 	}) => {
 		const id = input.id ?? generateId();
 		const data = parseWritableResumeData(structuredClone(input.data ?? defaultResumeData));
-		data.metadata.page.locale = input.locale;
+		// Import callers already resolved the language from the file or text-import UI.
+		// Other creation sources retain their existing UI-locale initialization.
+		if (input.source !== "import") data.metadata.page.locale = input.locale;
 
 		try {
 			await db.insert(schema.resume).values({

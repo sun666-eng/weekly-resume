@@ -112,6 +112,15 @@
 	},
 	"overrides": [
 		{
+			"includes": [
+				"packages/fonts/src/webfonts.compact.json",
+				"packages/pdf/src/templates/shared/pdf-icons/generated/**/*.json"
+			],
+			"formatter": {
+				"enabled": false
+			}
+		},
+		{
 			"includes": ["docs/spec.json"],
 			"files": {
 				"maxSize": 2097152

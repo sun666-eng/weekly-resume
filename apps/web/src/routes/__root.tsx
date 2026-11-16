@@ -4,6 +4,7 @@ import type { AuthSession } from "@reactive-resume/auth/types";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { QueryClient } from "@tanstack/react-query";
 import type { orpc } from "@/libs/orpc/client";
+import type { loadRootContext } from "@/libs/root-context";
 import type { Theme } from "@/libs/theme";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { i18n } from "@lingui/core";
@@ -20,14 +21,14 @@ import { useEffect } from "react";
 import { Toaster } from "@reactive-resume/ui/components/toast";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
 import { APP_NAME } from "@reactive-resume/utils/brand";
+import { LazyCommandPalette } from "@/components/command-palette/lazy";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
 import { DialogManager } from "@/dialogs/manager";
-import { CommandPalette } from "@/features/command-palette";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { PromptDialogProvider } from "@/hooks/use-prompt";
 import { isRTL } from "@/libs/locale";
-import { loadRootContext } from "@/libs/root-context";
+import { releaseBootstrapSession } from "@/libs/root-context";
 
 type RouterContext = {
 	theme: Theme;
@@ -36,6 +37,7 @@ type RouterContext = {
 	queryClient: QueryClient;
 	session: AuthSession | null;
 	flags: FeatureFlags;
+	resolveRootContext: () => ReturnType<typeof loadRootContext>;
 };
 
 const appName = APP_NAME;
@@ -51,14 +53,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		const appUrl = typeof window !== "undefined" ? window.location.origin : "";
 
 		return {
-			links: [
-				// Icons
-				{ rel: "icon", href: "/favicon.ico", type: "image/x-icon", sizes: "128x128" },
-				{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml", sizes: "256x256 any" },
-				{ rel: "apple-touch-icon", href: "/apple-touch-icon-180x180.png", type: "image/png", sizes: "180x180 any" },
-				// Manifest
-				{ rel: "manifest", href: "/manifest.webmanifest", crossOrigin: "use-credentials" },
-			],
+			// App-wide icons and the manifest already live in index.html. Re-inserting
+			// them here downloads the manifest and its app icon a second time on boot.
 			meta: [
 				{ title },
 				{ charSet: "UTF-8" },
@@ -87,12 +83,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			],
 		};
 	},
-	beforeLoad: async () => loadRootContext(),
+	beforeLoad: ({ context }) => context.resolveRootContext(),
 });
 
 function RootComponent() {
 	const { theme, locale, queryClient } = Route.useRouteContext();
 	const dir = isRTL(locale) ? "rtl" : "ltr";
+	useEffect(() => {
+		releaseBootstrapSession();
+	}, []);
 
 	useEffect(() => {
 		document.documentElement.lang = locale;
@@ -118,7 +117,7 @@ function RootComponent() {
 														<Outlet />
 
 														<DialogManager />
-														<CommandPalette />
+														<LazyCommandPalette />
 														<Toaster />
 
 														{import.meta.env.DEV && <BreakpointIndicator />}

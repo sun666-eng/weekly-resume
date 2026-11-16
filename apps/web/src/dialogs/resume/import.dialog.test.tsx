@@ -2,17 +2,25 @@
 
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { Dialog } from "@reactive-resume/ui/components/dialog";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
+import { ResumeImportError } from "@/features/resume/import/errors";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 
 const navigate = vi.hoisted(() => vi.fn());
 const importResume = vi.hoisted(() => vi.fn());
+const parsedPdf = vi.hoisted(() => ({ value: null as typeof sampleResumeData | null }));
+const provider = vi.hoisted(() => ({ hasUsableProvider: false, isLoading: false }));
+const providerEnabled = vi.hoisted(() => vi.fn());
+const parseDocxAi = vi.hoisted(() => vi.fn());
+const extractWord = vi.hoisted(() => vi.fn(async () => "Word local fixture"));
 // Stands in for the navigation TanStack Router performs from inside <Link>. Keeping it separate
 // from `navigate` lets a test tell "the router took us away" apart from "the dialog took us away".
 const routerNavigate = vi.hoisted(() => vi.fn());
@@ -46,60 +54,72 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
-	useHasUsableAiProvider: () => ({ hasUsableProvider: false, isLoading: false }),
+	useHasUsableAiProvider: (enabled = true) => {
+		providerEnabled(enabled);
+		return enabled ? provider : { hasUsableProvider: false, isLoading: false };
+	},
 }));
 
 vi.mock("@/features/resume/import/pdf-text", () => ({
 	extractPdfLines: () => ["Empty MIME PDF Probe"],
 }));
 
+vi.mock("@/features/resume/import/docx-text", () => ({ extractDocxText: extractWord }));
+
 vi.mock("@reactive-resume/import/plain-text", () => ({
-	parseResumeText: () => structuredClone(sampleResumeData),
+	parseResumeText: () => structuredClone(parsedPdf.value ?? sampleResumeData),
 }));
 
 vi.mock("@/libs/orpc/client", () => ({
-	client: {},
+	client: { ai: { parseDocx: parseDocxAi } },
 	orpc: { resume: { import: { mutationOptions: () => ({ mutationFn: importResume }) } } },
 }));
 
 const { ImportResumeDialog } = await import("./import");
 
 beforeAll(() => {
-	i18n.loadAndActivate({ locale: "en", messages: {} });
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 
 afterEach(() => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	parsedPdf.value = null;
+	provider.hasUsableProvider = false;
+	provider.isLoading = false;
+	extractWord.mockReset().mockResolvedValue("Word local fixture");
+	parseDocxAi.mockReset();
 	navigate.mockReset();
 	importResume.mockReset();
 	routerNavigate.mockReset();
+	providerEnabled.mockClear();
 });
 
 // Drive `open` from the store the way DialogManager does, so closing the dialog actually unmounts it.
-function DialogHarness() {
+function DialogHarness({ onPrepared }: { onPrepared?: (data: typeof sampleResumeData) => Promise<void> }) {
 	const open = useDialogStore((state) => state.open);
 
 	return (
 		<Dialog open={open}>
-			<ImportResumeDialog />
+			<ImportResumeDialog data={onPrepared ? { onPrepared } : undefined} />
 		</Dialog>
 	);
 }
 
-const renderDialog = () => {
+const renderDialog = (onPrepared?: (data: typeof sampleResumeData) => Promise<void>) => {
 	useDialogStore.setState({ open: true, activeDialog: null, onBeforeClose: null });
 
 	return render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={new QueryClient()}>
 				<ConfirmDialogProvider>
-					<DialogHarness />
+					<DialogHarness onPrepared={onPrepared} />
 				</ConfirmDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);
 };
 
-// Word still needs a provider, so it is what surfaces the notice. PDF falls back to a local parse.
+// Word defaults to local recognition; explicitly opting into AI surfaces the provider notice.
 const createWordFile = () =>
 	new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04])], "resume.docx", {
 		type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -111,14 +131,287 @@ async function selectWordFile() {
 	if (!input) throw new Error("File input not found");
 
 	fireEvent.change(input, { target: { files: [createWordFile()] } });
-
+	await screen.findByText("Basic import is available without AI.");
+	await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
 	return await screen.findByText("Set up a provider");
 }
+
+describe("ImportResumeDialog — Word basic and opt-in AI", () => {
+	it("hands recognized fields to the local draft without querying account providers or creating an account resume", async () => {
+		provider.hasUsableProvider = true;
+		const onPrepared = vi.fn(async () => undefined);
+		renderDialog(onPrepared);
+		await selectLocalWord();
+		expect(screen.queryByRole("switch", { name: "AI-enhanced recognition" })).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(onPrepared).toHaveBeenCalledExactlyOnceWith(sampleResumeData));
+		expect(providerEnabled.mock.calls.every(([enabled]) => enabled === false)).toBe(true);
+		expect(importResume).not.toHaveBeenCalled();
+		expect(parseDocxAi).not.toHaveBeenCalled();
+		expect(navigate).not.toHaveBeenCalled();
+	});
+	it("keeps the import dialog and selected file when local replacement is cancelled", async () => {
+		const onPrepared = vi.fn(() => Promise.reject(new Error("CANCELLED")));
+		renderDialog(onPrepared);
+		await selectLocalWord();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(onPrepared).toHaveBeenCalledOnce());
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		expect(useDialogStore.getState().open).toBe(true);
+		expect(screen.getByText("resume.docx")).toBeInTheDocument();
+		expect(importResume).not.toHaveBeenCalled();
+	});
+	async function selectLocalWord() {
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("File input not found");
+		fireEvent.change(input, { target: { files: [createWordFile()] } });
+		await screen.findByText("Basic import is available without AI.");
+	}
+	it.each([false, true])("imports locally by default, connected provider=%s", async (connected) => {
+		provider.hasUsableProvider = connected;
+		importResume.mockResolvedValue("word-basic");
+		renderDialog();
+		await selectLocalWord();
+		expect(screen.getByRole("switch", { name: "AI-enhanced recognition" })).not.toBeChecked();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(extractWord).toHaveBeenCalledOnce();
+		expect(parseDocxAi).not.toHaveBeenCalled();
+	});
+	it("basic mode is usable while provider discovery is loading", async () => {
+		provider.isLoading = true;
+		importResume.mockResolvedValue("word-loading-basic");
+		renderDialog();
+		await selectLocalWord();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+	});
+	it("requires a provider only after opting into AI and can switch back", async () => {
+		renderDialog();
+		await selectLocalWord();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled();
+	});
+	it("calls AI only when explicitly selected", async () => {
+		provider.hasUsableProvider = true;
+		parseDocxAi.mockResolvedValue(structuredClone(sampleResumeData));
+		importResume.mockResolvedValue("word-ai");
+		renderDialog();
+		await selectLocalWord();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(parseDocxAi).toHaveBeenCalledOnce();
+		expect(extractWord).not.toHaveBeenCalled();
+	});
+	it.each([false, true])("reviews suspicious local Word fields before creation, accept=%s", async (accepted) => {
+		const data = structuredClone(sampleResumeData);
+		data.summary.title = "• suspicious title";
+		parsedPdf.value = data;
+		importResume.mockResolvedValue("word-review");
+		renderDialog();
+		await selectLocalWord();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await screen.findByText("Check the recognized fields");
+		expect(importResume).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: accepted ? "Import and review" : "Cancel import" }));
+		if (accepted) await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		else {
+			await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+			expect(importResume).not.toHaveBeenCalled();
+		}
+	});
+	it.each([false, true])(
+		"reviews a contaminated name through the real review function, accept=%s",
+		async (accepted) => {
+			const data = structuredClone(sampleResumeData);
+			data.basics.name = "林知行 意向岗位：物联网技术支持/实施运维";
+			parsedPdf.value = data;
+			importResume.mockResolvedValue("name-review");
+			renderDialog();
+			await selectLocalWord();
+			fireEvent.click(screen.getByRole("button", { name: "Import" }));
+			expect(await screen.findByText("Check the recognized fields")).toBeVisible();
+			expect(screen.getByText(/Name may include an objective or contact field/)).toBeVisible();
+			expect(importResume).not.toHaveBeenCalled();
+			fireEvent.click(screen.getByRole("button", { name: accepted ? "Import and review" : "Cancel import" }));
+			if (accepted) {
+				await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+				expect(importResume.mock.calls[0]?.[0]).toEqual({ data });
+			} else {
+				await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+				expect(importResume).not.toHaveBeenCalled();
+				expect(navigate).not.toHaveBeenCalled();
+			}
+		},
+	);
+	it.each(["old.doc", "encrypted.docx"])("blocks OLE file %s even with a provider", async (name) => {
+		provider.hasUsableProvider = true;
+		renderDialog();
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("File input missing");
+		fireEvent.change(input, {
+			target: {
+				files: [new File([new Uint8Array([0xd0, 0xcf, 0x11, 0xe0])], name, { type: "" })],
+			},
+		});
+		await screen.findByText(/Old .doc and password-protected Word files are not supported/);
+		expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
+		expect(screen.queryByRole("switch", { name: "AI-enhanced recognition" })).not.toBeInTheDocument();
+	});
+	it("resets AI consent when selecting another file", async () => {
+		provider.hasUsableProvider = true;
+		renderDialog();
+		await selectLocalWord();
+		await userEvent.click(screen.getByRole("switch", { name: "AI-enhanced recognition" }));
+		expect(screen.getByRole("switch")).toBeChecked();
+		await selectLocalWord();
+		expect(screen.getByRole("switch")).not.toBeChecked();
+	});
+	it("ignores an older file's format detection finishing after a new selection", async () => {
+		renderDialog();
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("File input missing");
+		let resolveHeader!: (bytes: ArrayBuffer) => void;
+		const old = createWordFile();
+		vi.spyOn(old, "slice").mockReturnValue({
+			arrayBuffer: () =>
+				new Promise<ArrayBuffer>((resolve) => {
+					resolveHeader = resolve;
+				}),
+		} as Blob);
+		fireEvent.change(input, { target: { files: [old] } });
+		fireEvent.change(input, { target: { files: [new File(["%PDF"], "new.pdf", { type: "application/pdf" })] } });
+		await screen.findByText(/read the text out of the PDF here in your browser/);
+		resolveHeader(new Uint8Array([0x50, 0x4b, 0x03, 0x04]).buffer);
+		await waitFor(() => expect(screen.getByRole("combobox")).toHaveTextContent("PDF"));
+		expect(screen.queryByRole("switch")).not.toBeInTheDocument();
+	});
+	it.each([true, false])("shows controlled extraction guidance, safe=%s", async (safe) => {
+		const toastAdd = vi.spyOn(toast, "add");
+		extractWord.mockRejectedValue(safe ? new ResumeImportError("Readable error") : new Error("Raw ZIP detail"));
+		renderDialog();
+		await selectLocalWord();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(extractWord).toHaveBeenCalledOnce());
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		expect(importResume).not.toHaveBeenCalled();
+		expect(toastAdd).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: safe ? "Readable error" : "An unknown error occurred while importing your resume.",
+			}),
+		);
+		toastAdd.mockRestore();
+	});
+});
 
 const createPdfFile = () =>
 	new File([new Uint8Array([0x25, 0x50, 0x44, 0x46])], "resume.pdf", { type: "application/pdf" });
 
+function importFileInput() {
+	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+	if (!input) throw new Error("Missing import file input");
+	return input;
+}
+
+describe("F03 import language sources", () => {
+	it.each([
+		["de-DE", "de-DE"],
+		["unsupported", "zh-CN"],
+	] as const)("uses UI locale %s or the existing UI fallback", async (uiLocale, expectedLocale) => {
+		i18n.loadAndActivate({ locale: uiLocale, messages: {} });
+		const prepared = vi.fn(async () => undefined);
+		renderDialog(prepared);
+		fireEvent.change(importFileInput(), { target: { files: [createWordFile()] } });
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		const expected = structuredClone(sampleResumeData);
+		expected.metadata.page.locale = expectedLocale;
+		await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(expected));
+	});
+
+	it.each(["docx", "pdf"])("initializes guest and account %s from the supported UI locale", async (format) => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+		const prepared = vi.fn(async () => undefined);
+		const view = renderDialog(prepared);
+		fireEvent.change(importFileInput(), {
+			target: { files: [format === "docx" ? createWordFile() : createPdfFile()] },
+		});
+		await screen.findByRole("combobox");
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		const expected = structuredClone(sampleResumeData);
+		expected.metadata.page.locale = "zh-CN";
+		await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(expected));
+		view.unmount();
+		importResume.mockResolvedValue("f03-account");
+		renderDialog();
+		fireEvent.change(importFileInput(), {
+			target: { files: [format === "docx" ? createWordFile() : createPdfFile()] },
+		});
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(importResume.mock.calls[0]?.[0]).toEqual({ data: expected });
+	});
+	it.each(["guest", "account"])("preserves foreign JSON and schema fallback values for %s", async (identity) => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+		for (const [sourceLocale, expectedLocale] of [
+			["fr-FR", "fr-FR"],
+			[undefined, "en-US"],
+			[123, "en-US"],
+			["unsupported", "unsupported"],
+		] as const) {
+			const data = structuredClone(sampleResumeData);
+			const input = JSON.parse(JSON.stringify(data));
+			input.metadata.page.locale = sourceLocale;
+			const prepared = vi.fn(async () => undefined);
+			importResume.mockReset().mockResolvedValue("f03-json");
+			const view = renderDialog(identity === "guest" ? prepared : undefined);
+			fireEvent.change(importFileInput(), {
+				target: { files: [new File([JSON.stringify(input)], "locale.json", { type: "application/json" })] },
+			});
+			await screen.findByText("Weekly Resume (JSON)");
+			fireEvent.click(screen.getByRole("button", { name: "Import" }));
+			data.metadata.page.locale = expectedLocale;
+			if (identity === "guest") await waitFor(() => expect(prepared).toHaveBeenCalledExactlyOnceWith(data));
+			else {
+				await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+				expect(importResume.mock.calls[0]?.[0]).toEqual({ data });
+			}
+			view.unmount();
+		}
+	});
+});
+
 describe("ImportResumeDialog — PDF without a provider", () => {
+	it.each([false, true])("requires review for suspicious fields, confirmation=%s", async (accepted) => {
+		const data = structuredClone(sampleResumeData);
+		data.summary.title = "• 实现 WAL 预写日志与故障恢复。";
+		parsedPdf.value = data;
+		importResume.mockResolvedValue("reviewed-import");
+		renderDialog();
+		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+		if (!input) throw new Error("Missing file input");
+		fireEvent.change(input, { target: { files: [createPdfFile()] } });
+		await screen.findByText(/read the text out of the PDF here in your browser/);
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		expect(await screen.findByText("Check the recognized fields")).toBeVisible();
+		expect(importResume).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: accepted ? "Import and review" : "Cancel import" }));
+		if (accepted) {
+			await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+			expect(importResume.mock.calls[0]?.[0]).toEqual({ data });
+		} else {
+			await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+			expect(importResume).not.toHaveBeenCalled();
+			expect(navigate).not.toHaveBeenCalled();
+		}
+	});
+
 	it("offers a local parse instead of demanding an AI provider", async () => {
 		renderDialog();
 		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
@@ -165,6 +458,34 @@ describe("ImportResumeDialog — detected files without MIME metadata", () => {
 			to: "/builder/$resumeId",
 			params: { resumeId: "imported-resume-id" },
 		});
+	});
+
+	it("does not open Word/PDF review for JSON whose name still contains an objective label", async () => {
+		importResume.mockResolvedValue("json-contaminated");
+		renderDialog();
+		const data = structuredClone(sampleResumeData);
+		data.basics.name = "林知行 意向岗位：物联网技术支持/实施运维";
+		data.basics.headline = "Authored Headline C++";
+		data.metadata.page.locale = "zh-CN";
+		data.metadata.template = "ditgar";
+		data.metadata.design.colors.primary = "rgba(56, 91, 132, 1)";
+		const firstPage = data.metadata.layout.pages[0];
+		if (!firstPage) throw new Error("missing layout page");
+		firstPage.fullWidth = false;
+		fireEvent.change(importFileInput(), {
+			target: { files: [new File([JSON.stringify(data)], "resume.json", { type: "application/json" })] },
+		});
+		await screen.findByText("Weekly Resume (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(screen.queryByText("Check the recognized fields")).not.toBeInTheDocument();
+		const imported = importResume.mock.calls[0]?.[0] as { data: typeof sampleResumeData };
+		expect(imported.data.basics.name).toBe("林知行 意向岗位：物联网技术支持/实施运维");
+		expect(imported.data.basics.headline).toBe("Authored Headline C++");
+		expect(imported.data.metadata.page.locale).toBe("zh-CN");
+		expect(imported.data.metadata.template).toBe("ditgar");
+		expect(imported.data.metadata.design.colors.primary).toBe("rgba(56, 91, 132, 1)");
+		expect(imported.data.metadata.layout.pages[0]?.fullWidth).toBe(false);
 	});
 
 	it("imports a valid PDF detected from its magic bytes", async () => {

@@ -44,7 +44,7 @@ describe("registerFonts", () => {
 	});
 
 	it("retains the hyphenation preference when adding fallback font stacks", async () => {
-		vi.spyOn(Font, "register").mockImplementation(() => {});
+		vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 		const configured = { ...typography, hyphenation: true };
@@ -53,9 +53,8 @@ describe("registerFonts", () => {
 	});
 
 	it("registers CJK PDF fallbacks for normal and italic text styles", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
-		const cjkFallbackSource = getWebFontSource("Noto Serif SC", "400", false);
 		const { registerFonts } = await import("./use-register-fonts");
 
 		const pdfTypography = registerFonts(typography, "zh-CN");
@@ -70,18 +69,13 @@ describe("registerFonts", () => {
 				fontStyle: "normal",
 			}),
 		);
-		expect(registerSpy).toHaveBeenCalledWith(
-			expect.objectContaining({
-				family: "Noto Serif SC",
-				fontWeight: 400,
-				fontStyle: "italic",
-				src: cjkFallbackSource,
-			}),
+		expect(Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 400, fontStyle: "italic" })).toBe(
+			Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 400 }),
 		);
 	});
 
 	it("registers the family's true Bold face when the stored weights stop below it (#3310)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -99,13 +93,13 @@ describe("registerFonts", () => {
 		expect(registerSpy).toHaveBeenCalledWith(
 			expect.objectContaining({ family: "Open Sans", fontWeight: 700, fontStyle: "normal" }),
 		);
-		expect(registerSpy).toHaveBeenCalledWith(
-			expect.objectContaining({ family: "Open Sans", fontWeight: 700, fontStyle: "italic" }),
+		expect(Font.getFont({ fontFamily: "Open Sans", fontWeight: 700, fontStyle: "italic" })).toBe(
+			Font.getFont({ fontFamily: "Open Sans", fontWeight: 700 }),
 		);
 	});
 
 	it("registers the Korean Noto fallback for the ko-KR locale so Hangul renders", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -122,7 +116,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Japanese Noto fallback for the ja-JP locale", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -133,7 +127,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Traditional Chinese Noto fallback for the zh-TW locale", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -144,7 +138,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Korean Noto fallback for Latin locale when content contains Hangul", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -155,7 +149,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Arabic Noto fallback for the fa-IR (Persian) locale", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -166,7 +160,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Arabic Noto fallback for Latin locale when content contains Arabic", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -177,7 +171,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Hebrew Noto fallback for the he-IL locale (no SC safety net)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -188,7 +182,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Thai Noto fallback for the th-TH locale", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -199,7 +193,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the Noto Emoji fallback when content contains emoji (#3321)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const emojiSource = getWebFontSource("Noto Emoji", "400", false);
 		const { registerFonts } = await import("./use-register-fonts");
@@ -221,7 +215,7 @@ describe("registerFonts", () => {
 
 	it("does NOT enable CJK per-character line breaking for non-CJK fallback scripts", async () => {
 		const registerHyphenationSpy = vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
-		vi.spyOn(Font, "register").mockImplementation(() => {});
+		vi.spyOn(Font, "register");
 		const { registerFonts } = await import("./use-register-fonts");
 
 		registerFonts(typography, "fa-IR");
@@ -232,7 +226,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers the fallback family's true Bold face when primary bold exceeds stored weights (#3310)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -247,13 +241,13 @@ describe("registerFonts", () => {
 		expect(registerSpy).toHaveBeenCalledWith(
 			expect.objectContaining({ family: "Noto Sans SC", fontWeight: 700, fontStyle: "normal" }),
 		);
-		expect(registerSpy).toHaveBeenCalledWith(
-			expect.objectContaining({ family: "Noto Sans SC", fontWeight: 700, fontStyle: "italic" }),
+		expect(Font.getFont({ fontFamily: "Noto Sans SC", fontWeight: 700, fontStyle: "italic" })).toBe(
+			Font.getFont({ fontFamily: "Noto Sans SC", fontWeight: 700 }),
 		);
 	});
 
 	it("registers bold CJK fallback variants so strong text keeps bold glyphs", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -271,12 +265,8 @@ describe("registerFonts", () => {
 				fontStyle: "normal",
 			}),
 		);
-		expect(registerSpy).toHaveBeenCalledWith(
-			expect.objectContaining({
-				family: "Noto Serif SC",
-				fontWeight: 700,
-				fontStyle: "italic",
-			}),
+		expect(Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 700, fontStyle: "italic" })).toBe(
+			Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 700 }),
 		);
 		expect(registerSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -288,25 +278,22 @@ describe("registerFonts", () => {
 	});
 
 	it("uses the full CJK font source for synthetic italic variants when the CJK font is primary", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
-		const cjkFallbackSource = getWebFontSource("Noto Serif SC", "400", false);
 		const { registerFonts } = await import("./use-register-fonts");
 
 		registerFonts(cjkTypography, "zh-CN");
+		expect(Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 400, fontStyle: "italic" }).src).toBe(
+			getWebFontSource("Noto Serif SC", "400", false),
+		);
 
-		expect(registerSpy).toHaveBeenCalledWith(
-			expect.objectContaining({
-				family: "Noto Serif SC",
-				fontWeight: 400,
-				fontStyle: "italic",
-				src: cjkFallbackSource,
-			}),
+		expect(Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 400, fontStyle: "italic" })).toBe(
+			Font.getFont({ fontFamily: "Noto Serif SC", fontWeight: 400 }),
 		);
 	});
 
 	it("registers a punctuation fallback for Latin locale and Latin content (#3190)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -318,7 +305,7 @@ describe("registerFonts", () => {
 	});
 
 	it("registers CJK PDF fallbacks for Latin locale when resume content contains CJK text", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -342,7 +329,7 @@ describe("registerFonts", () => {
 	});
 
 	it("returns typography with font weights sorted ascending", async () => {
-		vi.spyOn(Font, "register").mockImplementation(() => {});
+		vi.spyOn(Font, "register");
 		const { registerFonts } = await import("./use-register-fonts");
 
 		const baseTypography = {
@@ -358,7 +345,7 @@ describe("registerFonts", () => {
 	});
 
 	it("replaces unsupported font weights with an available fallback pair", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		const { registerFonts } = await import("./use-register-fonts");
 
 		const migratedTypography = {
@@ -376,7 +363,7 @@ describe("registerFonts", () => {
 	});
 
 	it("keeps Vazirmatn as the primary PDF family instead of substituting IBM Plex Serif (#3098)", async () => {
-		const registerSpy = vi.spyOn(Font, "register").mockImplementation(() => {});
+		const registerSpy = vi.spyOn(Font, "register");
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 

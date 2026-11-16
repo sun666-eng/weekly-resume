@@ -2,6 +2,15 @@ diff --git a/lib/index.js b/lib/index.js
 index 18c2618f4630b3c1296c8c3cac317b8d7666bbe8..716ca874d496d40e0709236d4d7fe828a77088a7 100644
 --- a/lib/index.js
 +++ b/lib/index.js
+@@ -913,7 +913,7 @@ const fetchImage = async (node, pageWidth) => {
+             throw new Error(`Image's "src" or "source" prop returned ${source}`);
+         }
+         node.image = await resolveImage(source, { cache });
+-        if (Buffer.isBuffer(source) || source instanceof Blob)
++        if ((typeof Buffer !== 'undefined' && Buffer.isBuffer(source)) || (typeof Blob !== 'undefined' && source instanceof Blob))
+             return;
+         node.image.key = 'data' in source ? source.data.toString() : source.uri;
+     }
 @@ -1887,7 +1887,7 @@ const isTextInstance$2 = (node) => node.type === P.TextInstance;
   * @param level - Fragment level
   * @returns Text fragments

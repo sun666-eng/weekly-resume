@@ -8141,3 +8141,440 @@ msgstr "登录已过期，请重新登录后保存修改。"
 
 msgid "Sign in again"
 msgstr "重新登录"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Advanced picture settings"
+msgstr "照片高级设置"
+
+#: src/dialogs/resume/import.tsx
+msgid "Cancel import"
+msgstr "取消导入"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the recognized fields"
+msgstr "请核对识别结果"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import and review"
+msgstr "导入后核对"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Not saved"
+msgstr "尚未保存"
+
+#: src/dialogs/resume/import.tsx
+msgid "Position not recognized: {label}"
+msgstr "未识别到职位：{label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/experience.tsx
+msgid "Position not specified"
+msgstr "尚未填写职位"
+
+#: src/dialogs/resume/import.tsx
+msgid "Possible body text in a section title: {label}"
+msgstr "章节标题可能混入正文：{label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "Name may include an objective or contact field: {label}"
+msgstr "姓名可能包含求职意向或联系方式，请核对：{label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "No name was recognized; check the name and objective: {label}"
+msgstr "未识别到姓名，请核对姓名与求职意向：{label}"
+
+#: src/dialogs/resume/import.tsx
+msgid "Check the boundary between name and objective: {label}"
+msgstr "姓名与求职意向的边界待核对：{label}"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Replace picture"
+msgstr "更换照片"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Resolve conflict"
+msgstr "需要处理冲突"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Saved locally"
+msgstr "仅本机备份"
+
+#: src/dialogs/resume/import.tsx
+msgid "Some fields may need correcting. Import a new resume and review these fields in the editor; your existing resumes will stay unchanged."
+msgstr "部分字段可能识别不准确。导入为新简历后，请在编辑器核对以下内容；已有简历不会改变。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your changes are saved to your account."
+msgstr "修改已保存到你的账号。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are backed up in this browser, but are not saved to your account. Keep this page open and resolve the save error. Other devices cannot see these changes yet."
+msgstr "最新修改仅备份在当前浏览器，尚未保存到账号。请保持页面打开并处理保存错误；其他设备暂时看不到这些修改。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are being saved. Wait for “Saved” before closing this page."
+msgstr "正在保存最新修改。请等到显示“已保存”再关闭页面。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Your latest changes are not backed up. Keep this page open until saving succeeds."
+msgstr "最新修改尚未备份。请保持页面打开，直到保存成功。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Your picture is hidden from the resume."
+msgstr "照片已隐藏，不会显示在简历中。"
+
+#: src/features/resume/builder/save-status.tsx
+msgid "Retry saving"
+msgstr "重试保存"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
+msgstr "照片加载失败。请更换照片，或在高级设置中检查照片 URL。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This file is not a readable DOCX document. Save an unencrypted .docx copy and try again."
+msgstr "此文件不是可读取的 DOCX 文档。请另存为未加密的 .docx 文件后重试。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word file is too large. Please use a file smaller than 15 MB."
+msgstr "Word 文件过大。请使用小于 15 MB 的文件。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "This Word document has no readable text. Images and scanned pages cannot be imported with basic recognition."
+msgstr "此 Word 文档没有可读取的文字。基础识别无法导入图片或扫描页中的内容。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Old .doc and password-protected Word files are not supported. Open the file in Word or WPS and save an unencrypted .docx copy, then import it again."
+msgstr "暂不支持旧版 .doc 或加密的 Word 文件。请用 Word 或 WPS 打开文件，另存为未加密的 .docx 文件后再导入。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "Basic import is available without AI."
+msgstr "基础导入无需配置 AI。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "We read the document text in your browser and recognize resume fields. Review the result; photos and Word formatting are not imported."
+msgstr "在当前浏览器读取文档文字并识别简历字段。导入后请核对内容；照片和 Word 原有排版不会导入。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition"
+msgstr "AI 增强识别"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "The document will be sent to your connected AI provider for recognition when you import."
+msgstr "导入时，文档将发送给已连接的 AI 服务商进行识别。"
+
+#: src/dialogs/resume/import.tsx src/features/resume/import/docx-text.ts
+msgid "AI-enhanced recognition requires a connected AI provider. Turn it off to use basic import."
+msgstr "AI 增强识别需要连接 AI 服务商。关闭此选项即可使用基础导入。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture width"
+msgstr "照片宽度"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture shape"
+msgstr "照片比例"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Portrait 3:4"
+msgstr "竖版 3:4"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Square 1:1"
+msgstr "正方形 1:1"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Original proportions"
+msgstr "原图比例"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Height follows the selected width and ratio. Re-upload the original to recover content cropped out earlier."
+msgstr "高度根据宽度和比例自动调整。想恢复之前裁掉的内容，请重新上传原图。"
+
+msgid "China job reference (optional)"
+msgstr "中国岗位参考（可选）"
+
+msgid "No role selected"
+msgstr "未选择岗位"
+
+msgid "Career stage (optional)"
+msgstr "求职阶段（可选）"
+
+msgid "Any stage"
+msgstr "不限阶段"
+
+msgid "Campus recruitment"
+msgstr "校园招聘"
+
+msgid "Internship"
+msgstr "实习"
+
+msgid "Experienced"
+msgstr "社会招聘"
+
+msgid "Career change"
+msgstr "转岗"
+
+msgid "Human-curated starting points, not recruitment-platform statistics. The target job description takes precedence."
+msgstr "人工整理的初始基线，不代表招聘平台统计结论。目标 JD 优先。"
+
+msgid "Human-curated practice"
+msgstr "人工整理基线"
+
+msgid "Official guidance"
+msgstr "官方就业指导"
+
+msgid "Legal reference"
+msgstr "法律依据参考"
+
+msgid "Official standard"
+msgstr "官方职业标准"
+
+msgid "Reviewed: {0}"
+msgstr "复核日期：{0}"
+
+msgid "No external source; human-curated practice."
+msgstr "无外部来源，属于人工整理实践。"
+
+msgid "China job reference"
+msgstr "中国岗位参考"
+
+msgid "This checklist is separate from the parse score. A keyword appearing does not prove competence; an absent keyword is not proof of a missing skill."
+msgstr "本清单不参与解析评分。关键词出现不证明具备能力；未出现也不代表缺少技能。"
+
+msgid "Appears in the text"
+msgstr "已出现在文本中"
+
+msgid "No text evidence found"
+msgstr "未见文本证据"
+
+msgid "Evidence to review"
+msgstr "岗位证据审核清单"
+
+msgid "Truthfulness and privacy constraints ({0})"
+msgstr "真实性与隐私约束（{0} 条）"
+
+msgid "Reference version: {0}"
+msgstr "规则库版本：{0}"
+
+msgid "Inputs changed. Run the check again before requesting an AI review."
+msgstr "输入已变更。请重新检测后再进行 AI 审阅。"
+
+msgid "The selected role and career stage, plus relevant rules from the China reference library, are also sent for this review."
+msgstr "本次还会发送所选岗位、求职阶段及中国规则库的相关规则，供 AI 审阅参考。"
+
+msgid "This browser has no word segmenter. Chinese matching is limited to known dictionary terms; coverage may be incomplete."
+msgstr "当前浏览器缺少分词器，中文匹配仅覆盖已知术语词典，结果可能不完整。"
+
+msgid "Terms are drawn only from your job description. Text matches do not verify skills or interpret required versus preferred qualifications."
+msgstr "词项只来自你提供的 JD。文本匹配不核验技能，也不区分必需条件与优先条件。"
+
+msgid "Role methodology and sources"
+msgstr "岗位画像方法与参考来源"
+
+msgid "Segmentation support for this posting's language is limited. Treat these terms as a rough reference list."
+msgstr "该 JD 语言的分词支持有限，请将词项作为粗略参考清单。"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "This is a temporary sample preview, not a saved resume. It will not be restored after leaving or refreshing."
+msgstr "这里是临时样例预览，不会保存为你的简历。离开或刷新后不会自动恢复。"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your PDF is only processed on this page, never uploaded or saved. Select it again after leaving or refreshing."
+msgstr "PDF 仅在当前页面处理，不上传、不保存。离开或刷新后需重新选择文件。"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your file, job description and results are only used on this page and are not automatically saved. Select your file and enter the job description again after leaving or refreshing."
+msgstr "文件、职位描述和本次结果仅用于当前页面，不会自动保存。离开或刷新后需重新选择文件、填写职位描述。"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Leave this page?"
+msgstr "离开当前页面？"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Signing in will not carry over this sample or analysis. Your temporary inputs and results are not saved and will not be restored after leaving. Continue to sign in?"
+msgstr "登录不会自动带入当前示例或分析内容。当前临时输入和结果尚未保存，离开后不会自动恢复。继续前往登录吗？"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Your temporary inputs and results are not saved and will not be restored after leaving or refreshing. Leave this page?"
+msgstr "当前临时输入和结果尚未保存，离开或刷新后不会自动恢复。仍然离开当前页面吗？"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Stay on this page"
+msgstr "留在本页"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Leave anyway"
+msgstr "仍然离开"
+
+#: src/features/temporary-input/use-temporary-input-guard.ts
+msgid "Reset this analysis"
+msgstr "重置本次分析"
+
+
+#. js-lingui-explicit-id
+msgid "guest.disclosure"
+msgstr "无需注册即可制作；保存到账号和正式导出需登录。本机备份无需登录。"
+
+#. js-lingui-explicit-id
+msgid "guest.storageNotice"
+msgstr "内容只暂存在此浏览器。清理浏览器数据、隐私模式、存储回收或更换设备、站点来源可能导致无法恢复。重要内容请取回备份。"
+
+#. js-lingui-explicit-id
+msgid "guest.status.restoring"
+msgstr "恢复中"
+
+#. js-lingui-explicit-id
+msgid "guest.status.saving"
+msgstr "正在本机暂存"
+
+#. js-lingui-explicit-id
+msgid "guest.status.saved"
+msgstr "已暂存到此浏览器"
+
+#. js-lingui-explicit-id
+msgid "guest.status.failed"
+msgstr "暂存失败：请取回本机备份"
+
+#. js-lingui-explicit-id
+msgid "guest.status.claiming"
+msgstr "正在保存到账号"
+
+#. js-lingui-explicit-id
+msgid "guest.status.claimed"
+msgstr "已保存到账号"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.failed"
+msgstr "恢复未完成，原内容未被替换。请检查备份或重试。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.configFailed"
+msgstr "入口配置暂未加载成功。请重试，草稿不会因此改变。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.unknown"
+msgstr "无法识别此草稿格式，原始记录已保留，可以取回。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.unavailable"
+msgstr "本机存储读取或暂存失败，未替换已有草稿。如本页有未保存内容，请勿关闭。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.disabled"
+msgstr "新建游客入口暂未开放；已有草稿仍可恢复和取回，也可恢复本机备份。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.origin"
+msgstr "请在规范站点来源创建草稿。不同站点地址之间不共享本机草稿。"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.loading"
+msgstr "正在检查并恢复此浏览器中的草稿…"
+
+#. js-lingui-explicit-id
+msgid "guest.original"
+msgstr "取回原始记录"
+
+#. js-lingui-explicit-id
+msgid "guest.entry.memory"
+msgstr "继续编辑本页尚未暂存的草稿"
+
+#. js-lingui-explicit-id
+msgid "guest.backupWarning"
+msgstr "备份包含个人信息、照片和私人备注，请妥善保管。"
+
+#. js-lingui-explicit-id
+msgid "guest.backupFailed"
+msgstr "备份未完成，尚未完成保护。当前内容仍保留在本页，请勿关闭。"
+
+#. js-lingui-explicit-id
+msgid "guest.backup"
+msgstr "取回本机备份"
+
+#. js-lingui-explicit-id
+msgid "guest.retry"
+msgstr "重试恢复"
+
+#. js-lingui-explicit-id
+msgid "guest.restore"
+msgstr "恢复备份"
+
+#. js-lingui-explicit-id
+msgid "guest.canonical"
+msgstr "打开规范站点"
+
+#. js-lingui-explicit-id
+msgid "guest.home"
+msgstr "返回首页"
+
+#. js-lingui-explicit-id
+msgid "guest.help"
+msgstr "本机草稿说明"
+
+#. js-lingui-explicit-id
+msgid "guest.local"
+msgstr "本机草稿"
+
+#. js-lingui-explicit-id
+msgid "guest.saveAccount"
+msgstr "保存到账号"
+
+#. js-lingui-explicit-id
+msgid "guest.formalExport"
+msgstr "正式导出"
+
+#. js-lingui-explicit-id
+msgid "guest.more"
+msgstr "更多草稿操作"
+
+#. js-lingui-explicit-id
+msgid "guest.print"
+msgstr "打印"
+
+#. js-lingui-explicit-id
+msgid "guest.import"
+msgstr "导入"
+
+#. js-lingui-explicit-id
+msgid "guest.clear"
+msgstr "清除本机草稿"
+
+#. js-lingui-explicit-id
+msgid "guest.start"
+msgstr "立即制作简历"
+
+#. js-lingui-explicit-id
+msgid "guest.restoreConfirm"
+msgstr "确认将此备份恢复为本机草稿？不会自动上传或认领。"
+
+#. js-lingui-explicit-id
+msgid "guest.sampleNotCarried"
+msgstr "下方样例与 PDF 试读内容不会自动带入本机草稿。"
+
+#. js-lingui-explicit-id
+msgid "guest.importReview"
+msgstr "部分字段可能需要修正。确认替换本机草稿后可在编辑器核对；如需保留当前内容，请先取回本机备份。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.keepFormatting"
+msgstr "切换模板样式会保留已有布局、颜色和字体。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.sampleCards"
+msgstr "卡片展示的是示例内容与示例排版。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.viewSample"
+msgstr "查看示例内容与排版"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.applyStyle"
+msgstr "使用此模板样式"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.ownPreview"
+msgstr "正在用我的内容预览，保留已有布局、颜色和字体。"
+
+#. js-lingui-explicit-id
+msgid "template.gallery.samplePreview"
+msgstr "示例内容与示例排版。使用此样式会保留你的已有布局、颜色和字体。"

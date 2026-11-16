@@ -1,6 +1,7 @@
 import type { levelDesignSchema } from "@reactive-resume/schema/resume/data";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
+import { useEffect } from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 type Props = z.infer<typeof levelDesignSchema> &
@@ -15,6 +16,9 @@ const LEVEL_ITEM_KEYS = ["level-1", "level-2", "level-3", "level-4", "level-5"] 
 const defaultDecorationClassName = "size-2.5";
 
 export function LevelDisplay({ icon, type, level, className, decorationSizePx, iconSizePx, ...props }: Props) {
+	useEffect(() => {
+		if (type === "icon" && icon && level > 0) void import("@/routes/builder/$resumeId/-sidebar/left/phosphor.css");
+	}, [type, icon, level]);
 	if (level === 0) return null;
 	if (type === "hidden" || icon === "") return null;
 

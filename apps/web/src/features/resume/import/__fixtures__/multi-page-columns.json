@@ -1,0 +1,7187 @@
+{
+	"pages": [
+		{
+			"pageNumber": 1,
+			"width": 595.280029,
+			"height": 841.890015,
+			"lines": [
+				{
+					"page": 1,
+					"text": "虚构姓名验收一",
+					"spans": [
+						{
+							"text": "虚构姓名验收一",
+							"x": 234.640015,
+							"y": 117.84000000000003,
+							"width": 126.00000000000001,
+							"height": 18,
+							"fontRef": "g_d0_f1",
+							"fontSize": 18,
+							"streamIndex": 0
+						}
+					],
+					"x": 234.640015,
+					"y": 117.84000000000003,
+					"width": 126,
+					"height": 18,
+					"fontSize": 18,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 0
+				},
+				{
+					"page": 1,
+					"text": "中文岗位持久化验收",
+					"spans": [
+						{
+							"text": "中文岗位持久化验收",
+							"x": 252.640015,
+							"y": 144.999999,
+							"width": 90,
+							"height": 10,
+							"fontRef": "g_d0_f2",
+							"fontSize": 10,
+							"streamIndex": 2
+						}
+					],
+					"x": 252.640015,
+					"y": 144.999999,
+					"width": 90,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f2",
+					"meanStreamIndex": 2
+				},
+				{
+					"page": 1,
+					"text": "david.kowalski@email.com 000-UX-01 Seattle, WA davidkowalski.games github.com/dkowalski-dev",
+					"spans": [
+						{
+							"text": "david.kowalski@email.com",
+							"x": 38.695007000000004,
+							"y": 165.44999699999994,
+							"width": 128.48000000000008,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 4
+						},
+						{
+							"text": "000-UX-01",
+							"x": 185.175003,
+							"y": 165.44999699999994,
+							"width": 51.49999999999999,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 6
+						},
+						{
+							"text": "Seattle, WA",
+							"x": 254.675003,
+							"y": 165.44999699999994,
+							"width": 53.00999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 8
+						},
+						{
+							"text": "davidkowalski.games",
+							"x": 325.684998,
+							"y": 165.44999699999994,
+							"width": 100.53000000000007,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 10
+						},
+						{
+							"text": "github.com/dkowalski-dev",
+							"x": 444.214996,
+							"y": 165.44999699999994,
+							"width": 124.36999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 12
+						}
+					],
+					"x": 38.695007000000004,
+					"y": 165.44999699999994,
+					"width": 529.8899889999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 8
+				},
+				{
+					"page": 1,
+					"text": "itch.io/dkowalski",
+					"spans": [
+						{
+							"text": "itch.io/dkowalski",
+							"x": 263.50502,
+							"y": 181.44999699999994,
+							"width": 80.2700000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 13
+						}
+					],
+					"x": 263.50502,
+					"y": 181.44999699999994,
+					"width": 80.2700000000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 13
+				},
+				{
+					"page": 1,
+					"text": "个人资料 个人评价",
+					"spans": [
+						{
+							"text": "个人资料",
+							"x": 33,
+							"y": 210.75999699999988,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 15
+						},
+						{
+							"text": "个人评价",
+							"x": 217.983994,
+							"y": 210.75999699999988,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 59
+						}
+					],
+					"x": 33,
+					"y": 210.75999699999988,
+					"width": 232.983994,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 37
+				},
+				{
+					"page": 1,
+					"text": "GitHub Passionate game developer with 5+ years of professional experience-",
+					"spans": [
+						{
+							"text": "GitHub",
+							"x": 30,
+							"y": 230.44999699999994,
+							"width": 35.68,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 17
+						},
+						{
+							"text": "Passionate game developer with 5+ years of professional experience",
+							"x": 222.983994,
+							"y": 230.44999699999994,
+							"width": 334.7900000000002,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 61
+						},
+						{
+							"text": "-",
+							"x": 560.0939940000001,
+							"y": 230.44999699999994,
+							"width": 3.93,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 63
+						}
+					],
+					"x": 30,
+					"y": 230.44999699999994,
+					"width": 534.023994,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 47
+				},
+				{
+					"page": 1,
+					"text": "dkowalski-dev creating engaging gameplay systems and polished player experiences -",
+					"spans": [
+						{
+							"text": "dkowalski-dev",
+							"x": 16,
+							"y": 246.44999699999994,
+							"width": 68.27000000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 19
+						},
+						{
+							"text": "creating engaging gameplay systems and polished player experiences -",
+							"x": 222.983994,
+							"y": 245.44999699999994,
+							"width": 333.40999999999985,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 64
+						}
+					],
+					"x": 16,
+					"y": 245.44999699999994,
+					"width": 540.3939939999998,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 41.5
+				},
+				{
+					"page": 1,
+					"text": "across multiple platforms. Specialized in Unity and Unreal Engine with -",
+					"spans": [
+						{
+							"text": "across multiple platforms. Specialized in Unity and Unreal Engine with -",
+							"x": 222.983994,
+							"y": 260.44999699999994,
+							"width": 338.76,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 65
+						}
+					],
+					"x": 222.983994,
+					"y": 260.44999699999994,
+					"width": 338.75999999999993,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 65
+				},
+				{
+					"page": 1,
+					"text": "LinkedIn",
+					"spans": [
+						{
+							"text": "LinkedIn",
+							"x": 30,
+							"y": 269.44999699999994,
+							"width": 44.720000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 21
+						}
+					],
+					"x": 30,
+					"y": 269.44999699999994,
+					"width": 44.72,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 21
+				},
+				{
+					"page": 1,
+					"text": "strong expertise in C#, C++, and game design principles. Proven ability to -",
+					"spans": [
+						{
+							"text": "strong expertise in C#, C++, and game design principles. Proven ability to -",
+							"x": 222.983994,
+							"y": 275.44999699999994,
+							"width": 349.78999999999974,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 66
+						}
+					],
+					"x": 222.983994,
+					"y": 275.44999699999994,
+					"width": 349.7899999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 66
+				},
+				{
+					"page": 1,
+					"text": "davidkowalski",
+					"spans": [
+						{
+							"text": "davidkowalski",
+							"x": 16,
+							"y": 285.44999699999994,
+							"width": 67.26000000000002,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 23
+						}
+					],
+					"x": 16,
+					"y": 285.44999699999994,
+					"width": 67.26000000000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 23
+				},
+				{
+					"page": 1,
+					"text": "collaborate effectively with cross-functional teams including designers, -",
+					"spans": [
+						{
+							"text": "collaborate effectively with cross-functional teams including designers, -",
+							"x": 222.983994,
+							"y": 290.44999699999994,
+							"width": 340.90000000000003,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 67
+						}
+					],
+					"x": 222.983994,
+					"y": 290.44999699999994,
+					"width": 340.90000000000003,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 67
+				},
+				{
+					"page": 1,
+					"text": "artists, and QA to deliver high-quality games on time and within scope.",
+					"spans": [
+						{
+							"text": "artists, and QA to deliver high-quality games on time and within scope.",
+							"x": 222.983994,
+							"y": 305.44999699999994,
+							"width": 331.27999999999975,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 68
+						}
+					],
+					"x": 222.983994,
+					"y": 305.44999699999994,
+					"width": 331.2799999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 68
+				},
+				{
+					"page": 1,
+					"text": "专业技能",
+					"spans": [
+						{
+							"text": "专业技能",
+							"x": 33,
+							"y": 314.7599969999999,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 25
+						}
+					],
+					"x": 33,
+					"y": 314.7599969999999,
+					"width": 48,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 25
+				},
+				{
+					"page": 1,
+					"text": "Unity Engine 教育背景",
+					"spans": [
+						{
+							"text": "Unity Engine",
+							"x": 30,
+							"y": 334.44999699999994,
+							"width": 64.09999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 27
+						},
+						{
+							"text": "教育背景",
+							"x": 217.983994,
+							"y": 334.75999699999994,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 70
+						}
+					],
+					"x": 30,
+					"y": 334.44999699999994,
+					"width": 235.983994,
+					"height": 12.310000000000002,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 48.5
+				},
+				{
+					"page": 1,
+					"text": "Expert University of Washington Bachelor of Science • 3.6 GPA",
+					"spans": [
+						{
+							"text": "Expert",
+							"x": 16,
+							"y": 351.44999699999994,
+							"width": 31.67,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 29
+						},
+						{
+							"text": "University of Washington",
+							"x": 222.983994,
+							"y": 354.44999699999994,
+							"width": 125.03,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 72
+						},
+						{
+							"text": "Bachelor of Science • 3.6 GPA",
+							"x": 441.620011,
+							"y": 354.44999699999994,
+							"width": 137.65999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 74
+						}
+					],
+					"x": 16,
+					"y": 351.44999699999994,
+					"width": 563.280011,
+					"height": 13,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 58.333333333333336
+				},
+				{
+					"page": 1,
+					"text": "C#, Editor Tools, Performance Profiling",
+					"spans": [
+						{
+							"text": "C#, Editor Tools, Performance Profiling",
+							"x": 16,
+							"y": 366.41874699999994,
+							"width": 161.035,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 31
+						}
+					],
+					"x": 16,
+					"y": 366.41874699999994,
+					"width": 161.035,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 31
+				},
+				{
+					"page": 1,
+					"text": "Computer Science Seattle, WA • 2014 - 2018",
+					"spans": [
+						{
+							"text": "Computer Science",
+							"x": 222.983994,
+							"y": 370.44999699999994,
+							"width": 85.88000000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 75
+						},
+						{
+							"text": "Seattle, WA • 2014 - 2018",
+							"x": 460.90001,
+							"y": 370.44999699999994,
+							"width": 118.38000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 77
+						}
+					],
+					"x": 222.983994,
+					"y": 370.44999699999994,
+					"width": 356.29601600000007,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 76
+				},
+				{
+					"page": 1,
+					"text": "Concentration in Game Development. Relevant Coursework: Game Engine -",
+					"spans": [
+						{
+							"text": "Concentration in Game Development. Relevant Coursework: Game Engine -",
+							"x": 222.983994,
+							"y": 386.44999699999994,
+							"width": 353.3899999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 78
+						}
+					],
+					"x": 222.983994,
+					"y": 386.44999699999994,
+					"width": 353.3899999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 78
+				},
+				{
+					"page": 1,
+					"text": "Unreal Engine Architecture, Computer Graphics, Artificial Intelligence, Physics -",
+					"spans": [
+						{
+							"text": "Unreal Engine",
+							"x": 30,
+							"y": 403.57499699999994,
+							"width": 70.91999999999999,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 33
+						},
+						{
+							"text": "Architecture, Computer Graphics, Artificial Intelligence, Physics -",
+							"x": 222.983994,
+							"y": 401.44999699999994,
+							"width": 306.8500000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 79
+						}
+					],
+					"x": 30,
+					"y": 401.44999699999994,
+					"width": 499.8339940000001,
+					"height": 12.125,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 56
+				},
+				{
+					"page": 1,
+					"text": "Simulation, 3D Mathematics, Software Engineering, Data Structures & -",
+					"spans": [
+						{
+							"text": "Simulation, 3D Mathematics, Software Engineering, Data Structures & -",
+							"x": 222.983994,
+							"y": 416.44999699999994,
+							"width": 333.81000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 80
+						}
+					],
+					"x": 222.983994,
+					"y": 416.44999699999994,
+					"width": 333.8100000000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 80
+				},
+				{
+					"page": 1,
+					"text": "Advanced",
+					"spans": [
+						{
+							"text": "Advanced",
+							"x": 16,
+							"y": 420.57499699999994,
+							"width": 46.55,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 35
+						}
+					],
+					"x": 16,
+					"y": 420.57499699999994,
+					"width": 46.55,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 35
+				},
+				{
+					"page": 1,
+					"text": "Algorithms",
+					"spans": [
+						{
+							"text": "Algorithms",
+							"x": 222.983994,
+							"y": 431.44999699999994,
+							"width": 52.540000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 81
+						}
+					],
+					"x": 222.983994,
+					"y": 431.44999699999994,
+					"width": 52.54000000000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 81
+				},
+				{
+					"page": 1,
+					"text": "C++, Blueprints, UE5 Features",
+					"spans": [
+						{
+							"text": "C++, Blueprints, UE5 Features",
+							"x": 16,
+							"y": 435.54374699999994,
+							"width": 123.55000000000003,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 37
+						}
+					],
+					"x": 16,
+					"y": 435.54374699999994,
+					"width": 123.55000000000001,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 37
+				},
+				{
+					"page": 1,
+					"text": "工作经历",
+					"spans": [
+						{
+							"text": "工作经历",
+							"x": 217.983994,
+							"y": 460.75999699999994,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 83
+						}
+					],
+					"x": 217.983994,
+					"y": 460.75999699999994,
+					"width": 48,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 83
+				},
+				{
+					"page": 1,
+					"text": "Programming Languages",
+					"spans": [
+						{
+							"text": "Programming Languages",
+							"x": 30,
+							"y": 472.69999699999994,
+							"width": 124.31999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 39
+						}
+					],
+					"x": 30,
+					"y": 472.69999699999994,
+					"width": 124.31999999999996,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 39
+				},
+				{
+					"page": 1,
+					"text": "Cascade Studios Seattle, WA",
+					"spans": [
+						{
+							"text": "Cascade Studios",
+							"x": 222.983994,
+							"y": 480.44999699999994,
+							"width": 79.72999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 85
+						},
+						{
+							"text": "Seattle, WA",
+							"x": 526.270005,
+							"y": 480.44999699999994,
+							"width": 53.01000000000019,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 87
+						}
+					],
+					"x": 222.983994,
+					"y": 480.44999699999994,
+					"width": 356.2960110000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 86
+				},
+				{
+					"page": 1,
+					"text": "Expert",
+					"spans": [
+						{
+							"text": "Expert",
+							"x": 16,
+							"y": 489.69999699999994,
+							"width": 31.67,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 41
+						}
+					],
+					"x": 16,
+					"y": 489.69999699999994,
+					"width": 31.67,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 41
+				},
+				{
+					"page": 1,
+					"text": "Senior Game Developer March 2022 - Present",
+					"spans": [
+						{
+							"text": "Senior Game Developer",
+							"x": 222.983994,
+							"y": 496.44999699999994,
+							"width": 110.8300000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 88
+						},
+						{
+							"text": "March 2022 - Present",
+							"x": 478.280015,
+							"y": 496.44999699999994,
+							"width": 101.00000000000007,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 90
+						}
+					],
+					"x": 222.983994,
+					"y": 496.44999699999994,
+					"width": 356.29602100000005,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 89
+				},
+				{
+					"page": 1,
+					"text": "C#, C++, Python, HLSL/GLSL",
+					"spans": [
+						{
+							"text": "C#, C++, Python, HLSL/GLSL",
+							"x": 16,
+							"y": 504.66874699999994,
+							"width": 117.88875000000003,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 43
+						}
+					],
+					"x": 16,
+					"y": 504.66874699999994,
+					"width": 117.88875000000002,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 43
+				},
+				{
+					"page": 1,
+					"text": "• Lead gameplay programmer on an unannounced AAA action-adventure-",
+					"spans": [
+						{
+							"text": "• Lead gameplay programmer on an unannounced AAA action-adventure-",
+							"x": 228.823994,
+							"y": 512.4499969999999,
+							"width": 348.93999999999977,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 91
+						}
+					],
+					"x": 228.823994,
+					"y": 512.4499969999999,
+					"width": 348.9399999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 91
+				},
+				{
+					"page": 1,
+					"text": "title built in Unreal Engine 5 for PC and next-gen consoles",
+					"spans": [
+						{
+							"text": "title built in Unreal Engine 5 for PC and next-gen consoles",
+							"x": 236.983994,
+							"y": 527.4499969999999,
+							"width": 271.09,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 92
+						}
+					],
+					"x": 236.983994,
+					"y": 527.4499969999999,
+					"width": 271.09,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 92
+				},
+				{
+					"page": 1,
+					"text": "Game AI",
+					"spans": [
+						{
+							"text": "Game AI",
+							"x": 30,
+							"y": 541.8249969999999,
+							"width": 42.08,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 45
+						}
+					],
+					"x": 30,
+					"y": 541.8249969999999,
+					"width": 42.08,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 45
+				},
+				{
+					"page": 1,
+					"text": "• Architected and implemented core combat system including hit -",
+					"spans": [
+						{
+							"text": "• Architected and implemented core combat system including hit -",
+							"x": 228.823994,
+							"y": 548.4499969999999,
+							"width": 313.9399999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 93
+						}
+					],
+					"x": 228.823994,
+					"y": 548.4499969999999,
+					"width": 313.9399999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 93
+				},
+				{
+					"page": 1,
+					"text": "Advanced",
+					"spans": [
+						{
+							"text": "Advanced",
+							"x": 16,
+							"y": 558.8249969999999,
+							"width": 46.55,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 47
+						}
+					],
+					"x": 16,
+					"y": 558.8249969999999,
+					"width": 46.55,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 47
+				},
+				{
+					"page": 1,
+					"text": "detection, combo mechanics, and enemy AI behavior trees serving 15+ -",
+					"spans": [
+						{
+							"text": "detection, combo mechanics, and enemy AI behavior trees serving 15+ -",
+							"x": 236.983994,
+							"y": 563.4499969999999,
+							"width": 338.39000000000004,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 94
+						}
+					],
+					"x": 236.983994,
+					"y": 563.4499969999999,
+					"width": 338.39000000000004,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 94
+				},
+				{
+					"page": 1,
+					"text": "Behavior Trees, FSM, Pathfinding, -",
+					"spans": [
+						{
+							"text": "Behavior Trees, FSM, Pathfinding, -",
+							"x": 16,
+							"y": 573.7937469999999,
+							"width": 144.935,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 49
+						}
+					],
+					"x": 16,
+					"y": 573.7937469999999,
+					"width": 144.935,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 49
+				},
+				{
+					"page": 1,
+					"text": "enemy types",
+					"spans": [
+						{
+							"text": "enemy types",
+							"x": 236.983994,
+							"y": 578.4499969999999,
+							"width": 59.51000000000003,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 95
+						}
+					],
+					"x": 236.983994,
+					"y": 578.4499969999999,
+					"width": 59.51000000000005,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 95
+				},
+				{
+					"page": 1,
+					"text": "Navigation",
+					"spans": [
+						{
+							"text": "Navigation",
+							"x": 16,
+							"y": 586.9187469999999,
+							"width": 44.65125,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 50
+						}
+					],
+					"x": 16,
+					"y": 586.9187469999999,
+					"width": 44.65125,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 50
+				},
+				{
+					"page": 1,
+					"text": "• Developed custom editor tools in C++ that reduced level designer -",
+					"spans": [
+						{
+							"text": "• Developed custom editor tools in C++ that reduced level designer -",
+							"x": 228.823994,
+							"y": 599.4499969999999,
+							"width": 319.1600000000002,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 96
+						}
+					],
+					"x": 228.823994,
+					"y": 599.4499969999999,
+					"width": 319.1600000000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 96
+				},
+				{
+					"page": 1,
+					"text": "iteration time by 40% and improved workflow efficiency across the team",
+					"spans": [
+						{
+							"text": "iteration time by 40% and improved workflow efficiency across the team",
+							"x": 236.983994,
+							"y": 614.4499969999999,
+							"width": 339.6699999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 97
+						}
+					],
+					"x": 236.983994,
+					"y": 614.4499969999999,
+					"width": 339.6699999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 97
+				},
+				{
+					"page": 1,
+					"text": "Physics & Mathematics",
+					"spans": [
+						{
+							"text": "Physics & Mathematics",
+							"x": 30,
+							"y": 624.0749969999999,
+							"width": 113.38999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 52
+						}
+					],
+					"x": 30,
+					"y": 624.0749969999999,
+					"width": 113.38999999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 52
+				},
+				{
+					"page": 1,
+					"text": "• Optimized rendering pipeline and gameplay systems to maintain 60 -",
+					"spans": [
+						{
+							"text": "• Optimized rendering pipeline and gameplay systems to maintain 60 -",
+							"x": 228.823994,
+							"y": 635.4499969999999,
+							"width": 333.8899999999999,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 98
+						}
+					],
+					"x": 228.823994,
+					"y": 635.4499969999999,
+					"width": 333.8899999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 98
+				},
+				{
+					"page": 1,
+					"text": "Advanced",
+					"spans": [
+						{
+							"text": "Advanced",
+							"x": 16,
+							"y": 641.0749969999999,
+							"width": 46.55,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 54
+						}
+					],
+					"x": 16,
+					"y": 641.0749969999999,
+					"width": 46.55,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 54
+				},
+				{
+					"page": 1,
+					"text": "FPS performance target on all supported platforms, achieving 95% -",
+					"spans": [
+						{
+							"text": "FPS performance target on all supported platforms, achieving 95% -",
+							"x": 236.983994,
+							"y": 650.4499969999999,
+							"width": 319.61000000000007,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 99
+						}
+					],
+					"x": 236.983994,
+					"y": 650.4499969999999,
+					"width": 319.61000000000007,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 99
+				},
+				{
+					"page": 1,
+					"text": "3D Math, Collision Detection, Rigid -",
+					"spans": [
+						{
+							"text": "3D Math, Collision Detection, Rigid -",
+							"x": 16,
+							"y": 656.0437469999999,
+							"width": 147.83999999999995,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 56
+						}
+					],
+					"x": 16,
+					"y": 656.0437469999999,
+					"width": 147.83999999999995,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 56
+				},
+				{
+					"page": 1,
+					"text": "frame rate stability",
+					"spans": [
+						{
+							"text": "frame rate stability",
+							"x": 236.983994,
+							"y": 665.4499969999999,
+							"width": 89.36999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 100
+						}
+					],
+					"x": 236.983994,
+					"y": 665.4499969999999,
+					"width": 89.36999999999995,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 100
+				},
+				{
+					"page": 1,
+					"text": "Body Dynamics",
+					"spans": [
+						{
+							"text": "Body Dynamics",
+							"x": 16,
+							"y": 669.1687469999999,
+							"width": 64.00625000000002,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 57
+						}
+					],
+					"x": 16,
+					"y": 669.1687469999999,
+					"width": 64.00625000000002,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 57
+				},
+				{
+					"page": 1,
+					"text": "• Ad nostrud enim adipisicing ea proident aliqua veniam nisi amet ea -",
+					"spans": [
+						{
+							"text": "• Ad nostrud enim adipisicing ea proident aliqua veniam nisi amet ea -",
+							"x": 228.823994,
+							"y": 686.4499969999999,
+							"width": 332.7099999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 101
+						}
+					],
+					"x": 228.823994,
+					"y": 686.4499969999999,
+					"width": 332.7099999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 101
+				},
+				{
+					"page": 1,
+					"text": "irure et mollit.",
+					"spans": [
+						{
+							"text": "irure et mollit.",
+							"x": 236.983994,
+							"y": 701.4499969999999,
+							"width": 67.92000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 102
+						}
+					],
+					"x": 236.983994,
+					"y": 701.4499969999999,
+					"width": 67.92000000000007,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 102
+				}
+			],
+			"inversionRatio": 0.3877551020408163,
+			"gutter": null,
+			"margins": { "top": 165.44999699999994, "left": 16, "right": 16.000023999999826, "bottom": 166.440018 },
+			"textAreaRatio": 0.2324420534310767
+		},
+		{
+			"pageNumber": 2,
+			"width": 595.280029,
+			"height": 841.890015,
+			"lines": [
+				{
+					"page": 2,
+					"text": "证书信息 工作经历",
+					"spans": [
+						{
+							"text": "证书信息",
+							"x": 33,
+							"y": 14.559999999999945,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 0
+						},
+						{
+							"text": "工作经历",
+							"x": 217.983994,
+							"y": 14.559999999999945,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 47
+						}
+					],
+					"x": 33,
+					"y": 14.559999999999945,
+					"width": 232.983994,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 23.5
+				},
+				{
+					"page": 2,
+					"text": "Unity Certified Expert: - Pixel Forge Interactive Bellevue, WA",
+					"spans": [
+						{
+							"text": "Unity Certified Expert: -",
+							"x": 16,
+							"y": 34.25,
+							"width": 117.53999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 2
+						},
+						{
+							"text": "Pixel Forge Interactive",
+							"x": 222.983994,
+							"y": 34.25,
+							"width": 111.46000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 49
+						},
+						{
+							"text": "Bellevue, WA",
+							"x": 517.9799969999999,
+							"y": 34.25,
+							"width": 61.30000000000021,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 51
+						}
+					],
+					"x": 16,
+					"y": 34.25,
+					"width": 563.2799970000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 34
+				},
+				{
+					"page": 2,
+					"text": "Programmer Game Developer June 2020 - February 2022",
+					"spans": [
+						{
+							"text": "Programmer",
+							"x": 16,
+							"y": 49.25,
+							"width": 63.910000000000004,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 3
+						},
+						{
+							"text": "Game Developer",
+							"x": 222.983994,
+							"y": 50.25,
+							"width": 77.65999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 52
+						},
+						{
+							"text": "June 2020 - February 2022",
+							"x": 452.060014,
+							"y": 50.25,
+							"width": 127.22000000000025,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 54
+						}
+					],
+					"x": 16,
+					"y": 49.25,
+					"width": 563.2800140000003,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 36.333333333333336
+				},
+				{
+					"page": 2,
+					"text": "March 2022 • Core developer on 'Starbound Odyssey,' a sci-fi roguelike that achieved -",
+					"spans": [
+						{
+							"text": "March 2022",
+							"x": 16,
+							"y": 64.25,
+							"width": 56.33,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 5
+						},
+						{
+							"text": "• Core developer on 'Starbound Odyssey,' a sci-fi roguelike that achieved -",
+							"x": 228.823994,
+							"y": 66.25,
+							"width": 344.24999999999983,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 55
+						}
+					],
+					"x": 16,
+					"y": 64.25,
+					"width": 557.0739939999999,
+					"height": 12,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 30
+				},
+				{
+					"page": 2,
+					"text": "Unity Technologies 500K+ sales on Steam with 'Very Positive' user reviews",
+					"spans": [
+						{
+							"text": "Unity Technologies",
+							"x": 16,
+							"y": 80.25,
+							"width": 90.41,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 6
+						},
+						{
+							"text": "500K+ sales on Steam with 'Very Positive' user reviews",
+							"x": 236.983994,
+							"y": 81.25,
+							"width": 256.26000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 56
+						}
+					],
+					"x": 16,
+					"y": 80.25,
+					"width": 477.24399400000004,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 31
+				},
+				{
+					"page": 2,
+					"text": "Unreal Engine 5 C++ Developer • Implemented procedural generation systems for level layouts, enemy -",
+					"spans": [
+						{
+							"text": "Unreal Engine 5 C++ Developer",
+							"x": 16,
+							"y": 103.25,
+							"width": 152.84,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 8
+						},
+						{
+							"text": "• Implemented procedural generation systems for level layouts, enemy -",
+							"x": 228.823994,
+							"y": 102.25,
+							"width": 339.2099999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 57
+						}
+					],
+					"x": 16,
+					"y": 102.25,
+					"width": 552.0339939999998,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 32.5
+				},
+				{
+					"page": 2,
+					"text": "June 2023 encounters, and loot drops using Unity and C#",
+					"spans": [
+						{
+							"text": "June 2023",
+							"x": 16,
+							"y": 118.25,
+							"width": 48.78,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 10
+						},
+						{
+							"text": "encounters, and loot drops using Unity and C#",
+							"x": 236.983994,
+							"y": 117.25,
+							"width": 218.13000000000014,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 58
+						}
+					],
+					"x": 16,
+					"y": 117.25,
+					"width": 439.11399400000016,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 34
+				},
+				{
+					"page": 2,
+					"text": "Epic Games (Udemy)",
+					"spans": [
+						{
+							"text": "Epic Games (Udemy)",
+							"x": 16,
+							"y": 134.25,
+							"width": 97.84000000000002,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 11
+						}
+					],
+					"x": 16,
+					"y": 134.25,
+					"width": 97.84000000000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 11
+				},
+				{
+					"page": 2,
+					"text": "• Designed and programmed player progression systems including skill -",
+					"spans": [
+						{
+							"text": "• Designed and programmed player progression systems including skill -",
+							"x": 228.823994,
+							"y": 138.25,
+							"width": 343.3799999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 59
+						}
+					],
+					"x": 228.823994,
+					"y": 138.25,
+					"width": 343.3799999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 59
+				},
+				{
+					"page": 2,
+					"text": "trees, equipment upgrades, and meta-progression mechanics",
+					"spans": [
+						{
+							"text": "trees, equipment upgrades, and meta-progression mechanics",
+							"x": 236.983994,
+							"y": 153.25,
+							"width": 289.19000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 60
+						}
+					],
+					"x": 236.983994,
+					"y": 153.25,
+					"width": 289.19,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 60
+				},
+				{
+					"page": 2,
+					"text": "语言",
+					"spans": [
+						{
+							"text": "语言",
+							"x": 33,
+							"y": 163.55999999999995,
+							"width": 24,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 13
+						}
+					],
+					"x": 33,
+					"y": 163.55999999999995,
+					"width": 24,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 13
+				},
+				{
+					"page": 2,
+					"text": "• Created robust save/load system supporting cloud saves and -",
+					"spans": [
+						{
+							"text": "• Created robust save/load system supporting cloud saves and -",
+							"x": 228.823994,
+							"y": 174.25,
+							"width": 297.75999999999976,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 61
+						}
+					],
+					"x": 228.823994,
+					"y": 174.25,
+					"width": 297.75999999999976,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 61
+				},
+				{
+					"page": 2,
+					"text": "English",
+					"spans": [
+						{
+							"text": "English",
+							"x": 16,
+							"y": 183.25,
+							"width": 37.2,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 15
+						}
+					],
+					"x": 16,
+					"y": 183.25,
+					"width": 37.2,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 15
+				},
+				{
+					"page": 2,
+					"text": "cross-platform play between PC and Nintendo Switch",
+					"spans": [
+						{
+							"text": "cross-platform play between PC and Nintendo Switch",
+							"x": 236.983994,
+							"y": 189.25,
+							"width": 249.99000000000004,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 62
+						}
+					],
+					"x": 236.983994,
+					"y": 189.25,
+					"width": 249.99000000000007,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 62
+				},
+				{
+					"page": 2,
+					"text": "Native",
+					"spans": [
+						{
+							"text": "Native",
+							"x": 16,
+							"y": 198.25,
+							"width": 30.369999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 17
+						}
+					],
+					"x": 16,
+					"y": 198.25,
+					"width": 30.369999999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 17
+				},
+				{
+					"page": 2,
+					"text": "• Integrated third-party SDKs for analytics (GameAnalytics), -",
+					"spans": [
+						{
+							"text": "• Integrated third-party SDKs for analytics (GameAnalytics), -",
+							"x": 228.823994,
+							"y": 210.25,
+							"width": 288.88000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 63
+						}
+					],
+					"x": 228.823994,
+					"y": 210.25,
+					"width": 288.8800000000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 63
+				},
+				{
+					"page": 2,
+					"text": "achievements (Steamworks), and multiplayer networking (Photon)",
+					"spans": [
+						{
+							"text": "achievements (Steamworks), and multiplayer networking (Photon)",
+							"x": 236.983994,
+							"y": 225.25,
+							"width": 311.75999999999993,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 64
+						}
+					],
+					"x": 236.983994,
+					"y": 225.25,
+					"width": 311.75999999999993,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 64
+				},
+				{
+					"page": 2,
+					"text": "Polish",
+					"spans": [
+						{
+							"text": "Polish",
+							"x": 16,
+							"y": 236.25,
+							"width": 30.58,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 19
+						}
+					],
+					"x": 16,
+					"y": 236.25,
+					"width": 30.58,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 19
+				},
+				{
+					"page": 2,
+					"text": "• Fixed critical bugs and balanced gameplay based on community -",
+					"spans": [
+						{
+							"text": "• Fixed critical bugs and balanced gameplay based on community -",
+							"x": 228.823994,
+							"y": 246.25,
+							"width": 315.4699999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 65
+						}
+					],
+					"x": 228.823994,
+					"y": 246.25,
+					"width": 315.4699999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 65
+				},
+				{
+					"page": 2,
+					"text": "Conversational",
+					"spans": [
+						{
+							"text": "Conversational",
+							"x": 16,
+							"y": 251.25,
+							"width": 70.73,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 21
+						}
+					],
+					"x": 16,
+					"y": 251.25,
+					"width": 70.73,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 21
+				},
+				{
+					"page": 2,
+					"text": "feedback and telemetry data, releasing 12 post-launch content updates",
+					"spans": [
+						{
+							"text": "feedback and telemetry data, releasing 12 post-launch content updates",
+							"x": 236.983994,
+							"y": 261.25,
+							"width": 333.5699999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 66
+						}
+					],
+					"x": 236.983994,
+					"y": 261.25,
+					"width": 333.5699999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 66
+				},
+				{
+					"page": 2,
+					"text": "• Worked closely with artists to implement VFX, animations, and shaders-",
+					"spans": [
+						{
+							"text": "• Worked closely with artists to implement VFX, animations, and shaders-",
+							"x": 228.823994,
+							"y": 282.25,
+							"width": 347.1999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 67
+						}
+					],
+					"x": 228.823994,
+					"y": 282.25,
+					"width": 347.1999999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 67
+				},
+				{
+					"page": 2,
+					"text": "兴趣爱好 that enhanced visual polish while maintaining performance targets",
+					"spans": [
+						{
+							"text": "兴趣爱好",
+							"x": 33,
+							"y": 295.55999999999995,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 23
+						},
+						{
+							"text": "that enhanced visual polish while maintaining performance targets",
+							"x": 236.983994,
+							"y": 297.25,
+							"width": 316.0299999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 68
+						}
+					],
+					"x": 33,
+					"y": 295.55999999999995,
+					"width": 520.0139939999998,
+					"height": 12,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 45.5
+				},
+				{
+					"page": 2,
+					"text": "Game Design",
+					"spans": [
+						{
+							"text": "Game Design",
+							"x": 30,
+							"y": 315.25,
+							"width": 65.31,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 25
+						}
+					],
+					"x": 30,
+					"y": 315.25,
+					"width": 65.31,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 25
+				},
+				{
+					"page": 2,
+					"text": "Mobile Games Studio Remote",
+					"spans": [
+						{
+							"text": "Mobile Games Studio",
+							"x": 222.983994,
+							"y": 320.25,
+							"width": 103.94,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 70
+						},
+						{
+							"text": "Remote",
+							"x": 543.290025,
+							"y": 320.25,
+							"width": 35.99000000000002,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 72
+						}
+					],
+					"x": 222.983994,
+					"y": 320.25,
+					"width": 356.296031,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 71
+				},
+				{
+					"page": 2,
+					"text": "Mechanics, Level Design, Player -",
+					"spans": [
+						{
+							"text": "Mechanics, Level Design, Player -",
+							"x": 16,
+							"y": 331.21875,
+							"width": 136.33374999999995,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 27
+						}
+					],
+					"x": 16,
+					"y": 331.21875,
+					"width": 136.33374999999995,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 27
+				},
+				{
+					"page": 2,
+					"text": "Junior Game Developer September 2018 - May 2020",
+					"spans": [
+						{
+							"text": "Junior Game Developer",
+							"x": 222.983994,
+							"y": 336.25,
+							"width": 110.29999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 73
+						},
+						{
+							"text": "September 2018 - May 2020",
+							"x": 446.990022,
+							"y": 336.25,
+							"width": 132.29000000000013,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 75
+						}
+					],
+					"x": 222.983994,
+					"y": 336.25,
+					"width": 356.29602800000015,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 74
+				},
+				{
+					"page": 2,
+					"text": "Psychology",
+					"spans": [
+						{
+							"text": "Psychology",
+							"x": 16,
+							"y": 344.34375,
+							"width": 46.095000000000006,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 28
+						}
+					],
+					"x": 16,
+					"y": 344.34375,
+					"width": 46.095000000000006,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 28
+				},
+				{
+					"page": 2,
+					"text": "• Contributed to development of three mobile puzzle games built in -",
+					"spans": [
+						{
+							"text": "• Contributed to development of three mobile puzzle games built in -",
+							"x": 228.823994,
+							"y": 352.25,
+							"width": 322.29999999999995,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 76
+						}
+					],
+					"x": 228.823994,
+					"y": 352.25,
+					"width": 322.29999999999995,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 76
+				},
+				{
+					"page": 2,
+					"text": "AI & Procedural Generation Unity, collectively downloaded 2M+ times on iOS and Android",
+					"spans": [
+						{
+							"text": "AI & Procedural Generation",
+							"x": 30,
+							"y": 365.5,
+							"width": 136.48,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 30
+						},
+						{
+							"text": "Unity, collectively downloaded 2M+ times on iOS and Android",
+							"x": 236.983994,
+							"y": 367.25,
+							"width": 288.7700000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 77
+						}
+					],
+					"x": 30,
+					"y": 365.5,
+					"width": 495.75399400000015,
+					"height": 11.75,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 53.5
+				},
+				{
+					"page": 2,
+					"text": "PCG, Machine Learning, Emergent -",
+					"spans": [
+						{
+							"text": "PCG, Machine Learning, Emergent -",
+							"x": 16,
+							"y": 381.46875,
+							"width": 146.73750000000007,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 32
+						}
+					],
+					"x": 16,
+					"y": 381.46875,
+					"width": 146.73750000000007,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 32
+				},
+				{
+					"page": 2,
+					"text": "• Implemented UI systems, touch controls, and gesture recognition -",
+					"spans": [
+						{
+							"text": "• Implemented UI systems, touch controls, and gesture recognition -",
+							"x": 228.823994,
+							"y": 388.25,
+							"width": 320.95000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 78
+						}
+					],
+					"x": 228.823994,
+					"y": 388.25,
+					"width": 320.95000000000005,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 78
+				},
+				{
+					"page": 2,
+					"text": "Gameplay",
+					"spans": [
+						{
+							"text": "Gameplay",
+							"x": 16,
+							"y": 394.59375,
+							"width": 41.55375000000001,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 33
+						}
+					],
+					"x": 16,
+					"y": 394.59375,
+					"width": 41.55375000000001,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 33
+				},
+				{
+					"page": 2,
+					"text": "optimized for mobile devices and various screen sizes",
+					"spans": [
+						{
+							"text": "optimized for mobile devices and various screen sizes",
+							"x": 236.983994,
+							"y": 403.25,
+							"width": 252.93000000000018,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 79
+						}
+					],
+					"x": 236.983994,
+					"y": 403.25,
+					"width": 252.93000000000018,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 79
+				},
+				{
+					"page": 2,
+					"text": "Indie Game Development",
+					"spans": [
+						{
+							"text": "Indie Game Development",
+							"x": 30,
+							"y": 415.75,
+							"width": 124.75000000000001,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 35
+						}
+					],
+					"x": 30,
+					"y": 415.75,
+					"width": 124.75,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 35
+				},
+				{
+					"page": 2,
+					"text": "• Developed monetization features including rewarded video ads, in-app -",
+					"spans": [
+						{
+							"text": "• Developed monetization features including rewarded video ads, in-app -",
+							"x": 228.823994,
+							"y": 424.25,
+							"width": 347,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 80
+						}
+					],
+					"x": 228.823994,
+					"y": 424.25,
+					"width": 347,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 80
+				},
+				{
+					"page": 2,
+					"text": "Solo Dev, Game Jams, Community",
+					"spans": [
+						{
+							"text": "Solo Dev, Game Jams, Community",
+							"x": 16,
+							"y": 431.71875,
+							"width": 139.56250000000003,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 37
+						}
+					],
+					"x": 16,
+					"y": 431.71875,
+					"width": 139.56250000000003,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 37
+				},
+				{
+					"page": 2,
+					"text": "purchases, and daily reward systems that increased retention by 25%",
+					"spans": [
+						{
+							"text": "purchases, and daily reward systems that increased retention by 25%",
+							"x": 236.983994,
+							"y": 439.25,
+							"width": 326.0299999999999,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 81
+						}
+					],
+					"x": 236.983994,
+					"y": 439.25,
+					"width": 326.0299999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 81
+				},
+				{
+					"page": 2,
+					"text": "Technical Art",
+					"spans": [
+						{
+							"text": "Technical Art",
+							"x": 30,
+							"y": 452.875,
+							"width": 66.54999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 39
+						}
+					],
+					"x": 30,
+					"y": 452.875,
+					"width": 66.54999999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 39
+				},
+				{
+					"page": 2,
+					"text": "• Optimized memory usage and load times for mobile platforms, -",
+					"spans": [
+						{
+							"text": "• Optimized memory usage and load times for mobile platforms, -",
+							"x": 228.823994,
+							"y": 460.25,
+							"width": 308.57999999999987,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 82
+						}
+					],
+					"x": 228.823994,
+					"y": 460.25,
+					"width": 308.5799999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 82
+				},
+				{
+					"page": 2,
+					"text": "Shaders, VFX, Optimization",
+					"spans": [
+						{
+							"text": "Shaders, VFX, Optimization",
+							"x": 16,
+							"y": 468.84375,
+							"width": 113.41750000000002,
+							"height": 8.75,
+							"fontRef": "g_d0_f3",
+							"fontSize": 8.75,
+							"streamIndex": 41
+						}
+					],
+					"x": 16,
+					"y": 468.84375,
+					"width": 113.41750000000002,
+					"height": 8.75,
+					"fontSize": 8.75,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 41
+				},
+				{
+					"page": 2,
+					"text": "reducing app size by 35% through asset compression and code -",
+					"spans": [
+						{
+							"text": "reducing app size by 35% through asset compression and code -",
+							"x": 236.983994,
+							"y": 475.25,
+							"width": 300.9000000000003,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 83
+						}
+					],
+					"x": 236.983994,
+					"y": 475.25,
+					"width": 300.90000000000026,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 83
+				},
+				{
+					"page": 2,
+					"text": "optimization",
+					"spans": [
+						{
+							"text": "optimization",
+							"x": 236.983994,
+							"y": 490.25,
+							"width": 60.27999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 84
+						}
+					],
+					"x": 236.983994,
+					"y": 490.25,
+					"width": 60.27999999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 84
+				},
+				{
+					"page": 2,
+					"text": "推荐人",
+					"spans": [
+						{
+							"text": "推荐人",
+							"x": 33,
+							"y": 496.31,
+							"width": 36,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 43
+						}
+					],
+					"x": 33,
+					"y": 496.31,
+					"width": 36,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 43
+				},
+				{
+					"page": 2,
+					"text": "• Collaborated with game designers to balance puzzle difficulty curves -",
+					"spans": [
+						{
+							"text": "• Collaborated with game designers to balance puzzle difficulty curves -",
+							"x": 228.823994,
+							"y": 511.25,
+							"width": 335.94,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 85
+						}
+					],
+					"x": 228.823994,
+					"y": 511.25,
+					"width": 335.94000000000005,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 85
+				},
+				{
+					"page": 2,
+					"text": "Available upon request",
+					"spans": [
+						{
+							"text": "Available upon request",
+							"x": 16,
+							"y": 516,
+							"width": 113.08999999999999,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 45
+						}
+					],
+					"x": 16,
+					"y": 516,
+					"width": 113.08999999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 45
+				},
+				{
+					"page": 2,
+					"text": "and progression pacing using A/B testing data",
+					"spans": [
+						{
+							"text": "and progression pacing using A/B testing data",
+							"x": 236.983994,
+							"y": 526.25,
+							"width": 216.09999999999985,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 86
+						}
+					],
+					"x": 236.983994,
+					"y": 526.25,
+					"width": 216.09999999999985,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 86
+				},
+				{
+					"page": 2,
+					"text": "获奖经历",
+					"spans": [
+						{
+							"text": "获奖经历",
+							"x": 217.983994,
+							"y": 561.56,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 88
+						}
+					],
+					"x": 217.983994,
+					"y": 561.56,
+					"width": 48,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 88
+				},
+				{
+					"page": 2,
+					"text": "Best Gameplay - Ludum Dare 48 April 2021",
+					"spans": [
+						{
+							"text": "Best Gameplay - Ludum Dare 48",
+							"x": 222.983994,
+							"y": 581.25,
+							"width": 151.56000000000017,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 90
+						},
+						{
+							"text": "April 2021",
+							"x": 529.490006,
+							"y": 581.25,
+							"width": 49.789999999999914,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 92
+						}
+					],
+					"x": 222.983994,
+					"y": 581.25,
+					"width": 356.29601199999996,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 91
+				},
+				{
+					"page": 2,
+					"text": "Ludum Dare",
+					"spans": [
+						{
+							"text": "Ludum Dare",
+							"x": 222.983994,
+							"y": 597.25,
+							"width": 58.46,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 93
+						}
+					],
+					"x": 222.983994,
+					"y": 597.25,
+					"width": 58.45999999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 93
+				},
+				{
+					"page": 2,
+					"text": "Awarded for puzzle game 'Deeper and Deeper' which ranked in the top 5% -",
+					"spans": [
+						{
+							"text": "Awarded for puzzle game 'Deeper and Deeper' which ranked in the top 5% -",
+							"x": 222.983994,
+							"y": 613.25,
+							"width": 353.6499999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 94
+						}
+					],
+					"x": 222.983994,
+					"y": 613.25,
+					"width": 353.6499999999996,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 94
+				},
+				{
+					"page": 2,
+					"text": "overall among 3,000+ submissions",
+					"spans": [
+						{
+							"text": "overall among 3,000+ submissions",
+							"x": 222.983994,
+							"y": 628.25,
+							"width": 163.62000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 95
+						}
+					],
+					"x": 222.983994,
+					"y": 628.25,
+					"width": 163.62000000000006,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 95
+				},
+				{
+					"page": 2,
+					"text": "Employee Excellence Award December 2021",
+					"spans": [
+						{
+							"text": "Employee Excellence Award",
+							"x": 222.983994,
+							"y": 651.25,
+							"width": 132.0199999999999,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 96
+						},
+						{
+							"text": "December 2021",
+							"x": 504.720017,
+							"y": 651.25,
+							"width": 74.55999999999995,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 98
+						}
+					],
+					"x": 222.983994,
+					"y": 651.25,
+					"width": 356.29602299999993,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 97
+				},
+				{
+					"page": 2,
+					"text": "Pixel Forge Interactive",
+					"spans": [
+						{
+							"text": "Pixel Forge Interactive",
+							"x": 222.983994,
+							"y": 667.25,
+							"width": 105.58000000000004,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 99
+						}
+					],
+					"x": 222.983994,
+					"y": 667.25,
+					"width": 105.58000000000004,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 99
+				},
+				{
+					"page": 2,
+					"text": "Recognized for exceptional contributions to 'Starbound Odyssey' -",
+					"spans": [
+						{
+							"text": "Recognized for exceptional contributions to 'Starbound Odyssey' -",
+							"x": 222.983994,
+							"y": 683.25,
+							"width": 308.82999999999976,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 100
+						}
+					],
+					"x": 222.983994,
+					"y": 683.25,
+					"width": 308.82999999999976,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 100
+				},
+				{
+					"page": 2,
+					"text": "development and dedication to code quality",
+					"spans": [
+						{
+							"text": "development and dedication to code quality",
+							"x": 222.983994,
+							"y": 698.25,
+							"width": 205.17999999999984,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 101
+						}
+					],
+					"x": 222.983994,
+					"y": 698.25,
+					"width": 205.17999999999984,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 101
+				}
+			],
+			"inversionRatio": 0.36363636363636365,
+			"gutter": { "x": 170, "width": 46, "coverage": 1, "splitRatio": 0.36619718309859156 },
+			"margins": { "top": 34.25, "left": 16, "right": 16.000014999999735, "bottom": 180.64001499999995 },
+			"textAreaRatio": 0.2883945066316631
+		},
+		{
+			"pageNumber": 3,
+			"width": 595.280029,
+			"height": 841.890015,
+			"lines": [
+				{
+					"page": 3,
+					"text": "项目经历",
+					"spans": [
+						{
+							"text": "项目经历",
+							"x": 33,
+							"y": 14.559999999999945,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 0
+						}
+					],
+					"x": 33,
+					"y": 14.559999999999945,
+					"width": 48,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 0
+				},
+				{
+					"page": 3,
+					"text": "Echoes of the Void (Indie Game) 2023 - Present",
+					"spans": [
+						{
+							"text": "Echoes of the Void (Indie Game)",
+							"x": 38,
+							"y": 34.25,
+							"width": 155.72,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 2
+						},
+						{
+							"text": "2023 - Present",
+							"x": 510.610016,
+							"y": 34.25,
+							"width": 68.67000000000007,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 4
+						}
+					],
+					"x": 38,
+					"y": 34.25,
+					"width": 541.280016,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 3
+				},
+				{
+					"page": 3,
+					"text": "Solo developer for a narrative-driven 2D platformer built in Unity. Features custom dialogue system, branching -",
+					"spans": [
+						{
+							"text": "Solo developer for a narrative-driven 2D platformer built in Unity. Features custom dialogue system, branching -",
+							"x": 38,
+							"y": 50.25,
+							"width": 526.7099999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 5
+						}
+					],
+					"x": 38,
+					"y": 50.25,
+					"width": 526.7099999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 5
+				},
+				{
+					"page": 3,
+					"text": "story paths, and atmospheric pixel art. Currently in development with demo released on itch.io garnering 5K+ -",
+					"spans": [
+						{
+							"text": "story paths, and atmospheric pixel art. Currently in development with demo released on itch.io garnering 5K+ -",
+							"x": 38,
+							"y": 65.25,
+							"width": 521.4999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 6
+						}
+					],
+					"x": 38,
+					"y": 65.25,
+					"width": 521.4999999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 6
+				},
+				{
+					"page": 3,
+					"text": "downloads and positive community feedback. Planned Steam release Q2 2025.",
+					"spans": [
+						{
+							"text": "downloads and positive community feedback. Planned Steam release Q2 2025.",
+							"x": 38,
+							"y": 80.25,
+							"width": 369.67999999999995,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 7
+						}
+					],
+					"x": 38,
+					"y": 80.25,
+					"width": 369.67999999999995,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 7
+				},
+				{
+					"page": 3,
+					"text": "View on itch.io",
+					"spans": [
+						{
+							"text": "View on itch.io",
+							"x": 38,
+							"y": 96.25,
+							"width": 69.04,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 8
+						}
+					],
+					"x": 38,
+					"y": 96.25,
+					"width": 69.04,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 8
+				},
+				{
+					"page": 3,
+					"text": "Open Source: Unity Dialogue Framework 2021 - 2023",
+					"spans": [
+						{
+							"text": "Open Source: Unity Dialogue Framework",
+							"x": 38,
+							"y": 119.25,
+							"width": 201.22000000000003,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 10
+						},
+						{
+							"text": "2021 - 2023",
+							"x": 522.710022,
+							"y": 119.25,
+							"width": 56.5700000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 12
+						}
+					],
+					"x": 38,
+					"y": 119.25,
+					"width": 541.280022,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 11
+				},
+				{
+					"page": 3,
+					"text": "Created and maintain an open-source dialogue system for Unity with visual node-based editor, localization -",
+					"spans": [
+						{
+							"text": "Created and maintain an open-source dialogue system for Unity with visual node-based editor, localization -",
+							"x": 38,
+							"y": 135.25,
+							"width": 506.7199999999999,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 13
+						}
+					],
+					"x": 38,
+					"y": 135.25,
+					"width": 506.7199999999999,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 13
+				},
+				{
+					"page": 3,
+					"text": "support, and voice acting integration. Project has 800+ GitHub stars and is actively used by indie developers -",
+					"spans": [
+						{
+							"text": "support, and voice acting integration. Project has 800+ GitHub stars and is actively used by indie developers -",
+							"x": 38,
+							"y": 150.25,
+							"width": 512.6699999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 14
+						}
+					],
+					"x": 38,
+					"y": 150.25,
+					"width": 512.6699999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 14
+				},
+				{
+					"page": 3,
+					"text": "worldwide. Includes comprehensive documentation and example projects.",
+					"spans": [
+						{
+							"text": "worldwide. Includes comprehensive documentation and example projects.",
+							"x": 38,
+							"y": 165.25,
+							"width": 349.86999999999995,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 15
+						}
+					],
+					"x": 38,
+					"y": 165.25,
+					"width": 349.86999999999995,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 15
+				},
+				{
+					"page": 3,
+					"text": "View on GitHub",
+					"spans": [
+						{
+							"text": "View on GitHub",
+							"x": 38,
+							"y": 181.25,
+							"width": 73.32000000000001,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 16
+						}
+					],
+					"x": 38,
+					"y": 181.25,
+					"width": 73.32000000000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 16
+				},
+				{
+					"page": 3,
+					"text": "Game Jam Participation 2019 - Present",
+					"spans": [
+						{
+							"text": "Game Jam Participation",
+							"x": 38,
+							"y": 204.25,
+							"width": 119.16999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 18
+						},
+						{
+							"text": "2019 - Present",
+							"x": 510.610046,
+							"y": 204.25,
+							"width": 68.67000000000007,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 20
+						}
+					],
+					"x": 38,
+					"y": 204.25,
+					"width": 541.2800460000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 19
+				},
+				{
+					"page": 3,
+					"text": "Regular participant in Ludum Dare and Global Game Jam events. Created 12+ game prototypes exploring -",
+					"spans": [
+						{
+							"text": "Regular participant in Ludum Dare and Global Game Jam events. Created 12+ game prototypes exploring -",
+							"x": 38,
+							"y": 220.25,
+							"width": 498.58999999999975,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 21
+						}
+					],
+					"x": 38,
+					"y": 220.25,
+					"width": 498.5899999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 21
+				},
+				{
+					"page": 3,
+					"text": "experimental mechanics and art styles. Won 'Best Gameplay' award at Ludum Dare 48 with puzzle game 'Deeper -",
+					"spans": [
+						{
+							"text": "experimental mechanics and art styles. Won 'Best Gameplay' award at Ludum Dare 48 with puzzle game 'Deeper -",
+							"x": 38,
+							"y": 235.25,
+							"width": 532.5999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 22
+						}
+					],
+					"x": 38,
+					"y": 235.25,
+					"width": 532.5999999999997,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 22
+				},
+				{
+					"page": 3,
+					"text": "and Deeper' that ranked in top 5% overall.",
+					"spans": [
+						{
+							"text": "and Deeper' that ranked in top 5% overall.",
+							"x": 38,
+							"y": 250.25,
+							"width": 197.47999999999993,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 23
+						}
+					],
+					"x": 38,
+					"y": 250.25,
+					"width": 197.47999999999993,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 23
+				},
+				{
+					"page": 3,
+					"text": "科研成果",
+					"spans": [
+						{
+							"text": "科研成果",
+							"x": 33,
+							"y": 279.55999999999995,
+							"width": 48,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 25
+						}
+					],
+					"x": 33,
+					"y": 279.55999999999995,
+					"width": 48,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 25
+				},
+				{
+					"page": 3,
+					"text": "Optimizing Unity Games for Mobile: A Practical Guide September 2021",
+					"spans": [
+						{
+							"text": "Optimizing Unity Games for Mobile: A Practical Guide",
+							"x": 38,
+							"y": 299.25,
+							"width": 263.85999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 27
+						},
+						{
+							"text": "September 2021",
+							"x": 501.300018,
+							"y": 299.25,
+							"width": 77.98000000000008,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 29
+						}
+					],
+					"x": 38,
+					"y": 299.25,
+					"width": 541.2800180000002,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 28
+				},
+				{
+					"page": 3,
+					"text": "Game Developer Magazine",
+					"spans": [
+						{
+							"text": "Game Developer Magazine",
+							"x": 38,
+							"y": 315.25,
+							"width": 124.95999999999997,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 30
+						}
+					],
+					"x": 38,
+					"y": 315.25,
+					"width": 124.95999999999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 30
+				},
+				{
+					"page": 3,
+					"text": "Technical article covering mobile optimization techniques including draw call batching, LOD systems, and -",
+					"spans": [
+						{
+							"text": "Technical article covering mobile optimization techniques including draw call batching, LOD systems, and -",
+							"x": 38,
+							"y": 331.25,
+							"width": 504.00999999999993,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 31
+						}
+					],
+					"x": 38,
+					"y": 331.25,
+					"width": 504.01,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 31
+				},
+				{
+					"page": 3,
+					"text": "memory management",
+					"spans": [
+						{
+							"text": "memory management",
+							"x": 38,
+							"y": 346.25,
+							"width": 104.78999999999998,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 32
+						}
+					],
+					"x": 38,
+					"y": 346.25,
+					"width": 104.78999999999996,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 32
+				},
+				{
+					"page": 3,
+					"text": "Building Modular Dialogue Systems May 2022",
+					"spans": [
+						{
+							"text": "Building Modular Dialogue Systems",
+							"x": 38,
+							"y": 369.25,
+							"width": 175.37,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 34
+						},
+						{
+							"text": "May 2022",
+							"x": 533.540039,
+							"y": 369.25,
+							"width": 45.74000000000014,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 36
+						}
+					],
+					"x": 38,
+					"y": 369.25,
+					"width": 541.2800390000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 35
+				},
+				{
+					"page": 3,
+					"text": "Seattle Indie Game Developers Meetup",
+					"spans": [
+						{
+							"text": "Seattle Indie Game Developers Meetup",
+							"x": 38,
+							"y": 385.25,
+							"width": 181.25000000000003,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 37
+						}
+					],
+					"x": 38,
+					"y": 385.25,
+					"width": 181.25000000000003,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 37
+				},
+				{
+					"page": 3,
+					"text": "Presented talk on designing flexible dialogue systems for narrative games, attended by 60+ local developers",
+					"spans": [
+						{
+							"text": "Presented talk on designing flexible dialogue systems for narrative games, attended by 60+ local developers",
+							"x": 38,
+							"y": 401.25,
+							"width": 504.25999999999954,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 38
+						}
+					],
+					"x": 38,
+					"y": 401.25,
+					"width": 504.25999999999954,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 38
+				},
+				{
+					"page": 3,
+					"text": "志愿者经历",
+					"spans": [
+						{
+							"text": "志愿者经历",
+							"x": 33,
+							"y": 430.56,
+							"width": 60,
+							"height": 12,
+							"fontRef": "g_d0_f1",
+							"fontSize": 12,
+							"streamIndex": 40
+						}
+					],
+					"x": 33,
+					"y": 430.56,
+					"width": 60,
+					"height": 12,
+					"fontSize": 12,
+					"fontRef": "g_d0_f1",
+					"meanStreamIndex": 40
+				},
+				{
+					"page": 3,
+					"text": "Seattle Indies 2020 - Present Code.org Game Development Workshops",
+					"spans": [
+						{
+							"text": "Seattle Indies",
+							"x": 16,
+							"y": 450.25,
+							"width": 67.33,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 42
+						},
+						{
+							"text": "2020 - Present",
+							"x": 222.97001699999998,
+							"y": 450.25,
+							"width": 68.66999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 44
+						},
+						{
+							"text": "Code.org Game Development Workshops",
+							"x": 303.640015,
+							"y": 450.25,
+							"width": 200.2100000000001,
+							"height": 10,
+							"fontRef": "g_d0_f4",
+							"fontSize": 10,
+							"streamIndex": 51
+						}
+					],
+					"x": 16,
+					"y": 450.25,
+					"width": 487.8500150000001,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f4",
+					"meanStreamIndex": 45.666666666666664
+				},
+				{
+					"page": 3,
+					"text": "Seattle, WA 2021 - Present",
+					"spans": [
+						{
+							"text": "Seattle, WA",
+							"x": 16,
+							"y": 466.25,
+							"width": 53.01,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 45
+						},
+						{
+							"text": "2021 - Present",
+							"x": 303.640015,
+							"y": 465.25,
+							"width": 68.66999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 53
+						}
+					],
+					"x": 16,
+					"y": 465.25,
+					"width": 356.31001499999996,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 49
+				},
+				{
+					"page": 3,
+					"text": "Active member of local indie game development - Seattle, WA",
+					"spans": [
+						{
+							"text": "Active member of local indie game development -",
+							"x": 16,
+							"y": 482.25,
+							"width": 232.55000000000004,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 46
+						},
+						{
+							"text": "Seattle, WA",
+							"x": 303.640015,
+							"y": 481.25,
+							"width": 53.00999999999996,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 54
+						}
+					],
+					"x": 16,
+					"y": 481.25,
+					"width": 340.65001499999994,
+					"height": 11,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 50
+				},
+				{
+					"page": 3,
+					"text": "community. Organize monthly game showcases and - Volunteer instructor teaching basic game programming -",
+					"spans": [
+						{
+							"text": "community. Organize monthly game showcases and -",
+							"x": 16,
+							"y": 497.25,
+							"width": 250.04,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 47
+						},
+						{
+							"text": "Volunteer instructor teaching basic game programming -",
+							"x": 303.640015,
+							"y": 497.25,
+							"width": 268.18999999999977,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 55
+						}
+					],
+					"x": 16,
+					"y": 497.25,
+					"width": 555.8300149999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 51
+				},
+				{
+					"page": 3,
+					"text": "provide mentorship to aspiring game developers through- concepts to middle school students. Led 8+ workshops -",
+					"spans": [
+						{
+							"text": "provide mentorship to aspiring game developers through-",
+							"x": 16,
+							"y": 512.25,
+							"width": 272.41,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 48
+						},
+						{
+							"text": "concepts to middle school students. Led 8+ workshops -",
+							"x": 303.640015,
+							"y": 512.25,
+							"width": 261.67999999999984,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 56
+						}
+					],
+					"x": 16,
+					"y": 512.25,
+					"width": 549.3200149999998,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 52
+				},
+				{
+					"page": 3,
+					"text": "code reviews and technical guidance. introducing Unity fundamentals and game design -",
+					"spans": [
+						{
+							"text": "code reviews and technical guidance.",
+							"x": 16,
+							"y": 527.25,
+							"width": 174.75000000000006,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 49
+						},
+						{
+							"text": "introducing Unity fundamentals and game design -",
+							"x": 303.640015,
+							"y": 527.25,
+							"width": 239.94000000000005,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 57
+						}
+					],
+					"x": 16,
+					"y": 527.25,
+					"width": 527.580015,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 53
+				},
+				{
+					"page": 3,
+					"text": "principles.",
+					"spans": [
+						{
+							"text": "principles.",
+							"x": 303.640015,
+							"y": 542.25,
+							"width": 50.259999999999955,
+							"height": 10,
+							"fontRef": "g_d0_f3",
+							"fontSize": 10,
+							"streamIndex": 58
+						}
+					],
+					"x": 303.640015,
+					"y": 542.25,
+					"width": 50.259999999999934,
+					"height": 10,
+					"fontSize": 10,
+					"fontRef": "g_d0_f3",
+					"meanStreamIndex": 58
+				}
+			],
+			"inversionRatio": 0,
+			"gutter": null,
+			"margins": { "top": 34.25, "left": 16, "right": 16.000006999999982, "bottom": 304.64001499999995 },
+			"textAreaRatio": 0.22764265143198334
+		}
+	],
+	"lines": [
+		{
+			"page": 1,
+			"text": "虚构姓名验收一",
+			"spans": [
+				{
+					"text": "虚构姓名验收一",
+					"x": 234.640015,
+					"y": 117.84000000000003,
+					"width": 126.00000000000001,
+					"height": 18,
+					"fontRef": "g_d0_f1",
+					"fontSize": 18,
+					"streamIndex": 0
+				}
+			],
+			"x": 234.640015,
+			"y": 117.84000000000003,
+			"width": 126,
+			"height": 18,
+			"fontSize": 18,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 0
+		},
+		{
+			"page": 1,
+			"text": "中文岗位持久化验收",
+			"spans": [
+				{
+					"text": "中文岗位持久化验收",
+					"x": 252.640015,
+					"y": 144.999999,
+					"width": 90,
+					"height": 10,
+					"fontRef": "g_d0_f2",
+					"fontSize": 10,
+					"streamIndex": 2
+				}
+			],
+			"x": 252.640015,
+			"y": 144.999999,
+			"width": 90,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f2",
+			"meanStreamIndex": 2
+		},
+		{
+			"page": 1,
+			"text": "david.kowalski@email.com 000-UX-01 Seattle, WA davidkowalski.games github.com/dkowalski-dev",
+			"spans": [
+				{
+					"text": "david.kowalski@email.com",
+					"x": 38.695007000000004,
+					"y": 165.44999699999994,
+					"width": 128.48000000000008,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 4
+				},
+				{
+					"text": "000-UX-01",
+					"x": 185.175003,
+					"y": 165.44999699999994,
+					"width": 51.49999999999999,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 6
+				},
+				{
+					"text": "Seattle, WA",
+					"x": 254.675003,
+					"y": 165.44999699999994,
+					"width": 53.00999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 8
+				},
+				{
+					"text": "davidkowalski.games",
+					"x": 325.684998,
+					"y": 165.44999699999994,
+					"width": 100.53000000000007,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 10
+				},
+				{
+					"text": "github.com/dkowalski-dev",
+					"x": 444.214996,
+					"y": 165.44999699999994,
+					"width": 124.36999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 12
+				}
+			],
+			"x": 38.695007000000004,
+			"y": 165.44999699999994,
+			"width": 529.8899889999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 8
+		},
+		{
+			"page": 1,
+			"text": "itch.io/dkowalski",
+			"spans": [
+				{
+					"text": "itch.io/dkowalski",
+					"x": 263.50502,
+					"y": 181.44999699999994,
+					"width": 80.2700000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 13
+				}
+			],
+			"x": 263.50502,
+			"y": 181.44999699999994,
+			"width": 80.2700000000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 13
+		},
+		{
+			"page": 1,
+			"text": "个人资料 个人评价",
+			"spans": [
+				{
+					"text": "个人资料",
+					"x": 33,
+					"y": 210.75999699999988,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 15
+				},
+				{
+					"text": "个人评价",
+					"x": 217.983994,
+					"y": 210.75999699999988,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 59
+				}
+			],
+			"x": 33,
+			"y": 210.75999699999988,
+			"width": 232.983994,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 37
+		},
+		{
+			"page": 1,
+			"text": "GitHub Passionate game developer with 5+ years of professional experience-",
+			"spans": [
+				{
+					"text": "GitHub",
+					"x": 30,
+					"y": 230.44999699999994,
+					"width": 35.68,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 17
+				},
+				{
+					"text": "Passionate game developer with 5+ years of professional experience",
+					"x": 222.983994,
+					"y": 230.44999699999994,
+					"width": 334.7900000000002,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 61
+				},
+				{
+					"text": "-",
+					"x": 560.0939940000001,
+					"y": 230.44999699999994,
+					"width": 3.93,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 63
+				}
+			],
+			"x": 30,
+			"y": 230.44999699999994,
+			"width": 534.023994,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 47
+		},
+		{
+			"page": 1,
+			"text": "dkowalski-dev creating engaging gameplay systems and polished player experiences -",
+			"spans": [
+				{
+					"text": "dkowalski-dev",
+					"x": 16,
+					"y": 246.44999699999994,
+					"width": 68.27000000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 19
+				},
+				{
+					"text": "creating engaging gameplay systems and polished player experiences -",
+					"x": 222.983994,
+					"y": 245.44999699999994,
+					"width": 333.40999999999985,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 64
+				}
+			],
+			"x": 16,
+			"y": 245.44999699999994,
+			"width": 540.3939939999998,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 41.5
+		},
+		{
+			"page": 1,
+			"text": "across multiple platforms. Specialized in Unity and Unreal Engine with -",
+			"spans": [
+				{
+					"text": "across multiple platforms. Specialized in Unity and Unreal Engine with -",
+					"x": 222.983994,
+					"y": 260.44999699999994,
+					"width": 338.76,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 65
+				}
+			],
+			"x": 222.983994,
+			"y": 260.44999699999994,
+			"width": 338.75999999999993,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 65
+		},
+		{
+			"page": 1,
+			"text": "LinkedIn",
+			"spans": [
+				{
+					"text": "LinkedIn",
+					"x": 30,
+					"y": 269.44999699999994,
+					"width": 44.720000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 21
+				}
+			],
+			"x": 30,
+			"y": 269.44999699999994,
+			"width": 44.72,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 21
+		},
+		{
+			"page": 1,
+			"text": "strong expertise in C#, C++, and game design principles. Proven ability to -",
+			"spans": [
+				{
+					"text": "strong expertise in C#, C++, and game design principles. Proven ability to -",
+					"x": 222.983994,
+					"y": 275.44999699999994,
+					"width": 349.78999999999974,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 66
+				}
+			],
+			"x": 222.983994,
+			"y": 275.44999699999994,
+			"width": 349.7899999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 66
+		},
+		{
+			"page": 1,
+			"text": "davidkowalski",
+			"spans": [
+				{
+					"text": "davidkowalski",
+					"x": 16,
+					"y": 285.44999699999994,
+					"width": 67.26000000000002,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 23
+				}
+			],
+			"x": 16,
+			"y": 285.44999699999994,
+			"width": 67.26000000000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 23
+		},
+		{
+			"page": 1,
+			"text": "collaborate effectively with cross-functional teams including designers, -",
+			"spans": [
+				{
+					"text": "collaborate effectively with cross-functional teams including designers, -",
+					"x": 222.983994,
+					"y": 290.44999699999994,
+					"width": 340.90000000000003,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 67
+				}
+			],
+			"x": 222.983994,
+			"y": 290.44999699999994,
+			"width": 340.90000000000003,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 67
+		},
+		{
+			"page": 1,
+			"text": "artists, and QA to deliver high-quality games on time and within scope.",
+			"spans": [
+				{
+					"text": "artists, and QA to deliver high-quality games on time and within scope.",
+					"x": 222.983994,
+					"y": 305.44999699999994,
+					"width": 331.27999999999975,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 68
+				}
+			],
+			"x": 222.983994,
+			"y": 305.44999699999994,
+			"width": 331.2799999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 68
+		},
+		{
+			"page": 1,
+			"text": "专业技能",
+			"spans": [
+				{
+					"text": "专业技能",
+					"x": 33,
+					"y": 314.7599969999999,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 25
+				}
+			],
+			"x": 33,
+			"y": 314.7599969999999,
+			"width": 48,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 25
+		},
+		{
+			"page": 1,
+			"text": "Unity Engine 教育背景",
+			"spans": [
+				{
+					"text": "Unity Engine",
+					"x": 30,
+					"y": 334.44999699999994,
+					"width": 64.09999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 27
+				},
+				{
+					"text": "教育背景",
+					"x": 217.983994,
+					"y": 334.75999699999994,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 70
+				}
+			],
+			"x": 30,
+			"y": 334.44999699999994,
+			"width": 235.983994,
+			"height": 12.310000000000002,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 48.5
+		},
+		{
+			"page": 1,
+			"text": "Expert University of Washington Bachelor of Science • 3.6 GPA",
+			"spans": [
+				{
+					"text": "Expert",
+					"x": 16,
+					"y": 351.44999699999994,
+					"width": 31.67,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 29
+				},
+				{
+					"text": "University of Washington",
+					"x": 222.983994,
+					"y": 354.44999699999994,
+					"width": 125.03,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 72
+				},
+				{
+					"text": "Bachelor of Science • 3.6 GPA",
+					"x": 441.620011,
+					"y": 354.44999699999994,
+					"width": 137.65999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 74
+				}
+			],
+			"x": 16,
+			"y": 351.44999699999994,
+			"width": 563.280011,
+			"height": 13,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 58.333333333333336
+		},
+		{
+			"page": 1,
+			"text": "C#, Editor Tools, Performance Profiling",
+			"spans": [
+				{
+					"text": "C#, Editor Tools, Performance Profiling",
+					"x": 16,
+					"y": 366.41874699999994,
+					"width": 161.035,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 31
+				}
+			],
+			"x": 16,
+			"y": 366.41874699999994,
+			"width": 161.035,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 31
+		},
+		{
+			"page": 1,
+			"text": "Computer Science Seattle, WA • 2014 - 2018",
+			"spans": [
+				{
+					"text": "Computer Science",
+					"x": 222.983994,
+					"y": 370.44999699999994,
+					"width": 85.88000000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 75
+				},
+				{
+					"text": "Seattle, WA • 2014 - 2018",
+					"x": 460.90001,
+					"y": 370.44999699999994,
+					"width": 118.38000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 77
+				}
+			],
+			"x": 222.983994,
+			"y": 370.44999699999994,
+			"width": 356.29601600000007,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 76
+		},
+		{
+			"page": 1,
+			"text": "Concentration in Game Development. Relevant Coursework: Game Engine -",
+			"spans": [
+				{
+					"text": "Concentration in Game Development. Relevant Coursework: Game Engine -",
+					"x": 222.983994,
+					"y": 386.44999699999994,
+					"width": 353.3899999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 78
+				}
+			],
+			"x": 222.983994,
+			"y": 386.44999699999994,
+			"width": 353.3899999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 78
+		},
+		{
+			"page": 1,
+			"text": "Unreal Engine Architecture, Computer Graphics, Artificial Intelligence, Physics -",
+			"spans": [
+				{
+					"text": "Unreal Engine",
+					"x": 30,
+					"y": 403.57499699999994,
+					"width": 70.91999999999999,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 33
+				},
+				{
+					"text": "Architecture, Computer Graphics, Artificial Intelligence, Physics -",
+					"x": 222.983994,
+					"y": 401.44999699999994,
+					"width": 306.8500000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 79
+				}
+			],
+			"x": 30,
+			"y": 401.44999699999994,
+			"width": 499.8339940000001,
+			"height": 12.125,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 56
+		},
+		{
+			"page": 1,
+			"text": "Simulation, 3D Mathematics, Software Engineering, Data Structures & -",
+			"spans": [
+				{
+					"text": "Simulation, 3D Mathematics, Software Engineering, Data Structures & -",
+					"x": 222.983994,
+					"y": 416.44999699999994,
+					"width": 333.81000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 80
+				}
+			],
+			"x": 222.983994,
+			"y": 416.44999699999994,
+			"width": 333.8100000000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 80
+		},
+		{
+			"page": 1,
+			"text": "Advanced",
+			"spans": [
+				{
+					"text": "Advanced",
+					"x": 16,
+					"y": 420.57499699999994,
+					"width": 46.55,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 35
+				}
+			],
+			"x": 16,
+			"y": 420.57499699999994,
+			"width": 46.55,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 35
+		},
+		{
+			"page": 1,
+			"text": "Algorithms",
+			"spans": [
+				{
+					"text": "Algorithms",
+					"x": 222.983994,
+					"y": 431.44999699999994,
+					"width": 52.540000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 81
+				}
+			],
+			"x": 222.983994,
+			"y": 431.44999699999994,
+			"width": 52.54000000000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 81
+		},
+		{
+			"page": 1,
+			"text": "C++, Blueprints, UE5 Features",
+			"spans": [
+				{
+					"text": "C++, Blueprints, UE5 Features",
+					"x": 16,
+					"y": 435.54374699999994,
+					"width": 123.55000000000003,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 37
+				}
+			],
+			"x": 16,
+			"y": 435.54374699999994,
+			"width": 123.55000000000001,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 37
+		},
+		{
+			"page": 1,
+			"text": "工作经历",
+			"spans": [
+				{
+					"text": "工作经历",
+					"x": 217.983994,
+					"y": 460.75999699999994,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 83
+				}
+			],
+			"x": 217.983994,
+			"y": 460.75999699999994,
+			"width": 48,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 83
+		},
+		{
+			"page": 1,
+			"text": "Programming Languages",
+			"spans": [
+				{
+					"text": "Programming Languages",
+					"x": 30,
+					"y": 472.69999699999994,
+					"width": 124.31999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 39
+				}
+			],
+			"x": 30,
+			"y": 472.69999699999994,
+			"width": 124.31999999999996,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 39
+		},
+		{
+			"page": 1,
+			"text": "Cascade Studios Seattle, WA",
+			"spans": [
+				{
+					"text": "Cascade Studios",
+					"x": 222.983994,
+					"y": 480.44999699999994,
+					"width": 79.72999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 85
+				},
+				{
+					"text": "Seattle, WA",
+					"x": 526.270005,
+					"y": 480.44999699999994,
+					"width": 53.01000000000019,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 87
+				}
+			],
+			"x": 222.983994,
+			"y": 480.44999699999994,
+			"width": 356.2960110000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 86
+		},
+		{
+			"page": 1,
+			"text": "Expert",
+			"spans": [
+				{
+					"text": "Expert",
+					"x": 16,
+					"y": 489.69999699999994,
+					"width": 31.67,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 41
+				}
+			],
+			"x": 16,
+			"y": 489.69999699999994,
+			"width": 31.67,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 41
+		},
+		{
+			"page": 1,
+			"text": "Senior Game Developer March 2022 - Present",
+			"spans": [
+				{
+					"text": "Senior Game Developer",
+					"x": 222.983994,
+					"y": 496.44999699999994,
+					"width": 110.8300000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 88
+				},
+				{
+					"text": "March 2022 - Present",
+					"x": 478.280015,
+					"y": 496.44999699999994,
+					"width": 101.00000000000007,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 90
+				}
+			],
+			"x": 222.983994,
+			"y": 496.44999699999994,
+			"width": 356.29602100000005,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 89
+		},
+		{
+			"page": 1,
+			"text": "C#, C++, Python, HLSL/GLSL",
+			"spans": [
+				{
+					"text": "C#, C++, Python, HLSL/GLSL",
+					"x": 16,
+					"y": 504.66874699999994,
+					"width": 117.88875000000003,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 43
+				}
+			],
+			"x": 16,
+			"y": 504.66874699999994,
+			"width": 117.88875000000002,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 43
+		},
+		{
+			"page": 1,
+			"text": "• Lead gameplay programmer on an unannounced AAA action-adventure-",
+			"spans": [
+				{
+					"text": "• Lead gameplay programmer on an unannounced AAA action-adventure-",
+					"x": 228.823994,
+					"y": 512.4499969999999,
+					"width": 348.93999999999977,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 91
+				}
+			],
+			"x": 228.823994,
+			"y": 512.4499969999999,
+			"width": 348.9399999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 91
+		},
+		{
+			"page": 1,
+			"text": "title built in Unreal Engine 5 for PC and next-gen consoles",
+			"spans": [
+				{
+					"text": "title built in Unreal Engine 5 for PC and next-gen consoles",
+					"x": 236.983994,
+					"y": 527.4499969999999,
+					"width": 271.09,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 92
+				}
+			],
+			"x": 236.983994,
+			"y": 527.4499969999999,
+			"width": 271.09,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 92
+		},
+		{
+			"page": 1,
+			"text": "Game AI",
+			"spans": [
+				{
+					"text": "Game AI",
+					"x": 30,
+					"y": 541.8249969999999,
+					"width": 42.08,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 45
+				}
+			],
+			"x": 30,
+			"y": 541.8249969999999,
+			"width": 42.08,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 45
+		},
+		{
+			"page": 1,
+			"text": "• Architected and implemented core combat system including hit -",
+			"spans": [
+				{
+					"text": "• Architected and implemented core combat system including hit -",
+					"x": 228.823994,
+					"y": 548.4499969999999,
+					"width": 313.9399999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 93
+				}
+			],
+			"x": 228.823994,
+			"y": 548.4499969999999,
+			"width": 313.9399999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 93
+		},
+		{
+			"page": 1,
+			"text": "Advanced",
+			"spans": [
+				{
+					"text": "Advanced",
+					"x": 16,
+					"y": 558.8249969999999,
+					"width": 46.55,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 47
+				}
+			],
+			"x": 16,
+			"y": 558.8249969999999,
+			"width": 46.55,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 47
+		},
+		{
+			"page": 1,
+			"text": "detection, combo mechanics, and enemy AI behavior trees serving 15+ -",
+			"spans": [
+				{
+					"text": "detection, combo mechanics, and enemy AI behavior trees serving 15+ -",
+					"x": 236.983994,
+					"y": 563.4499969999999,
+					"width": 338.39000000000004,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 94
+				}
+			],
+			"x": 236.983994,
+			"y": 563.4499969999999,
+			"width": 338.39000000000004,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 94
+		},
+		{
+			"page": 1,
+			"text": "Behavior Trees, FSM, Pathfinding, -",
+			"spans": [
+				{
+					"text": "Behavior Trees, FSM, Pathfinding, -",
+					"x": 16,
+					"y": 573.7937469999999,
+					"width": 144.935,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 49
+				}
+			],
+			"x": 16,
+			"y": 573.7937469999999,
+			"width": 144.935,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 49
+		},
+		{
+			"page": 1,
+			"text": "enemy types",
+			"spans": [
+				{
+					"text": "enemy types",
+					"x": 236.983994,
+					"y": 578.4499969999999,
+					"width": 59.51000000000003,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 95
+				}
+			],
+			"x": 236.983994,
+			"y": 578.4499969999999,
+			"width": 59.51000000000005,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 95
+		},
+		{
+			"page": 1,
+			"text": "Navigation",
+			"spans": [
+				{
+					"text": "Navigation",
+					"x": 16,
+					"y": 586.9187469999999,
+					"width": 44.65125,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 50
+				}
+			],
+			"x": 16,
+			"y": 586.9187469999999,
+			"width": 44.65125,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 50
+		},
+		{
+			"page": 1,
+			"text": "• Developed custom editor tools in C++ that reduced level designer -",
+			"spans": [
+				{
+					"text": "• Developed custom editor tools in C++ that reduced level designer -",
+					"x": 228.823994,
+					"y": 599.4499969999999,
+					"width": 319.1600000000002,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 96
+				}
+			],
+			"x": 228.823994,
+			"y": 599.4499969999999,
+			"width": 319.1600000000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 96
+		},
+		{
+			"page": 1,
+			"text": "iteration time by 40% and improved workflow efficiency across the team",
+			"spans": [
+				{
+					"text": "iteration time by 40% and improved workflow efficiency across the team",
+					"x": 236.983994,
+					"y": 614.4499969999999,
+					"width": 339.6699999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 97
+				}
+			],
+			"x": 236.983994,
+			"y": 614.4499969999999,
+			"width": 339.6699999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 97
+		},
+		{
+			"page": 1,
+			"text": "Physics & Mathematics",
+			"spans": [
+				{
+					"text": "Physics & Mathematics",
+					"x": 30,
+					"y": 624.0749969999999,
+					"width": 113.38999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 52
+				}
+			],
+			"x": 30,
+			"y": 624.0749969999999,
+			"width": 113.38999999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 52
+		},
+		{
+			"page": 1,
+			"text": "• Optimized rendering pipeline and gameplay systems to maintain 60 -",
+			"spans": [
+				{
+					"text": "• Optimized rendering pipeline and gameplay systems to maintain 60 -",
+					"x": 228.823994,
+					"y": 635.4499969999999,
+					"width": 333.8899999999999,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 98
+				}
+			],
+			"x": 228.823994,
+			"y": 635.4499969999999,
+			"width": 333.8899999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 98
+		},
+		{
+			"page": 1,
+			"text": "Advanced",
+			"spans": [
+				{
+					"text": "Advanced",
+					"x": 16,
+					"y": 641.0749969999999,
+					"width": 46.55,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 54
+				}
+			],
+			"x": 16,
+			"y": 641.0749969999999,
+			"width": 46.55,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 54
+		},
+		{
+			"page": 1,
+			"text": "FPS performance target on all supported platforms, achieving 95% -",
+			"spans": [
+				{
+					"text": "FPS performance target on all supported platforms, achieving 95% -",
+					"x": 236.983994,
+					"y": 650.4499969999999,
+					"width": 319.61000000000007,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 99
+				}
+			],
+			"x": 236.983994,
+			"y": 650.4499969999999,
+			"width": 319.61000000000007,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 99
+		},
+		{
+			"page": 1,
+			"text": "3D Math, Collision Detection, Rigid -",
+			"spans": [
+				{
+					"text": "3D Math, Collision Detection, Rigid -",
+					"x": 16,
+					"y": 656.0437469999999,
+					"width": 147.83999999999995,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 56
+				}
+			],
+			"x": 16,
+			"y": 656.0437469999999,
+			"width": 147.83999999999995,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 56
+		},
+		{
+			"page": 1,
+			"text": "frame rate stability",
+			"spans": [
+				{
+					"text": "frame rate stability",
+					"x": 236.983994,
+					"y": 665.4499969999999,
+					"width": 89.36999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 100
+				}
+			],
+			"x": 236.983994,
+			"y": 665.4499969999999,
+			"width": 89.36999999999995,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 100
+		},
+		{
+			"page": 1,
+			"text": "Body Dynamics",
+			"spans": [
+				{
+					"text": "Body Dynamics",
+					"x": 16,
+					"y": 669.1687469999999,
+					"width": 64.00625000000002,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 57
+				}
+			],
+			"x": 16,
+			"y": 669.1687469999999,
+			"width": 64.00625000000002,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 57
+		},
+		{
+			"page": 1,
+			"text": "• Ad nostrud enim adipisicing ea proident aliqua veniam nisi amet ea -",
+			"spans": [
+				{
+					"text": "• Ad nostrud enim adipisicing ea proident aliqua veniam nisi amet ea -",
+					"x": 228.823994,
+					"y": 686.4499969999999,
+					"width": 332.7099999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 101
+				}
+			],
+			"x": 228.823994,
+			"y": 686.4499969999999,
+			"width": 332.7099999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 101
+		},
+		{
+			"page": 1,
+			"text": "irure et mollit.",
+			"spans": [
+				{
+					"text": "irure et mollit.",
+					"x": 236.983994,
+					"y": 701.4499969999999,
+					"width": 67.92000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 102
+				}
+			],
+			"x": 236.983994,
+			"y": 701.4499969999999,
+			"width": 67.92000000000007,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 102
+		},
+		{
+			"page": 2,
+			"text": "证书信息 工作经历",
+			"spans": [
+				{
+					"text": "证书信息",
+					"x": 33,
+					"y": 14.559999999999945,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 0
+				},
+				{
+					"text": "工作经历",
+					"x": 217.983994,
+					"y": 14.559999999999945,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 47
+				}
+			],
+			"x": 33,
+			"y": 14.559999999999945,
+			"width": 232.983994,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 23.5
+		},
+		{
+			"page": 2,
+			"text": "Unity Certified Expert: - Pixel Forge Interactive Bellevue, WA",
+			"spans": [
+				{
+					"text": "Unity Certified Expert: -",
+					"x": 16,
+					"y": 34.25,
+					"width": 117.53999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 2
+				},
+				{
+					"text": "Pixel Forge Interactive",
+					"x": 222.983994,
+					"y": 34.25,
+					"width": 111.46000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 49
+				},
+				{
+					"text": "Bellevue, WA",
+					"x": 517.9799969999999,
+					"y": 34.25,
+					"width": 61.30000000000021,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 51
+				}
+			],
+			"x": 16,
+			"y": 34.25,
+			"width": 563.2799970000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 34
+		},
+		{
+			"page": 2,
+			"text": "Programmer Game Developer June 2020 - February 2022",
+			"spans": [
+				{
+					"text": "Programmer",
+					"x": 16,
+					"y": 49.25,
+					"width": 63.910000000000004,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 3
+				},
+				{
+					"text": "Game Developer",
+					"x": 222.983994,
+					"y": 50.25,
+					"width": 77.65999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 52
+				},
+				{
+					"text": "June 2020 - February 2022",
+					"x": 452.060014,
+					"y": 50.25,
+					"width": 127.22000000000025,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 54
+				}
+			],
+			"x": 16,
+			"y": 49.25,
+			"width": 563.2800140000003,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 36.333333333333336
+		},
+		{
+			"page": 2,
+			"text": "March 2022 • Core developer on 'Starbound Odyssey,' a sci-fi roguelike that achieved -",
+			"spans": [
+				{
+					"text": "March 2022",
+					"x": 16,
+					"y": 64.25,
+					"width": 56.33,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 5
+				},
+				{
+					"text": "• Core developer on 'Starbound Odyssey,' a sci-fi roguelike that achieved -",
+					"x": 228.823994,
+					"y": 66.25,
+					"width": 344.24999999999983,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 55
+				}
+			],
+			"x": 16,
+			"y": 64.25,
+			"width": 557.0739939999999,
+			"height": 12,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 30
+		},
+		{
+			"page": 2,
+			"text": "Unity Technologies 500K+ sales on Steam with 'Very Positive' user reviews",
+			"spans": [
+				{
+					"text": "Unity Technologies",
+					"x": 16,
+					"y": 80.25,
+					"width": 90.41,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 6
+				},
+				{
+					"text": "500K+ sales on Steam with 'Very Positive' user reviews",
+					"x": 236.983994,
+					"y": 81.25,
+					"width": 256.26000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 56
+				}
+			],
+			"x": 16,
+			"y": 80.25,
+			"width": 477.24399400000004,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 31
+		},
+		{
+			"page": 2,
+			"text": "Unreal Engine 5 C++ Developer • Implemented procedural generation systems for level layouts, enemy -",
+			"spans": [
+				{
+					"text": "Unreal Engine 5 C++ Developer",
+					"x": 16,
+					"y": 103.25,
+					"width": 152.84,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 8
+				},
+				{
+					"text": "• Implemented procedural generation systems for level layouts, enemy -",
+					"x": 228.823994,
+					"y": 102.25,
+					"width": 339.2099999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 57
+				}
+			],
+			"x": 16,
+			"y": 102.25,
+			"width": 552.0339939999998,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 32.5
+		},
+		{
+			"page": 2,
+			"text": "June 2023 encounters, and loot drops using Unity and C#",
+			"spans": [
+				{
+					"text": "June 2023",
+					"x": 16,
+					"y": 118.25,
+					"width": 48.78,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 10
+				},
+				{
+					"text": "encounters, and loot drops using Unity and C#",
+					"x": 236.983994,
+					"y": 117.25,
+					"width": 218.13000000000014,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 58
+				}
+			],
+			"x": 16,
+			"y": 117.25,
+			"width": 439.11399400000016,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 34
+		},
+		{
+			"page": 2,
+			"text": "Epic Games (Udemy)",
+			"spans": [
+				{
+					"text": "Epic Games (Udemy)",
+					"x": 16,
+					"y": 134.25,
+					"width": 97.84000000000002,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 11
+				}
+			],
+			"x": 16,
+			"y": 134.25,
+			"width": 97.84000000000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 11
+		},
+		{
+			"page": 2,
+			"text": "• Designed and programmed player progression systems including skill -",
+			"spans": [
+				{
+					"text": "• Designed and programmed player progression systems including skill -",
+					"x": 228.823994,
+					"y": 138.25,
+					"width": 343.3799999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 59
+				}
+			],
+			"x": 228.823994,
+			"y": 138.25,
+			"width": 343.3799999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 59
+		},
+		{
+			"page": 2,
+			"text": "trees, equipment upgrades, and meta-progression mechanics",
+			"spans": [
+				{
+					"text": "trees, equipment upgrades, and meta-progression mechanics",
+					"x": 236.983994,
+					"y": 153.25,
+					"width": 289.19000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 60
+				}
+			],
+			"x": 236.983994,
+			"y": 153.25,
+			"width": 289.19,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 60
+		},
+		{
+			"page": 2,
+			"text": "语言",
+			"spans": [
+				{
+					"text": "语言",
+					"x": 33,
+					"y": 163.55999999999995,
+					"width": 24,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 13
+				}
+			],
+			"x": 33,
+			"y": 163.55999999999995,
+			"width": 24,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 13
+		},
+		{
+			"page": 2,
+			"text": "• Created robust save/load system supporting cloud saves and -",
+			"spans": [
+				{
+					"text": "• Created robust save/load system supporting cloud saves and -",
+					"x": 228.823994,
+					"y": 174.25,
+					"width": 297.75999999999976,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 61
+				}
+			],
+			"x": 228.823994,
+			"y": 174.25,
+			"width": 297.75999999999976,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 61
+		},
+		{
+			"page": 2,
+			"text": "English",
+			"spans": [
+				{
+					"text": "English",
+					"x": 16,
+					"y": 183.25,
+					"width": 37.2,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 15
+				}
+			],
+			"x": 16,
+			"y": 183.25,
+			"width": 37.2,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 15
+		},
+		{
+			"page": 2,
+			"text": "cross-platform play between PC and Nintendo Switch",
+			"spans": [
+				{
+					"text": "cross-platform play between PC and Nintendo Switch",
+					"x": 236.983994,
+					"y": 189.25,
+					"width": 249.99000000000004,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 62
+				}
+			],
+			"x": 236.983994,
+			"y": 189.25,
+			"width": 249.99000000000007,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 62
+		},
+		{
+			"page": 2,
+			"text": "Native",
+			"spans": [
+				{
+					"text": "Native",
+					"x": 16,
+					"y": 198.25,
+					"width": 30.369999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 17
+				}
+			],
+			"x": 16,
+			"y": 198.25,
+			"width": 30.369999999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 17
+		},
+		{
+			"page": 2,
+			"text": "• Integrated third-party SDKs for analytics (GameAnalytics), -",
+			"spans": [
+				{
+					"text": "• Integrated third-party SDKs for analytics (GameAnalytics), -",
+					"x": 228.823994,
+					"y": 210.25,
+					"width": 288.88000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 63
+				}
+			],
+			"x": 228.823994,
+			"y": 210.25,
+			"width": 288.8800000000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 63
+		},
+		{
+			"page": 2,
+			"text": "achievements (Steamworks), and multiplayer networking (Photon)",
+			"spans": [
+				{
+					"text": "achievements (Steamworks), and multiplayer networking (Photon)",
+					"x": 236.983994,
+					"y": 225.25,
+					"width": 311.75999999999993,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 64
+				}
+			],
+			"x": 236.983994,
+			"y": 225.25,
+			"width": 311.75999999999993,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 64
+		},
+		{
+			"page": 2,
+			"text": "Polish",
+			"spans": [
+				{
+					"text": "Polish",
+					"x": 16,
+					"y": 236.25,
+					"width": 30.58,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 19
+				}
+			],
+			"x": 16,
+			"y": 236.25,
+			"width": 30.58,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 19
+		},
+		{
+			"page": 2,
+			"text": "• Fixed critical bugs and balanced gameplay based on community -",
+			"spans": [
+				{
+					"text": "• Fixed critical bugs and balanced gameplay based on community -",
+					"x": 228.823994,
+					"y": 246.25,
+					"width": 315.4699999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 65
+				}
+			],
+			"x": 228.823994,
+			"y": 246.25,
+			"width": 315.4699999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 65
+		},
+		{
+			"page": 2,
+			"text": "Conversational",
+			"spans": [
+				{
+					"text": "Conversational",
+					"x": 16,
+					"y": 251.25,
+					"width": 70.73,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 21
+				}
+			],
+			"x": 16,
+			"y": 251.25,
+			"width": 70.73,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 21
+		},
+		{
+			"page": 2,
+			"text": "feedback and telemetry data, releasing 12 post-launch content updates",
+			"spans": [
+				{
+					"text": "feedback and telemetry data, releasing 12 post-launch content updates",
+					"x": 236.983994,
+					"y": 261.25,
+					"width": 333.5699999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 66
+				}
+			],
+			"x": 236.983994,
+			"y": 261.25,
+			"width": 333.5699999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 66
+		},
+		{
+			"page": 2,
+			"text": "• Worked closely with artists to implement VFX, animations, and shaders-",
+			"spans": [
+				{
+					"text": "• Worked closely with artists to implement VFX, animations, and shaders-",
+					"x": 228.823994,
+					"y": 282.25,
+					"width": 347.1999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 67
+				}
+			],
+			"x": 228.823994,
+			"y": 282.25,
+			"width": 347.1999999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 67
+		},
+		{
+			"page": 2,
+			"text": "兴趣爱好 that enhanced visual polish while maintaining performance targets",
+			"spans": [
+				{
+					"text": "兴趣爱好",
+					"x": 33,
+					"y": 295.55999999999995,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 23
+				},
+				{
+					"text": "that enhanced visual polish while maintaining performance targets",
+					"x": 236.983994,
+					"y": 297.25,
+					"width": 316.0299999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 68
+				}
+			],
+			"x": 33,
+			"y": 295.55999999999995,
+			"width": 520.0139939999998,
+			"height": 12,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 45.5
+		},
+		{
+			"page": 2,
+			"text": "Game Design",
+			"spans": [
+				{
+					"text": "Game Design",
+					"x": 30,
+					"y": 315.25,
+					"width": 65.31,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 25
+				}
+			],
+			"x": 30,
+			"y": 315.25,
+			"width": 65.31,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 25
+		},
+		{
+			"page": 2,
+			"text": "Mobile Games Studio Remote",
+			"spans": [
+				{
+					"text": "Mobile Games Studio",
+					"x": 222.983994,
+					"y": 320.25,
+					"width": 103.94,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 70
+				},
+				{
+					"text": "Remote",
+					"x": 543.290025,
+					"y": 320.25,
+					"width": 35.99000000000002,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 72
+				}
+			],
+			"x": 222.983994,
+			"y": 320.25,
+			"width": 356.296031,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 71
+		},
+		{
+			"page": 2,
+			"text": "Mechanics, Level Design, Player -",
+			"spans": [
+				{
+					"text": "Mechanics, Level Design, Player -",
+					"x": 16,
+					"y": 331.21875,
+					"width": 136.33374999999995,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 27
+				}
+			],
+			"x": 16,
+			"y": 331.21875,
+			"width": 136.33374999999995,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 27
+		},
+		{
+			"page": 2,
+			"text": "Junior Game Developer September 2018 - May 2020",
+			"spans": [
+				{
+					"text": "Junior Game Developer",
+					"x": 222.983994,
+					"y": 336.25,
+					"width": 110.29999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 73
+				},
+				{
+					"text": "September 2018 - May 2020",
+					"x": 446.990022,
+					"y": 336.25,
+					"width": 132.29000000000013,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 75
+				}
+			],
+			"x": 222.983994,
+			"y": 336.25,
+			"width": 356.29602800000015,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 74
+		},
+		{
+			"page": 2,
+			"text": "Psychology",
+			"spans": [
+				{
+					"text": "Psychology",
+					"x": 16,
+					"y": 344.34375,
+					"width": 46.095000000000006,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 28
+				}
+			],
+			"x": 16,
+			"y": 344.34375,
+			"width": 46.095000000000006,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 28
+		},
+		{
+			"page": 2,
+			"text": "• Contributed to development of three mobile puzzle games built in -",
+			"spans": [
+				{
+					"text": "• Contributed to development of three mobile puzzle games built in -",
+					"x": 228.823994,
+					"y": 352.25,
+					"width": 322.29999999999995,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 76
+				}
+			],
+			"x": 228.823994,
+			"y": 352.25,
+			"width": 322.29999999999995,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 76
+		},
+		{
+			"page": 2,
+			"text": "AI & Procedural Generation Unity, collectively downloaded 2M+ times on iOS and Android",
+			"spans": [
+				{
+					"text": "AI & Procedural Generation",
+					"x": 30,
+					"y": 365.5,
+					"width": 136.48,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 30
+				},
+				{
+					"text": "Unity, collectively downloaded 2M+ times on iOS and Android",
+					"x": 236.983994,
+					"y": 367.25,
+					"width": 288.7700000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 77
+				}
+			],
+			"x": 30,
+			"y": 365.5,
+			"width": 495.75399400000015,
+			"height": 11.75,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 53.5
+		},
+		{
+			"page": 2,
+			"text": "PCG, Machine Learning, Emergent -",
+			"spans": [
+				{
+					"text": "PCG, Machine Learning, Emergent -",
+					"x": 16,
+					"y": 381.46875,
+					"width": 146.73750000000007,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 32
+				}
+			],
+			"x": 16,
+			"y": 381.46875,
+			"width": 146.73750000000007,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 32
+		},
+		{
+			"page": 2,
+			"text": "• Implemented UI systems, touch controls, and gesture recognition -",
+			"spans": [
+				{
+					"text": "• Implemented UI systems, touch controls, and gesture recognition -",
+					"x": 228.823994,
+					"y": 388.25,
+					"width": 320.95000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 78
+				}
+			],
+			"x": 228.823994,
+			"y": 388.25,
+			"width": 320.95000000000005,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 78
+		},
+		{
+			"page": 2,
+			"text": "Gameplay",
+			"spans": [
+				{
+					"text": "Gameplay",
+					"x": 16,
+					"y": 394.59375,
+					"width": 41.55375000000001,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 33
+				}
+			],
+			"x": 16,
+			"y": 394.59375,
+			"width": 41.55375000000001,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 33
+		},
+		{
+			"page": 2,
+			"text": "optimized for mobile devices and various screen sizes",
+			"spans": [
+				{
+					"text": "optimized for mobile devices and various screen sizes",
+					"x": 236.983994,
+					"y": 403.25,
+					"width": 252.93000000000018,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 79
+				}
+			],
+			"x": 236.983994,
+			"y": 403.25,
+			"width": 252.93000000000018,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 79
+		},
+		{
+			"page": 2,
+			"text": "Indie Game Development",
+			"spans": [
+				{
+					"text": "Indie Game Development",
+					"x": 30,
+					"y": 415.75,
+					"width": 124.75000000000001,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 35
+				}
+			],
+			"x": 30,
+			"y": 415.75,
+			"width": 124.75,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 35
+		},
+		{
+			"page": 2,
+			"text": "• Developed monetization features including rewarded video ads, in-app -",
+			"spans": [
+				{
+					"text": "• Developed monetization features including rewarded video ads, in-app -",
+					"x": 228.823994,
+					"y": 424.25,
+					"width": 347,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 80
+				}
+			],
+			"x": 228.823994,
+			"y": 424.25,
+			"width": 347,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 80
+		},
+		{
+			"page": 2,
+			"text": "Solo Dev, Game Jams, Community",
+			"spans": [
+				{
+					"text": "Solo Dev, Game Jams, Community",
+					"x": 16,
+					"y": 431.71875,
+					"width": 139.56250000000003,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 37
+				}
+			],
+			"x": 16,
+			"y": 431.71875,
+			"width": 139.56250000000003,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 37
+		},
+		{
+			"page": 2,
+			"text": "purchases, and daily reward systems that increased retention by 25%",
+			"spans": [
+				{
+					"text": "purchases, and daily reward systems that increased retention by 25%",
+					"x": 236.983994,
+					"y": 439.25,
+					"width": 326.0299999999999,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 81
+				}
+			],
+			"x": 236.983994,
+			"y": 439.25,
+			"width": 326.0299999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 81
+		},
+		{
+			"page": 2,
+			"text": "Technical Art",
+			"spans": [
+				{
+					"text": "Technical Art",
+					"x": 30,
+					"y": 452.875,
+					"width": 66.54999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 39
+				}
+			],
+			"x": 30,
+			"y": 452.875,
+			"width": 66.54999999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 39
+		},
+		{
+			"page": 2,
+			"text": "• Optimized memory usage and load times for mobile platforms, -",
+			"spans": [
+				{
+					"text": "• Optimized memory usage and load times for mobile platforms, -",
+					"x": 228.823994,
+					"y": 460.25,
+					"width": 308.57999999999987,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 82
+				}
+			],
+			"x": 228.823994,
+			"y": 460.25,
+			"width": 308.5799999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 82
+		},
+		{
+			"page": 2,
+			"text": "Shaders, VFX, Optimization",
+			"spans": [
+				{
+					"text": "Shaders, VFX, Optimization",
+					"x": 16,
+					"y": 468.84375,
+					"width": 113.41750000000002,
+					"height": 8.75,
+					"fontRef": "g_d0_f3",
+					"fontSize": 8.75,
+					"streamIndex": 41
+				}
+			],
+			"x": 16,
+			"y": 468.84375,
+			"width": 113.41750000000002,
+			"height": 8.75,
+			"fontSize": 8.75,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 41
+		},
+		{
+			"page": 2,
+			"text": "reducing app size by 35% through asset compression and code -",
+			"spans": [
+				{
+					"text": "reducing app size by 35% through asset compression and code -",
+					"x": 236.983994,
+					"y": 475.25,
+					"width": 300.9000000000003,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 83
+				}
+			],
+			"x": 236.983994,
+			"y": 475.25,
+			"width": 300.90000000000026,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 83
+		},
+		{
+			"page": 2,
+			"text": "optimization",
+			"spans": [
+				{
+					"text": "optimization",
+					"x": 236.983994,
+					"y": 490.25,
+					"width": 60.27999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 84
+				}
+			],
+			"x": 236.983994,
+			"y": 490.25,
+			"width": 60.27999999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 84
+		},
+		{
+			"page": 2,
+			"text": "推荐人",
+			"spans": [
+				{
+					"text": "推荐人",
+					"x": 33,
+					"y": 496.31,
+					"width": 36,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 43
+				}
+			],
+			"x": 33,
+			"y": 496.31,
+			"width": 36,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 43
+		},
+		{
+			"page": 2,
+			"text": "• Collaborated with game designers to balance puzzle difficulty curves -",
+			"spans": [
+				{
+					"text": "• Collaborated with game designers to balance puzzle difficulty curves -",
+					"x": 228.823994,
+					"y": 511.25,
+					"width": 335.94,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 85
+				}
+			],
+			"x": 228.823994,
+			"y": 511.25,
+			"width": 335.94000000000005,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 85
+		},
+		{
+			"page": 2,
+			"text": "Available upon request",
+			"spans": [
+				{
+					"text": "Available upon request",
+					"x": 16,
+					"y": 516,
+					"width": 113.08999999999999,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 45
+				}
+			],
+			"x": 16,
+			"y": 516,
+			"width": 113.08999999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 45
+		},
+		{
+			"page": 2,
+			"text": "and progression pacing using A/B testing data",
+			"spans": [
+				{
+					"text": "and progression pacing using A/B testing data",
+					"x": 236.983994,
+					"y": 526.25,
+					"width": 216.09999999999985,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 86
+				}
+			],
+			"x": 236.983994,
+			"y": 526.25,
+			"width": 216.09999999999985,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 86
+		},
+		{
+			"page": 2,
+			"text": "获奖经历",
+			"spans": [
+				{
+					"text": "获奖经历",
+					"x": 217.983994,
+					"y": 561.56,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 88
+				}
+			],
+			"x": 217.983994,
+			"y": 561.56,
+			"width": 48,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 88
+		},
+		{
+			"page": 2,
+			"text": "Best Gameplay - Ludum Dare 48 April 2021",
+			"spans": [
+				{
+					"text": "Best Gameplay - Ludum Dare 48",
+					"x": 222.983994,
+					"y": 581.25,
+					"width": 151.56000000000017,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 90
+				},
+				{
+					"text": "April 2021",
+					"x": 529.490006,
+					"y": 581.25,
+					"width": 49.789999999999914,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 92
+				}
+			],
+			"x": 222.983994,
+			"y": 581.25,
+			"width": 356.29601199999996,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 91
+		},
+		{
+			"page": 2,
+			"text": "Ludum Dare",
+			"spans": [
+				{
+					"text": "Ludum Dare",
+					"x": 222.983994,
+					"y": 597.25,
+					"width": 58.46,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 93
+				}
+			],
+			"x": 222.983994,
+			"y": 597.25,
+			"width": 58.45999999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 93
+		},
+		{
+			"page": 2,
+			"text": "Awarded for puzzle game 'Deeper and Deeper' which ranked in the top 5% -",
+			"spans": [
+				{
+					"text": "Awarded for puzzle game 'Deeper and Deeper' which ranked in the top 5% -",
+					"x": 222.983994,
+					"y": 613.25,
+					"width": 353.6499999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 94
+				}
+			],
+			"x": 222.983994,
+			"y": 613.25,
+			"width": 353.6499999999996,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 94
+		},
+		{
+			"page": 2,
+			"text": "overall among 3,000+ submissions",
+			"spans": [
+				{
+					"text": "overall among 3,000+ submissions",
+					"x": 222.983994,
+					"y": 628.25,
+					"width": 163.62000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 95
+				}
+			],
+			"x": 222.983994,
+			"y": 628.25,
+			"width": 163.62000000000006,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 95
+		},
+		{
+			"page": 2,
+			"text": "Employee Excellence Award December 2021",
+			"spans": [
+				{
+					"text": "Employee Excellence Award",
+					"x": 222.983994,
+					"y": 651.25,
+					"width": 132.0199999999999,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 96
+				},
+				{
+					"text": "December 2021",
+					"x": 504.720017,
+					"y": 651.25,
+					"width": 74.55999999999995,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 98
+				}
+			],
+			"x": 222.983994,
+			"y": 651.25,
+			"width": 356.29602299999993,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 97
+		},
+		{
+			"page": 2,
+			"text": "Pixel Forge Interactive",
+			"spans": [
+				{
+					"text": "Pixel Forge Interactive",
+					"x": 222.983994,
+					"y": 667.25,
+					"width": 105.58000000000004,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 99
+				}
+			],
+			"x": 222.983994,
+			"y": 667.25,
+			"width": 105.58000000000004,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 99
+		},
+		{
+			"page": 2,
+			"text": "Recognized for exceptional contributions to 'Starbound Odyssey' -",
+			"spans": [
+				{
+					"text": "Recognized for exceptional contributions to 'Starbound Odyssey' -",
+					"x": 222.983994,
+					"y": 683.25,
+					"width": 308.82999999999976,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 100
+				}
+			],
+			"x": 222.983994,
+			"y": 683.25,
+			"width": 308.82999999999976,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 100
+		},
+		{
+			"page": 2,
+			"text": "development and dedication to code quality",
+			"spans": [
+				{
+					"text": "development and dedication to code quality",
+					"x": 222.983994,
+					"y": 698.25,
+					"width": 205.17999999999984,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 101
+				}
+			],
+			"x": 222.983994,
+			"y": 698.25,
+			"width": 205.17999999999984,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 101
+		},
+		{
+			"page": 3,
+			"text": "项目经历",
+			"spans": [
+				{
+					"text": "项目经历",
+					"x": 33,
+					"y": 14.559999999999945,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 0
+				}
+			],
+			"x": 33,
+			"y": 14.559999999999945,
+			"width": 48,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 0
+		},
+		{
+			"page": 3,
+			"text": "Echoes of the Void (Indie Game) 2023 - Present",
+			"spans": [
+				{
+					"text": "Echoes of the Void (Indie Game)",
+					"x": 38,
+					"y": 34.25,
+					"width": 155.72,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 2
+				},
+				{
+					"text": "2023 - Present",
+					"x": 510.610016,
+					"y": 34.25,
+					"width": 68.67000000000007,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 4
+				}
+			],
+			"x": 38,
+			"y": 34.25,
+			"width": 541.280016,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 3
+		},
+		{
+			"page": 3,
+			"text": "Solo developer for a narrative-driven 2D platformer built in Unity. Features custom dialogue system, branching -",
+			"spans": [
+				{
+					"text": "Solo developer for a narrative-driven 2D platformer built in Unity. Features custom dialogue system, branching -",
+					"x": 38,
+					"y": 50.25,
+					"width": 526.7099999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 5
+				}
+			],
+			"x": 38,
+			"y": 50.25,
+			"width": 526.7099999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 5
+		},
+		{
+			"page": 3,
+			"text": "story paths, and atmospheric pixel art. Currently in development with demo released on itch.io garnering 5K+ -",
+			"spans": [
+				{
+					"text": "story paths, and atmospheric pixel art. Currently in development with demo released on itch.io garnering 5K+ -",
+					"x": 38,
+					"y": 65.25,
+					"width": 521.4999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 6
+				}
+			],
+			"x": 38,
+			"y": 65.25,
+			"width": 521.4999999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 6
+		},
+		{
+			"page": 3,
+			"text": "downloads and positive community feedback. Planned Steam release Q2 2025.",
+			"spans": [
+				{
+					"text": "downloads and positive community feedback. Planned Steam release Q2 2025.",
+					"x": 38,
+					"y": 80.25,
+					"width": 369.67999999999995,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 7
+				}
+			],
+			"x": 38,
+			"y": 80.25,
+			"width": 369.67999999999995,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 7
+		},
+		{
+			"page": 3,
+			"text": "View on itch.io",
+			"spans": [
+				{
+					"text": "View on itch.io",
+					"x": 38,
+					"y": 96.25,
+					"width": 69.04,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 8
+				}
+			],
+			"x": 38,
+			"y": 96.25,
+			"width": 69.04,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 8
+		},
+		{
+			"page": 3,
+			"text": "Open Source: Unity Dialogue Framework 2021 - 2023",
+			"spans": [
+				{
+					"text": "Open Source: Unity Dialogue Framework",
+					"x": 38,
+					"y": 119.25,
+					"width": 201.22000000000003,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 10
+				},
+				{
+					"text": "2021 - 2023",
+					"x": 522.710022,
+					"y": 119.25,
+					"width": 56.5700000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 12
+				}
+			],
+			"x": 38,
+			"y": 119.25,
+			"width": 541.280022,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 11
+		},
+		{
+			"page": 3,
+			"text": "Created and maintain an open-source dialogue system for Unity with visual node-based editor, localization -",
+			"spans": [
+				{
+					"text": "Created and maintain an open-source dialogue system for Unity with visual node-based editor, localization -",
+					"x": 38,
+					"y": 135.25,
+					"width": 506.7199999999999,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 13
+				}
+			],
+			"x": 38,
+			"y": 135.25,
+			"width": 506.7199999999999,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 13
+		},
+		{
+			"page": 3,
+			"text": "support, and voice acting integration. Project has 800+ GitHub stars and is actively used by indie developers -",
+			"spans": [
+				{
+					"text": "support, and voice acting integration. Project has 800+ GitHub stars and is actively used by indie developers -",
+					"x": 38,
+					"y": 150.25,
+					"width": 512.6699999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 14
+				}
+			],
+			"x": 38,
+			"y": 150.25,
+			"width": 512.6699999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 14
+		},
+		{
+			"page": 3,
+			"text": "worldwide. Includes comprehensive documentation and example projects.",
+			"spans": [
+				{
+					"text": "worldwide. Includes comprehensive documentation and example projects.",
+					"x": 38,
+					"y": 165.25,
+					"width": 349.86999999999995,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 15
+				}
+			],
+			"x": 38,
+			"y": 165.25,
+			"width": 349.86999999999995,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 15
+		},
+		{
+			"page": 3,
+			"text": "View on GitHub",
+			"spans": [
+				{
+					"text": "View on GitHub",
+					"x": 38,
+					"y": 181.25,
+					"width": 73.32000000000001,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 16
+				}
+			],
+			"x": 38,
+			"y": 181.25,
+			"width": 73.32000000000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 16
+		},
+		{
+			"page": 3,
+			"text": "Game Jam Participation 2019 - Present",
+			"spans": [
+				{
+					"text": "Game Jam Participation",
+					"x": 38,
+					"y": 204.25,
+					"width": 119.16999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 18
+				},
+				{
+					"text": "2019 - Present",
+					"x": 510.610046,
+					"y": 204.25,
+					"width": 68.67000000000007,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 20
+				}
+			],
+			"x": 38,
+			"y": 204.25,
+			"width": 541.2800460000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 19
+		},
+		{
+			"page": 3,
+			"text": "Regular participant in Ludum Dare and Global Game Jam events. Created 12+ game prototypes exploring -",
+			"spans": [
+				{
+					"text": "Regular participant in Ludum Dare and Global Game Jam events. Created 12+ game prototypes exploring -",
+					"x": 38,
+					"y": 220.25,
+					"width": 498.58999999999975,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 21
+				}
+			],
+			"x": 38,
+			"y": 220.25,
+			"width": 498.5899999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 21
+		},
+		{
+			"page": 3,
+			"text": "experimental mechanics and art styles. Won 'Best Gameplay' award at Ludum Dare 48 with puzzle game 'Deeper -",
+			"spans": [
+				{
+					"text": "experimental mechanics and art styles. Won 'Best Gameplay' award at Ludum Dare 48 with puzzle game 'Deeper -",
+					"x": 38,
+					"y": 235.25,
+					"width": 532.5999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 22
+				}
+			],
+			"x": 38,
+			"y": 235.25,
+			"width": 532.5999999999997,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 22
+		},
+		{
+			"page": 3,
+			"text": "and Deeper' that ranked in top 5% overall.",
+			"spans": [
+				{
+					"text": "and Deeper' that ranked in top 5% overall.",
+					"x": 38,
+					"y": 250.25,
+					"width": 197.47999999999993,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 23
+				}
+			],
+			"x": 38,
+			"y": 250.25,
+			"width": 197.47999999999993,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 23
+		},
+		{
+			"page": 3,
+			"text": "科研成果",
+			"spans": [
+				{
+					"text": "科研成果",
+					"x": 33,
+					"y": 279.55999999999995,
+					"width": 48,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 25
+				}
+			],
+			"x": 33,
+			"y": 279.55999999999995,
+			"width": 48,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 25
+		},
+		{
+			"page": 3,
+			"text": "Optimizing Unity Games for Mobile: A Practical Guide September 2021",
+			"spans": [
+				{
+					"text": "Optimizing Unity Games for Mobile: A Practical Guide",
+					"x": 38,
+					"y": 299.25,
+					"width": 263.85999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 27
+				},
+				{
+					"text": "September 2021",
+					"x": 501.300018,
+					"y": 299.25,
+					"width": 77.98000000000008,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 29
+				}
+			],
+			"x": 38,
+			"y": 299.25,
+			"width": 541.2800180000002,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 28
+		},
+		{
+			"page": 3,
+			"text": "Game Developer Magazine",
+			"spans": [
+				{
+					"text": "Game Developer Magazine",
+					"x": 38,
+					"y": 315.25,
+					"width": 124.95999999999997,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 30
+				}
+			],
+			"x": 38,
+			"y": 315.25,
+			"width": 124.95999999999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 30
+		},
+		{
+			"page": 3,
+			"text": "Technical article covering mobile optimization techniques including draw call batching, LOD systems, and -",
+			"spans": [
+				{
+					"text": "Technical article covering mobile optimization techniques including draw call batching, LOD systems, and -",
+					"x": 38,
+					"y": 331.25,
+					"width": 504.00999999999993,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 31
+				}
+			],
+			"x": 38,
+			"y": 331.25,
+			"width": 504.01,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 31
+		},
+		{
+			"page": 3,
+			"text": "memory management",
+			"spans": [
+				{
+					"text": "memory management",
+					"x": 38,
+					"y": 346.25,
+					"width": 104.78999999999998,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 32
+				}
+			],
+			"x": 38,
+			"y": 346.25,
+			"width": 104.78999999999996,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 32
+		},
+		{
+			"page": 3,
+			"text": "Building Modular Dialogue Systems May 2022",
+			"spans": [
+				{
+					"text": "Building Modular Dialogue Systems",
+					"x": 38,
+					"y": 369.25,
+					"width": 175.37,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 34
+				},
+				{
+					"text": "May 2022",
+					"x": 533.540039,
+					"y": 369.25,
+					"width": 45.74000000000014,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 36
+				}
+			],
+			"x": 38,
+			"y": 369.25,
+			"width": 541.2800390000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 35
+		},
+		{
+			"page": 3,
+			"text": "Seattle Indie Game Developers Meetup",
+			"spans": [
+				{
+					"text": "Seattle Indie Game Developers Meetup",
+					"x": 38,
+					"y": 385.25,
+					"width": 181.25000000000003,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 37
+				}
+			],
+			"x": 38,
+			"y": 385.25,
+			"width": 181.25000000000003,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 37
+		},
+		{
+			"page": 3,
+			"text": "Presented talk on designing flexible dialogue systems for narrative games, attended by 60+ local developers",
+			"spans": [
+				{
+					"text": "Presented talk on designing flexible dialogue systems for narrative games, attended by 60+ local developers",
+					"x": 38,
+					"y": 401.25,
+					"width": 504.25999999999954,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 38
+				}
+			],
+			"x": 38,
+			"y": 401.25,
+			"width": 504.25999999999954,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 38
+		},
+		{
+			"page": 3,
+			"text": "志愿者经历",
+			"spans": [
+				{
+					"text": "志愿者经历",
+					"x": 33,
+					"y": 430.56,
+					"width": 60,
+					"height": 12,
+					"fontRef": "g_d0_f1",
+					"fontSize": 12,
+					"streamIndex": 40
+				}
+			],
+			"x": 33,
+			"y": 430.56,
+			"width": 60,
+			"height": 12,
+			"fontSize": 12,
+			"fontRef": "g_d0_f1",
+			"meanStreamIndex": 40
+		},
+		{
+			"page": 3,
+			"text": "Seattle Indies 2020 - Present Code.org Game Development Workshops",
+			"spans": [
+				{
+					"text": "Seattle Indies",
+					"x": 16,
+					"y": 450.25,
+					"width": 67.33,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 42
+				},
+				{
+					"text": "2020 - Present",
+					"x": 222.97001699999998,
+					"y": 450.25,
+					"width": 68.66999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 44
+				},
+				{
+					"text": "Code.org Game Development Workshops",
+					"x": 303.640015,
+					"y": 450.25,
+					"width": 200.2100000000001,
+					"height": 10,
+					"fontRef": "g_d0_f4",
+					"fontSize": 10,
+					"streamIndex": 51
+				}
+			],
+			"x": 16,
+			"y": 450.25,
+			"width": 487.8500150000001,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f4",
+			"meanStreamIndex": 45.666666666666664
+		},
+		{
+			"page": 3,
+			"text": "Seattle, WA 2021 - Present",
+			"spans": [
+				{
+					"text": "Seattle, WA",
+					"x": 16,
+					"y": 466.25,
+					"width": 53.01,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 45
+				},
+				{
+					"text": "2021 - Present",
+					"x": 303.640015,
+					"y": 465.25,
+					"width": 68.66999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 53
+				}
+			],
+			"x": 16,
+			"y": 465.25,
+			"width": 356.31001499999996,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 49
+		},
+		{
+			"page": 3,
+			"text": "Active member of local indie game development - Seattle, WA",
+			"spans": [
+				{
+					"text": "Active member of local indie game development -",
+					"x": 16,
+					"y": 482.25,
+					"width": 232.55000000000004,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 46
+				},
+				{
+					"text": "Seattle, WA",
+					"x": 303.640015,
+					"y": 481.25,
+					"width": 53.00999999999996,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 54
+				}
+			],
+			"x": 16,
+			"y": 481.25,
+			"width": 340.65001499999994,
+			"height": 11,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 50
+		},
+		{
+			"page": 3,
+			"text": "community. Organize monthly game showcases and - Volunteer instructor teaching basic game programming -",
+			"spans": [
+				{
+					"text": "community. Organize monthly game showcases and -",
+					"x": 16,
+					"y": 497.25,
+					"width": 250.04,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 47
+				},
+				{
+					"text": "Volunteer instructor teaching basic game programming -",
+					"x": 303.640015,
+					"y": 497.25,
+					"width": 268.18999999999977,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 55
+				}
+			],
+			"x": 16,
+			"y": 497.25,
+			"width": 555.8300149999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 51
+		},
+		{
+			"page": 3,
+			"text": "provide mentorship to aspiring game developers through- concepts to middle school students. Led 8+ workshops -",
+			"spans": [
+				{
+					"text": "provide mentorship to aspiring game developers through-",
+					"x": 16,
+					"y": 512.25,
+					"width": 272.41,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 48
+				},
+				{
+					"text": "concepts to middle school students. Led 8+ workshops -",
+					"x": 303.640015,
+					"y": 512.25,
+					"width": 261.67999999999984,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 56
+				}
+			],
+			"x": 16,
+			"y": 512.25,
+			"width": 549.3200149999998,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 52
+		},
+		{
+			"page": 3,
+			"text": "code reviews and technical guidance. introducing Unity fundamentals and game design -",
+			"spans": [
+				{
+					"text": "code reviews and technical guidance.",
+					"x": 16,
+					"y": 527.25,
+					"width": 174.75000000000006,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 49
+				},
+				{
+					"text": "introducing Unity fundamentals and game design -",
+					"x": 303.640015,
+					"y": 527.25,
+					"width": 239.94000000000005,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 57
+				}
+			],
+			"x": 16,
+			"y": 527.25,
+			"width": 527.580015,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 53
+		},
+		{
+			"page": 3,
+			"text": "principles.",
+			"spans": [
+				{
+					"text": "principles.",
+					"x": 303.640015,
+					"y": 542.25,
+					"width": 50.259999999999955,
+					"height": 10,
+					"fontRef": "g_d0_f3",
+					"fontSize": 10,
+					"streamIndex": 58
+				}
+			],
+			"x": 303.640015,
+			"y": 542.25,
+			"width": 50.259999999999934,
+			"height": 10,
+			"fontSize": 10,
+			"fontRef": "g_d0_f3",
+			"meanStreamIndex": 58
+		}
+	],
+	"fullText": "虚构姓名验收一\n中文岗位持久化验收\ndavid.kowalski@email.com 000-UX-01 Seattle, WA davidkowalski.games github.com/dkowalski-dev\nitch.io/dkowalski\n个人资料 个人评价\nGitHub Passionate game developer with 5+ years of professional experience-\ndkowalski-dev creating engaging gameplay systems and polished player experiences -\nacross multiple platforms. Specialized in Unity and Unreal Engine with -\nLinkedIn\nstrong expertise in C#, C++, and game design principles. Proven ability to -\ndavidkowalski\ncollaborate effectively with cross-functional teams including designers, -\nartists, and QA to deliver high-quality games on time and within scope.\n专业技能\nUnity Engine 教育背景\nExpert University of Washington Bachelor of Science • 3.6 GPA\nC#, Editor Tools, Performance Profiling\nComputer Science Seattle, WA • 2014 - 2018\nConcentration in Game Development. Relevant Coursework: Game Engine -\nUnreal Engine Architecture, Computer Graphics, Artificial Intelligence, Physics -\nSimulation, 3D Mathematics, Software Engineering, Data Structures & -\nAdvanced\nAlgorithms\nC++, Blueprints, UE5 Features\n工作经历\nProgramming Languages\nCascade Studios Seattle, WA\nExpert\nSenior Game Developer March 2022 - Present\nC#, C++, Python, HLSL/GLSL\n• Lead gameplay programmer on an unannounced AAA action-adventure-\ntitle built in Unreal Engine 5 for PC and next-gen consoles\nGame AI\n• Architected and implemented core combat system including hit -\nAdvanced\ndetection, combo mechanics, and enemy AI behavior trees serving 15+ -\nBehavior Trees, FSM, Pathfinding, -\nenemy types\nNavigation\n• Developed custom editor tools in C++ that reduced level designer -\niteration time by 40% and improved workflow efficiency across the team\nPhysics & Mathematics\n• Optimized rendering pipeline and gameplay systems to maintain 60 -\nAdvanced\nFPS performance target on all supported platforms, achieving 95% -\n3D Math, Collision Detection, Rigid -\nframe rate stability\nBody Dynamics\n• Ad nostrud enim adipisicing ea proident aliqua veniam nisi amet ea -\nirure et mollit.\n\n证书信息 工作经历\nUnity Certified Expert: - Pixel Forge Interactive Bellevue, WA\nProgrammer Game Developer June 2020 - February 2022\nMarch 2022 • Core developer on 'Starbound Odyssey,' a sci-fi roguelike that achieved -\nUnity Technologies 500K+ sales on Steam with 'Very Positive' user reviews\nUnreal Engine 5 C++ Developer • Implemented procedural generation systems for level layouts, enemy -\nJune 2023 encounters, and loot drops using Unity and C#\nEpic Games (Udemy)\n• Designed and programmed player progression systems including skill -\ntrees, equipment upgrades, and meta-progression mechanics\n语言\n• Created robust save/load system supporting cloud saves and -\nEnglish\ncross-platform play between PC and Nintendo Switch\nNative\n• Integrated third-party SDKs for analytics (GameAnalytics), -\nachievements (Steamworks), and multiplayer networking (Photon)\nPolish\n• Fixed critical bugs and balanced gameplay based on community -\nConversational\nfeedback and telemetry data, releasing 12 post-launch content updates\n• Worked closely with artists to implement VFX, animations, and shaders-\n兴趣爱好 that enhanced visual polish while maintaining performance targets\nGame Design\nMobile Games Studio Remote\nMechanics, Level Design, Player -\nJunior Game Developer September 2018 - May 2020\nPsychology\n• Contributed to development of three mobile puzzle games built in -\nAI & Procedural Generation Unity, collectively downloaded 2M+ times on iOS and Android\nPCG, Machine Learning, Emergent -\n• Implemented UI systems, touch controls, and gesture recognition -\nGameplay\noptimized for mobile devices and various screen sizes\nIndie Game Development\n• Developed monetization features including rewarded video ads, in-app -\nSolo Dev, Game Jams, Community\npurchases, and daily reward systems that increased retention by 25%\nTechnical Art\n• Optimized memory usage and load times for mobile platforms, -\nShaders, VFX, Optimization\nreducing app size by 35% through asset compression and code -\noptimization\n推荐人\n• Collaborated with game designers to balance puzzle difficulty curves -\nAvailable upon request\nand progression pacing using A/B testing data\n获奖经历\nBest Gameplay - Ludum Dare 48 April 2021\nLudum Dare\nAwarded for puzzle game 'Deeper and Deeper' which ranked in the top 5% -\noverall among 3,000+ submissions\nEmployee Excellence Award December 2021\nPixel Forge Interactive\nRecognized for exceptional contributions to 'Starbound Odyssey' -\ndevelopment and dedication to code quality\n\n项目经历\nEchoes of the Void (Indie Game) 2023 - Present\nSolo developer for a narrative-driven 2D platformer built in Unity. Features custom dialogue system, branching -\nstory paths, and atmospheric pixel art. Currently in development with demo released on itch.io garnering 5K+ -\ndownloads and positive community feedback. Planned Steam release Q2 2025.\nView on itch.io\nOpen Source: Unity Dialogue Framework 2021 - 2023\nCreated and maintain an open-source dialogue system for Unity with visual node-based editor, localization -\nsupport, and voice acting integration. Project has 800+ GitHub stars and is actively used by indie developers -\nworldwide. Includes comprehensive documentation and example projects.\nView on GitHub\nGame Jam Participation 2019 - Present\nRegular participant in Ludum Dare and Global Game Jam events. Created 12+ game prototypes exploring -\nexperimental mechanics and art styles. Won 'Best Gameplay' award at Ludum Dare 48 with puzzle game 'Deeper -\nand Deeper' that ranked in top 5% overall.\n科研成果\nOptimizing Unity Games for Mobile: A Practical Guide September 2021\nGame Developer Magazine\nTechnical article covering mobile optimization techniques including draw call batching, LOD systems, and -\nmemory management\nBuilding Modular Dialogue Systems May 2022\nSeattle Indie Game Developers Meetup\nPresented talk on designing flexible dialogue systems for narrative games, attended by 60+ local developers\n志愿者经历\nSeattle Indies 2020 - Present Code.org Game Development Workshops\nSeattle, WA 2021 - Present\nActive member of local indie game development - Seattle, WA\ncommunity. Organize monthly game showcases and - Volunteer instructor teaching basic game programming -\nprovide mentorship to aspiring game developers through- concepts to middle school students. Led 8+ workshops -\ncode reviews and technical guidance. introducing Unity fundamentals and game design -\nprinciples.",
+	"charCount": 6350,
+	"wordCount": 978,
+	"modalFontSize": 10,
+	"modalFontRef": "g_d0_f3",
+	"distinctFontRefs": 4
+}

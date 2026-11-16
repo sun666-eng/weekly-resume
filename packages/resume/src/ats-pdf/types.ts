@@ -1,4 +1,5 @@
 import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
+import type { ChinaReferenceReport } from "../china-job-rules";
 import type { PdfRuleCode } from "./catalog";
 
 // ---------------------------------------------------------------------------
@@ -360,6 +361,8 @@ export type JdTermMatch = {
 };
 
 export type JdMatchReport = {
+	/** Older callers may omit this; the UI then retains its conservative language caveat. */
+	segmentation?: "intl" | "dictionary-fallback";
 	/** The job description the terms came from, kept so the UI can caveat non-English coverage. */
 	jobDescription: string;
 	/** Terms extracted from the job description, most important first. */
@@ -396,6 +399,8 @@ export type PdfAtsReport = {
 	passedChecks: number;
 	skippedChecks: number;
 	jd: JdMatchReport | null;
+	/** Unscored human-curated reference, separate from checks and every denominator. */
+	chinaReference?: ChinaReferenceReport | null;
 	file: RawExtraction["file"];
 	document: {
 		pageCount: number;

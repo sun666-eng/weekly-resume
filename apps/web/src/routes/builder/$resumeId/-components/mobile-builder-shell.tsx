@@ -88,8 +88,8 @@ export function MobileBuilderShell() {
 
 			<BuilderHeader />
 
-			{/* The preview (fixed inset-0) stays mounted so zoom/pan state survives tab switches. */}
-			<main id="main-content" className="flex-1">
+			{/* Keep preview mounted inside its usable area so zoom/pan survives tab switches. */}
+			<main id="main-content" className="fixed inset-x-0 top-14 bottom-16">
 				<Outlet />
 			</main>
 

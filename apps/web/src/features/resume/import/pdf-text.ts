@@ -1,4 +1,5 @@
 import type { ExtractedDocument } from "@reactive-resume/resume/ats-pdf";
+import { isKnownResumeHeading } from "@reactive-resume/import/plain-text";
 import { buildExtractedDocument } from "@reactive-resume/resume/ats-pdf";
 import { extractPdf } from "@/features/ats-checker/extract-client";
 
@@ -46,35 +47,104 @@ function joinSpans(spans: readonly TextSpan[]): string {
 /** Mid-point of a convincing gutter, or null on a page that reads as one column. */
 function columnSplitX(page: PageGeometry): number | null {
 	const gutter = page.gutter;
-	if (!gutter || gutter.coverage < GUTTER_COVERAGE || gutter.splitRatio < GUTTER_SPLIT_RATIO) return null;
-
-	return gutter.x + gutter.width / 2;
+	if (gutter && gutter.coverage >= GUTTER_COVERAGE && gutter.splitRatio >= GUTTER_SPLIT_RATIO)
+		return gutter.x + gutter.width / 2;
+	// A centered contact header can occupy an otherwise clear gutter. Evaluate the body only,
+	// requiring independent content on both sides so right-aligned dates are not a sidebar.
+	const start = page.lines.findIndex((line) => line.spans.some((span) => isKnownResumeHeading(span.text)));
+	const lines = start < 0 ? page.lines : page.lines.slice(start);
+	const spans = lines.flatMap((line) => line.spans);
+	if (spans.length < 12) return null;
+	let best: { x: number; score: number } | null = null;
+	for (let x = page.width * 0.2; x <= page.width * 0.75; x += 4) {
+		const left = spans.filter((span) => span.x + span.width <= x - 4);
+		const right = spans.filter((span) => span.x >= x + 4);
+		const crossing = spans.length - left.length - right.length;
+		if (left.length < 6 || right.length < 6 || crossing / spans.length > 0.08) continue;
+		const onlyLeft = lines.filter((line) => line.spans.every((span) => span.x + span.width <= x - 4)).length;
+		const onlyRight = lines.filter((line) => line.spans.every((span) => span.x >= x + 4)).length;
+		const headingsOnBothSides =
+			left.some((span) => isKnownResumeHeading(span.text)) && right.some((span) => isKnownResumeHeading(span.text));
+		const independentProse =
+			left.filter((span) => span.text.length > 40).length >= 2 &&
+			right.filter((span) => span.text.length > 40).length >= 2;
+		if (!(onlyLeft >= 3 && onlyRight >= 3) && !headingsOnBothSides && !independentProse) continue;
+		const gap = Math.min(...right.map((span) => span.x)) - Math.max(...left.map((span) => span.x + span.width));
+		const score = (crossing / spans.length) * 10 - gap / page.width;
+		if (!best || score < best.score) best = { x, score };
+	}
+	return best?.x ?? null;
 }
 
 /**
  * Lines grouped by baseline alone interleave a sidebar with the body, which drops a whole work
  * history into the skills section. On a two-column page each column is read out in full instead.
  */
-function pageToLines(page: PageGeometry): string[] {
-	const splitX = columnSplitX(page);
-	if (splitX === null) return page.lines.map((line) => joinSpans(line.spans));
-
-	const left: string[] = [];
-	const right: string[] = [];
-
-	for (const line of page.lines) {
-		const leftSpans = line.spans.filter((span) => span.x + span.width / 2 < splitX);
-		if (leftSpans.length > 0) left.push(joinSpans(leftSpans));
-
-		const rightSpans = line.spans.filter((span) => span.x + span.width / 2 >= splitX);
-		if (rightSpans.length > 0) right.push(joinSpans(rightSpans));
-	}
-
-	return [...left, ...right];
+function readingBands(page: PageGeometry): PageGeometry[] {
+	if (columnSplitX(page) !== null) return [page];
+	// Section-level columns can appear below full-width project descriptions on the same page.
+	const starts = page.lines.flatMap((line, index) =>
+		line.spans.length === 1 && isKnownResumeHeading(line.spans[0]?.text ?? "") ? [index] : [],
+	);
+	if (starts.length === 0) return [page];
+	if (starts[0] !== 0) starts.unshift(0);
+	return starts.map((start, index) => ({ ...page, lines: page.lines.slice(start, starts[index + 1]), gutter: null }));
 }
 
 export function documentToLines(doc: ExtractedDocument): string[] {
-	return doc.pages.flatMap(pageToLines).filter((line) => line.length > 0);
+	const result: string[] = [];
+	let left: string[] = [];
+	let right: string[] = [];
+	let previousSplit: number | null = null;
+	let previousWidth = 0;
+	const flush = () => {
+		result.push(...left, ...right);
+		left = [];
+		right = [];
+	};
+	for (const originalPage of doc.pages) {
+		const bands = readingBands(originalPage);
+		for (const page of bands) {
+			if (bands.length > 1) {
+				flush();
+				previousSplit = null;
+			}
+			const split = columnSplitX(page);
+			if (split === null) {
+				flush();
+				result.push(...page.lines.map((line) => joinSpans(line.spans)));
+			} else {
+				const continuing =
+					previousSplit !== null && Math.abs(previousSplit - split) < 40 && Math.abs(previousWidth - page.width) < 20;
+				if (!continuing) flush();
+				const headingStart = continuing
+					? -1
+					: page.lines.findIndex((line) => line.spans.some((span) => isKnownResumeHeading(span.text)));
+				for (const [index, line] of page.lines.entries()) {
+					if (
+						(bands.length > 1 &&
+							index === 0 &&
+							line.spans.length === 1 &&
+							isKnownResumeHeading(line.spans[0]?.text ?? "")) ||
+						index < headingStart ||
+						line.spans.some((span) => span.x < split && span.x + span.width > split)
+					) {
+						flush();
+						result.push(joinSpans(line.spans));
+						continue;
+					}
+					const l = line.spans.filter((span) => span.x + span.width / 2 < split);
+					const r = line.spans.filter((span) => span.x + span.width / 2 >= split);
+					if (l.length) left.push(joinSpans(l));
+					if (r.length) right.push(joinSpans(r));
+				}
+			}
+			previousSplit = split;
+			previousWidth = page.width;
+		}
+	}
+	flush();
+	return result.filter(Boolean);
 }
 
 export async function extractPdfLines(file: File): Promise<string[]> {

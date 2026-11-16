@@ -1,7 +1,6 @@
 import type { Style } from "@react-pdf/types";
 import type { ComponentProps, ReactNode } from "react";
 import type { StyleInput } from "./styles";
-import { Icon as PhosphorIcon } from "phosphor-icons-react-pdf/dynamic";
 import { Children, isValidElement } from "react";
 import { Image, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
@@ -19,6 +18,7 @@ import { semanticNodeKeys } from "../../semantic/node-keys";
 import { Link as PdfLink, Text as PdfText } from "../../text";
 import { useSectionStyleRule, useTemplateIconSlot, useTemplatePageNodeKey, useTemplateStyle } from "./context";
 import { resolveIconSize } from "./icon-size";
+import { PdfIcon as PhosphorIcon } from "./pdf-icons";
 import { getPictureShadow } from "./picture-shadow";
 import { safeTextStyle } from "./safe-text-style";
 import { composeLinkStyles, composeStyles, mergeStyles } from "./styles";

@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
+import { readGuestPhoto } from "@reactive-resume/api/features/resume/guest-claim";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
 import {
@@ -35,6 +36,9 @@ const getTrustedClient = (context: Context<ServerEnvironment>): string => {
 
 export function createApp() {
 	const app = new Hono<ServerEnvironment>();
+	app.get("/api/resume-photo/:resumeId/:assetId", (c) =>
+		readGuestPhoto(c.req.raw, c.req.param("resumeId"), c.req.param("assetId")),
+	);
 
 	app.use("/auth/*", async (c, next) => {
 		await next();

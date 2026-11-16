@@ -1,6 +1,7 @@
 import type { PdfAtsReport } from "@reactive-resume/resume/ats-pdf";
 import type { AtsAiReview } from "./ai-review-results";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, InfoIcon, SparkleIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
@@ -35,6 +36,7 @@ type AiReviewCardProps = {
  * the browser. Only the text already extracted from it travels.
  */
 export function AiReviewCard({ report, fullText, jobDescription }: AiReviewCardProps) {
+	const { i18n } = useLingui();
 	const { usableProviders, hasUsableProvider, isLoading } = useHasUsableAiProvider();
 	const [providerOverride, setProviderOverride] = useState<string | null | undefined>(undefined);
 	const [review, setReview] = useState<AtsAiReview | null>(null);
@@ -66,6 +68,10 @@ export function AiReviewCard({ report, fullText, jobDescription }: AiReviewCardP
 		if (!trimmedText) return;
 
 		mutate({
+			responseLocale: i18n.locale === "en" ? "en-US" : i18n.locale,
+			...(report.chinaReference
+				? { targetRoleId: report.chinaReference.role.id, audience: report.chinaReference.audience }
+				: {}),
 			...(aiProviderId ? { aiProviderId } : {}),
 			extractedText: trimmedText,
 			findings: report.findings.slice(0, MAX_FINDINGS).map((finding) => ({
@@ -107,6 +113,14 @@ export function AiReviewCard({ report, fullText, jobDescription }: AiReviewCardP
 				)}
 			</p>
 
+			{report.chinaReference && (
+				<p className="text-muted-foreground text-xs">
+					<Trans>
+						The selected role and career stage, plus relevant rules from the China reference library, are also sent for
+						this review.
+					</Trans>
+				</p>
+			)}
 			<div className="space-y-2">
 				<Label>
 					<Trans>AI provider</Trans>

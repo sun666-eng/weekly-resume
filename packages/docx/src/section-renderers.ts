@@ -1,4 +1,10 @@
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type {
+	CustomSection,
+	CustomSectionType,
+	ProjectItem,
+	ResumeData,
+	SectionType,
+} from "@reactive-resume/schema/resume/data";
 import type { HtmlStyleConfig } from "./html-to-docx";
 import { BorderStyle, ExternalHyperlink, HeadingLevel, Paragraph, TabStopPosition, TabStopType, TextRun } from "docx";
 import { htmlToParagraphs } from "./html-to-docx";
@@ -127,26 +133,65 @@ function locationAndPeriod(location: string, period: string): Paragraph | null {
 	});
 }
 
-function websiteParagraph(url: string, label: string): Paragraph | null {
+function websiteLink(url: string, label: string): ExternalHyperlink | null {
 	const safeUrl = toSafeDocxLink(url);
 	if (!safeUrl) return null;
 
-	return new Paragraph({
+	return new ExternalHyperlink({
+		link: safeUrl,
 		children: [
+			new TextRun({
+				text: label || safeUrl,
+				color: primaryColor ?? "0563C1",
+				underline: {},
+				...(bodyFont ? { font: bodyFont } : {}),
+				...(bodySize ? { size: bodySize } : {}),
+			}),
+		],
+	});
+}
+
+function websiteParagraph(url: string, label: string): Paragraph | null {
+	const link = websiteLink(url, label);
+	return link ? new Paragraph({ children: [link], spacing: { after: 60 } }) : null;
+}
+
+function projectTitleParagraph(item: ProjectItem): Paragraph {
+	const baseRun = getBaseRun();
+	const safeUrl = toSafeDocxLink(item.website.url);
+	const children: (TextRun | ExternalHyperlink)[] = [];
+
+	if (safeUrl && item.website.inlineLink) {
+		children.push(
 			new ExternalHyperlink({
 				link: safeUrl,
 				children: [
 					new TextRun({
-						text: label || safeUrl,
+						...baseRun,
+						text: item.name,
+						bold: true,
 						color: primaryColor ?? "0563C1",
 						underline: {},
-						...(bodyFont ? { font: bodyFont } : {}),
-						...(bodySize ? { size: bodySize } : {}),
 					}),
 				],
 			}),
-		],
-		spacing: { after: 60 },
+		);
+	} else {
+		children.push(new TextRun({ text: item.name, bold: true, ...baseRun }));
+		if (safeUrl) {
+			children.push(new TextRun({ text: " | ", ...baseRun }));
+			const link = websiteLink(safeUrl, item.website.label);
+			if (link) children.push(link);
+		}
+	}
+
+	if (item.role) children.push(new TextRun({ text: ` — ${item.role}`, ...baseRun }));
+	if (item.period) children.push(new TextRun({ text: `\t${item.period}`, italics: true, ...baseRun }));
+
+	return new Paragraph({
+		tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+		spacing: { before: 120 },
+		children,
 	});
 }
 
@@ -248,14 +293,11 @@ function renderProjects(section: Sections["projects"], colorHex: string): Paragr
 	const paragraphs: Paragraph[] = sectionHeadingParagraph(section, section.title, colorHex);
 
 	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.name, item.role ?? "", item.period));
+		paragraphs.push(projectTitleParagraph(item));
 
 		if (item.description) {
 			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
 		}
-
-		const ws = websiteParagraph(item.website.url, item.website.label);
-		if (ws) paragraphs.push(ws);
 	}
 
 	return paragraphs;

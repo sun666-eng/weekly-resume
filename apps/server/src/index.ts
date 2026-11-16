@@ -9,6 +9,11 @@ export async function main() {
 	// OAuth resource seeding starts when auth is imported, so load the app only
 	// after migrations have created the provider tables.
 	const { createApp } = await import("./http/app");
+	const { reclaimGuestPhotos } = await import("@reactive-resume/api/features/resume/guest-claim");
+	const sweepGuestPhotos = () =>
+		void reclaimGuestPhotos().catch(() => console.warn("[guest-photo-cleanup] retry pending"));
+	sweepGuestPhotos();
+	setInterval(sweepGuestPhotos, 60 * 60_000).unref();
 
 	// Safety net: Node 24 crashes the whole process on an unhandled rejection. One request's
 	// stray promise must not take the server down for everyone, so log and keep serving.

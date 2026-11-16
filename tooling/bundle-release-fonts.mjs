@@ -48,6 +48,6 @@ for (const family of [...primary, ...fallbacks]) {
 	manifest[family] = files;
 	console.log(family + ": " + weights.length + " weights");
 }
-await writeFile("packages/fonts/src/local-fonts.json", JSON.stringify(manifest, null, "\t") + "\n");
-await writeFile("apps/web/public/fonts/download-manifest.json", JSON.stringify(records, null, "\t") + "\n");
+await writeFile("packages/fonts/src/local-fonts.json", JSON.stringify(manifest, null, 2) + "\n");
+await writeFile("apps/web/public/fonts/download-manifest.json", JSON.stringify(records, null, 2) + "\n");
 console.log("DONE " + records.length + " files, " + records.reduce((n, r) => n + r.bytes, 0) + " bytes");

@@ -6,6 +6,7 @@ import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
 import { Separator } from "@reactive-resume/ui/components/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { Copyright } from "@/components/ui/copyright";
+import { useGuestEditor } from "@/features/resume/guest/context";
 import { getSectionIcon, getSectionTitle, rightSidebarSections } from "@/libs/resume/section";
 import { BuilderSidebarEdge } from "../../-components/edge";
 import { useBuilderSidebar } from "../../-store/sidebar";
@@ -40,6 +41,7 @@ function getSectionComponent(type: RightSidebarSection) {
 }
 
 export function BuilderSidebarRight() {
+	const guest = useGuestEditor();
 	const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
 	return (
@@ -53,7 +55,13 @@ export function BuilderSidebarRight() {
 				<div className="space-y-4 p-4">
 					{rightSidebarSections.map((section) => (
 						<Fragment key={section}>
-							{getSectionComponent(section)}
+							{guest && ["sharing", "statistics", "ats"].includes(section) ? (
+								<Button variant="ghost" onClick={() => guest.showHelp(getSectionTitle(section))}>
+									{getSectionTitle(section)} · 账号功能
+								</Button>
+							) : (
+								getSectionComponent(section)
+							)}
 							<Separator />
 						</Fragment>
 					))}

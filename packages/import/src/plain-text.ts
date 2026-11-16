@@ -97,8 +97,12 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	联系方式: "summary",
 	求职目标: "summary",
 	求职意向: "summary",
+	意向岗位: "summary",
 	自我评价: "summary",
 	个人评价: "summary",
+	个人总结: "summary",
+	自我介绍: "summary",
+	个人优势: "summary",
 	教育背景: "education",
 	教育经历: "education",
 	学习经历: "education",
@@ -112,6 +116,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	技能特长: "skills",
 	技能: "skills",
 	语言能力: "languages",
+	语言: "languages",
 	兴趣爱好: "interests",
 	业余爱好: "interests",
 	获奖情况: "awards",
@@ -119,6 +124,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	荣誉奖项: "awards",
 	奖项: "awards",
 	证书: "certifications",
+	证书信息: "certifications",
 	资格证书: "certifications",
 	技能证书: "certifications",
 	科研经历: "publications",
@@ -128,6 +134,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	志愿经历: "volunteer",
 	志愿者经历: "volunteer",
 	社交账号: "profiles",
+	推荐人: "references",
 	// The Chinese editor keeps internships and campus life as dedicated experience-style sections;
 	// mapping them there preserves the original classification instead of merging them into
 	// work experience or volunteer work.
@@ -141,7 +148,7 @@ const SECTION_ALIASES: Readonly<Record<string, SectionKey>> = {
 	社團經歷: "zh-campus",
 };
 
-const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;
+const BULLET_PATTERN = /^\s*(?:[-–—*]\s+|[•◦‣·]\s*)/;
 const EMAIL_PATTERN = /[\w.+-]+@[\w-]+\.[\w.-]*\w/;
 const URL_PATTERN = /\b(?:https?:\/\/|www\.)[^\s,;|•·]+/gi;
 const PHONE_CANDIDATE = /[+(]?\d[\d\s().+-]{5,}\d/g;
@@ -152,7 +159,15 @@ const ENTRY_PREAMBLE_LOOKAHEAD = 4;
 const PERIOD_CANDIDATE =
 	/(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4}))\s*(?:[-–—~]|to|until|through)\s*(?:(?:\d{4}[/.]\d{1,2}|(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?\d{4})|\p{L}+)/giu;
 const STRONG_SEPARATOR = /\s*[|•·]\s*|\s{2,}|\s+[–—]\s+/;
-const SENTENCE_END = /[.!?]$/;
+const ENTRY_SEPARATOR = /\s*[|｜•·]\s*|\s{2,}|\s+[–—]\s+/;
+const CITY_HEADER_FIELD = /(^|[|｜]\s*)((?:所\s*在\s*)?城\s*市\s*[:：]\s*([^|｜]*))/gu;
+const isLabeledCity = (value: string) =>
+	value.trim().length > 0 &&
+	value.trim().length <= 40 &&
+	!/[。！？!?;；:：|｜]/u.test(value) &&
+	!EMAIL_PATTERN.test(value) &&
+	!extractPhone(value);
+const SENTENCE_END = /[.!?。！？]$/;
 const TRAILING_DATES = [/(?:\p{L}{3,}\.?\s+)?(?:\d{1,2}[/.])?(?:19|20)\d{2}$/u, /(?:\d{1,2}[/.])?(?:19|20)\d{2}$/];
 
 const escapeHtml = (value: string) =>
@@ -219,8 +234,10 @@ function looksLikeTitleCaseHeading(line: string): boolean {
  */
 function looksLikeEntryHeader(line: string): boolean {
 	const trimmed = line.trim();
-	if (STRONG_SEPARATOR.test(trimmed)) return true;
 	if (SENTENCE_END.test(trimmed)) return false;
+	if (/^View on\s/i.test(trimmed)) return false;
+	if (/^(?:that|which|and|while|with|for|to|of|the|a|an|in|on|through|using|across)\s/.test(trimmed)) return false;
+	if (ENTRY_SEPARATOR.test(trimmed)) return true;
 
 	return trimmed.split(/\s+/).length <= MAX_ENTRY_HEADER_WORDS;
 }
@@ -230,6 +247,10 @@ function findPeriod(line: string): string {
 
 	for (const match of line.match(PERIOD_CANDIDATE) ?? []) {
 		if (parsePeriod(match)) return match.trim();
+		// A title word before a year is not a month. Retry the year range while keeping that word
+		// available to the entry title ("Dialogue Framework 2021 - 2023").
+		const yearRange = match.replace(/^[\p{L}.]+\s+(?=\d{4}\b)/u, "");
+		if (yearRange !== match && parsePeriod(yearRange)) return yearRange.trim();
 	}
 
 	return "";
@@ -293,11 +314,21 @@ function headerBoundary(lines: string[]): number {
 	return boundary;
 }
 
-function splitHeaderParts(text: string): string[] {
+function splitHeaderParts(text: string, separator = STRONG_SEPARATOR): string[] {
 	return text
-		.split(STRONG_SEPARATOR)
+		.split(separator)
 		.map((part) => part.replace(/^[\s,;|•·–—-]+|[\s,;|•·–—-]+$/g, "").trim())
 		.filter(Boolean);
+}
+
+function splitEntryHeaderParts(text: string): string[] {
+	if (!text.includes("｜") || URL_TEST.test(text) || text.includes("`")) return splitHeaderParts(text);
+	const candidates = splitHeaderParts(text, ENTRY_SEPARATOR);
+	// An unspaced bar can be part of a company/project name. Require recognizable entry
+	// fields or explicit spacing before treating it as structure; keep ambiguous text intact.
+	const supported =
+		/\s｜|｜\s/u.test(text.trim()) || candidates.some(isEntryLocation) || candidates.some(isEntryDegree);
+	return supported ? candidates : splitHeaderParts(text);
 }
 
 function toHtml(lines: string[]): string {
@@ -335,7 +366,7 @@ function withHeaderText(entry: RawEntry): RawEntry {
 	if (entry.headerParts.length > 0) return entry;
 
 	const [first, ...rest] = entry.body;
-	return { ...entry, headerParts: splitHeaderParts(first ?? ""), body: rest };
+	return { ...entry, headerParts: splitEntryHeaderParts(first ?? ""), body: rest };
 }
 
 function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
@@ -356,7 +387,11 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 		const date = dateOf(line);
 
 		if (date) {
-			const remainder = splitHeaderParts(line.replace(date, " "));
+			const dateIndex = line.indexOf(date);
+			// Only remove a fullwidth bar immediately adjacent to the date that was consumed.
+			const before = line.slice(0, dateIndex).replace(/｜\s*$/u, "");
+			const after = line.slice(dateIndex + date.length).replace(/^\s*｜/u, "");
+			const remainder = splitEntryHeaderParts(`${before} ${after}`);
 
 			if (current && !current.period) {
 				current.period = date;
@@ -370,21 +405,39 @@ function groupEntries(lines: string[], allowSingleDate = false): RawEntry[] {
 		}
 
 		if (!current) {
-			current = { period: "", headerParts: splitHeaderParts(line), body: [] };
+			current = { period: "", headerParts: splitEntryHeaderParts(line), body: [] };
 			continue;
 		}
 
 		const isBullet = BULLET_PATTERN.test(line);
-		const leadsToDate = !isBullet && looksLikeEntryHeader(line) && introducesEntry(cleaned, index, allowSingleDate);
+		const issuerAfterDate =
+			allowSingleDate &&
+			current.period &&
+			current.body.length === 0 &&
+			/\b(?:Technologies|University|Institute|Games|Association|Academy)\b/.test(line);
+		const nearbyDate = [1, 2].some((offset) => isDateLine(cleaned[index + offset] ?? "", allowSingleDate));
+		const continuation = Boolean(
+			current.period &&
+				current.body.length > 0 &&
+				/^[a-z][a-z'-]*[.,:]?\s/.test(line) &&
+				!STRONG_SEPARATOR.test(line) &&
+				!nearbyDate,
+		);
+		const leadsToDate =
+			!isBullet &&
+			!issuerAfterDate &&
+			!continuation &&
+			looksLikeEntryHeader(line) &&
+			introducesEntry(cleaned, index, allowSingleDate);
 
 		if (leadsToDate && !current.period && current.body.length === 0) {
-			current.headerParts.push(...splitHeaderParts(line));
+			current.headerParts.push(...splitEntryHeaderParts(line));
 			continue;
 		}
 
 		if (leadsToDate) {
 			entries.push(current);
-			current = { period: "", headerParts: splitHeaderParts(line), body: [] };
+			current = { period: "", headerParts: splitEntryHeaderParts(line), body: [] };
 			continue;
 		}
 
@@ -404,6 +457,59 @@ function entryDescription(entry: RawEntry, usedParts: number): string {
 const baseItem = () => ({ id: generateId(), hidden: false });
 
 const emptyWebsite = { url: "", label: "", inlineLink: false };
+
+const isEntryLocation = (part: string) =>
+	/^(?:[\p{Script=Han}]{2,8}(?:省|市|区|县)|北京|上海|天津|重庆|广州|深圳|杭州|南京|成都|武汉|西安|Remote|Hybrid|远程)$|,\s*\p{L}/iu.test(
+		part,
+	);
+
+const isEntryDegree = (part: string) =>
+	/^(?:(?:本科|学士|大专|专科|硕士|博士|高中|中专|研究生)(?:学位|学历)?$|(?:Bachelor|Master|Doctor|BSc|MSc|BA|BS|MA|MS|PhD)\b)/i.test(
+		part,
+	);
+
+function experienceFields(entry: RawEntry) {
+	const parts = entry.headerParts.slice(1);
+	const locationIndex = parts.findIndex((part, index) => index < 2 && isEntryLocation(part));
+	if (locationIndex < 0)
+		return { position: parts[0] ?? "", location: parts[1] ?? "", description: entryDescription(entry, 3) };
+	const roleIndex = parts.findIndex((_, index) => index !== locationIndex);
+	return {
+		position: parts[roleIndex] ?? "",
+		location: parts[locationIndex] ?? "",
+		description: toHtml([...parts.filter((_, index) => index !== roleIndex && index !== locationIndex), ...entry.body]),
+	};
+}
+
+function educationFields(entry: RawEntry) {
+	const parts = entry.headerParts.slice(1);
+	const degreeIndex = parts.findIndex(isEntryDegree);
+	if (degreeIndex < 0)
+		return { degree: parts[0] ?? "", area: "", location: parts[1] ?? "", description: entryDescription(entry, 3) };
+	const remaining = parts.filter((_, index) => index !== degreeIndex);
+	const locationIndex = remaining.findIndex(isEntryLocation);
+	const gradeIndex = remaining.findIndex((part) =>
+		/^(?:\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)?\s*GPA|GPA\s*[:：]?\s*\d+(?:\.\d+)?)$/i.test(part),
+	);
+	const majorIndex = remaining.findIndex(
+		(part, index) =>
+			index !== locationIndex &&
+			index !== gradeIndex &&
+			/(?:专业|工程|科学|技术|学|设计|管理|艺术|教育|语言|数学|物理|化学|英语|Science|Engineering|Mathematics|Arts|Design|Management)$/i.test(
+				part,
+			),
+	);
+	return {
+		degree: parts[degreeIndex] ?? "",
+		area: remaining[majorIndex] ?? "",
+		grade: remaining[gradeIndex] ?? "",
+		location: remaining[locationIndex] ?? "",
+		description: toHtml([
+			...remaining.filter((_, index) => index !== majorIndex && index !== locationIndex && index !== gradeIndex),
+			...entry.body,
+		]),
+	};
+}
 
 function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	if (key === "skills") {
@@ -427,18 +533,19 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	}
 
 	if (key === "languages") {
-		return lines
-			.map((line) => line.replace(BULLET_PATTERN, "").trim())
-			.filter(Boolean)
-			.map((line) => {
-				const match = /^(.+?)\s*[([–—-]\s*(.+?)\s*[)\]]?$/.exec(line);
-				return {
-					...baseItem(),
-					language: (match?.[1] ?? line).trim(),
-					fluency: (match?.[2] ?? "").trim(),
-					level: 0,
-				};
-			});
+		const languageLines = lines.map((line) => line.replace(BULLET_PATTERN, "").trim()).filter(Boolean);
+		return languageLines.flatMap((line, index) => {
+			const fluency = /^(?:Native|Fluent|Conversational|Professional|Intermediate|Beginner|母语|流利|熟练)$/i;
+			if (index > 0 && fluency.test(line) && !fluency.test(languageLines[index - 1] ?? "")) return [];
+			const match = /^(.+?)\s*[([–—-]\s*(.+?)\s*[)\]]?$/.exec(line);
+			const next = languageLines[index + 1] ?? "";
+			return {
+				...baseItem(),
+				language: (match?.[1] ?? line).trim(),
+				fluency: (match?.[2] ?? (fluency.test(next) ? next : "")).trim(),
+				level: 0,
+			};
+		});
 	}
 
 	if (key === "profiles") {
@@ -466,11 +573,9 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 		return entries.map((entry) => ({
 			...baseItem(),
 			company: entry.headerParts[0] ?? "",
-			position: entry.headerParts[1] ?? "",
-			location: entry.headerParts[2] ?? "",
 			period: entry.period,
 			website: emptyWebsite,
-			description: entryDescription(entry, 3),
+			...experienceFields(entry),
 			roles: [],
 		}));
 	}
@@ -479,13 +584,10 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 		return entries.map((entry) => ({
 			...baseItem(),
 			school: entry.headerParts[0] ?? "",
-			degree: entry.headerParts[1] ?? "",
-			area: "",
 			grade: "",
-			location: entry.headerParts[2] ?? "",
 			period: entry.period,
 			website: emptyWebsite,
-			description: entryDescription(entry, 3),
+			...educationFields(entry),
 		}));
 	}
 
@@ -522,14 +624,27 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	}
 
 	if (key === "certifications") {
-		return entries.map((entry) => ({
-			...baseItem(),
-			title: entry.headerParts[0] ?? "",
-			issuer: entry.headerParts[1] ?? "",
-			date: entry.period,
-			website: emptyWebsite,
-			description: entryDescription(entry, 2),
-		}));
+		return entries.map((entry) => {
+			const wrappedTitle = /[:：]$/.test(entry.headerParts[0] ?? "");
+			const title = wrappedTitle ? entry.headerParts.join(" ") : (entry.headerParts[0] ?? "");
+			const explicitIssuer = wrappedTitle ? "" : entry.headerParts[1];
+			const firstBodyLine = entry.body[0] ?? "";
+			const issuerInBody =
+				!explicitIssuer &&
+				!SENTENCE_END.test(firstBodyLine) &&
+				firstBodyLine.split(/\s+/).length <= 10 &&
+				/\b(?:Technologies|University|Institute|Games|Association|Academy)\b/.test(firstBodyLine);
+			const issuer = explicitIssuer || (issuerInBody ? firstBodyLine : "");
+			const remaining = issuerInBody ? { ...entry, body: entry.body.slice(1) } : entry;
+			return {
+				...baseItem(),
+				title,
+				issuer,
+				date: entry.period,
+				website: emptyWebsite,
+				description: entryDescription(remaining, wrappedTitle ? entry.headerParts.length : 2),
+			};
+		});
 	}
 
 	if (key === "publications") {
@@ -562,6 +677,20 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 	const header: string[] = [];
 	const segments: Segment[] = [];
 	let current: Segment | null = null;
+	let currentSource = "";
+
+	// An unrecognized heading with nothing under it (an uppercase "JAVA SPRING MYSQL" or
+	// "AWS CERTIFIED" line) was content, not a section. Return its line to whatever it followed
+	// instead of dropping it with the empty segment.
+	const closeCurrent = () => {
+		if (!current) return;
+		if (current.key === null && current.lines.length === 0) {
+			const previous = segments.at(-1);
+			(previous ? previous.lines : header).push(currentSource);
+			return;
+		}
+		segments.push(current);
+	};
 
 	for (const [index, { line, precededByBlank }] of records.entries()) {
 		const key = knownHeading(line);
@@ -584,8 +713,9 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 			(current === null || isolatedTitleCase || !introducesEntry(cleaned, index));
 
 		if ((key !== null || unknown) && !holdsInSkills) {
-			if (current) segments.push(current);
+			closeCurrent();
 			current = { key, title: line.replace(/[:：]\s*$/, "").trim(), lines: [] };
+			currentSource = line;
 			continue;
 		}
 
@@ -593,9 +723,92 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 		else header.push(line);
 	}
 
-	if (current) segments.push(current);
+	closeCurrent();
 
 	return { header, segments };
+}
+
+const OBJECTIVE_LABEL_CORE =
+	"(?:意\\s*向\\s*岗\\s*位|求\\s*职\\s*意\\s*向|求\\s*职\\s*目\\s*标|目\\s*标\\s*职\\s*位|job objective|desired position|target position|objective)";
+const OBJECTIVE_HEADINGS = new Set(["求职意向", "求职目标", "意向岗位"]);
+const HEADER_CONTACT_LABEL =
+	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|网\s*址|主\s*页|网\s*站|website|homepage|url)\s*[:：]/giu;
+const EMPTY_HEADER_CONTACT_LINE =
+	/^(?:(?:电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile)\s*[:：]?\s*[|｜•·,;，；\s]*)+$/iu;
+const HEADER_CONTACT_SEPARATORS = /^[\s|｜•·,;，；]+|[\s|｜•·,;，；]+$/g;
+
+/** Drops A/B empty contact labels; keeps C residue for summary instead of name/headline. */
+function peelHeaderContactResidue(
+	text: string,
+	extracted: { email: string; phone: string; urls: string[] },
+): { rest: string; leftover: { text: string; offset: number }[] } {
+	const leftover: { text: string; offset: number }[] = [];
+	const fields = [...text.matchAll(PERSONAL_FIELD_LABEL)];
+	const isContactLabel = new RegExp(HEADER_CONTACT_LABEL.source, "iu");
+	if (fields.length === 0) return { rest: text.replace(/\s+/g, " ").trim(), leftover };
+
+	let rest = text.slice(0, fields[0]?.index ?? 0);
+	let cursor = fields[0]?.index ?? 0;
+	for (const [index, match] of fields.entries()) {
+		const start = match.index ?? 0;
+		if (start > cursor) rest += text.slice(cursor, start);
+		const valueEnd = fields[index + 1]?.index ?? text.length;
+		const value = text.slice(start + match[0].length, valueEnd);
+		cursor = valueEnd;
+		if (!isContactLabel.test(match[0])) {
+			rest += text.slice(start, valueEnd);
+			continue;
+		}
+		// Keep offsets aligned with the unconsumed fields on this line.
+		rest += " ".repeat(valueEnd - start);
+		const trimmed = value.replace(HEADER_CONTACT_SEPARATORS, "").trim();
+		if (!trimmed) continue;
+
+		const emailHit = value.match(EMAIL_PATTERN)?.[0] ?? "";
+		const phoneHit = extractPhone(value);
+		const urlHit = value.match(URL_PATTERN)?.[0] ?? "";
+		const extractedHit =
+			(emailHit && extracted.email.toLowerCase() === emailHit.toLowerCase() ? emailHit : "") ||
+			(phoneHit && extracted.phone === phoneHit ? phoneHit : "") ||
+			(urlHit && extracted.urls.some((url) => url.toLowerCase() === urlHit.toLowerCase()) ? urlHit : "");
+		if (extractedHit) {
+			const residue = value.replace(extractedHit, "").replace(HEADER_CONTACT_SEPARATORS, "").trim();
+			if (residue) leftover.push({ text: `${match[0]}${residue}`.replace(/\s+/g, " ").trim(), offset: start });
+			continue;
+		}
+
+		leftover.push({ text: `${match[0]}${trimmed}`.replace(/\s+/g, " ").trim(), offset: start });
+	}
+	rest += text.slice(cursor);
+	return { rest: rest.replace(HEADER_CONTACT_SEPARATORS, (value) => " ".repeat(value.length)), leftover };
+}
+
+const stripObjectiveLabel = (value: string) =>
+	value.replace(new RegExp(`^${OBJECTIVE_LABEL_CORE}\\s*[:：]\\s*`, "iu"), "");
+
+/** Reuses explicit personal-field boundaries; ordinary name spaces are never separators. */
+function takeLabeledHeaderFields(text: string) {
+	const fieldType = (label: string) =>
+		PERSONAL_FIELD_TYPES[label.toLowerCase()] ?? PERSONAL_FIELD_TYPES[label.replace(/\s+/g, "").toLowerCase()];
+	const fields = [...text.matchAll(PERSONAL_FIELD_LABEL)].filter((match) => {
+		const type = fieldType(match[1] ?? "");
+		return type === "name" || type === "headline";
+	});
+	if (fields.length === 0) return null;
+	return {
+		rest: text
+			.slice(0, fields[0]?.index ?? 0)
+			.replace(/\s+/g, " ")
+			.trim(),
+		fields: fields.map((match, index) => ({
+			type: fieldType(match[1] ?? ""),
+			value: text
+				.slice((match.index ?? 0) + match[0].length, fields[index + 1]?.index)
+				.replace(/\s+/g, " ")
+				.trim(),
+			offset: match.index ?? 0,
+		})),
+	};
 }
 
 function parseHeader(lines: string[]) {
@@ -612,20 +825,68 @@ function parseHeader(lines: string[]) {
 		return result.replace(/\s+/g, " ").trim();
 	};
 
-	const remaining = lines.map(strip).filter(Boolean);
-	const name = remaining[0] ?? "";
-	const rest = remaining.slice(1).flatMap(splitHeaderParts).filter(Boolean);
+	const cityFields = lines.flatMap((line, index) =>
+		[...line.matchAll(CITY_HEADER_FIELD)].map((match) => ({ match, index })),
+	);
+	const explicitLocation = cityFields.map(({ match }) => match[3]?.trim() ?? "").find(isLabeledCity);
+	const leftover = cityFields
+		.filter(({ match }) => match[3]?.trim() !== explicitLocation)
+		.map(({ match, index }) => ({ text: match[2] ?? "", index, offset: match.index ?? 0 }));
+	const remaining = lines
+		.flatMap((source, index) => {
+			const line = strip(source.replace(CITY_HEADER_FIELD, "$1"));
+			const peeled = peelHeaderContactResidue(line, { email, phone, urls });
+			leftover.push(...peeled.leftover.map((fragment) => ({ ...fragment, index })));
+			return peeled.rest.trim() ? [{ text: peeled.rest, index, offset: 0 }] : [];
+		})
+		.filter(({ text }) => !EMPTY_HEADER_CONTACT_LINE.test(text));
+
+	let extractedHeadline = "";
+	let extractedName = "";
+	const remainingForName: { text: string; index: number; offset: number }[] = [];
+	for (const line of remaining) {
+		const labeled = takeLabeledHeaderFields(line.text);
+		if (!labeled) {
+			remainingForName.push({ ...line, text: line.text.replace(/\s+/g, " ").trim() });
+			continue;
+		}
+		if (labeled.rest) remainingForName.push({ text: labeled.rest, index: line.index, offset: 0 });
+		for (const { type, value, offset } of labeled.fields) {
+			if (!value) continue;
+			if (type === "headline" && !extractedHeadline) extractedHeadline = value;
+			else if (type === "name" && !extractedName) {
+				extractedName = remainingForName.shift()?.text ?? value;
+				if (value !== extractedName) leftover.push({ text: value, index: line.index, offset });
+			} else if (value !== (type === "name" ? extractedName : extractedHeadline)) {
+				leftover.push({ text: value, index: line.index, offset });
+			}
+		}
+	}
+
+	const name = extractedName || remainingForName.shift()?.text || "";
+	const rest = remainingForName.flatMap(({ text }) => splitHeaderParts(text)).filter(Boolean);
 	const locationIndex = rest.findIndex((part) => /,/.test(part) && !/\d{4}/.test(part));
-	const stripObjectiveLabel = (value: string) =>
-		value.replace(
-			/^(?:求职意向|求职目标|目标职位|job objective|desired position|target position|objective)\s*[:：]\s*/i,
-			"",
-		);
+	const headlineIndex = extractedHeadline ? -1 : locationIndex === 0 ? 1 : 0;
+	// Header parts that become neither the headline nor the location go to the summary, so an
+	// unlabeled third header line is kept rather than dropped.
+	let partIndex = 0;
+	for (const line of remainingForName) {
+		const text = splitHeaderParts(line.text)
+			.filter(Boolean)
+			.filter(() => {
+				const index = partIndex++;
+				if (index === headlineIndex) return false;
+				return explicitLocation || index !== locationIndex;
+			})
+			.join(" ");
+		if (text) leftover.push({ ...line, text });
+	}
 
 	return {
 		name,
-		headline: stripObjectiveLabel(locationIndex === 0 ? (rest[1] ?? "") : (rest[0] ?? "")),
-		location: locationIndex === -1 ? "" : (rest[locationIndex] ?? ""),
+		headline: extractedHeadline || stripObjectiveLabel(rest[headlineIndex] ?? ""),
+		location: explicitLocation ?? (locationIndex === -1 ? "" : (rest[locationIndex] ?? "")),
+		locationRemainder: leftover.sort((a, b) => a.index - b.index || a.offset - b.offset).map(({ text }) => text),
 		email,
 		phone,
 		website: urls[0] ?? "",
@@ -640,6 +901,7 @@ const PERSONAL_INFO_TITLES = new Set([
 	"联系方式",
 	"求职意向",
 	"求职目标",
+	"意向岗位",
 	"personal information",
 	"personal details",
 	"basic information",
@@ -651,40 +913,44 @@ const PERSONAL_INFO_TITLES = new Set([
 const isPersonalInfoHeading = (title: string) => PERSONAL_INFO_TITLES.has(normalizeHeading(title));
 
 const PERSONAL_FIELD_LABEL =
-	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective)\s*[:：]/gi;
+	/(?<![A-Za-z])(电\s*子\s*邮\s*箱|电\s*子\s*邮\s*件|邮\s*箱|e-?mail|手\s*机\s*号\s*码|手\s*机\s*号|手\s*机|电\s*话\s*号\s*码|电\s*话|tel(?:ephone)?|phone|mobile|姓\s*名|名\s*字|name|网\s*址|主\s*页|网\s*站|website|homepage|url|意\s*向\s*岗\s*位|求\s*职\s*意\s*向|求\s*职\s*目\s*标|目\s*标\s*职\s*位|job objective|desired position|target position|objective|(?<![\p{L}\p{N}])所\s*在\s*城\s*市|(?<![\p{L}\p{N}])城\s*市)\s*[:：]/giu;
 
-const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline">> = {
-	姓名: "name",
-	名字: "name",
-	name: "name",
-	电子邮箱: "email",
-	电子邮件: "email",
-	邮箱: "email",
-	"e-mail": "email",
-	email: "email",
-	手机号码: "phone",
-	手机号: "phone",
-	手机: "phone",
-	电话号码: "phone",
-	电话: "phone",
-	tel: "phone",
-	telephone: "phone",
-	phone: "phone",
-	mobile: "phone",
-	网址: "website",
-	主页: "website",
-	网站: "website",
-	website: "website",
-	homepage: "website",
-	url: "website",
-	求职意向: "headline",
-	求职目标: "headline",
-	目标职位: "headline",
-	"job objective": "headline",
-	"desired position": "headline",
-	"target position": "headline",
-	objective: "headline",
-};
+const PERSONAL_FIELD_TYPES: Readonly<Record<string, "email" | "name" | "phone" | "website" | "headline" | "location">> =
+	{
+		城市: "location",
+		所在城市: "location",
+		姓名: "name",
+		名字: "name",
+		name: "name",
+		电子邮箱: "email",
+		电子邮件: "email",
+		邮箱: "email",
+		"e-mail": "email",
+		email: "email",
+		手机号码: "phone",
+		手机号: "phone",
+		手机: "phone",
+		电话号码: "phone",
+		电话: "phone",
+		tel: "phone",
+		telephone: "phone",
+		phone: "phone",
+		mobile: "phone",
+		网址: "website",
+		主页: "website",
+		网站: "website",
+		website: "website",
+		homepage: "website",
+		url: "website",
+		求职意向: "headline",
+		求职目标: "headline",
+		目标职位: "headline",
+		意向岗位: "headline",
+		"job objective": "headline",
+		"desired position": "headline",
+		"target position": "headline",
+		objective: "headline",
+	};
 
 // A bare line under 求职意向 is a target role, not prose, only while it stays short and free of
 // sentence or enumeration punctuation; anything else keeps flowing into the summary text.
@@ -699,14 +965,19 @@ const trimEdgeSeparators = (value: string) => value.replace(/^[\s,;，；、。]
  * and an identical value is treated as a duplicate and consumed without any loss.
  */
 function assignPersonalField(
-	type: "email" | "name" | "phone" | "website" | "headline",
+	type: "email" | "name" | "phone" | "website" | "headline" | "location",
 	value: string,
 	basics: ResumeData["basics"],
 ): string {
-	if (type === "name" || type === "headline") {
-		const field = type === "name" ? "name" : "headline";
+	if (type === "name" || type === "headline" || type === "location") {
+		const field = type;
 		const normalizedValue = value.trim();
 		if (!normalizedValue) return value;
+		if (type === "location" && !isLabeledCity(normalizedValue)) {
+			// Extract recognizable contacts, but keep the complete uncertain city field for review.
+			consumeInlineContact(value, basics);
+			return value;
+		}
 		if (!basics[field] || basics[field] === normalizedValue) {
 			basics[field] ||= normalizedValue;
 			return "";
@@ -821,6 +1092,11 @@ function applyPersonalInfo(lines: string[], basics: ResumeData["basics"], object
 	return leftover;
 }
 
+/** Shared with PDF reading-order detection; uses the importer's exact section aliases. */
+export function isKnownResumeHeading(line: string): boolean {
+	return knownHeading(line) !== null;
+}
+
 export function parseResumeText(text: string): ResumeData {
 	const lines = text.replace(/\r\n?/g, "\n").split("\n");
 	const { header, segments } = segment(lines);
@@ -835,13 +1111,17 @@ export function parseResumeText(text: string): ResumeData {
 	data.basics.phone = contact.phone;
 	data.basics.location = contact.location;
 	data.basics.website = { url: contact.website, label: "" };
+	if (contact.locationRemainder.length > 0) {
+		data.summary.content = toHtml(contact.locationRemainder);
+		order.push("summary");
+	}
 
 	for (const item of segments) {
 		if (item.lines.length === 0) continue;
 
 		if (item.key === "summary") {
 			if (isPersonalInfoHeading(item.title)) {
-				const objective = normalizeHeading(item.title) === "求职意向" || normalizeHeading(item.title) === "求职目标";
+				const objective = OBJECTIVE_HEADINGS.has(normalizeHeading(item.title));
 				const leftover = applyPersonalInfo(item.lines, data.basics, objective);
 				const content = toHtml(leftover);
 				data.summary.content = data.summary.content ? `${data.summary.content}${content}` : content;

@@ -97,7 +97,7 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 						marginTop: -metrics.page.paddingVertical,
 						paddingTop:
 							showHeader && hasPicture
-								? metrics.page.paddingVertical + picture.size + metrics.itemGapY * 3
+								? metrics.page.paddingVertical + picture.size / picture.aspectRatio + metrics.itemGapY * 3
 								: metrics.page.paddingVertical,
 						paddingRight: metrics.page.paddingHorizontal,
 						paddingLeft: metrics.columnGap,

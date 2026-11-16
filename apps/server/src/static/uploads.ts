@@ -73,7 +73,7 @@ function isValidPathSegments(path: string): boolean {
 }
 
 function isPrivateUploadPath(path: string): boolean {
-	return path.split("/")[0] === "agent";
+	return ["agent", "guest"].includes(path.split("/")[0] ?? "");
 }
 
 function isNotModified(headers: Headers, etag: string): boolean {
