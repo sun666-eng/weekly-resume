@@ -1,11 +1,8 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { SectionTitleResolver } from "../section-title";
-import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { basename, dirname, join, resolve } from "node:path";
+import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { decode } from "fast-png";
+import { createCanvas } from "@napi-rs/canvas";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import pixelmatch from "pixelmatch";
 import { act } from "react";
@@ -156,37 +153,56 @@ function expectMetricsEqual(actual: TextMetric[], expected: TextMetric[]) {
 	}
 }
 
-function pngRgba(path: string): { width: number; height: number; data: Uint8Array } {
-	const png = decode(readFileSync(path));
-	const channels = png.channels ?? png.data.length / (png.width * png.height);
-	if (channels === 4) return { width: png.width, height: png.height, data: Uint8Array.from(png.data) };
-	if (channels !== 3) throw new Error(`Unexpected PNG channel count ${channels} in ${path}`);
-	const data = new Uint8Array(png.width * png.height * 4);
-	for (let index = 0, pixel = 0; index < png.data.length; index += 3, pixel += 4) {
-		data[pixel] = png.data[index] ?? 0;
-		data[pixel + 1] = png.data[index + 1] ?? 0;
-		data[pixel + 2] = png.data[index + 2] ?? 0;
-		data[pixel + 3] = 255;
+type RasterPage = { width: number; height: number; data: Uint8Array };
+
+async function rasterizeWithPdfJs(pdf: Uint8Array): Promise<RasterPage> {
+	// Render embedded glyph paths without depending on browser or system fonts.
+	const task = getDocument({ data: new Uint8Array(pdf), useSystemFonts: false, disableFontFace: true });
+	try {
+		const document = await task.promise;
+		expect(document.numPages).toBe(1);
+		const page = await document.getPage(1);
+		try {
+			const viewport = page.getViewport({ scale: 2 }); // Preserve the 144 DPI comparison.
+			const width = Math.ceil(viewport.width);
+			const height = Math.ceil(viewport.height);
+			const canvas = createCanvas(width, height);
+			const context = canvas.getContext("2d");
+			await page.render({
+				canvas: canvas as unknown as HTMLCanvasElement,
+				canvasContext: context as unknown as CanvasRenderingContext2D,
+				viewport,
+			}).promise;
+			return { width, height, data: Uint8Array.from(context.getImageData(0, 0, width, height).data) };
+		} finally {
+			page.cleanup();
+		}
+	} finally {
+		await task.destroy();
 	}
-	return { width: png.width, height: png.height, data };
 }
 
-function rasterizeWithPoppler(pdf: Uint8Array, dir: string, name: string) {
-	const pdfPath = join(dir, `${name}.pdf`);
-	const prefix = join(dir, name);
-	writeFileSync(pdfPath, pdf);
-	const result = spawnSync("pdftoppm", ["-png", "-singlefile", "-r", "144", pdfPath, prefix], {
-		timeout: 30_000,
-		windowsHide: true,
-		encoding: "buffer",
-		maxBuffer: 16 * 1024 * 1024,
-	});
-	if (result.error) throw result.error;
-	if (result.signal) throw new Error(`pdftoppm killed by ${result.signal}`);
-	if (result.status !== 0) {
-		throw new Error(`pdftoppm failed (${result.status}): ${result.stderr.toString("utf8")}`);
+function inkPixels(page: RasterPage, text?: TextMetric): number {
+	const left = text ? Math.max(0, Math.floor(text.x * 2)) : 0;
+	const right = text ? Math.min(page.width, Math.ceil((text.x + text.width) * 2)) : page.width;
+	const top = text ? Math.max(0, Math.floor(page.height - (text.y + text.height) * 2)) : 0;
+	const bottom = text ? Math.min(page.height, Math.ceil(page.height - (text.y - text.height * 0.3) * 2)) : page.height;
+	let count = 0;
+	for (let y = top; y < bottom; y++) {
+		for (let x = left; x < right; x++) {
+			const index = (y * page.width + x) * 4;
+			if (page.data[index + 3] === 255 && (page.data[index] ?? 255) < 128) count++;
+		}
 	}
-	return pngRgba(`${prefix}.png`);
+	return count;
+}
+
+function expectGlyphInk(page: RasterPage, metrics: TextMetric[], text: string, label: string) {
+	const rows = metrics.filter((row) => row.str === text);
+	expect(rows, `${label} glyph rows for every weight/style`).toHaveLength(weights.length * styles.length);
+	for (const [index, row] of rows.entries()) {
+		expect(inkPixels(page, row), `${label} glyph ink at row ${index}`).toBeGreaterThan(64);
+	}
 }
 
 function expectPixelParity(
@@ -263,7 +279,8 @@ describe("CJK compact subset render parity", () => {
 			const baselineCommonPdf = new Uint8Array(
 				await act(() => renderToBuffer(documentFor(baselineFamily, commonText))),
 			);
-			expectMetricsEqual(await textMetrics(compactPdf), await textMetrics(baselineCommonPdf));
+			const compactMetrics = await textMetrics(compactPdf);
+			expectMetricsEqual(compactMetrics, await textMetrics(baselineCommonPdf));
 
 			expect(resumeContentFitsCjkCompact(data, rareTitleResolver)).toBe(false);
 			data.basics.name += rareGlyph;
@@ -284,26 +301,20 @@ describe("CJK compact subset render parity", () => {
 			expect(scFetches(fetches, family).some((path) => /\/(400|700)\.ttf$/.test(path))).toBe(true);
 
 			const baselineRarePdf = new Uint8Array(await act(() => renderToBuffer(documentFor(baselineFamily, rareText))));
-			expectMetricsEqual(await textMetrics(rarePdf), await textMetrics(baselineRarePdf));
+			const rareMetrics = await textMetrics(rarePdf);
+			expectMetricsEqual(rareMetrics, await textMetrics(baselineRarePdf));
 
-			const dir = resolve(mkdtempSync(join(tmpdir(), "cjk-subset-render-")));
-			if (dirname(dir) !== resolve(tmpdir()) || !basename(dir).startsWith("cjk-subset-render-")) {
-				throw new Error("Unexpected PDF fixture directory");
-			}
-			try {
-				expectPixelParity(
-					rasterizeWithPoppler(compactPdf, dir, "compact"),
-					rasterizeWithPoppler(baselineCommonPdf, dir, "full-common"),
-					`${family} compact vs full`,
-				);
-				expectPixelParity(
-					rasterizeWithPoppler(rarePdf, dir, "rare"),
-					rasterizeWithPoppler(baselineRarePdf, dir, "full-rare"),
-					`${family} rare vs full`,
-				);
-			} finally {
-				rmSync(dir, { recursive: true, force: true });
-			}
+			const compactPixels = await rasterizeWithPdfJs(compactPdf);
+			const baselineCommonPixels = await rasterizeWithPdfJs(baselineCommonPdf);
+			const rarePixels = await rasterizeWithPdfJs(rarePdf);
+			const baselineRarePixels = await rasterizeWithPdfJs(baselineRarePdf);
+			expectGlyphInk(compactPixels, compactMetrics, "中文简历", `${family} compact`);
+			expectGlyphInk(rarePixels, rareMetrics, rareGlyph, `${family} rare`);
+			expect(inkPixels(rarePixels), `${family} added rare glyph increases ink`).toBeGreaterThan(
+				inkPixels(compactPixels) + 64 * weights.length * styles.length,
+			);
+			expectPixelParity(compactPixels, baselineCommonPixels, `${family} compact vs full`);
+			expectPixelParity(rarePixels, baselineRarePixels, `${family} rare vs full`);
 		},
 	);
 });
