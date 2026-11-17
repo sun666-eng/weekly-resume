@@ -1,12 +1,15 @@
 // @vitest-environment happy-dom
 
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { ORPCError } from "@orpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { Dialog } from "@reactive-resume/ui/components/dialog";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -16,6 +19,7 @@ import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 
 const navigate = vi.hoisted(() => vi.fn());
 const importResume = vi.hoisted(() => vi.fn());
+const updateResume = vi.hoisted(() => vi.fn());
 const parsedPdf = vi.hoisted(() => ({ value: null as typeof sampleResumeData | null }));
 const provider = vi.hoisted(() => ({ hasUsableProvider: false, isLoading: false }));
 const providerEnabled = vi.hoisted(() => vi.fn());
@@ -72,7 +76,12 @@ vi.mock("@reactive-resume/import/plain-text", () => ({
 
 vi.mock("@/libs/orpc/client", () => ({
 	client: { ai: { parseDocx: parseDocxAi } },
-	orpc: { resume: { import: { mutationOptions: () => ({ mutationFn: importResume }) } } },
+	orpc: {
+		resume: {
+			import: { mutationOptions: () => ({ mutationFn: importResume }) },
+			update: { call: updateResume },
+		},
+	},
 }));
 
 const { ImportResumeDialog } = await import("./import");
@@ -90,12 +99,13 @@ afterEach(() => {
 	parseDocxAi.mockReset();
 	navigate.mockReset();
 	importResume.mockReset();
+	updateResume.mockReset();
 	routerNavigate.mockReset();
 	providerEnabled.mockClear();
 });
 
 // Drive `open` from the store the way DialogManager does, so closing the dialog actually unmounts it.
-function DialogHarness({ onPrepared }: { onPrepared?: (data: typeof sampleResumeData) => Promise<void> }) {
+function DialogHarness({ onPrepared }: { onPrepared?: (data: ResumeData, name?: string) => Promise<void> }) {
 	const open = useDialogStore((state) => state.open);
 
 	return (
@@ -105,7 +115,7 @@ function DialogHarness({ onPrepared }: { onPrepared?: (data: typeof sampleResume
 	);
 }
 
-const renderDialog = (onPrepared?: (data: typeof sampleResumeData) => Promise<void>) => {
+const renderDialog = (onPrepared?: (data: ResumeData, name?: string) => Promise<void>) => {
 	useDialogStore.setState({ open: true, activeDialog: null, onBeforeClose: null });
 
 	return render(
@@ -152,6 +162,7 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 	});
 	it("keeps the import dialog and selected file when local replacement is cancelled", async () => {
 		const onPrepared = vi.fn(() => Promise.reject(new Error("CANCELLED")));
+		const toastAdd = vi.spyOn(toast, "add");
 		renderDialog(onPrepared);
 		await selectLocalWord();
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
@@ -160,6 +171,8 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		expect(useDialogStore.getState().open).toBe(true);
 		expect(screen.getByText("resume.docx")).toBeInTheDocument();
 		expect(importResume).not.toHaveBeenCalled();
+		expect(toastAdd.mock.calls.some((call) => call[0]?.type === "error")).toBe(false);
+		toastAdd.mockRestore();
 	});
 	async function selectLocalWord() {
 		const input = document.querySelector<HTMLInputElement>('input[type="file"]');
@@ -289,9 +302,14 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		await waitFor(() => expect(screen.getByRole("combobox")).toHaveTextContent("PDF"));
 		expect(screen.queryByRole("switch")).not.toBeInTheDocument();
 	});
-	it.each([true, false])("shows controlled extraction guidance, safe=%s", async (safe) => {
+	it.each([
+		["a ResumeImportError", new ResumeImportError("Readable error"), "Readable error"],
+		["a genuine Error", new Error("Raw ZIP detail"), "Raw ZIP detail"],
+		["an empty Error", new Error(""), "An unknown error occurred while importing your resume."],
+		["an unknown failure", { code: "mystery" }, "An unknown error occurred while importing your resume."],
+	])("surfaces %s without swallowing a real import message", async (_label, failure, description) => {
 		const toastAdd = vi.spyOn(toast, "add");
-		extractWord.mockRejectedValue(safe ? new ResumeImportError("Readable error") : new Error("Raw ZIP detail"));
+		extractWord.mockRejectedValue(failure);
 		renderDialog();
 		await selectLocalWord();
 		fireEvent.click(screen.getByRole("button", { name: "Import" }));
@@ -301,7 +319,7 @@ describe("ImportResumeDialog — Word basic and opt-in AI", () => {
 		expect(toastAdd).toHaveBeenLastCalledWith(
 			expect.objectContaining({
 				type: "error",
-				description: safe ? "Readable error" : "An unknown error occurred while importing your resume.",
+				description,
 			}),
 		);
 		toastAdd.mockRestore();
@@ -579,5 +597,170 @@ describe("ImportResumeDialog — Set up a provider", () => {
 		expect(event.defaultPrevented).toBe(false);
 		expect(screen.queryByText("Leave to set up an AI provider?")).not.toBeInTheDocument();
 		expect(navigate).not.toHaveBeenCalled();
+	});
+});
+
+function localBackupFile() {
+	const data = structuredClone(defaultResumeData);
+	data.picture.url = "";
+	data.basics.name = "林知禾";
+	return new File(
+		[
+			JSON.stringify({
+				format: "weekly-resume-local-backup",
+				version: 1,
+				name: "虚构草稿",
+				data,
+				photo: { mime: "image/png", base64: "AQIDBA==" },
+			}),
+		],
+		"weekly-resume-local-backup.json",
+		{ type: "application/json" },
+	);
+}
+
+describe("ImportResumeDialog — local backup JSON", () => {
+	it("unwraps a guest backup into data, name and embedded photo", async () => {
+		const onPrepared = vi.fn(async (_data: ResumeData, _name?: string) => undefined);
+		renderDialog(onPrepared);
+		fireEvent.change(importFileInput(), { target: { files: [localBackupFile()] } });
+		await screen.findByText("Weekly Resume local backup (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(onPrepared).toHaveBeenCalledOnce());
+		expect(onPrepared.mock.calls[0]?.[0].basics.name).toBe("林知禾");
+		expect(onPrepared.mock.calls[0]?.[0].picture.url).toBe("data:image/png;base64,AQIDBA==");
+		expect(onPrepared.mock.calls[0]?.[1]).toBe("虚构草稿");
+		expect(importResume).not.toHaveBeenCalled();
+		expect(updateResume).not.toHaveBeenCalled();
+		expect(navigate).not.toHaveBeenCalled();
+	});
+
+	it("imports a local backup into an account resume with the restored photo and title", async () => {
+		importResume.mockResolvedValue("backup-import");
+		renderDialog();
+		fireEvent.change(importFileInput(), { target: { files: [localBackupFile()] } });
+		await screen.findByText("Weekly Resume local backup (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		const imported = importResume.mock.calls[0]?.[0] as { data: typeof defaultResumeData };
+		expect(imported.data.basics.name).toBe("林知禾");
+		expect(imported.data.picture.url).toBe("data:image/png;base64,AQIDBA==");
+		expect(updateResume).toHaveBeenCalledExactlyOnceWith({ id: "backup-import", name: "虚构草稿" });
+		expect(navigate).toHaveBeenCalledWith({
+			to: "/builder/$resumeId",
+			params: { resumeId: "backup-import" },
+		});
+	});
+
+	it("shows a backup-specific error instead of a generic unknown failure", async () => {
+		const toastAdd = vi.spyOn(toast, "add");
+		renderDialog();
+		fireEvent.change(importFileInput(), {
+			target: {
+				files: [
+					new File(
+						[JSON.stringify({ format: "weekly-resume-local-backup", version: 1 })],
+						"weekly-resume-local-backup.json",
+						{ type: "application/json" },
+					),
+				],
+			},
+		});
+		await screen.findByText("Weekly Resume local backup (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		expect(toastAdd).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: "This file is not a valid Weekly Resume local backup.",
+			}),
+		);
+		expect(importResume).not.toHaveBeenCalled();
+		expect(updateResume).not.toHaveBeenCalled();
+		toastAdd.mockRestore();
+	});
+});
+
+describe("ImportResumeDialog — server errors", () => {
+	it("preserves a genuine server error message instead of a generic unknown failure", async () => {
+		const toastAdd = vi.spyOn(toast, "add");
+		importResume.mockRejectedValue(new ORPCError("OTHER", { message: "Resume quota exceeded for this account." }));
+		renderDialog();
+		const data = structuredClone(sampleResumeData);
+		fireEvent.change(importFileInput(), {
+			target: { files: [new File([JSON.stringify(data)], "resume.json", { type: "application/json" })] },
+		});
+		await screen.findByText("Weekly Resume (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(toastAdd).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: "Resume quota exceeded for this account.",
+			}),
+		);
+		toastAdd.mockRestore();
+	});
+
+	it("preserves a genuine Error message from import instead of a generic unknown failure", async () => {
+		const toastAdd = vi.spyOn(toast, "add");
+		importResume.mockRejectedValue(new Error("Disk is full while importing."));
+		renderDialog();
+		const data = structuredClone(sampleResumeData);
+		fireEvent.change(importFileInput(), {
+			target: { files: [new File([JSON.stringify(data)], "resume.json", { type: "application/json" })] },
+		});
+		await screen.findByText("Weekly Resume (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		expect(toastAdd).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: "Disk is full while importing.",
+			}),
+		);
+		expect(updateResume).not.toHaveBeenCalled();
+		toastAdd.mockRestore();
+	});
+
+	it("preserves a genuine error from the follow-up title update", async () => {
+		const toastAdd = vi.spyOn(toast, "add");
+		importResume.mockResolvedValue("backup-import");
+		updateResume.mockRejectedValue(new Error("Could not rename imported resume."));
+		renderDialog();
+		fireEvent.change(importFileInput(), { target: { files: [localBackupFile()] } });
+		await screen.findByText("Weekly Resume local backup (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(updateResume).toHaveBeenCalledOnce());
+		expect(toastAdd).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: "Could not rename imported resume.",
+			}),
+		);
+		expect(navigate).not.toHaveBeenCalled();
+		toastAdd.mockRestore();
+	});
+
+	it("retries only the title update when the same backup file is imported again", async () => {
+		importResume.mockResolvedValue("backup-import");
+		updateResume
+			.mockRejectedValueOnce(new Error("Could not rename imported resume."))
+			.mockResolvedValueOnce({ id: "backup-import" });
+		renderDialog();
+		fireEvent.change(importFileInput(), { target: { files: [localBackupFile()] } });
+		await screen.findByText("Weekly Resume local backup (JSON)");
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(updateResume).toHaveBeenCalledOnce());
+		await waitFor(() => expect(screen.getByRole("button", { name: "Import" })).not.toBeDisabled());
+		expect(importResume).toHaveBeenCalledOnce();
+		expect(navigate).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: "Import" }));
+		await waitFor(() => expect(updateResume).toHaveBeenCalledTimes(2));
+		expect(importResume).toHaveBeenCalledOnce();
+		expect(navigate).toHaveBeenCalledWith({
+			to: "/builder/$resumeId",
+			params: { resumeId: "backup-import" },
+		});
 	});
 });

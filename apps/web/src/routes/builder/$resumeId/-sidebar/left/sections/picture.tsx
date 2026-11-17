@@ -523,18 +523,33 @@ export function PictureSectionForm() {
 	const guest = useGuestEditor();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const ratioRequest = useRef(0);
-	useEffect(
-		() => () => {
-			ratioRequest.current += 1;
-		},
-		[],
-	);
+	const cropStateRef = useRef<CropState | null>(null);
+	const photoBusyRef = useRef(guest?.photoBusy);
+	const [activeUploadCount, setActiveUploadCount] = useState(0);
+	photoBusyRef.current = guest?.photoBusy;
 	const appOrigin = typeof window === "undefined" ? "" : window.location.origin;
 
 	const [cropState, setCropState] = useState<CropState | null>(null);
 	const [crop, setCrop] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+	cropStateRef.current = cropState;
+	useEffect(() => {
+		const busy = cropState !== null || activeUploadCount > 0;
+		if (!busy) return;
+		photoBusyRef.current?.(true);
+		return () => photoBusyRef.current?.(false);
+	}, [cropState, activeUploadCount]);
+	useEffect(
+		() => () => {
+			ratioRequest.current += 1;
+			if (cropStateRef.current) {
+				URL.revokeObjectURL(cropStateRef.current.imageSrc);
+				cropStateRef.current = null;
+			}
+		},
+		[],
+	);
 
 	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
@@ -576,8 +591,8 @@ export function PictureSectionForm() {
 		if (!uploadTasks.isCurrent(requestId)) return;
 		const toastId = toast.add({ type: "loading", description: t`Uploading picture…` });
 		const finish = uploadTasks.track(() => toast.close(toastId));
+		setActiveUploadCount((count) => count + 1);
 		try {
-			guest?.photoBusy(true);
 			const { url } = guest
 				? {
 						url: await new Promise<string>((resolve, reject) => {
@@ -618,8 +633,8 @@ export function PictureSectionForm() {
 				});
 			}
 		} finally {
-			guest?.photoBusy(false);
 			finish();
+			setActiveUploadCount((count) => Math.max(0, count - 1));
 			if (uploadTasks.isCurrent(requestId) && fileInputRef.current) fileInputRef.current.value = "";
 		}
 	};
@@ -627,7 +642,6 @@ export function PictureSectionForm() {
 	const onUploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
-		guest?.photoBusy(true);
 		const requestId = uploadTasks.invalidate();
 		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
 		if (form.state.values.fit === "contain") {
@@ -649,7 +663,6 @@ export function PictureSectionForm() {
 	};
 
 	const closeCropDialog = (cancel = true) => {
-		if (cancel) guest?.photoBusy(false);
 		if (cancel) uploadTasks.invalidate();
 		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
 		setCropState(null);
@@ -658,21 +671,24 @@ export function PictureSectionForm() {
 
 	const onConfirmCrop = async () => {
 		if (!cropState) return;
-
-		let fileToUpload: File = cropState.file;
+		const session = cropState;
+		let fileToUpload: File = session.file;
 		try {
 			if (croppedAreaPixels) {
-				const blob = await getCroppedImageBlob(cropState.imageSrc, croppedAreaPixels, cropState.file.type);
-				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
+				try {
+					const blob = await getCroppedImageBlob(session.imageSrc, croppedAreaPixels, session.file.type);
+					fileToUpload = new File([blob], session.file.name, { type: blob.type });
+				} catch {
+					// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
+					fileToUpload = session.file;
+				}
 			}
-		} catch {
-			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
-			fileToUpload = cropState.file;
+			if (uploadTasks.isCurrent(session.requestId)) {
+				void uploadPictureFile(fileToUpload, session.requestId, session.aspectRatio);
+			}
+		} finally {
+			if (cropStateRef.current?.requestId === session.requestId) closeCropDialog(false);
 		}
-
-		if (!uploadTasks.isCurrent(cropState.requestId)) return;
-		void uploadPictureFile(fileToUpload, cropState.requestId, cropState.aspectRatio);
-		closeCropDialog(false);
 	};
 
 	const cropAspect = cropState?.aspectRatio ?? 0.75;

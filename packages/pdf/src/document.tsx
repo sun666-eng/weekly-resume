@@ -1,6 +1,5 @@
 import type { LayoutPage, ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
-import type { Locale } from "@reactive-resume/utils/locale";
 import type { ComponentType } from "react";
 import type { ResumeRenderOptions } from "./context";
 import type { SectionTitleResolver } from "./section-title";
@@ -8,7 +7,7 @@ import type { ResolvedResumeRuntime } from "./semantic";
 import { useMemo } from "react";
 import { Document } from "#react-pdf-renderer";
 import { RenderProvider } from "./context";
-import { registerFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
+import { registerResumeFonts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
@@ -45,16 +44,9 @@ export const ResumeDocument = ({
 }: ResumeDocumentProps) => {
 	const TemplatePageComponent = getTemplatePage(template);
 	const creationDate = useMemo(() => new Date(), []);
-	const hasCjkContent = useMemo(() => resumeContentContainsCJK(data), [data]);
-	const scripts = useMemo(() => resumeContentScripts(data), [data]);
-	const typography = registerFonts(
-		data.metadata.typography,
-		data.metadata.page.locale as Locale,
-		hasCjkContent,
-		scripts,
-	) as Typography;
+	const typography = registerResumeFonts(data, resolveSectionTitle) as Typography;
 
-	// `registerFonts` widens `fontFamily` to `string | string[]` for CJK
+	// `registerResumeFonts` widens `fontFamily` to `string | string[]` for CJK
 	// fallback (#2986); the cast carries that wider runtime value through
 	// `ResumeData` without changing the public schema.
 	const resumeData = useMemo(() => ({ ...data, metadata: { ...data.metadata, typography } }), [data, typography]);

@@ -139,3 +139,16 @@ it("allows an invalid file to be reset and does not leave an invisible permanent
 	expect(dirty()).toBe(false);
 	expect(mocks.parse).not.toHaveBeenCalled();
 });
+
+it("syncs the sample preview when the in-page locale changes", async () => {
+	await setup();
+	expect(screen.getByLabelText("Your name")).toHaveValue("Alex Morgan");
+	expect(screen.getByRole("button", { name: "Ditgar" })).toHaveAttribute("aria-pressed", "true");
+	act(() => {
+		i18n.loadAndActivate({ locale: "zh-CN", messages: {} });
+	});
+	expect(screen.getByLabelText("Your name")).toHaveValue("林志远");
+	expect(screen.getByRole("button", { name: "经典" })).toHaveAttribute("aria-pressed", "true");
+	expect(screen.getByRole("button", { name: "墨蓝" })).toHaveAttribute("aria-pressed", "true");
+	expect(dirty()).toBe(false);
+});

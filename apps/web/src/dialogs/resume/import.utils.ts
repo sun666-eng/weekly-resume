@@ -5,11 +5,14 @@ export type ImportType =
 	| "doc"
 	| "reactive-resume-json"
 	| "reactive-resume-v4-json"
-	| "json-resume-json";
+	| "json-resume-json"
+	| "weekly-resume-local-backup";
 
 export function detectJsonImportType(parsed: unknown): ImportType {
 	if (!parsed || typeof parsed !== "object") return "";
 	const data = parsed as Record<string, unknown>;
+
+	if (data.format === "weekly-resume-local-backup" && data.version === 1) return "weekly-resume-local-backup";
 
 	// JSON Resume standard: top-level `basics`, without Weekly Resume's `sections`/`metadata`.
 	if ("basics" in data && !("sections" in data) && !("metadata" in data)) return "json-resume-json";

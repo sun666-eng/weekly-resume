@@ -114,6 +114,7 @@
 		{
 			"includes": [
 				"packages/fonts/src/webfonts.compact.json",
+				"packages/fonts/src/cjk-compact-coverage.json",
 				"packages/pdf/src/templates/shared/pdf-icons/generated/**/*.json"
 			],
 			"formatter": {

@@ -1,11 +1,15 @@
 import type { FontWeight } from "@reactive-resume/fonts";
 import type { ResumeData, Typography } from "@reactive-resume/schema/resume/data";
 import type { Locale, Script } from "@reactive-resume/utils/locale";
+import type { SectionTitleResolver } from "../section-title";
 import { letters as cjkLetters } from "cjk-regex";
+import { parse } from "node-html-parser";
 import {
+	getCjkCompactFamily,
 	getFont,
 	getPdfFallbackFontFamilies,
 	getWebFontSource,
+	isCjkCompactText,
 	isStandardPdfFontFamily,
 	resolveBoldFontWeight,
 	resolveLegacyFontAlias,
@@ -14,6 +18,7 @@ import {
 } from "@reactive-resume/fonts";
 import { isCJKLocale } from "@reactive-resume/utils/locale";
 import { Font } from "#react-pdf-renderer";
+import { getResumeSectionTitle } from "../section-title";
 
 type FontWeightRange = {
 	lowest: number;
@@ -153,7 +158,9 @@ const resolvePdfTypography = (typography: Typography): Typography => {
 };
 
 const containsCjkLetters = (value: unknown): boolean => {
-	if (typeof value === "string") return cjkLetterRegex.test(value);
+	if (typeof value === "string") {
+		return cjkLetterRegex.test(value) || (value.includes("&") && cjkLetterRegex.test(parse(value).text));
+	}
 	if (!value || typeof value !== "object") return false;
 	if (Array.isArray(value)) return value.some(containsCjkLetters);
 
@@ -175,7 +182,7 @@ export const resumeContentContainsCJK = (data: ResumeData): boolean => {
 // "han-simplified"; Traditional ordering instead comes from the zh-TW locale.
 const hangulRegex = /[가-힯ᄀ-ᇿ㄰-㆏ꥠ-꥿]/;
 const kanaRegex = /[぀-ゟ゠-ヿㇰ-ㇿ]/;
-const hanRegex = /[㐀-䶿一-鿿豈-﫿]/;
+const hanRegex = /\p{Script=Han}/u;
 
 // Arabic + Supplement + Extended-A + Presentation Forms-A/B (covers Persian).
 const arabicRegex = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-ﻼ]/;
@@ -202,8 +209,9 @@ const scriptDetectors: { script: Script; regex: RegExp }[] = [
 
 const collectScripts = (value: unknown, scripts: Set<Script>): void => {
 	if (typeof value === "string") {
+		const decoded = value.includes("&") ? parse(value).text : value;
 		for (const { script, regex } of scriptDetectors) {
-			if (regex.test(value)) scripts.add(script);
+			if (regex.test(value) || regex.test(decoded)) scripts.add(script);
 		}
 		return;
 	}
@@ -231,11 +239,60 @@ export const resumeContentScripts = (data: ResumeData): Set<Script> => {
 	return scripts;
 };
 
+const contentFitsCjkCompact = (value: unknown): boolean => {
+	if (typeof value === "string") {
+		if (!isCjkCompactText(value)) return false;
+		// Rich text may encode rare glyphs as numeric or named HTML entities.
+		return !value.includes("&") || isCjkCompactText(parse(value).text);
+	}
+	if (!value || typeof value !== "object") return true;
+	if (Array.isArray(value)) return value.every(contentFitsCjkCompact);
+	return Object.values(value).every(contentFitsCjkCompact);
+};
+
+const resolvedResumeSectionTitles = (data: ResumeData, resolveSectionTitle?: SectionTitleResolver): string[] => {
+	const renderData = { ...data, resolveSectionTitle };
+	const sectionIds = new Set([
+		"summary",
+		...Object.keys(data.sections),
+		...data.customSections.map((section) => section.id),
+		...data.metadata.layout.pages.flatMap((page) => [...page.main, ...page.sidebar]),
+	]);
+	return [...sectionIds].map((id) => getResumeSectionTitle(renderData, id));
+};
+
+/** Check renderable text, including localized/default titles, on every resume revision. */
+export const resumeContentFitsCjkCompact = (data: ResumeData, resolveSectionTitle?: SectionTitleResolver): boolean =>
+	contentFitsCjkCompact([
+		data.basics,
+		data.summary,
+		data.sections,
+		data.customSections,
+		resolvedResumeSectionTitles(data, resolveSectionTitle),
+	]);
+
+/** The document adapter supplies the current data and its actual title resolver. */
+export const registerResumeFonts = (data: ResumeData, resolveSectionTitle?: SectionTitleResolver): PdfTypography => {
+	const titles = resolvedResumeSectionTitles(data, resolveSectionTitle);
+	const scripts = resumeContentScripts(data);
+	// A resolver can introduce a script absent from the stored data and page locale.
+	// Include its actual output in fallback registration as well as subset selection.
+	collectScripts(titles, scripts);
+	return registerFonts(
+		data.metadata.typography,
+		data.metadata.page.locale as Locale,
+		resumeContentContainsCJK(data) || containsCjkLetters(titles),
+		scripts,
+		contentFitsCjkCompact([data.basics, data.summary, data.sections, data.customSections, titles]),
+	);
+};
+
 export const registerFonts = (
 	typography: Typography,
 	locale: Locale,
 	hasCjkContent = false,
 	scripts?: Set<Script>,
+	useCjkCompact = false,
 ): PdfTypography => {
 	// CJK needs per-character line breaking. This must stay CJK-only: applying
 	// it to Arabic (cursive, joined letters) or Thai (combining marks) would
@@ -265,8 +322,10 @@ export const registerFonts = (
 	// ["400", "600"] for Open Sans) — make sure that face is registered or
 	// @react-pdf/renderer would silently fall back to the nearest one.
 	const bodyBoldWeight = resolveBoldFontWeight(bodyFontFamily, pdfTypography.body.fontWeights);
+	const pdfFamily = (family: string) => (useCjkCompact ? getCjkCompactFamily(family) : family);
 
-	const registerFont = (family: string, weight: number, italic = false) => {
+	const registerFont = (sourceFamily: string, weight: number, italic = false) => {
+		const family = pdfFamily(sourceFamily);
 		if (isStandardPdfFontFamily(family)) return;
 
 		const normalizedWeight = toFontWeight(weight);
@@ -334,12 +393,19 @@ export const registerFonts = (
 
 	// Latin-only path: no fallback registered, return as-is.
 	if (bodyFallbacks.length === 0 && headingFallbacks.length === 0) {
-		return pdfTypography as PdfTypography;
+		return {
+			...pdfTypography,
+			body: { ...pdfTypography.body, fontFamily: pdfFamily(bodyFontFamily) },
+			heading: { ...pdfTypography.heading, fontFamily: pdfFamily(headingFontFamily) },
+		};
 	}
 
-	const bodyStack: string | string[] = bodyFallbacks.length > 0 ? [bodyFontFamily, ...bodyFallbacks] : bodyFontFamily;
+	const bodyStack: string | string[] =
+		bodyFallbacks.length > 0 ? [bodyFontFamily, ...bodyFallbacks].map(pdfFamily) : pdfFamily(bodyFontFamily);
 	const headingStack: string | string[] =
-		headingFallbacks.length > 0 ? [headingFontFamily, ...headingFallbacks] : headingFontFamily;
+		headingFallbacks.length > 0
+			? [headingFontFamily, ...headingFallbacks].map(pdfFamily)
+			: pdfFamily(headingFontFamily);
 
 	return {
 		...pdfTypography,
