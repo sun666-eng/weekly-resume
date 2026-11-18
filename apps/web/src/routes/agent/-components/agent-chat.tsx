@@ -106,6 +106,7 @@ type AssistantMarkdownProps = {
 };
 
 type FileAttachmentProps = {
+	onRemove?: () => void;
 	filename?: string | null;
 	mediaType?: string | null;
 	state?: "idle" | "uploading" | "processing" | "error" | "done";
@@ -196,6 +197,7 @@ type AgentChatComposerProps = {
 	isReadOnly: boolean;
 	isStreaming: boolean;
 	isUploading: boolean;
+	onRemoveAttachment: (id: string) => void;
 	pendingAttachments: Array<Pick<AgentAttachment, "filename" | "id" | "mediaType">>;
 	onInputChange: (value: string) => void;
 	onSend: () => void;
@@ -491,16 +493,29 @@ export const AssistantMarkdown = memo(function AssistantMarkdown({ text }: Assis
 	);
 });
 
-function FileAttachment({ filename, mediaType, state = "done" }: FileAttachmentProps) {
+function FileAttachment({ filename: name, mediaType, state = "done", onRemove }: FileAttachmentProps) {
+	const filename = name || t`Attachment`;
 	return (
 		<Attachment size="sm" state={state}>
 			<AttachmentMedia>
 				<FileIcon />
 			</AttachmentMedia>
 			<AttachmentContent>
-				<AttachmentTitle>{filename || t`Attachment`}</AttachmentTitle>
+				<AttachmentTitle>{filename}</AttachmentTitle>
 				{mediaType ? <span className="sr-only">{mediaType}</span> : null}
 			</AttachmentContent>
+			{onRemove && (
+				<Button
+					type="button"
+					size="icon"
+					variant="ghost"
+					className="size-6"
+					aria-label={t`Remove attachment ${filename}`}
+					onClick={onRemove}
+				>
+					<XIcon />
+				</Button>
+			)}
 		</Attachment>
 	);
 }
@@ -1217,6 +1232,7 @@ export function AgentChat({
 				isStreaming={isStreaming}
 				isUploading={isUploading}
 				pendingAttachments={pendingAttachments}
+				onRemoveAttachment={(id) => setPendingAttachments((current) => current.filter((a) => a.id !== id))}
 				onInputChange={setInput}
 				onSend={send}
 				onStopRun={() => void stopRun()}
@@ -1304,7 +1320,9 @@ function AgentChatMessages({
 						{error ? (
 							<MessageScrollerItem>
 								<Marker className="items-center justify-between gap-3 rounded-md border border-rose-300 bg-rose-50 p-3 text-rose-950 dark:bg-rose-950/20 dark:text-rose-200">
-									<MarkerContent>{error.message}</MarkerContent>
+									<MarkerContent>
+										{error instanceof ORPCError ? getLocalizedErrorMessage(error, error.message) : error.message}
+									</MarkerContent>
 									{!isReadOnly ? (
 										<Button size="sm" variant="outline" type="button" onClick={onRetry}>
 											<ArrowClockwiseIcon />
@@ -1439,6 +1457,7 @@ function AgentChatComposer({
 	isStreaming,
 	isUploading,
 	pendingAttachments,
+	onRemoveAttachment,
 	onInputChange,
 	onSend,
 	onStopRun,
@@ -1461,6 +1480,7 @@ function AgentChatComposer({
 								filename={attachment.filename}
 								mediaType={attachment.mediaType}
 								state={isUploading ? "uploading" : "done"}
+								onRemove={() => onRemoveAttachment(attachment.id)}
 							/>
 						))}
 					</AttachmentGroup>

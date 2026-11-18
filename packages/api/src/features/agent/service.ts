@@ -15,13 +15,16 @@ import {
 	wrapLanguageModel,
 } from "ai";
 import { and, asc, count, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { SYSTEM_AI_PROVIDER_ID } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { planAgentRollback } from "@reactive-resume/resume/agent-rollback";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { assertAgentEnvironment, getAgentToolApprovalSecret } from "../ai/credentials";
+import { consumeSystemQuota } from "../ai/quota";
 import { getAgentModel } from "../ai/service";
+import { getSystemAiConfig } from "../ai/system-config";
 import { aiProvidersService } from "../ai-providers/service";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { resumeService } from "../resume/service";
@@ -87,6 +90,7 @@ type CreateThreadInput = {
 
 type SendMessageInput = {
 	userId: string;
+	trustedClient?: string | undefined;
 	threadId: string;
 	message: UIMessage;
 	attachmentIds?: unknown;
@@ -115,7 +119,7 @@ function toThreadSummary(row: AgentThreadRecord & { resumeName?: string | null; 
 		workingResumeId: row.workingResumeId,
 		aiProviderId: row.aiProviderId,
 		resumeName: row.resumeName ?? null,
-		providerLabel: row.providerLabel ?? null,
+		providerLabel: row.providerLabel ?? (row.aiProviderId ? null : (getSystemAiConfig()?.label ?? null)),
 		activeRunId: row.activeRunId,
 		lastMessageAt: row.lastMessageAt,
 		archivedAt: row.archivedAt,
@@ -949,7 +953,7 @@ export const agentService = {
 				.insert(schema.agentThread)
 				.values({
 					userId: input.userId,
-					aiProviderId: selectedProvider.id,
+					aiProviderId: selectedProvider.id === SYSTEM_AI_PROVIDER_ID ? null : selectedProvider.id,
 					sourceResumeId: input.sourceResumeId ?? null,
 					workingResumeId: working.id,
 					title: "New thread",
@@ -987,7 +991,7 @@ export const agentService = {
 				.insert(schema.agentThread)
 				.values({
 					userId: input.userId,
-					aiProviderId: selectedProvider.id,
+					aiProviderId: selectedProvider.id === SYSTEM_AI_PROVIDER_ID ? null : selectedProvider.id,
 					sourceResumeId: input.resumeId,
 					workingResumeId: input.resumeId,
 					title: "Resume assistant",
@@ -1050,7 +1054,7 @@ export const agentService = {
 				isReadOnly:
 					thread.status === "archived" ||
 					!thread.workingResumeId ||
-					!thread.aiProviderId ||
+					(!thread.aiProviderId && !getSystemAiConfig()) ||
 					!resume ||
 					!!resume.isLocked,
 			};
@@ -1150,7 +1154,7 @@ export const agentService = {
 					streamId: thread.activeStreamId,
 				});
 			}
-			if (!thread.workingResumeId || !thread.aiProviderId) {
+			if (!thread.workingResumeId || (!thread.aiProviderId && !getSystemAiConfig())) {
 				throw new ORPCError("AGENT_THREAD_READ_ONLY", { status: 400 });
 			}
 			if (input.message.role !== "user" && input.message.role !== "assistant") {
@@ -1165,7 +1169,7 @@ export const agentService = {
 
 			const [runnableProvider, attachments] = await Promise.all([
 				aiProvidersService.getRunnableById({
-					id: thread.aiProviderId,
+					id: thread.aiProviderId ?? SYSTEM_AI_PROVIDER_ID,
 					userId: input.userId,
 				}),
 				getUnlinkedMessageAttachments({
@@ -1199,13 +1203,12 @@ export const agentService = {
 			let draftUiMessage: UIMessage = { id: responseMessageId, role: "assistant", parts: [] };
 
 			try {
+				if (input.message.role === "assistant" && attachments.length > 0)
+					throw new ORPCError("BAD_REQUEST", { message: "Tool result messages cannot include attachments." });
+				await consumeSystemQuota(runnableProvider.id, input.userId, input.trustedClient);
 				let attachmentsForModel: AgentAttachmentRecord[] = [];
 
 				if (input.message.role === "assistant") {
-					if (attachments.length > 0) {
-						throw new ORPCError("BAD_REQUEST", { message: "Tool result messages cannot include attachments." });
-					}
-
 					// Merge AFTER the exclusive claim: concurrent approve/deny requests serialize on
 					// the claim instead of both persisting, and a merge that is rejected (or any later
 					// setup failure) releases the claim via the catch below. A response persisted by a
@@ -1360,7 +1363,12 @@ export const agentService = {
 									});
 								}
 							},
-							onError: (error) => (error instanceof Error ? error.message : "Agent run failed."),
+							onError: (error) =>
+								runnableProvider.id === SYSTEM_AI_PROVIDER_ID
+									? "Agent run failed."
+									: error instanceof Error
+										? error.message
+										: "Agent run failed.",
 						}),
 					),
 				);

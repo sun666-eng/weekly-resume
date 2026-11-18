@@ -16,7 +16,7 @@ const MAX_JOB_DESCRIPTION_CHARS = 20_000;
 const MAX_FINDINGS = 120;
 
 export const atsReviewInputSchema = z.object({
-	aiProviderId: z.string().optional(),
+	aiProviderId: z.string().nullish(),
 	extractedText: z.string().trim().min(1).max(MAX_EXTRACTED_TEXT_CHARS),
 	findings: z
 		.array(

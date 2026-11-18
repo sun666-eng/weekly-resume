@@ -7,11 +7,13 @@ export type UsableAiProvider = {
 	label: string;
 	provider: AIProvider;
 	model: string;
+	isSystem?: boolean;
 };
 
 /** Two accounts on the same provider are only told apart by their label, so all three are shown. */
 function aiProviderLabel(provider: UsableAiProvider) {
-	return `${provider.label} · ${provider.provider} · ${provider.model}`;
+	const label = provider.isSystem && provider.label === "Built-in AI" ? t`Built-in free AI` : provider.label;
+	return `${label} · ${provider.provider} · ${provider.model}`;
 }
 
 type AiProviderPickerProps = {

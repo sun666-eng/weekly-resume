@@ -167,6 +167,7 @@ const businessErrorMessages: Record<string, MessageDescriptor> = {
 	// ai
 	AI_PROVIDER_UNREACHABLE: msg`Could not reach the AI provider.`,
 	AI_PROVIDER_INVALID: msg`Invalid AI provider configuration.`,
+	AI_FREE_QUOTA_EXCEEDED: msg`Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings.`,
 	AI_PROVIDER_UNAVAILABLE: msg`No tested AI provider is available.`,
 	AI_PROVIDER_NOT_CONFIGURED: msg`No AI provider is configured. Add one in Settings → Integrations to use AI features.`,
 	AI_ENCRYPTION_UNAVAILABLE: msg`AI providers are unavailable because ENCRYPTION_SECRET is not configured.`,

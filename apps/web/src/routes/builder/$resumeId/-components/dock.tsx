@@ -32,6 +32,7 @@ import {
 	useCurrentBuilderResumeSelector,
 	useResumeStore,
 } from "@/features/resume/builder/draft";
+import { FitOnePageButton } from "@/features/resume/builder/fit-button";
 import { useGuestEditor } from "@/features/resume/guest/context";
 import { authClient } from "@/libs/auth/client";
 
@@ -87,6 +88,7 @@ export function BuilderDock({ pageLayout, onTogglePageLayout, onFitToView, onAct
 				transition={{ duration: 0.2, ease: "easeOut" }}
 				className="flex max-w-full items-center overflow-x-auto rounded-full bg-popover px-2 shadow-xl will-change-[transform,opacity]"
 			>
+				<FitOnePageButton dock />
 				<DockIcon icon={ArrowUUpLeftIcon} title={t`Undo`} disabled={!canUndo} onClick={() => undo()} />
 				<DockIcon icon={ArrowUUpRightIcon} title={t`Redo`} disabled={!canRedo} onClick={() => redo()} />
 				<div className="mx-1 h-8 w-px bg-border" />
@@ -100,7 +102,7 @@ export function BuilderDock({ pageLayout, onTogglePageLayout, onFitToView, onAct
 				/>
 				<DockIcon
 					icon={ChatCircleDotsIcon}
-					title={t`Open AI agent`}
+					title={guest ? t`Sign in to use AI` : t`Open AI agent`}
 					onClick={() => {
 						if (guest) {
 							guest.showHelp("AI");

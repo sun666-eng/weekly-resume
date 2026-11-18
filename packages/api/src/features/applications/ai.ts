@@ -6,6 +6,7 @@ import { generateId, slugify } from "@reactive-resume/utils/string";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { generateJson as sharedGenerateJson } from "../ai/generate-json";
+import { consumeSystemQuota } from "../ai/quota";
 import { getModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
 import { coverLetterService } from "../cover-letters/service";
@@ -16,11 +17,12 @@ const reserved = { tags: ["Applications", "AI"] } as const;
 const MAX_PASTED_JOB_DESCRIPTION_CHARS = 20_000;
 
 // Resolve the user's default (tested + enabled) AI provider into a ready model instance.
-async function resolveModel(userId: string) {
+async function resolveModel(userId: string, trustedClient?: string) {
 	const provider = await aiProvidersService.getDefaultRunnable({ userId });
 	if (!provider) {
 		throw new ORPCError("AI_PROVIDER_NOT_CONFIGURED", { status: 400 });
 	}
+	await consumeSystemQuota(provider.id, userId, trustedClient);
 	return getModel({
 		provider: provider.provider,
 		model: provider.model,
@@ -106,6 +108,7 @@ const matchScoreOutput = z.object({
 });
 
 const aiErrors = {
+	AI_FREE_QUOTA_EXCEEDED: { status: 429, message: "Daily free AI quota exhausted." },
 	BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
 	BAD_REQUEST: { message: "Invalid application or AI request.", status: 400 },
 	AI_PROVIDER_UNREACHABLE: { message: "The AI provider returned an error or is unreachable.", status: 502 },
@@ -124,7 +127,7 @@ export const aiRouter = {
 		.output(autofillOutput)
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
-			const model = await resolveModel(context.user.id);
+			const model = await resolveModel(context.user.id, context.trustedClient);
 
 			return generateJson(
 				model,
@@ -155,7 +158,7 @@ export const aiRouter = {
 			}
 
 			const [model, resume] = await Promise.all([
-				resolveModel(context.user.id),
+				resolveModel(context.user.id, context.trustedClient),
 				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
 			]);
 
@@ -191,7 +194,7 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			const model = await resolveModel(context.user.id);
+			const model = await resolveModel(context.user.id, context.trustedClient);
 			const resume = application.resumeId
 				? await resumeService.getById({ id: application.resumeId, userId: context.user.id }).catch(() => null)
 				: null;
@@ -235,7 +238,7 @@ export const aiRouter = {
 			}
 
 			const [model, resume] = await Promise.all([
-				resolveModel(context.user.id),
+				resolveModel(context.user.id, context.trustedClient),
 				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
 			]);
 

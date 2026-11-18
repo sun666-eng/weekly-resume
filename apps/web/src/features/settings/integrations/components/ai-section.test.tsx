@@ -9,6 +9,8 @@ import { toast } from "@reactive-resume/ui/components/toast";
 type MutationName = "create" | "test" | "update" | "delete";
 
 type MockProvider = {
+	isSystem?: boolean;
+	quota?: { dailyLimit: number; remainingToday: number; usedToday: number };
 	id: string;
 	label: string;
 	provider: "openai";
@@ -146,6 +148,23 @@ describe("AISettingsSection", () => {
 		providers.data = [];
 	});
 
+	it("shows the system allowance read-only alongside the personal provider form", () => {
+		providers.data = [
+			provider({
+				id: "__system_default__",
+				isSystem: true,
+				label: "Built-in AI",
+				enabled: true,
+				testStatus: "success",
+				quota: { dailyLimit: 15, usedToday: 2, remainingToday: 13 },
+			}),
+		];
+		renderSection();
+		expect(screen.getByText("Built-in free AI")).toBeVisible();
+		expect(screen.getByText("13 of 15 free uses remaining today.")).toBeVisible();
+		expect(screen.queryByRole("button", { name: /delete|edit|retest/i })).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Save & Test Provider" })).toBeVisible();
+	});
 	it("offers popular AI SDK providers and labels Ollama as cloud-hosted", () => {
 		renderSection();
 

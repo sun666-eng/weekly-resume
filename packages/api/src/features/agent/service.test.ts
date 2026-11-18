@@ -27,6 +27,7 @@ const storageServiceMock = {
 };
 
 const resumeServiceMock = {
+	create: vi.fn(),
 	getById: vi.fn(),
 	patch: vi.fn(),
 	patchInTransaction: vi.fn(),
@@ -139,6 +140,11 @@ vi.mock("../ai/credentials", () => ({
 	assertAgentEnvironment: vi.fn(),
 	getAgentToolApprovalSecret: vi.fn(() => "test-approval-secret"),
 }));
+const consumeQuotaMock = vi.hoisted(() => vi.fn());
+vi.mock("../ai/quota", () => ({ consumeSystemQuota: consumeQuotaMock }));
+vi.mock("@reactive-resume/env/server", () => ({
+	env: { SYSTEM_AI_PROVIDER: "openai", SYSTEM_AI_MODEL: "synthetic", SYSTEM_AI_API_KEY: "synthetic-test" },
+}));
 vi.mock("../ai-providers/service", () => ({ aiProvidersService: aiProvidersServiceMock }));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
 vi.mock("../resume/resume-data-validation", () => ({ parseStoredResumeData: (data: unknown) => data }));
@@ -175,6 +181,7 @@ beforeEach(() => {
 	dbMock.transaction.mockImplementation(async <T>(callback: (tx: typeof dbMock) => Promise<T>) => callback(dbMock));
 	clearActiveAgentRunIfCurrentMock.mockReset();
 	claimActiveAgentRunMock.mockReset();
+	consumeQuotaMock.mockReset();
 	for (const mock of Object.values(messagesPersistenceMock)) mock.mockReset();
 	messagesPersistenceMock.applyStepToUiMessage.mockImplementation((message: unknown) => message);
 	messagesPersistenceMock.insertDraftAssistantMessage.mockResolvedValue({ rowId: "draft-row-1", sequence: 1 });
@@ -224,6 +231,74 @@ function buildActiveThread(overrides: Record<string, unknown> = {}) {
 		...overrides,
 	});
 }
+
+describe("system provider threads", () => {
+	it.each(["new", "builder"] as const)("stores a null FK for the %s entry point", async (entry) => {
+		const { agentService } = await import("./service");
+		const thread = buildActiveThread({ aiProviderId: null });
+		const returning = vi.fn(async () => [thread]);
+		const values = vi.fn(() => ({ returning, onConflictDoNothing: () => ({ returning }) }));
+		dbMock.insert.mockReturnValue({ values });
+		const provider = { id: "__system_default__", label: "Built-in AI" };
+		if (entry === "new") {
+			aiProvidersServiceMock.getDefaultRunnable.mockResolvedValue(provider);
+			resumeServiceMock.create.mockResolvedValue("resume-1");
+			dbMock.select.mockReturnValue(selectWhereResult([]));
+			await agentService.threads.create({ userId: "user-1", locale: "en-US" });
+			expect(aiProvidersServiceMock.getDefaultRunnable).toHaveBeenCalledWith({ userId: "user-1" });
+		} else {
+			const query = {
+				from: () => query,
+				leftJoin: () => query,
+				where: () => query,
+				orderBy: () => query,
+				limit: async () => [],
+			};
+			dbMock.select.mockReturnValue(query);
+			aiProvidersServiceMock.getRunnableById.mockResolvedValue(provider);
+			resumeServiceMock.getById.mockResolvedValue({ name: "Synthetic" });
+			await agentService.threads.getOrCreateForResume({
+				userId: "user-1",
+				resumeId: "resume-1",
+				aiProviderId: provider.id,
+			});
+			expect(aiProvidersServiceMock.getRunnableById).toHaveBeenCalledWith({ id: provider.id, userId: "user-1" });
+		}
+		expect(values).toHaveBeenCalledWith(expect.objectContaining({ aiProviderId: null, workingResumeId: "resume-1" }));
+		expect(consumeQuotaMock).not.toHaveBeenCalled();
+	});
+	it.each([true, false])(
+		"resolves the stored null provider and accounts only after claiming the run (claimed=%s)",
+		async (claimed) => {
+			const { agentService } = await import("./service");
+			dbMock.select.mockReturnValue(selectLimitResult([buildActiveThread({ aiProviderId: null })]));
+			aiProvidersServiceMock.getRunnableById.mockResolvedValue({ id: "__system_default__" });
+			claimActiveAgentRunMock.mockResolvedValue(claimed);
+			clearActiveAgentRunIfCurrentMock.mockResolvedValue(undefined);
+			consumeQuotaMock.mockRejectedValue(new ORPCError("AI_FREE_QUOTA_EXCEEDED", { status: 429 }));
+			await expect(
+				agentService.messages.send({
+					userId: "user-1",
+					trustedClient: "192.0.2.18",
+					threadId: "thread-1",
+					message: { id: "synthetic", role: "user", parts: [{ type: "text", text: "Test" }] },
+				}),
+			).rejects.toMatchObject(
+				claimed ? { code: "AI_FREE_QUOTA_EXCEEDED", status: 429 } : { code: "AGENT_THREAD_BUSY", status: 409 },
+			);
+			expect(aiProvidersServiceMock.getRunnableById).toHaveBeenCalledWith({
+				id: "__system_default__",
+				userId: "user-1",
+			});
+			expect(aiProvidersServiceMock.getDefaultRunnable).not.toHaveBeenCalled();
+			if (claimed) {
+				expect(consumeQuotaMock).toHaveBeenCalledWith("__system_default__", "user-1", "192.0.2.18");
+				expect(clearActiveAgentRunIfCurrentMock).toHaveBeenCalledOnce();
+			} else expect(consumeQuotaMock).not.toHaveBeenCalled();
+			expect(dbMock.insert).not.toHaveBeenCalled();
+		},
+	);
+});
 
 function buildAttachment(overrides: Record<string, unknown> = {}) {
 	return {

@@ -24,6 +24,7 @@ import {
 	docxParserUserPrompt,
 	pdfParserSystemPrompt,
 	pdfParserUserPrompt,
+	textParserSystemPrompt,
 } from "@reactive-resume/ai/prompts";
 import { buildAiExtractionTemplate } from "@reactive-resume/ai/resume/extraction-template";
 import { sanitizeAndParseResumeJson } from "@reactive-resume/ai/resume/sanitize";
@@ -592,7 +593,16 @@ async function parseDocx(input: ParseDocxInput): Promise<ResumeData> {
 	return parseAndValidateResumeJson(result.text);
 }
 
+async function parseText(input: TestConnectionInput & { text: string }): Promise<ResumeData> {
+	const result = await generateText({
+		model: getModel(input),
+		system: buildResumeParsingSystemPrompt(textParserSystemPrompt),
+		messages: [{ role: "user", content: input.text }],
+	});
+	return parseAndValidateResumeJson(result.text);
+}
 export const aiService = {
+	parseText,
 	parseDocx,
 	parsePdf,
 	testConnection,

@@ -1,5 +1,6 @@
 export type ImportType =
 	| ""
+	| "paste"
 	| "pdf"
 	| "docx"
 	| "doc"

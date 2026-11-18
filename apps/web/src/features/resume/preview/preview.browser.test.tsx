@@ -5,9 +5,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { useFitState } from "../builder/fit-state";
 import { ResumePreviewClient } from "./preview.browser";
 
 const previewMock = vi.hoisted(() => ({
+	count: 1,
 	builderResumeData: undefined as ResumeData | undefined,
 	toastAdd: vi.fn(),
 	toBlob: vi.fn(async () => new Blob(["%PDF"], { type: "application/pdf" })),
@@ -51,7 +53,11 @@ vi.mock("../builder/draft", () => ({
 
 vi.mock("./pdf-canvas", async () => {
 	const React = await import("react");
-	const pdfDocument = { numPages: 1 };
+	const pdfDocument = {
+		get numPages() {
+			return previewMock.count;
+		},
+	};
 
 	return {
 		PdfCanvasDocument: ({ children, onLoadSuccess }: PdfCanvasDocumentProps) => {
@@ -82,12 +88,24 @@ describe("ResumePreviewClient", () => {
 	});
 
 	beforeEach(() => {
+		previewMock.count = 1;
 		previewMock.builderResumeData = undefined;
 		previewMock.toBlob.mockReset();
 		previewMock.toBlob.mockImplementation(async () => new Blob(["%PDF"], { type: "application/pdf" }));
 		previewMock.toastAdd.mockReset();
 	});
 
+	it("publishes the actual PDF count only for the current builder preview", async () => {
+		const data = resumeDataWithPageCount(1);
+		previewMock.builderResumeData = data;
+		previewMock.count = 2;
+		const props = { pageLayout: "vertical" as const, pageScale: 1, showPageNumbers: false };
+		const viewer = render(<ResumePreviewClient {...props} />);
+		await waitFor(() => expect(useFitState.getState().preview?.count).toBe(2));
+		expect(useFitState.getState().preview?.data).toBe(data);
+		viewer.rerender(<ResumePreviewClient {...props} data={data} />);
+		await waitFor(() => expect(useFitState.getState().preview).toBeNull());
+	});
 	it("renders a loading placeholder for each builder layout page while the PDF is generated", () => {
 		previewMock.builderResumeData = resumeDataWithPageCount(3);
 		previewMock.toBlob.mockImplementation(() => new Promise<Blob>(() => {}));

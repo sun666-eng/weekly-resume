@@ -6,6 +6,7 @@ import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
 import { atsReviewInputSchema, atsReviewOutputSchema, reviewResumeText } from "./ats-review";
+import { consumeSystemQuota } from "./quota";
 import { aiService, fileInputSchema } from "./service";
 
 function isInvalidAiBaseUrlError(error: unknown): boolean {
@@ -37,17 +38,19 @@ function throwResumeStructureError(error: ZodError): never {
 	throw new ORPCError("AI_REQUEST_INVALID", { status: 400, cause: flattenError(error) });
 }
 
-async function getRunnableProvider(userId: string, aiProviderId?: string) {
+async function getRunnableProvider(userId: string, aiProviderId?: string | null, trustedClient?: string) {
 	const provider = aiProviderId
 		? await aiProvidersService.getRunnableById({ id: aiProviderId, userId })
 		: await aiProvidersService.getDefaultRunnable({ userId });
 
 	if (!provider) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
 
+	await consumeSystemQuota(provider.id, userId, trustedClient);
 	return provider;
 }
 
 const aiErrors = {
+	AI_FREE_QUOTA_EXCEEDED: { message: "Daily free AI quota exhausted.", status: 429 },
 	BAD_GATEWAY: { message: "The AI provider returned an error or is unreachable.", status: 502 },
 	BAD_REQUEST: { message: "The AI returned an improperly formatted structure.", status: 400 },
 	AI_PROVIDER_UNREACHABLE: { message: "The AI provider returned an error or is unreachable.", status: 502 },
@@ -59,6 +62,30 @@ const aiErrors = {
 };
 
 export const aiRouter = {
+	parseText: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/ai/parse-text",
+			tags: ["AI"],
+			operationId: "parseResumeText",
+			summary: "Parse pasted resume text",
+		})
+		.input(z.object({ text: z.string().trim().min(1).max(40000), aiProviderId: z.string().nullish() }))
+		.use(aiRequestRateLimit)
+		.errors(aiErrors)
+		.handler(async ({ context, input }): Promise<ResumeData> => {
+			try {
+				const provider = await getRunnableProvider(context.user.id, input.aiProviderId, context.trustedClient);
+				return await aiService.parseText({ ...provider, baseURL: provider.baseURL ?? "", text: input.text });
+			} catch (error) {
+				if (isCredentialEncryptionUnavailable(error)) throwCredentialEncryptionUnavailable();
+				if (isInvalidAiBaseUrlError(error)) throwAiProviderConfigError();
+				if (isAiProviderGatewayError(error)) throwAiProviderGatewayError();
+				if (error instanceof ZodError) throwResumeStructureError(error);
+				throw error;
+			}
+		}),
+
 	parsePdf: protectedProcedure
 		.route({
 			method: "POST",
@@ -70,12 +97,12 @@ export const aiRouter = {
 				"Extracts structured resume data from a PDF file using the specified AI provider. The file should be sent as a base64-encoded string along with AI provider credentials. Returns a complete ResumeData object. Requires authentication.",
 			successDescription: "The PDF was successfully parsed into structured resume data.",
 		})
-		.input(z.object({ aiProviderId: z.string().optional(), file: fileInputSchema }))
+		.input(z.object({ aiProviderId: z.string().nullish(), file: fileInputSchema }))
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
 		.handler(async ({ context, input }): Promise<ResumeData> => {
 			try {
-				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				const provider = await getRunnableProvider(context.user.id, input.aiProviderId, context.trustedClient);
 				return await aiService.parsePdf({
 					provider: provider.provider,
 					model: provider.model,
@@ -105,7 +132,7 @@ export const aiRouter = {
 		})
 		.input(
 			z.object({
-				aiProviderId: z.string().optional(),
+				aiProviderId: z.string().nullish(),
 				file: fileInputSchema,
 				mediaType: z.enum([
 					"application/msword",
@@ -117,7 +144,7 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			try {
-				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				const provider = await getRunnableProvider(context.user.id, input.aiProviderId, context.trustedClient);
 				return await aiService.parseDocx({
 					provider: provider.provider,
 					model: provider.model,
@@ -152,7 +179,7 @@ export const aiRouter = {
 		.errors(aiErrors)
 		.handler(async ({ context, input }) => {
 			try {
-				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				const provider = await getRunnableProvider(context.user.id, input.aiProviderId, context.trustedClient);
 
 				return await reviewResumeText({
 					...input,

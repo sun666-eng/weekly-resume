@@ -1,16 +1,19 @@
 import type { AIProvider } from "@reactive-resume/ai/types";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
-import { aiProviderSchema } from "@reactive-resume/ai/types";
+import { aiProviderSchema, SYSTEM_AI_PROVIDER_ID } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import {
 	assertCredentialEncryptionConfigured,
 	decryptCredential,
 	encryptCredential,
+	isCredentialEncryptionConfigured,
 	redactEncryptedCredential,
 } from "../ai/credentials";
+import { readSystemQuota } from "../ai/quota";
 import { testConnection } from "../ai/service";
+import { getSystemAiConfig } from "../ai/system-config";
 import { resolveAiBaseUrl } from "../ai/url-policy";
 
 type AiProviderRecord = typeof schema.aiProvider.$inferSelect;
@@ -28,8 +31,10 @@ export type AiProviderResponse = {
 	apiKeyFingerprint: string;
 	lastTestedAt: Date | null;
 	lastUsedAt: Date | null;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: Date | null;
+	updatedAt: Date | null;
+	isSystem?: boolean;
+	quota?: { dailyLimit: number; usedToday: number; remainingToday: number };
 };
 
 type CreateAiProviderInput = {
@@ -98,8 +103,47 @@ async function getOwnedProvider(input: { id: string; userId: string }) {
 	return provider;
 }
 
+function systemDescriptor(config: NonNullable<ReturnType<typeof getSystemAiConfig>>): AiProviderResponse {
+	return {
+		id: SYSTEM_AI_PROVIDER_ID,
+		label: config.label,
+		provider: config.provider,
+		model: config.model,
+		baseURL: null,
+		enabled: true,
+		testStatus: "success",
+		testError: null,
+		apiKeyPreview: "Built-in",
+		apiKeyFingerprint: "",
+		lastTestedAt: null,
+		lastUsedAt: null,
+		createdAt: null,
+		updatedAt: null,
+		isSystem: true,
+	};
+}
+
+function systemRuntime() {
+	const config = getSystemAiConfig();
+	return config ? { ...systemDescriptor(config), apiKey: config.apiKey, baseURL: config.baseURL } : null;
+}
+
+function assertPersonalProvider(id: string) {
+	if (id === SYSTEM_AI_PROVIDER_ID) throw new ORPCError("FORBIDDEN");
+}
+
 export const aiProvidersService = {
-	list: async (input: { userId: string }) => {
+	list: async (input: { userId: string; trustedClient?: string | undefined }) => {
+		const config = getSystemAiConfig();
+		const builtIn: AiProviderResponse[] = [];
+		if (config) {
+			const descriptor = systemDescriptor(config);
+			// A shared-meter outage must not hide runnable personal providers. Execution still requires a reservation.
+			const quota = await readSystemQuota(input.userId, input.trustedClient).catch(() => null);
+			if (quota) descriptor.quota = quota;
+			builtIn.push(descriptor);
+		}
+		if (config && !isCredentialEncryptionConfigured()) return builtIn;
 		assertCredentialEncryptionConfigured();
 
 		const providers = await db
@@ -111,10 +155,15 @@ export const aiProvidersService = {
 				asc(schema.aiProvider.createdAt),
 			);
 
-		return providers.map(toResponse);
+		return [...providers.map(toResponse), ...builtIn];
 	},
 
 	getRunnableById: async (input: { id: string; userId: string }) => {
+		if (input.id === SYSTEM_AI_PROVIDER_ID) {
+			const system = systemRuntime();
+			if (!system) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
+			return system;
+		}
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);
@@ -130,6 +179,8 @@ export const aiProvidersService = {
 	},
 
 	getDefaultRunnable: async (input: { userId: string }) => {
+		const system = systemRuntime();
+		if (system && !isCredentialEncryptionConfigured()) return system;
 		assertCredentialEncryptionConfigured();
 
 		const [provider] = await db
@@ -151,7 +202,7 @@ export const aiProvidersService = {
 					apiKey: decryptCredential(provider.encryptedApiKey),
 					baseURL: provider.baseUrl ?? "",
 				}
-			: null;
+			: system;
 	},
 
 	create: async (input: CreateAiProviderInput) => {
@@ -176,6 +227,7 @@ export const aiProvidersService = {
 	},
 
 	update: async (input: UpdateAiProviderInput) => {
+		assertPersonalProvider(input.id);
 		assertCredentialEncryptionConfigured();
 
 		const existing = await getOwnedProvider(input);
@@ -213,6 +265,7 @@ export const aiProvidersService = {
 	},
 
 	delete: async (input: { id: string; userId: string }) => {
+		assertPersonalProvider(input.id);
 		assertCredentialEncryptionConfigured();
 
 		await db
@@ -221,6 +274,7 @@ export const aiProvidersService = {
 	},
 
 	test: async (input: { id: string; userId: string }) => {
+		assertPersonalProvider(input.id);
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);
@@ -267,6 +321,7 @@ export const aiProvidersService = {
 	},
 
 	markUsed: async (input: { id: string; userId: string }) => {
+		if (input.id === SYSTEM_AI_PROVIDER_ID) return;
 		await db
 			.update(schema.aiProvider)
 			.set({ lastUsedAt: new Date() })

@@ -24,6 +24,7 @@ export const env = createEnv({
 			.trim()
 			.transform((value) => value || undefined)
 			.optional(),
+		TRUST_PROXY: z.stringbool().default(false),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
 
 		// Database
@@ -79,6 +80,33 @@ export const env = createEnv({
 		// AI Agent Workspace (optional until the agent feature is used)
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
 		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
+
+		// Keep the accepted names aligned with aiProviderSchema without a server-to-domain dependency.
+		SYSTEM_AI_PROVIDER: z
+			.enum([
+				"openai",
+				"anthropic",
+				"gemini",
+				"vercel-ai-gateway",
+				"openrouter",
+				"mistral",
+				"cohere",
+				"xai",
+				"groq",
+				"deepseek",
+				"togetherai",
+				"fireworks",
+				"cerebras",
+				"perplexity",
+				"ollama",
+				"openai-compatible",
+			])
+			.optional(),
+		SYSTEM_AI_MODEL: z.string().trim().min(1).optional(),
+		SYSTEM_AI_API_KEY: z.string().trim().min(1).optional(),
+		SYSTEM_AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+		SYSTEM_AI_LABEL: z.string().trim().min(1).optional(),
+		SYSTEM_AI_DAILY_LIMIT: z.coerce.number().int().positive().default(15),
 
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),

@@ -8500,3 +8500,87 @@ msgstr "Previewing my content with my existing layout, colors, and fonts."
 #. js-lingui-explicit-id
 msgid "template.gallery.samplePreview"
 msgstr "Sample content and sample layout. Applying this style keeps your existing layout, colors, and fonts."
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Fit to 1 Page"
+msgstr "Fit to 1 Page"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Restore previous spacing"
+msgstr "Restore previous spacing"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Measuring PDF…"
+msgstr "Measuring PDF…"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Could not measure the PDF. Try again."
+msgstr "Could not measure the PDF. Try again."
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "This resume still needs more than one page. Trim a few lines and try again."
+msgstr "This resume still needs more than one page. Trim a few lines and try again."
+
+#: src/dialogs/resume/import.tsx
+msgid "Paste Resume Text"
+msgstr "Paste Resume Text"
+
+#: src/dialogs/resume/import.tsx
+msgid "Resume text"
+msgstr "Resume text"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import a file or paste your resume text."
+msgstr "Import a file or paste your resume text."
+
+#: src/dialogs/resume/import.tsx
+msgid "Import source"
+msgstr "Import source"
+
+#: src/dialogs/resume/import.tsx
+msgid "Basic recognition runs in your browser."
+msgstr "Basic recognition runs in your browser."
+
+#: src/dialogs/resume/import.tsx
+msgid "The pasted text will be sent to your AI provider when you import."
+msgstr "The pasted text will be sent to your AI provider when you import."
+
+#: src/dialogs/resume/import.tsx
+msgid "AI recognition supports up to 40,000 characters. Shorten the text or use basic import."
+msgstr "AI recognition supports up to 40,000 characters. Shorten the text or use basic import."
+
+#: src/dialogs/resume/import.tsx
+msgid "Weekly Resume local backup (JSON)"
+msgstr "Weekly Resume local backup (JSON)"
+
+#: src/dialogs/resume/import.tsx
+msgid "This file is not a valid Weekly Resume local backup."
+msgstr "This file is not a valid Weekly Resume local backup."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Built-in free AI"
+msgstr "Built-in free AI"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "{0} of {1} free uses remaining today."
+msgstr "{0} of {1} free uses remaining today."
+
+#: src/features/resume/guest/editor.tsx
+msgid "Sign up or sign in for {freeAiLimit} free AI uses per day. No API key needed."
+msgstr "Sign up or sign in for {freeAiLimit} free AI uses per day. No API key needed."
+
+#: src/features/resume/guest/editor.tsx
+msgid "Save to an account to use AI"
+msgstr "Save to an account to use AI"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Sign in to use AI"
+msgstr "Sign in to use AI"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Remove attachment {filename}"
+msgstr "Remove attachment {filename}"
+
+#: src/libs/error-message.ts
+msgid "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
+msgstr "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."

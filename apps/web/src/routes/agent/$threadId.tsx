@@ -34,7 +34,7 @@ function RouteComponent() {
 	const resumePanelRef = useRef<PanelImperativeHandle | null>(null);
 	const [isThreadsCollapsed, setIsThreadsCollapsed] = useState(false);
 	const [isResumeCollapsed, setIsResumeCollapsed] = useState(false);
-	const isDesktopLayout = useMediaQuery(DESKTOP_QUERY, { initializeWithValue: false });
+	const isDesktopLayout = useMediaQuery(DESKTOP_QUERY);
 	const { data, isLoading, error } = useQuery(orpc.agent.threads.get.queryOptions({ input: { id: threadId } }));
 	useAgentResumeUpdateSubscription({ resumeId: data?.resume?.id, threadId });
 
@@ -105,6 +105,7 @@ function RouteComponent() {
 						<ResizableSeparator withHandle />
 						<ResizablePanel id="chat" defaultSize="52%" minSize="280px">
 							<AgentChat
+								key={threadId}
 								threadId={threadId}
 								initialMessages={data.messages}
 								isReadOnly={data.isReadOnly}
@@ -160,6 +161,7 @@ function RouteComponent() {
 						</div>
 						<div className={cn("h-full min-w-0", mobileTab !== "chat" && "hidden")}>
 							<AgentChat
+								key={threadId}
 								threadId={threadId}
 								initialMessages={data.messages}
 								isReadOnly={data.isReadOnly}

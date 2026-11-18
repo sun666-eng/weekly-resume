@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 const envMock = vi.hoisted(() => ({
 	ENCRYPTION_SECRET: "test-secret-with-enough-entropy",
+	AUTH_SECRET: "",
 	REDIS_URL: "redis://localhost:6379",
 }));
 
@@ -12,6 +13,7 @@ const {
 	decryptCredential,
 	encryptCredential,
 	fingerprintCredential,
+	getAgentToolApprovalSecret,
 	isAgentEnvironmentConfigured,
 	redactEncryptedCredential,
 } = await import("./credentials");
@@ -55,7 +57,7 @@ describe("AI credential encryption", () => {
 });
 
 describe("AI agent environment", () => {
-	it("is available only when Redis and encryption secret are configured", () => {
+	it("requires Redis and a signing secret while keeping personal credentials separately encrypted", () => {
 		expect(isAgentEnvironmentConfigured()).toBe(true);
 		expect(() => assertAgentEnvironment()).not.toThrow();
 
@@ -65,6 +67,12 @@ describe("AI agent environment", () => {
 
 		envMock.REDIS_URL = "redis://localhost:6379";
 		envMock.ENCRYPTION_SECRET = "";
+		envMock.AUTH_SECRET = "synthetic-auth-only";
+		expect(isAgentEnvironmentConfigured()).toBe(true);
+		expect(getAgentToolApprovalSecret()).not.toBe(envMock.AUTH_SECRET);
+		expect(getAgentToolApprovalSecret()).toHaveLength(64);
+		expect(() => encryptCredential("synthetic-personal")).toThrow("AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE");
+		envMock.AUTH_SECRET = "";
 		expect(isAgentEnvironmentConfigured()).toBe(false);
 		expect(() => assertAgentEnvironment()).toThrow("AGENT_ENVIRONMENT_UNAVAILABLE");
 	});

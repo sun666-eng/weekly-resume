@@ -619,7 +619,7 @@ function CreateProviderForm() {
 }
 
 export function AISettingsSection() {
-	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
+	const { data: providers, isLoading, error } = useQuery({ ...orpc.aiProviders.list.queryOptions(), staleTime: 0 });
 	const { hasUsableProvider } = useHasUsableAiProvider();
 	const isConfigError = isAiProviderConfigError(error);
 
@@ -680,9 +680,23 @@ export function AISettingsSection() {
 					</div>
 				) : null}
 
-				{providers?.map((provider) => (
-					<ProviderRow key={provider.id} provider={provider} />
-				))}
+				{providers?.map((provider) =>
+					provider.isSystem ? (
+						<div key={provider.id} className="grid gap-2 rounded-md border p-4">
+							<div className="flex items-center gap-2">
+								<Badge variant="secondary">{t`Built-in free AI`}</Badge>
+								<span className="font-medium">
+									{provider.label === "Built-in AI" ? provider.model : provider.label}
+								</span>
+							</div>
+							{provider.quota && (
+								<p className="text-muted-foreground text-sm">{t`${provider.quota.remainingToday} of ${provider.quota.dailyLimit} free uses remaining today.`}</p>
+							)}
+						</div>
+					) : (
+						<ProviderRow key={provider.id} provider={provider} />
+					),
+				)}
 			</div>
 		</section>
 	);

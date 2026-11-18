@@ -23,7 +23,7 @@ export const threadsRouter = {
 			operationId: "createAgentThread",
 			summary: "Create agent thread",
 		})
-		.input(z.object({ aiProviderId: z.string().optional(), sourceResumeId: z.string().optional() }))
+		.input(z.object({ aiProviderId: z.string().nullish(), sourceResumeId: z.string().optional() }))
 		.use(mapAgentEnvironmentError)
 		.handler(({ context, input }) =>
 			agentService.threads.create({
@@ -42,7 +42,7 @@ export const threadsRouter = {
 			operationId: "getOrCreateAgentThreadForResume",
 			summary: "Get or create an in-resume agent thread",
 		})
-		.input(z.object({ resumeId: z.string(), aiProviderId: z.string().optional() }))
+		.input(z.object({ resumeId: z.string(), aiProviderId: z.string().nullish() }))
 		.use(mapAgentEnvironmentError)
 		.handler(({ context, input }) =>
 			agentService.threads.getOrCreateForResume({

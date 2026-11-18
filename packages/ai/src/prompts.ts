@@ -41,6 +41,15 @@ const docxParserSystemPrompt = makeParserPrompt({
 	FALLBACK_CLAUSE: "document is malformed or partially unreadable",
 });
 
+const textParserSystemPrompt = makeParserPrompt({
+	FORMAT_HEADER: "pasted resume text",
+	FORMAT_NOUN: "text",
+	ALLOWED_INPUT: "- Use only the resume text provided by the user. Preserve names and facts in the original language.",
+	URL_CLAUSE: "URLs explicitly present in the text",
+	EXTRA_RULES: "",
+	FALLBACK_CLAUSE: "text is incomplete or ambiguous",
+});
+
 const atsReviewSystemPrompt = readPrompt("ats-review-system.md");
 const atsReviewUserPromptTemplate = readPrompt("ats-review-user.md");
 const chatSystemPromptTemplate = readPrompt("chat-system.md");
@@ -55,4 +64,5 @@ export {
 	docxParserUserPrompt,
 	pdfParserSystemPrompt,
 	pdfParserUserPrompt,
+	textParserSystemPrompt,
 };

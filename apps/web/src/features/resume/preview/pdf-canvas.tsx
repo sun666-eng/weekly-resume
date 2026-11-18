@@ -1,3 +1,4 @@
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
 import type { PreviewPageSize } from "./preview.shared.utils";
@@ -12,6 +13,17 @@ import { cn } from "@reactive-resume/utils/style";
 import { DEFAULT_PDF_PAGE_SIZE, getPreviewCanvasScale, getScaledPreviewPageSize } from "./preview.shared.utils";
 
 GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+
+export async function measureResumePages(data: ResumeData) {
+	const { createResumePdfBlob } = await import("../export/pdf-document");
+	const blob = await createResumePdfBlob(data);
+	const task = getDocument({ data: new Uint8Array(await blob.arrayBuffer()) });
+	try {
+		return (await task.promise).numPages;
+	} finally {
+		await task.destroy();
+	}
+}
 
 type PdfCanvasDocumentProps = {
 	children: (document: PDFDocumentProxy) => ReactNode;
