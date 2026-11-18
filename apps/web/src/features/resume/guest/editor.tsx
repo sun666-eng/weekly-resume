@@ -74,6 +74,7 @@ export function GuestEditor({ resumeId, operationId }: GuestEditorProps) {
 		frozen: false,
 		composing: false,
 		photoBusy: false,
+		photoBusyHolds: 0,
 		raw: undefined as unknown,
 	});
 	useEffect(() => {
@@ -648,7 +649,9 @@ export function GuestEditor({ resumeId, operationId }: GuestEditorProps) {
 				showHelp: (feature) =>
 					setMessage(`${feature}需登录并主动选择。登录不会自动调用模型或公开简历，请先保存到账号。`),
 				photoBusy: (value) => {
-					state.current.photoBusy = value;
+					const local = state.current;
+					local.photoBusyHolds = Math.max(0, local.photoBusyHolds + (value ? 1 : -1));
+					local.photoBusy = local.photoBusyHolds > 0;
 				},
 			}}
 		>

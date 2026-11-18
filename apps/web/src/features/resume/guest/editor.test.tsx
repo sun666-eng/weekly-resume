@@ -240,6 +240,7 @@ beforeEach(async () => {
 afterEach(() => {
 	cleanup();
 	useResumeStore.getState().reset();
+	vi.unstubAllGlobals();
 	vi.restoreAllMocks();
 });
 
@@ -353,6 +354,73 @@ describe("guest navigation transaction barrier (component tests, not browser evi
 		expect(await first).toBe(false);
 		expect(fixture.go).toHaveBeenCalledExactlyOnceWith(-1, { ignoreBlocker: true });
 		spy.mockRestore();
+	});
+	it("embeds the in-memory data-URL photo when flushing a guest edit", async () => {
+		await mountEditor();
+		const fetchMock = vi.fn();
+		vi.stubGlobal("fetch", fetchMock);
+		fireEvent.change(screen.getByLabelText("合成姓名"), { target: { value: "GUEST-PHOTO-DATA" } });
+		await act(async () => expect(await leave()).toBe(false));
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(fixture.write.mock.calls[0][1].photo).toEqual({
+			mime: "image/png",
+			base64: "dGVzdC1waG90by1ieXRlcw==",
+		});
+		expect(fixture.write.mock.calls[0][1].data.basics.name).toBe("GUEST-PHOTO-DATA");
+		vi.unstubAllGlobals();
+	});
+	it("lets navigation finish when the photo URL is unreachable", async () => {
+		await mountEditor();
+		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+		act(() => {
+			useResumeStore.getState().updateResumeData((data) => {
+				data.picture.url = "https://fixture.invalid/editor-blocked.png";
+				data.basics.name = "GUEST-PHOTO-CORS";
+			});
+		});
+		let blocked: boolean | undefined;
+		await act(async () => {
+			blocked = await leave();
+		});
+		expect(blocked).toBe(false);
+		expect(fixture.write).toHaveBeenCalled();
+		expect(fixture.write.mock.calls[0][1].photo).toBeNull();
+		expect(fixture.write.mock.calls[0][1].data.basics.name).toBe("GUEST-PHOTO-CORS");
+		expect(useResumeStore.getState().resume?.data.picture.url).toBe("https://fixture.invalid/editor-blocked.png");
+		vi.unstubAllGlobals();
+	});
+	it("does not treat a skipped photo as a saved draft when storage write fails", async () => {
+		await mountEditor();
+		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+		fixture.write.mockRejectedValue(new Error("QUOTA"));
+		act(() => {
+			useResumeStore.getState().updateResumeData((data) => {
+				data.picture.url = "https://fixture.invalid/editor-write-fail.png";
+				data.basics.name = "GUEST-PHOTO-WRITE-FAIL";
+			});
+		});
+		let blocked: boolean | undefined;
+		await act(async () => {
+			blocked = await leave();
+		});
+		expect(blocked).toBe(true);
+		expect(screen.getByLabelText("合成姓名")).toHaveValue("GUEST-PHOTO-WRITE-FAIL");
+		expect(screen.getByLabelText("保存状态")).toHaveTextContent("暂存失败");
+		expect(fixture.record).toEqual(original);
+		fireEvent.click(screen.getByRole("button", { name: "本机备份" }));
+		await waitFor(() => expect(fixture.backup).toHaveBeenCalled());
+		expect(fixture.backup.mock.calls[0][1].basics.name).toBe("GUEST-PHOTO-WRITE-FAIL");
+		vi.unstubAllGlobals();
+	});
+	it("keeps photoBusy held until every holder releases it", async () => {
+		await mountEditor();
+		fireEvent.click(screen.getByText("处理照片"));
+		fireEvent.click(screen.getByText("处理照片"));
+		await act(async () => expect(await leave()).toBe(true));
+		fireEvent.click(screen.getByText("完成照片"));
+		await act(async () => expect(await leave()).toBe(true));
+		fireEvent.click(screen.getByText("完成照片"));
+		await act(async () => expect(await leave()).toBe(false));
 	});
 	it("releases the local sink on unmount so another local store change cannot write the retired editor", async () => {
 		const view = await mountEditor();

@@ -44,6 +44,7 @@ import {
 } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { ITEM_HEADER_ROW_PART_KEYS } from "../../semantic/shared-parts";
+import { Text as PdfText } from "../../text";
 import { getSectionItemRows, getSectionItemsLayout, shouldUseSectionTimeline } from "./columns";
 import { getWebsiteDisplayText } from "./contact";
 import {
@@ -128,6 +129,7 @@ type ItemTitleProps = {
 type ItemWebsiteLinkProps = {
 	website: ItemWebsite;
 	style?: StyleInput;
+	preserveCharacters?: boolean;
 };
 
 type SummarySectionProps = {
@@ -746,6 +748,9 @@ const projectTitlePartStyle = { flexShrink: 1, minWidth: 0 } satisfies Style;
 const projectWebsiteLinkStyle = { flexShrink: 1, minWidth: 0 } satisfies Style;
 const projectTitleSeparatorStyle = { marginHorizontal: 2 } satisfies Style;
 
+// Empty segments become zero-width break opportunities rather than hyphenation penalties.
+const projectLinkHyphenation = (word: string) => word.split("\u200b").flatMap((part) => [part, ""]);
+
 const ProjectTitle = ({ item }: { item: ProjectItem }) => {
 	const isColumn = use(ItemHeaderRowColumnContext);
 	const { rtl } = useRender();
@@ -770,17 +775,21 @@ const ProjectTitle = ({ item }: { item: ProjectItem }) => {
 				{item.name}
 			</ItemTitle>
 			<Text style={projectTitleSeparatorStyle}> | </Text>
-			<ItemWebsiteLink website={item.website} style={projectWebsiteLinkStyle} />
+			<ItemWebsiteLink website={item.website} style={projectWebsiteLinkStyle} preserveCharacters />
 		</View>
 	);
 };
 
-const ItemWebsiteLink = ({ website, style }: ItemWebsiteLinkProps) => {
+const ItemWebsiteLink = ({ website, style, preserveCharacters = false }: ItemWebsiteLinkProps) => {
 	if (!shouldRenderSeparateItemWebsite(website)) return null;
 
 	return (
 		<Link {...(style ? { style } : {})} semanticRole="website" src={website.url}>
-			{getWebsiteDisplayText(website)}
+			{preserveCharacters ? (
+				<PdfText hyphenationCallback={projectLinkHyphenation}>{getWebsiteDisplayText(website)}</PdfText>
+			) : (
+				getWebsiteDisplayText(website)
+			)}
 		</Link>
 	);
 };

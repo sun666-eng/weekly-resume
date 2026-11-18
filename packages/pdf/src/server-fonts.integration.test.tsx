@@ -9,7 +9,7 @@ import { PdfIcon } from "./templates/shared/pdf-icons";
 vi.unmock("@reactive-resume/fonts");
 
 describe("Node PDF adapter with real local fonts", () => {
-	it("resolves real disk paths and awaits custom icons before rendering without HTTP", async () => {
+	it("switches compact to full local fonts after a rare edit and awaits custom icons without HTTP", async () => {
 		const data = structuredClone(defaultResumeData);
 		data.basics.name = "合成字体测试";
 		data.basics.headline = "Software Engineer";
@@ -32,9 +32,11 @@ describe("Node PDF adapter with real local fonts", () => {
 			const file = await act(() => createResumePdfFile({ data, filename: "synthetic.pdf" }));
 			expect(requests).toEqual([]);
 			expect(PdfIcon({ name: "yin-yang" })).not.toBeNull();
-			expect(Font.getFont({ fontFamily: "Noto Sans SC" }).src).toMatch(
-				/[\\/]apps[\\/]web[\\/](?:dist|public)[\\/]fonts[\\/]/,
+			const compact = Font.getFont({ fontFamily: "Noto Sans SC Compact" });
+			expect(compact.src).toMatch(
+				/[\\/]apps[\\/]web[\\/](?:dist|public)[\\/]fonts[\\/]noto-sans-sc[\\/]400\.subset\.ttf$/,
 			);
+			expect(compact.data?.glyphForCodePoint(0x9fd5).id).toBe(0);
 			expect(JSON.stringify(data)).toBe(input);
 			const task = getDocument({ data: new Uint8Array(await file.arrayBuffer()) });
 			try {
@@ -45,6 +47,24 @@ describe("Node PDF adapter with real local fonts", () => {
 				expect(text).toContain("粗斜体");
 			} finally {
 				await task.destroy();
+			}
+
+			data.basics.name += "鿕";
+			const rareFile = await act(() => createResumePdfFile({ data, filename: "synthetic-rare.pdf" }));
+			expect(requests).toEqual([]);
+			const full = Font.getFont({ fontFamily: "Noto Sans SC" });
+			expect(full.src).toMatch(/[\\/]noto-sans-sc[\\/]400\.ttf$/);
+			expect(full.data).toBeTruthy();
+			expect(full.data?.hasGlyphForCodePoint(0x9fd5)).toBe(true);
+			expect(full.data?.glyphForCodePoint(0x9fd5).id).toBeGreaterThan(0);
+			const rareTask = getDocument({ data: new Uint8Array(await rareFile.arrayBuffer()) });
+			try {
+				const pdf = await rareTask.promise;
+				const content = await (await pdf.getPage(1)).getTextContent();
+				const text = content.items.flatMap((item) => ("str" in item ? [item.str] : [])).join(" ");
+				expect(text).toContain("合成字体测试鿕");
+			} finally {
+				await rareTask.destroy();
 			}
 		} finally {
 			fetch.mockRestore();

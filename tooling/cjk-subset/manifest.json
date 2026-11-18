@@ -1,0 +1,144 @@
+{
+	"version": 1,
+	"fontTools": "4.25.0",
+	"subsetOptions": {
+		"canonical_order": null,
+		"desubroutinize": false,
+		"drop_tables": [
+			"DSIG",
+			"EBDT",
+			"EBLC",
+			"EBSC",
+			"SVG",
+			"PCLT",
+			"LTSH",
+			"Feat",
+			"Glat",
+			"Gloc",
+			"Silf",
+			"Sill",
+			"JSTF"
+		],
+		"flavor": null,
+		"font_number": -1,
+		"glyph_names": false,
+		"hinting": true,
+		"hinting_tables": ["cvt", "cvar", "fpgm", "prep", "hdmx", "VDMX"],
+		"ignore_missing_glyphs": false,
+		"ignore_missing_unicodes": true,
+		"layout_closure": true,
+		"layout_features": ["*"],
+		"layout_scripts": ["*"],
+		"legacy_cmap": true,
+		"legacy_kern": true,
+		"name_IDs": ["*"],
+		"name_languages": ["*"],
+		"name_legacy": true,
+		"no_subset_tables": [
+			"BASE",
+			"CPAL",
+			"DSIG",
+			"MVAR",
+			"OS/2",
+			"STAT",
+			"VDMX",
+			"avar",
+			"cvar",
+			"cvt",
+			"fpgm",
+			"fvar",
+			"gasp",
+			"head",
+			"hhea",
+			"loca",
+			"maxp",
+			"name",
+			"prep",
+			"vhea"
+		],
+		"notdef_glyph": true,
+		"notdef_outline": true,
+		"obfuscate_names": false,
+		"passthrough_tables": false,
+		"prune_unicode_ranges": true,
+		"recalc_average_width": false,
+		"recalc_bounds": false,
+		"recalc_max_context": false,
+		"recalc_timestamp": false,
+		"recommended_glyphs": true,
+		"retain_gids": false,
+		"symbol_cmap": true,
+		"timing": false,
+		"verbose": false,
+		"with_zopfli": false,
+		"xml": false
+	},
+	"hanziCount": 8105,
+	"hanziSha256": "2eb4d27524786e63a1942662b4cf10848d5e179b3b65172733effa68af22366b",
+	"codepointCount": 10553,
+	"coverageSha256": "71a7010e7b83051dfb78cbccd908eea847261f0670c0e3ed5d44480f7db99cbe",
+	"rareExample": "鿕",
+	"rareCodepoint": 40917,
+	"fonts": {
+		"noto-sans-sc/400.ttf": {
+			"sha256": "d45f67f0a7c0ca3f256950777ce6a61cc7ce5f9696d02900cbbaac25f8aa7d16",
+			"bytes": 10559284,
+			"role": "full"
+		},
+		"noto-sans-sc/400.subset.ttf": {
+			"sha256": "404c77f1f6019d7ac457160edb5676e9c6fc185fa31791d6659a64bfa14b89ac",
+			"bytes": 2922648,
+			"role": "subset"
+		},
+		"noto-sans-sc/500.ttf": {
+			"sha256": "b30853d205f3ecdde938b1488c735ee15a2e870d31331b992fdc53971e23ec4a",
+			"bytes": 10552448,
+			"role": "full"
+		},
+		"noto-sans-sc/500.subset.ttf": {
+			"sha256": "e971868b1417b13622d293c2933b5ef86ac4ef17b1c9d979f8d2f1e63eda22e3",
+			"bytes": 2921100,
+			"role": "subset"
+		},
+		"noto-sans-sc/600.ttf": {
+			"sha256": "b5eb7510dff58e0626c72c0861d83a3ed2be1d03047cf90a623682b8667bc5ff",
+			"bytes": 10548948,
+			"role": "full"
+		},
+		"noto-sans-sc/600.subset.ttf": {
+			"sha256": "7ea187d2c09520e9bf404e9547ecbe7bd62848bad222348ddaf2f9df18be99b3",
+			"bytes": 2920320,
+			"role": "subset"
+		},
+		"noto-sans-sc/700.ttf": {
+			"sha256": "9a38ae0ab28cd5a256f9ea8e00dedc688aac17f7915fcb000572990afa956b96",
+			"bytes": 10549020,
+			"role": "full"
+		},
+		"noto-sans-sc/700.subset.ttf": {
+			"sha256": "d88b98a330657beefbbde0179ebd2a50debfe19b61a7b1a4573a81814a7a762d",
+			"bytes": 2920632,
+			"role": "subset"
+		},
+		"noto-serif-sc/400.ttf": {
+			"sha256": "c358a69de3df5f423a8946a7b03e3126fb6ba116f1130a463455b4e39e1f0742",
+			"bytes": 14807636,
+			"role": "full"
+		},
+		"noto-serif-sc/400.subset.ttf": {
+			"sha256": "4e3d09ab4bd055137c61f63b9924bbeb0c0604b986387c8935526c2290598e17",
+			"bytes": 4024264,
+			"role": "subset"
+		},
+		"noto-serif-sc/700.ttf": {
+			"sha256": "9c6a2ba736e4b499c84f65ce366bd3625c0401885fd3e585ace50fb738b96ff6",
+			"bytes": 14806580,
+			"role": "full"
+		},
+		"noto-serif-sc/700.subset.ttf": {
+			"sha256": "b539a1ac3d125a4453d6ec1ab847e9029e21893961fce4552f27108f0578a4a1",
+			"bytes": 4024152,
+			"role": "subset"
+		}
+	}
+}

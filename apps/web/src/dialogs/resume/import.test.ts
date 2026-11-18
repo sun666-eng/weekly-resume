@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { detectJsonImportType } from "./import.utils";
 
 describe("detectJsonImportType", () => {
@@ -29,6 +30,32 @@ describe("detectJsonImportType", () => {
 				},
 			}),
 		).toBe("reactive-resume-v4-json");
+	});
+
+	it("detects a version 1 local backup even when the nested resume has sections/metadata", () => {
+		const data = structuredClone(defaultResumeData);
+		data.picture.url = "";
+		expect(
+			detectJsonImportType({
+				format: "weekly-resume-local-backup",
+				version: 1,
+				name: "虚构草稿",
+				data,
+				photo: { mime: "image/png", base64: "AQIDBA==" },
+			}),
+		).toBe("weekly-resume-local-backup");
+	});
+
+	it("does not treat an unknown backup version as a resume JSON shape", () => {
+		expect(
+			detectJsonImportType({
+				format: "weekly-resume-local-backup",
+				version: 2,
+				name: "虚构草稿",
+				data: structuredClone(defaultResumeData),
+				photo: null,
+			}),
+		).toBe("");
 	});
 
 	it("returns an empty string for unrecognized shapes", () => {

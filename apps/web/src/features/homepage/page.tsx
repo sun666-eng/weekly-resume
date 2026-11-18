@@ -8,7 +8,7 @@ import { ArrowDownIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { useInView } from "motion/react";
-import { lazy, Suspense, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
 import { GithubStarsButton } from "@/components/input/github-stars-button";
@@ -33,6 +33,24 @@ const buttonClass =
 	"inline-flex min-h-[52px] items-center justify-center gap-3 rounded-[4px] border border-[#f1f0eb] bg-[#f1f0eb] px-[19px] py-[14px] text-[14px] font-[550] text-[#151516] [transition:background-color_150ms_ease,transform_150ms_cubic-bezier(0.23,1,0.32,1)] hover:bg-[#d9d8d2] active:transform-[scale(0.97)] max-[540px]:min-h-[49px] max-[540px]:gap-[18px] max-[540px]:px-[15px] max-[540px]:py-3 max-[540px]:text-[13px]";
 const brandClass = "inline-flex shrink-0 items-center gap-[11px] font-[550] tracking-[-0.04em] max-[540px]:gap-2";
 type DeferredDemoProps = { children: ReactNode };
+type HomepageSample = {
+	name: string;
+	accent: string;
+	typeface: "sans" | "serif";
+	template: Template;
+	heroTemplate: SculptureTemplate;
+};
+
+function samplePreviewForLocale(locale: string): HomepageSample {
+	const chinese = locale === "zh-CN";
+	return {
+		name: chinese ? "林志远" : "Alex Morgan",
+		accent: chinese ? "#27343d" : "#735c9a",
+		typeface: "sans",
+		template: chinese ? "meowth" : "ditgar",
+		heroTemplate: chinese ? "bronzor" : "ditgar",
+	};
+}
 
 function DeferredDemo({ children }: DeferredDemoProps) {
 	const ref = useRef<HTMLDivElement>(null);
@@ -61,14 +79,24 @@ export function Homepage() {
 	const currentSession = isPending ? root.session : authSession;
 	const startPath = guestConfig?.enabled && !currentSession?.user ? "/local-draft" : "/dashboard";
 	const { i18n } = useLingui();
-	const chinese = i18n.locale === "zh-CN";
-	const [name, setName] = useState(() => (chinese ? "林志远" : "Alex Morgan"));
-	const [accent, setAccent] = useState(() => (chinese ? "#27343d" : "#735c9a"));
-	const [typeface, setTypeface] = useState<"sans" | "serif">("sans");
-	const [template, setTemplate] = useState<Template>(() => (chinese ? "meowth" : "ditgar"));
-	const [heroTemplate, setHeroTemplate] = useState<SculptureTemplate>(() => (chinese ? "bronzor" : "ditgar"));
-	const [initialSample] = useState({ name, accent, typeface, template, heroTemplate });
+	const [name, setName] = useState(() => samplePreviewForLocale(i18n.locale).name);
+	const [accent, setAccent] = useState(() => samplePreviewForLocale(i18n.locale).accent);
+	const [typeface, setTypeface] = useState<"sans" | "serif">(() => samplePreviewForLocale(i18n.locale).typeface);
+	const [template, setTemplate] = useState<Template>(() => samplePreviewForLocale(i18n.locale).template);
+	const [heroTemplate, setHeroTemplate] = useState<SculptureTemplate>(
+		() => samplePreviewForLocale(i18n.locale).heroTemplate,
+	);
+	const [initialSample, setInitialSample] = useState(() => samplePreviewForLocale(i18n.locale));
 	const [hasPdfInput, setHasPdfInput] = useState(false);
+	useEffect(() => {
+		const next = samplePreviewForLocale(i18n.locale);
+		setName(next.name);
+		setAccent(next.accent);
+		setTypeface(next.typeface);
+		setTemplate(next.template);
+		setHeroTemplate(next.heroTemplate);
+		setInitialSample(next);
+	}, [i18n.locale]);
 	useTemporaryInputGuard({
 		loginRequired: !currentSession,
 		hasTemporaryInput:
@@ -282,7 +310,7 @@ export function Homepage() {
 					</Link>
 				</div>
 			</main>
-			<SiteFooter />
+			<SiteFooter startPath={startPath} />
 		</div>
 	);
 }

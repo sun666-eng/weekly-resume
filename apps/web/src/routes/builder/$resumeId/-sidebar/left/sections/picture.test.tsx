@@ -4,8 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { useResumeStore } from "@/features/resume/builder/draft";
+import { GuestContext } from "@/features/resume/guest/context";
 import { PictureSectionForm } from "./picture";
 
 const upload = vi.hoisted(() => vi.fn());
@@ -258,5 +260,137 @@ describe("picture actions", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Show picture" }));
 		await waitFor(() => expect(useResumeStore.getState().resume?.data.picture.hidden).toBe(false));
 		expect(useResumeStore.getState().resume?.data.picture.url).toBe("/uploads/test/old.png");
+	});
+});
+
+function renderGuestForm(photoBusy = vi.fn()) {
+	const view = render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}>
+				<GuestContext.Provider
+					value={{
+						status: "已暂存到此浏览器",
+						requestAction: vi.fn(),
+						backup: vi.fn(),
+						replaceData: vi.fn(),
+						clear: vi.fn(),
+						showHelp: vi.fn(),
+						photoBusy,
+					}}
+				>
+					<PictureSectionForm />
+				</GuestContext.Provider>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	return { ...view, photoBusy };
+}
+
+describe("guest photoBusy lifetime", () => {
+	it("releases photoBusy after cancelling the crop dialog", async () => {
+		const resume = useResumeStore.getState().resume;
+		if (!resume) throw new Error("Missing initialized resume");
+		useResumeStore
+			.getState()
+			.initialize({ ...resume, data: { ...resume.data, picture: structuredClone(defaultResumeData.picture) } });
+		const { photoBusy } = renderGuestForm();
+		selectFile();
+		expect(await screen.findByRole("dialog")).toBeTruthy();
+		await waitFor(() => expect(photoBusy).toHaveBeenCalledWith(true));
+		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+		await waitFor(() => expect(photoBusy).toHaveBeenLastCalledWith(false));
+		expect(screen.queryByRole("dialog")).toBeNull();
+	});
+
+	it("releases photoBusy if the section unmounts while the crop dialog is open", async () => {
+		const resume = useResumeStore.getState().resume;
+		if (!resume) throw new Error("Missing initialized resume");
+		useResumeStore
+			.getState()
+			.initialize({ ...resume, data: { ...resume.data, picture: structuredClone(defaultResumeData.picture) } });
+		const { photoBusy, unmount } = renderGuestForm();
+		selectFile();
+		expect(await screen.findByRole("dialog")).toBeTruthy();
+		await waitFor(() => expect(photoBusy).toHaveBeenCalledWith(true));
+		unmount();
+		expect(photoBusy).toHaveBeenLastCalledWith(false);
+	});
+
+	it("stores a local data-URL photo and releases photoBusy after a guest upload", async () => {
+		const { photoBusy } = renderGuestForm();
+		selectFile();
+		await waitFor(() => expect(useResumeStore.getState().resume?.data.picture.url).toMatch(/^data:image\/png;base64,/));
+		await waitFor(() => expect(photoBusy).toHaveBeenLastCalledWith(false));
+		expect(upload).not.toHaveBeenCalled();
+	});
+});
+
+function DualPictureHarness({ photoBusy }: { photoBusy: (busy: boolean) => void }) {
+	const [showIdle, setShowIdle] = useState(false);
+	const [queryClient] = useState(() => new QueryClient({ defaultOptions: { mutations: { retry: false } } }));
+	return (
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={queryClient}>
+				<GuestContext.Provider
+					value={{
+						status: "已暂存到此浏览器",
+						requestAction: vi.fn(),
+						backup: vi.fn(),
+						replaceData: vi.fn(),
+						clear: vi.fn(),
+						showHelp: vi.fn(),
+						photoBusy,
+					}}
+				>
+					<div data-testid="primary">
+						<PictureSectionForm />
+					</div>
+					{showIdle ? (
+						<div data-testid="idle">
+							<PictureSectionForm />
+						</div>
+					) : null}
+					<button type="button" onClick={() => setShowIdle(true)}>
+						show-idle
+					</button>
+					<button type="button" onClick={() => setShowIdle(false)}>
+						hide-idle
+					</button>
+				</GuestContext.Provider>
+			</QueryClientProvider>
+		</I18nProvider>
+	);
+}
+
+describe("guest photoBusy isolation", () => {
+	it("does not release photoBusy when an idle section unmounts", () => {
+		const photoBusy = vi.fn();
+		const { unmount } = renderGuestForm(photoBusy);
+		unmount();
+		expect(photoBusy).not.toHaveBeenCalled();
+	});
+
+	it("does not let an idle sibling unmount clear an open crop hold", async () => {
+		const resume = useResumeStore.getState().resume;
+		if (!resume) throw new Error("Missing initialized resume");
+		useResumeStore
+			.getState()
+			.initialize({ ...resume, data: { ...resume.data, picture: structuredClone(defaultResumeData.picture) } });
+		const photoBusy = vi.fn();
+		render(<DualPictureHarness photoBusy={photoBusy} />);
+		const showIdle = screen.getByRole("button", { name: "show-idle" });
+		const hideIdle = screen.getByRole("button", { name: "hide-idle" });
+		fireEvent.change(within(screen.getByTestId("primary")).getByLabelText("Upload picture", { selector: "input" }), {
+			target: { files: [new File(["fake-photo"], "new.png", { type: "image/png" })] },
+		});
+		expect(await screen.findByRole("dialog")).toBeTruthy();
+		await waitFor(() => expect(photoBusy).toHaveBeenCalledWith(true));
+		fireEvent.click(showIdle);
+		expect(screen.getByTestId("idle")).toBeTruthy();
+		expect(photoBusy).toHaveBeenLastCalledWith(true);
+		fireEvent.click(hideIdle);
+		expect(screen.queryByTestId("idle")).toBeNull();
+		expect(photoBusy).toHaveBeenLastCalledWith(true);
+		expect(screen.getByRole("dialog")).toBeTruthy();
 	});
 });

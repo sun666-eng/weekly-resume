@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
 import z from "zod";
+import { restoreGuestSnapshot } from "@reactive-resume/resume/guest-draft";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DialogContent,
@@ -84,7 +85,52 @@ const formSchema = z.discriminatedUnion("type", [
 			error: () => t`File must be a JSON file`,
 		}),
 	}),
+	z.object({
+		type: z.literal("weekly-resume-local-backup"),
+		file: z.instanceof(File).refine((file) => file.type === "" || file.type === "application/json", {
+			error: () => t`File must be a JSON file`,
+		}),
+	}),
 ]);
+
+function isImportCancellation(error: unknown) {
+	return error instanceof Error && error.message === "CANCELLED";
+}
+
+function unwrapLocalBackupJson(text: string) {
+	try {
+		return restoreGuestSnapshot(JSON.parse(text));
+	} catch {
+		throw new ResumeImportError(
+			t({
+				comment: "Error shown when a local backup JSON file cannot be restored",
+				message: "This file is not a valid Weekly Resume local backup.",
+			}),
+		);
+	}
+}
+
+function describeImportFailure(error: unknown) {
+	const fallback = t({
+		comment: "Fallback toast when importing a resume fails for an unknown reason",
+		message: "An unknown error occurred while importing your resume.",
+	});
+	const byCode = {
+		AI_REQUEST_INVALID: t({
+			comment: "Error shown when AI parsing returns invalid resume structure during import",
+			message: "The imported file could not be parsed into a valid resume.",
+		}),
+		AI_PROVIDER_UNREACHABLE: t({
+			comment: "Error shown when AI provider is unreachable during PDF/DOCX resume import",
+			message: "Could not reach the AI provider. Please try again.",
+		}),
+	};
+	if (error instanceof ResumeImportError) return error.message;
+	const localized = getLocalizedErrorMessage(error, fallback, byCode);
+	if (localized !== fallback) return localized;
+	if (error instanceof Error && error.message) return error.message;
+	return fallback;
+}
 
 function fileToBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -139,6 +185,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 	const [useAiForWord, setUseAiForWord] = useState(false);
 	const wordAiSwitchId = useId();
 	const selectionSequence = useRef(0);
+	const pendingNamedImport = useRef<{ file: File; id: string } | null>(null);
 
 	const { mutateAsync: importResume } = useMutation(orpc.resume.import.mutationOptions());
 	const { hasUsableProvider, isLoading: isLoadingAiProviders } = useHasUsableAiProvider(!dialogData?.onPrepared);
@@ -168,6 +215,13 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 
 			try {
 				let data: ResumeData | undefined;
+				let importedName: string | undefined;
+
+				if (value.type === "weekly-resume-local-backup") {
+					const restored = unwrapLocalBackupJson(await value.file.text());
+					data = restored.data;
+					importedName = restored.name;
+				}
 
 				if (
 					value.type === "json-resume-json" ||
@@ -178,7 +232,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 				}
 
 				if (value.type === "pdf") {
-					if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
+					if (isLoadingAiProviders) throw new ResumeImportError(t`Loading AI providers. Please try again in a moment.`);
 
 					if (hasUsableProvider) {
 						const base64 = await fileToBase64(value.file);
@@ -194,7 +248,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 
 						const lines = await extractPdfLines(value.file);
 						if (lines.length === 0) {
-							throw new Error(
+							throw new ResumeImportError(
 								t({
 									comment: "Error shown when a PDF has no extractable text layer during import",
 									message: "This PDF has no readable text. It is likely a scan, so there is nothing to import.",
@@ -208,9 +262,12 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 
 				if (value.type === "docx") {
 					if (useAiForWord) {
-						if (isLoadingAiProviders) throw new Error(t`Loading AI providers. Please try again in a moment.`);
+						if (isLoadingAiProviders)
+							throw new ResumeImportError(t`Loading AI providers. Please try again in a moment.`);
 						if (!hasUsableProvider)
-							throw new Error(t`This feature requires a connected AI provider. Please set one up in the settings.`);
+							throw new ResumeImportError(
+								t`This feature requires a connected AI provider. Please set one up in the settings.`,
+							);
 						const base64 = await fileToBase64(value.file);
 						data = await client.ai.parseDocx({
 							mediaType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -226,7 +283,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 				}
 
 				if (!data) {
-					throw new Error(
+					throw new ResumeImportError(
 						t({
 							comment: "Error shown when AI import endpoint returns no parsed resume data",
 							message: "No data was returned from the AI provider.",
@@ -256,16 +313,27 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 						confirmText: t`Import and review`,
 						cancelText: t`Cancel import`,
 					});
-					if (!accepted) return;
+					if (!accepted) {
+						toast.close(toastId);
+						return;
+					}
 				}
 
 				if (dialogData?.onPrepared) {
-					await dialogData.onPrepared(data);
+					const onPrepared: (next: ResumeData, name?: string) => Promise<void> = dialogData.onPrepared;
+					if (importedName) await onPrepared(data, importedName);
+					else await onPrepared(data);
 					toast.close(toastId);
 					closeDialog();
 					return;
 				}
-				const id = await importResume({ data });
+				const pending = pendingNamedImport.current;
+				const id = pending?.file === value.file ? pending.id : await importResume({ data });
+				if (importedName) {
+					if (pending?.file !== value.file) pendingNamedImport.current = { file: value.file, id };
+					await orpc.resume.update.call({ id, name: importedName });
+				}
+				pendingNamedImport.current = null;
 				toast.add({
 					type: "success",
 					title: null,
@@ -275,29 +343,14 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 				closeDialog();
 				void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
 			} catch (error: unknown) {
+				if (isImportCancellation(error)) {
+					toast.close(toastId);
+					return;
+				}
 				toast.add({
 					type: "error",
 					title: null,
-					description:
-						error instanceof ResumeImportError
-							? error.message
-							: getLocalizedErrorMessage(
-									error,
-									t({
-										comment: "Fallback toast when importing a resume fails for an unknown reason",
-										message: "An unknown error occurred while importing your resume.",
-									}),
-									{
-										AI_REQUEST_INVALID: t({
-											comment: "Error shown when AI parsing returns invalid resume structure during import",
-											message: "The imported file could not be parsed into a valid resume.",
-										}),
-										AI_PROVIDER_UNREACHABLE: t({
-											comment: "Error shown when AI provider is unreachable during PDF/DOCX resume import",
-											message: "Could not reach the AI provider. Please try again.",
-										}),
-									},
-								),
+					description: describeImportFailure(error),
 					id: toastId,
 				});
 			} finally {
@@ -319,6 +372,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 	const onUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const selected = e.target.files?.[0];
 		if (!selected) return;
+		pendingNamedImport.current = null;
 		const sequence = ++selectionSequence.current;
 		setUseAiForWord(false);
 		form.setFieldValue("file", selected);
@@ -424,6 +478,13 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 											value={field.state.value}
 											onValueChange={(value) => field.handleChange(value as ImportType)}
 											options={[
+												{
+													value: "weekly-resume-local-backup",
+													label: t({
+														comment: "Import source option for Weekly Resume local backup JSON",
+														message: "Weekly Resume local backup (JSON)",
+													}),
+												},
 												{
 													value: "reactive-resume-json",
 													label: t({

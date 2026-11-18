@@ -1,5 +1,14 @@
 import type { Locale, Script } from "@reactive-resume/utils/locale";
 import { getLocaleScript, isCjkScript } from "@reactive-resume/utils/locale";
+import { getCjkFullFamily } from "./cjk-compact-coverage";
+
+export {
+	cjkCompactFamilies,
+	getCjkCompactFamily,
+	getCjkFullFamily,
+	isCjkCompactCodepoint,
+	isCjkCompactText,
+} from "./cjk-compact-coverage";
 
 // ponytail: inlined from @reactive-resume/utils/field (sole consumer)
 const unique = <T>(items: T[]): T[] => [...new Set(items)];
@@ -152,10 +161,11 @@ export function resolveLegacyFontAlias(family: string): string | null {
 }
 
 export function getFont(family: string) {
-	const direct = fontMap.get(family);
+	const fullFamily = getCjkFullFamily(family);
+	const direct = fontMap.get(fullFamily);
 	if (direct) {
-		const weights = getHostedFontWeights(family);
-		return weights.length ? { ...direct, weights } : direct;
+		const weights = getHostedFontWeights(fullFamily);
+		return weights.length ? { ...direct, family, weights } : direct;
 	}
 
 	const alias = legacyFontAliases[family];
@@ -198,13 +208,13 @@ export function getWebFont(family: string) {
 const localFontMap = localFontsJSON as Record<string, Record<string, string>>;
 
 export function getHostedFontWeights(family: string): FontWeight[] {
-	return Object.keys(localFontMap[family] ?? {})
+	return Object.keys(localFontMap[getCjkFullFamily(family)] ?? {})
 		.filter((key) => /^\d00$/.test(key))
 		.sort() as FontWeight[];
 }
 
 export function isOfflineFontFamily(family: string): boolean {
-	return isStandardPdfFontFamily(family) || Object.hasOwn(localFontMap, family);
+	return isStandardPdfFontFamily(family) || Object.hasOwn(localFontMap, getCjkFullFamily(family));
 }
 
 /** Legacy selections remain stored; PDF uses a shipped face until the user chooses another. */
@@ -224,7 +234,11 @@ export function getLocalFontSource(family: string, weight: FontWeight = "400", i
 	return files[key] ?? null;
 }
 
-export function getWebFontSource(family: string, weight: FontWeight = "400", italic = false) {
+export function getWebFontSource(family: string, weight: FontWeight = "400", italic = false): string | null {
+	const fullFamily = getCjkFullFamily(family);
+	if (fullFamily !== family) {
+		return getWebFontSource(fullFamily, weight, italic)?.replace(/\.ttf$/, ".subset.ttf") ?? null;
+	}
 	// A hosted family resolves entirely locally — including the italic-falls-back-to-normal rule —
 	// so one render never mixes a local 400 with an upstream italic request.
 	const localFiles = localFontMap[family];

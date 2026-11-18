@@ -7,17 +7,19 @@ import { cn } from "@reactive-resume/utils/style";
 import { CrowdMotion } from "@/features/home-motion/decorations";
 import { wrap } from "./classes";
 
-type FooterLink = { label: string } & ({ anchor: string } | { to: "/dashboard" | "/ats-checker" });
+type FooterPath = "/dashboard" | "/ats-checker" | "/local-draft";
+type FooterLink = { label: string } & ({ anchor: string } | { to: FooterPath });
 type FooterColumn = { title: string; links: FooterLink[] };
+type SiteFooterProps = { startPath?: "/dashboard" | "/local-draft" };
 
-const getColumns = (): FooterColumn[] => [
+const getColumns = (startPath: "/dashboard" | "/local-draft"): FooterColumn[] => [
 	{
 		title: t`Product`,
 		links: [
 			{ anchor: "#templates", label: t`Templates` },
 			{ anchor: "#features", label: t`Features` },
 			{ to: "/ats-checker", label: t`ATS Checker` },
-			{ to: "/dashboard", label: t`Get Started` },
+			{ to: startPath, label: t`Get Started` },
 		],
 	},
 ];
@@ -41,7 +43,7 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
 	);
 }
 
-export function SiteFooter() {
+export function SiteFooter({ startPath = "/dashboard" }: SiteFooterProps) {
 	return (
 		<footer id="footer" className="relative isolate z-1 overflow-clip border-(--home-line) border-t">
 			<div
@@ -65,7 +67,7 @@ export function SiteFooter() {
 					</p>
 				</div>
 
-				{getColumns().map((column) => (
+				{getColumns(startPath).map((column) => (
 					<nav key={column.title} aria-label={column.title}>
 						<h2 className="font-[Manrope_Variable,sans-serif] font-semibold text-[15px] tracking-[-0.03em]">
 							{column.title}
@@ -98,7 +100,7 @@ export function SiteFooter() {
 			<div className={cn(wrap, "@container mt-10 max-[540px]:mt-7")}>
 				<m.p
 					aria-hidden="true"
-					className="select-none bg-gradient-to-b from-(--home-ink) from-45% to-[rgb(241_240_235/7%)] bg-clip-text font-[Manrope_Variable,sans-serif] font-bold text-[14_4cqw] text-transparent leading-[0.78] tracking-[-0.07em]"
+					className="select-none bg-gradient-to-b from-(--home-ink) from-45% to-[rgb(241_240_235/7%)] bg-clip-text font-[Manrope_Variable,sans-serif] font-bold text-[14.4cqw] text-transparent leading-[0.78] tracking-[-0.07em]"
 					initial={{ opacity: 0, y: 24 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true, amount: 0.3 }}
