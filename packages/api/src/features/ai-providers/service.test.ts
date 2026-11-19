@@ -76,6 +76,7 @@ const config = vi.hoisted(() => ({
 	SYSTEM_AI_BASE_URL: "https://private.example",
 	SYSTEM_AI_API_KEY: "synthetic-secret-for-tests",
 	SYSTEM_AI_DAILY_LIMIT: 15,
+	SYSTEM_AI_ENDPOINTS_JSON: undefined as string | undefined,
 }));
 vi.mock("@reactive-resume/env/server", () => ({ env: config }));
 const { isCredentialEncryptionConfigured } = await import("../ai/credentials");
@@ -110,6 +111,7 @@ describe("aiProvidersService", () => {
 		queryState.rows = [];
 		queryState.whereArg = undefined;
 		queryState.orderByArgs = [];
+		config.SYSTEM_AI_ENDPOINTS_JSON = undefined;
 	});
 
 	it("discovers a read-only system provider without exposing credentials or requiring personal-key encryption", async () => {
@@ -145,6 +147,45 @@ describe("aiProvidersService", () => {
 			expect(dbMock.select).not.toHaveBeenCalled();
 		},
 	);
+
+	it("keeps endpoint names, URLs, credentials and routing settings out of the client descriptor", async () => {
+		config.SYSTEM_AI_ENDPOINTS_JSON = JSON.stringify([
+			{
+				name: "internal-relay",
+				provider: "openai-compatible",
+				model: "first-model",
+				apiKey: "private-api-key",
+				baseURL: "https://relay.example/v1?token=private-url-token",
+			},
+			{ name: "internal-official", provider: "deepseek", model: "last-model", apiKey: "private-fallback-key" },
+		]);
+		vi.mocked(isCredentialEncryptionConfigured).mockReturnValueOnce(false);
+		const [descriptor] = await aiProvidersService.list({ userId: "listed-user" });
+		expect(descriptor).toMatchObject({
+			provider: "openai-compatible",
+			model: "first-model",
+			baseURL: null,
+			isSystem: true,
+			label: "Public label",
+		});
+		expect(JSON.stringify(descriptor)).not.toMatch(
+			/internal-|private-|last-model|relay\.example|endpoints|systemConfig|cooldown|timeout/i,
+		);
+	});
+	it("redacts a display field that accidentally contains credentials from another endpoint", async () => {
+		config.SYSTEM_AI_ENDPOINTS_JSON = JSON.stringify([
+			{ provider: "openai", model: "model-with-private-token", apiKey: "primary-private-key" },
+			{
+				provider: "deepseek",
+				model: "official",
+				apiKey: "second-private-key",
+				baseURL: "https://relay.example/v1?token=private-token",
+			},
+		]);
+		vi.mocked(isCredentialEncryptionConfigured).mockReturnValueOnce(false);
+		const [descriptor] = await aiProvidersService.list({ userId: "listed-user" });
+		expect(descriptor?.model).toBe("[redacted]");
+	});
 	it("keeps personal providers visible when the shared quota meter is unavailable", async () => {
 		queryState.rows = [providerRow()];
 		const quota = vi.spyOn(quotaService, "readSystemQuota").mockRejectedValueOnce(new Error("Synthetic Redis outage"));

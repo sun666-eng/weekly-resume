@@ -1,6 +1,8 @@
 import type { AIProvider } from "@reactive-resume/ai/types";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ModelMessage } from "ai";
+import type { SystemAiConfig } from "./system-config";
+import type { AiCallOptions } from "./system-scheduler";
 import { inflateRawSync } from "node:zlib";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createCerebras } from "@ai-sdk/cerebras";
@@ -15,7 +17,9 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createPerplexity } from "@ai-sdk/perplexity";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { createXai } from "@ai-sdk/xai";
+import { ORPCError } from "@orpc/client";
 import { APICallError, createGateway, generateText, LoadAPIKeyError, NoSuchModelError } from "ai";
+import { jsonrepair } from "jsonrepair";
 import { createOllama } from "ollama-ai-provider-v2";
 import { match } from "ts-pattern";
 import { z } from "zod";
@@ -30,22 +34,34 @@ import { buildAiExtractionTemplate } from "@reactive-resume/ai/resume/extraction
 import { sanitizeAndParseResumeJson } from "@reactive-resume/ai/resume/sanitize";
 import { AI_PROVIDER_DEFAULT_BASE_URLS, AI_PROVIDER_DISPLAY_NAMES, aiProviderSchema } from "@reactive-resume/ai/types";
 import { supportsProviderNativeWebSearch } from "./capabilities";
+import { createFallbackLanguageModel } from "./system-scheduler";
 import { resolveAiBaseUrl } from "./url-policy";
 
 const aiExtractionTemplate = buildAiExtractionTemplate();
 
-function logAndRethrow(context: string, error: unknown): never {
-	if (error instanceof Error) {
-		console.error(`${context}:`, error);
-		throw error;
+function systemResumeJson(resultText: string) {
+	// A relay can return a maintenance page or an error object in a successful completion.
+	// Check its shape before the domain sanitizer fills missing fields with a blank resume.
+	const start = resultText.indexOf("{");
+	const end = resultText.lastIndexOf("}");
+	if (start < 0) throw new ORPCError("AI_RESPONSE_INVALID", { status: 502 });
+	try {
+		const json = jsonrepair(resultText.slice(start, end >= start ? end + 1 : undefined));
+		const value: unknown = JSON.parse(json);
+		if (
+			value &&
+			typeof value === "object" &&
+			Object.keys(aiExtractionTemplate).some((key) => Object.hasOwn(value, key))
+		)
+			return json;
+	} catch {
+		// A JSON repair error can include a fragment of the model's response.
 	}
-
-	console.error(`${context}:`, error);
-	throw new Error(`An unknown error occurred during ${context}.`);
+	throw new ORPCError("AI_RESPONSE_INVALID", { status: 502 });
 }
 
-function parseAndValidateResumeJson(resultText: string): ResumeData {
-	const { data, diagnostics } = sanitizeAndParseResumeJson(resultText);
+function parseAndValidateResumeJson(resultText: string, isSystem = false): ResumeData {
+	const { data, diagnostics } = sanitizeAndParseResumeJson(isSystem ? systemResumeJson(resultText) : resultText);
 
 	if (diagnostics.coercions.length === 0 && diagnostics.droppedSectionItems.length === 0) return data;
 
@@ -63,7 +79,7 @@ function parseAndValidateResumeJson(resultText: string): ResumeData {
 	return data;
 }
 
-type GetModelInput = {
+export type GetModelInput = {
 	provider: AIProvider;
 	model: string;
 	apiKey: string;
@@ -265,10 +281,18 @@ export function getModel(input: GetModelInput) {
 		.exhaustive();
 }
 
-export function getAgentModel(input: GetModelInput) {
+function getSingleAgentModel(input: GetModelInput) {
 	if (!supportsProviderNativeWebSearch(input)) return getModel(input);
 
 	return createOpenAI({ apiKey: input.apiKey, baseURL: resolveAiBaseUrl(input) }).responses(input.model);
+}
+
+export function getAgentModel(input: GetModelInput, systemConfig?: SystemAiConfig) {
+	if (!systemConfig) return getSingleAgentModel(input);
+	const modelFor = systemConfig.endpoints.length === 1 ? getSingleAgentModel : getModel;
+	return createFallbackLanguageModel(systemConfig, "v4", (endpoint) =>
+		modelFor({ ...endpoint, baseURL: endpoint.baseURL ?? "" }),
+	);
 }
 
 const aiCredentialsSchema = z.object({
@@ -416,7 +440,9 @@ export async function testConnection(input: TestConnectionInput): Promise<TestCo
 	};
 }
 
-type ParsePdfInput = z.infer<typeof aiCredentialsSchema> & {
+type ParserCredentials = TestConnectionInput & { isSystem?: boolean };
+
+type ParsePdfInput = ParserCredentials & {
 	file: z.infer<typeof fileInputSchema>;
 };
 
@@ -456,10 +482,11 @@ function buildResumeParsingTextMessages({ userPrompt, text }: { userPrompt: stri
 	];
 }
 
-async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
+async function parsePdf(input: ParsePdfInput, options?: AiCallOptions): Promise<ResumeData> {
 	const model = getModel(input);
 
 	const result = await generateText({
+		...options,
 		model,
 		system: buildResumeParsingSystemPrompt(pdfParserSystemPrompt),
 		messages: buildResumeParsingMessages({
@@ -467,12 +494,12 @@ async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
 			file: input.file,
 			mediaType: "application/pdf",
 		}),
-	}).catch((error: unknown) => logAndRethrow("Failed to generate the text with the model", error));
+	});
 
-	return parseAndValidateResumeJson(result.text);
+	return parseAndValidateResumeJson(result.text, input.isSystem);
 }
 
-type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
+type ParseDocxInput = ParserCredentials & {
 	file: z.infer<typeof fileInputSchema>;
 	mediaType: "application/msword" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 };
@@ -573,33 +600,39 @@ function extractDocxText(file: z.infer<typeof fileInputSchema>): string {
 	return text;
 }
 
-async function parseDocx(input: ParseDocxInput): Promise<ResumeData> {
-	const model = getModel(input);
-	const messages =
-		input.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			? buildResumeParsingTextMessages({ userPrompt: docxParserUserPrompt, text: extractDocxText(input.file) })
-			: buildResumeParsingMessages({
-					userPrompt: docxParserUserPrompt,
-					file: input.file,
-					mediaType: input.mediaType,
-				});
-
-	const result = await generateText({
-		model,
-		system: buildResumeParsingSystemPrompt(docxParserSystemPrompt),
-		messages,
-	}).catch((error: unknown) => logAndRethrow("Failed to generate the text with the model", error));
-
-	return parseAndValidateResumeJson(result.text);
+export function prepareDocxMessages(input: Pick<ParseDocxInput, "file" | "mediaType">) {
+	return input.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+		? buildResumeParsingTextMessages({ userPrompt: docxParserUserPrompt, text: extractDocxText(input.file) })
+		: buildResumeParsingMessages({
+				userPrompt: docxParserUserPrompt,
+				file: input.file,
+				mediaType: input.mediaType,
+			});
 }
 
-async function parseText(input: TestConnectionInput & { text: string }): Promise<ResumeData> {
+async function parseDocx(
+	input: ParseDocxInput,
+	options?: AiCallOptions,
+	messages = prepareDocxMessages(input),
+): Promise<ResumeData> {
 	const result = await generateText({
+		...options,
+		model: getModel(input),
+		system: buildResumeParsingSystemPrompt(docxParserSystemPrompt),
+		messages,
+	});
+
+	return parseAndValidateResumeJson(result.text, input.isSystem);
+}
+
+async function parseText(input: ParserCredentials & { text: string }, options?: AiCallOptions): Promise<ResumeData> {
+	const result = await generateText({
+		...options,
 		model: getModel(input),
 		system: buildResumeParsingSystemPrompt(textParserSystemPrompt),
 		messages: [{ role: "user", content: input.text }],
 	});
-	return parseAndValidateResumeJson(result.text);
+	return parseAndValidateResumeJson(result.text, input.isSystem);
 }
 export const aiService = {
 	parseText,

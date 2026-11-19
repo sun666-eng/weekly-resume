@@ -140,8 +140,8 @@ vi.mock("../ai/credentials", () => ({
 	assertAgentEnvironment: vi.fn(),
 	getAgentToolApprovalSecret: vi.fn(() => "test-approval-secret"),
 }));
-const consumeQuotaMock = vi.hoisted(() => vi.fn());
-vi.mock("../ai/quota", () => ({ consumeSystemQuota: consumeQuotaMock }));
+const reserveQuotaMock = vi.hoisted(() => vi.fn());
+vi.mock("../ai/quota", () => ({ reserveSystemQuota: reserveQuotaMock }));
 vi.mock("@reactive-resume/env/server", () => ({
 	env: { SYSTEM_AI_PROVIDER: "openai", SYSTEM_AI_MODEL: "synthetic", SYSTEM_AI_API_KEY: "synthetic-test" },
 }));
@@ -181,7 +181,7 @@ beforeEach(() => {
 	dbMock.transaction.mockImplementation(async <T>(callback: (tx: typeof dbMock) => Promise<T>) => callback(dbMock));
 	clearActiveAgentRunIfCurrentMock.mockReset();
 	claimActiveAgentRunMock.mockReset();
-	consumeQuotaMock.mockReset();
+	reserveQuotaMock.mockReset();
 	for (const mock of Object.values(messagesPersistenceMock)) mock.mockReset();
 	messagesPersistenceMock.applyStepToUiMessage.mockImplementation((message: unknown) => message);
 	messagesPersistenceMock.insertDraftAssistantMessage.mockResolvedValue({ rowId: "draft-row-1", sequence: 1 });
@@ -233,6 +233,89 @@ function buildActiveThread(overrides: Record<string, unknown> = {}) {
 }
 
 describe("system provider threads", () => {
+	it.each(["startup", "preamble", "sdk-error", "text", "step"] as const)(
+		"refunds only an empty failed run (%s)",
+		async (stage) => {
+			const [{ agentService }, { convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, toolModule] =
+				await Promise.all([import("./service"), import("ai"), import("./streams"), import("./tools")]);
+			const realTools = await vi.importActual<typeof import("./tools")>("./tools");
+			vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
+			const primary = { provider: "openai", model: "gpt-5", apiKey: "synthetic-primary", baseURL: "" };
+			const endpoints =
+				stage === "step" ? [primary] : [primary, { provider: "deepseek", model: "official", apiKey: "synthetic-last" }];
+			const systemConfig = {
+				...primary,
+				endpoints,
+				cooldownMs: 180000,
+				defaultRelayTimeoutMs: 12000,
+				label: "Free",
+				dailyLimit: 1,
+			};
+			aiProvidersServiceMock.getRunnableById.mockResolvedValue({ id: "__system_default__", ...primary, systemConfig });
+			const thread = buildActiveThread({ aiProviderId: null });
+			const message = {
+				id: "new-user-message",
+				role: "user" as const,
+				parts: [{ type: "text" as const, text: "Synthetic" }],
+			};
+			const row = { ...thread, role: "user", sequence: 0, uiMessage: message };
+			dbMock.select
+				.mockReturnValueOnce(selectLimitResult([thread]))
+				.mockReturnValueOnce(selectWhereResult([{ total: 2 }]))
+				.mockReturnValueOnce(selectOrderByResult([row]));
+			dbMock.insert.mockReturnValue({ values: () => ({ returning: async () => [row] }) });
+			claimActiveAgentRunMock.mockResolvedValue(true);
+			const refund = vi.fn(async () => undefined);
+			reserveQuotaMock.mockResolvedValue({ refund });
+			vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: "Synthetic" }]);
+			type Hooks = {
+				messageMetadata: (input: { part: { type: string; text?: string } }) => unknown;
+				onError: (error: unknown) => string;
+				onFinish: (event: { responseMessage: typeof message; isAborted: boolean }) => Promise<void>;
+			};
+			let hooks!: Hooks;
+			class Agent {
+				async stream({ onStepEnd }: { onStepEnd: (step: unknown) => Promise<void> }) {
+					if (stage === "startup") throw new Error("startup failed");
+					if (stage === "step") await onStepEnd({ stepNumber: 0, toolCalls: [], finishReason: "stop" });
+					return {
+						toUIMessageStream(options: Hooks) {
+							hooks = options;
+							return new ReadableStream();
+						},
+					};
+				}
+			}
+			vi.mocked(ToolLoopAgent).mockImplementationOnce(Agent as never);
+			vi.mocked(agentStreamLifecycle.create).mockImplementationOnce((_id, factory) => {
+				factory();
+				return Promise.resolve(new ReadableStream());
+			});
+			const sent = agentService.messages.send({ userId: "user-1", threadId: thread.id, message });
+			if (stage === "startup") {
+				await expect(sent).rejects.toThrow();
+			} else {
+				await sent;
+				hooks.messageMetadata({ part: { type: "start-step" } });
+				if (stage === "text") hooks.messageMetadata({ part: { type: "text-delta", text: "Delivered" } });
+				const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
+				if (stage === "sdk-error" || stage === "text") {
+					if (!settings || !("onError" in settings) || typeof settings.onError !== "function")
+						throw new Error("Missing SDK error callback");
+					await settings.onError();
+				}
+				if (stage === "sdk-error") expect(refund).toHaveBeenCalledOnce();
+				expect(hooks.onError(new Error(primary.apiKey))).toBe("Agent run failed.");
+				hooks.onError(new Error("duplicate callback"));
+				await hooks.onFinish({ responseMessage: message, isAborted: false });
+			}
+			expect(reserveQuotaMock).toHaveBeenCalledTimes(1);
+			expect(refund).toHaveBeenCalledTimes(stage === "text" || stage === "step" ? 0 : 1);
+			const tools = vi.mocked(ToolLoopAgent).mock.lastCall?.[0].tools ?? {};
+			expect("web_search" in tools).toBe(endpoints.length === 1);
+			expect("read_resume" in tools).toBe(true);
+		},
+	);
 	it.each(["new", "builder"] as const)("stores a null FK for the %s entry point", async (entry) => {
 		const { agentService } = await import("./service");
 		const thread = buildActiveThread({ aiProviderId: null });
@@ -265,7 +348,7 @@ describe("system provider threads", () => {
 			expect(aiProvidersServiceMock.getRunnableById).toHaveBeenCalledWith({ id: provider.id, userId: "user-1" });
 		}
 		expect(values).toHaveBeenCalledWith(expect.objectContaining({ aiProviderId: null, workingResumeId: "resume-1" }));
-		expect(consumeQuotaMock).not.toHaveBeenCalled();
+		expect(reserveQuotaMock).not.toHaveBeenCalled();
 	});
 	it.each([true, false])(
 		"resolves the stored null provider and accounts only after claiming the run (claimed=%s)",
@@ -275,7 +358,7 @@ describe("system provider threads", () => {
 			aiProvidersServiceMock.getRunnableById.mockResolvedValue({ id: "__system_default__" });
 			claimActiveAgentRunMock.mockResolvedValue(claimed);
 			clearActiveAgentRunIfCurrentMock.mockResolvedValue(undefined);
-			consumeQuotaMock.mockRejectedValue(new ORPCError("AI_FREE_QUOTA_EXCEEDED", { status: 429 }));
+			reserveQuotaMock.mockRejectedValue(new ORPCError("AI_FREE_QUOTA_EXCEEDED", { status: 429 }));
 			await expect(
 				agentService.messages.send({
 					userId: "user-1",
@@ -292,9 +375,9 @@ describe("system provider threads", () => {
 			});
 			expect(aiProvidersServiceMock.getDefaultRunnable).not.toHaveBeenCalled();
 			if (claimed) {
-				expect(consumeQuotaMock).toHaveBeenCalledWith("__system_default__", "user-1", "192.0.2.18");
+				expect(reserveQuotaMock).toHaveBeenCalledWith("__system_default__", "user-1", "192.0.2.18");
 				expect(clearActiveAgentRunIfCurrentMock).toHaveBeenCalledOnce();
-			} else expect(consumeQuotaMock).not.toHaveBeenCalled();
+			} else expect(reserveQuotaMock).not.toHaveBeenCalled();
 			expect(dbMock.insert).not.toHaveBeenCalled();
 		},
 	);

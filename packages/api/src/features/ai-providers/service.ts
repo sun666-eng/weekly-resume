@@ -1,4 +1,5 @@
 import type { AIProvider } from "@reactive-resume/ai/types";
+import type { SystemAiConfig } from "../ai/system-config";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { aiProviderSchema, SYSTEM_AI_PROVIDER_ID } from "@reactive-resume/ai/types";
@@ -13,7 +14,7 @@ import {
 } from "../ai/credentials";
 import { readSystemQuota } from "../ai/quota";
 import { testConnection } from "../ai/service";
-import { getSystemAiConfig } from "../ai/system-config";
+import { getSystemAiConfig, publicSystemAiText } from "../ai/system-config";
 import { resolveAiBaseUrl } from "../ai/url-policy";
 
 type AiProviderRecord = typeof schema.aiProvider.$inferSelect;
@@ -36,6 +37,8 @@ export type AiProviderResponse = {
 	isSystem?: boolean;
 	quota?: { dailyLimit: number; usedToday: number; remainingToday: number };
 };
+
+type RunnableAiProvider = AiProviderResponse & { apiKey: string; baseURL: string; systemConfig?: SystemAiConfig };
 
 type CreateAiProviderInput = {
 	userId: string;
@@ -108,7 +111,7 @@ function systemDescriptor(config: NonNullable<ReturnType<typeof getSystemAiConfi
 		id: SYSTEM_AI_PROVIDER_ID,
 		label: config.label,
 		provider: config.provider,
-		model: config.model,
+		model: publicSystemAiText(config.model, config.endpoints),
 		baseURL: null,
 		enabled: true,
 		testStatus: "success",
@@ -125,7 +128,15 @@ function systemDescriptor(config: NonNullable<ReturnType<typeof getSystemAiConfi
 
 function systemRuntime() {
 	const config = getSystemAiConfig();
-	return config ? { ...systemDescriptor(config), apiKey: config.apiKey, baseURL: config.baseURL } : null;
+	return config
+		? {
+				...systemDescriptor(config),
+				model: config.model,
+				apiKey: config.apiKey,
+				baseURL: config.baseURL,
+				systemConfig: config,
+			}
+		: null;
 }
 
 function assertPersonalProvider(id: string) {
@@ -158,7 +169,7 @@ export const aiProvidersService = {
 		return [...providers.map(toResponse), ...builtIn];
 	},
 
-	getRunnableById: async (input: { id: string; userId: string }) => {
+	getRunnableById: async (input: { id: string; userId: string }): Promise<RunnableAiProvider> => {
 		if (input.id === SYSTEM_AI_PROVIDER_ID) {
 			const system = systemRuntime();
 			if (!system) throw new ORPCError("AI_PROVIDER_UNAVAILABLE", { status: 400 });
@@ -178,7 +189,7 @@ export const aiProvidersService = {
 		};
 	},
 
-	getDefaultRunnable: async (input: { userId: string }) => {
+	getDefaultRunnable: async (input: { userId: string }): Promise<RunnableAiProvider | null> => {
 		const system = systemRuntime();
 		if (system && !isCredentialEncryptionConfigured()) return system;
 		assertCredentialEncryptionConfigured();

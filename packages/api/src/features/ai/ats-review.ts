@@ -1,3 +1,4 @@
+import type { AiCallOptions } from "./system-scheduler";
 import { z } from "zod";
 import { atsReviewSystemPrompt, atsReviewUserPromptTemplate } from "@reactive-resume/ai/prompts";
 import {
@@ -94,7 +95,21 @@ export const atsReviewOutputSchema = z.object({
 
 export type AtsReviewOutput = z.infer<typeof atsReviewOutputSchema>;
 
+const systemReviewSchema = atsReviewOutputSchema.refine(
+	(review) =>
+		Boolean(
+			review.summary.trim() ||
+				review.suggestions.length ||
+				review.strengths.length ||
+				review.jdAlignment?.verdict.trim() ||
+				review.jdAlignment?.missingConcepts.length ||
+				review.jdAlignment?.strengths.length,
+		),
+	"Empty AI review",
+);
+
 type AtsReviewServiceInput = AtsReviewInput & {
+	isSystem?: boolean;
 	provider: Parameters<typeof getModel>[0]["provider"];
 	model: string;
 	apiKey: string;
@@ -160,13 +175,17 @@ function normalizeReview(review: AtsReviewOutput, input: AtsReviewInput): AtsRev
 }
 
 /** Qualitative review of the writing. Never returns a score — see {@link atsReviewOutputSchema}. */
-export async function reviewResumeText(input: AtsReviewServiceInput): Promise<AtsReviewOutput> {
+export async function reviewResumeText(
+	input: AtsReviewServiceInput,
+	options?: AiCallOptions,
+): Promise<AtsReviewOutput> {
 	const model = getModel(input);
 
 	const review = await generateJson(
 		model,
 		{ system: atsReviewSystemPrompt, prompt: buildUserPrompt(input) },
-		atsReviewOutputSchema,
+		input.isSystem ? systemReviewSchema : atsReviewOutputSchema,
+		options,
 	);
 	return normalizeReview(review, input);
 }

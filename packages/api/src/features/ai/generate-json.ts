@@ -1,5 +1,6 @@
 import type { LanguageModel } from "ai";
 import type { z } from "zod";
+import type { AiCallOptions } from "./system-scheduler";
 import { ORPCError } from "@orpc/client";
 import { generateText } from "ai";
 
@@ -19,8 +20,10 @@ export async function generateJson<T>(
 	model: LanguageModel,
 	{ system, prompt }: GenerateJsonPrompt,
 	schema: z.ZodType<T>,
+	options: AiCallOptions = {},
 ): Promise<T> {
 	const { text } = await generateText({
+		...options,
 		model,
 		...(system ? { system } : {}),
 		messages: [{ role: "user", content: prompt }],
