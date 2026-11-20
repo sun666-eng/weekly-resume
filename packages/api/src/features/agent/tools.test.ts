@@ -40,6 +40,19 @@ function buildTools(
 }
 
 describe("agent tools", () => {
+	it("mounts both executable research tools for personal direct DeepSeek accounts only", () => {
+		const tools = buildTools("deepseek");
+		expect(tools.web_search?.execute).toBeTypeOf("function");
+		expect(tools.web_fetch?.execute).toBeTypeOf("function");
+		for (const relay of [
+			buildTools("deepseek", { baseURL: "https://relay.example/v1" }),
+			buildTools("openai-compatible", { baseURL: "https://api.deepseek.com/v1" }),
+		]) {
+			expect(relay).not.toHaveProperty("web_search");
+			expect(relay).not.toHaveProperty("web_fetch");
+		}
+	});
+
 	it("adds provider-native web search for direct OpenAI providers", () => {
 		const tools = buildTools("openai");
 
@@ -90,23 +103,30 @@ describe("agent tools", () => {
 		expect(open.apply_resume_patch?.needsApproval).toBeUndefined();
 	});
 
-	it("keeps instructions explicit about native search availability", () => {
-		expect(buildAgentInstructions({ hasProviderNativeSearch: true })).toContain("Use web_search");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: true })).toContain("user-provided public URLs");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).not.toContain("Use web_search");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("Live web research is unavailable");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"paste or attach the relevant content",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("Batch related JSON Patch operations");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("/basics/name");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"/sections/experience/items/0/description",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain(
-			"/customSections/0/items/0/description",
-		);
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("never prefixed with /data");
-		expect(buildAgentInstructions({ hasProviderNativeSearch: false })).toContain("clean Markdown");
+	it("explains the available web tools, sources, privacy and untrusted content", () => {
+		const search = buildAgentInstructions({ hasWebSearch: true });
+		expect(search).toContain("Use web_search");
+		expect(search).toContain("user-provided public URLs");
+		expect(search).not.toContain("web_fetch");
+		const both = buildAgentInstructions({ hasWebSearch: true, hasWebFetch: true });
+		expect(both).toContain("Use web_fetch");
+		for (const instructions of [search, both]) {
+			expect(instructions).toContain("Cite source links");
+			expect(instructions).toContain("untrusted reference material");
+			expect(instructions).toContain("Never put private resume information or contact details in search queries");
+		}
+	});
+
+	it("continues editing from local context when research is unavailable", () => {
+		const instructions = buildAgentInstructions({ hasWebSearch: false });
+		expect(instructions).not.toContain("Use web_search");
+		expect(instructions).toContain("Live web research is unavailable");
+		expect(instructions).toContain("paste or attach the relevant content");
+		expect(instructions).toContain("Batch related JSON Patch operations");
+		expect(instructions).toContain("/basics/name");
+		expect(instructions).toContain("/sections/experience/items/0/description");
+		expect(instructions).toContain("/customSections/0/items/0/description");
+		expect(instructions).toContain("never prefixed with /data");
+		expect(instructions).toContain("clean Markdown");
 	});
 });

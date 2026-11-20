@@ -13,7 +13,7 @@ type MockProvider = {
 	quota?: { dailyLimit: number; remainingToday: number; usedToday: number };
 	id: string;
 	label: string;
-	provider: "openai";
+	provider: "openai" | "deepseek";
 	model: string;
 	baseURL: string;
 	enabled: boolean;
@@ -184,6 +184,16 @@ describe("AISettingsSection", () => {
 		}
 
 		expect(screen.queryByRole("option", { name: "Ollama" })).not.toBeInTheDocument();
+	});
+
+	it("prefills deepseek-flash for a new connection and preserves a saved DeepSeek model", () => {
+		providers.data = [provider({ provider: "deepseek", label: "My DeepSeek", model: "deepseek-chat" })];
+		renderSection();
+		fireEvent.change(screen.getByLabelText("Provider"), { target: { value: "deepseek" } });
+		expect(screen.getByLabelText("Model")).toHaveValue("deepseek-flash");
+		fireEvent.click(screen.getByRole("button", { name: "Edit model" }));
+		expect(screen.getByLabelText("Provider model")).toHaveValue("deepseek-chat");
+		expect(mutations.update).not.toHaveBeenCalled();
 	});
 
 	it("uses the save-and-test result as the connected provider row", async () => {

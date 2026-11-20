@@ -17,7 +17,7 @@ type ToolPartFields = {
 };
 
 function toolDisplay(part: ToolPartFields): { label: string; icon: React.ReactNode } {
-	switch (part.type) {
+	switch (part.type === "dynamic-tool" ? `tool-${part.toolName}` : part.type) {
 		case "tool-read_resume": {
 			return { label: t`Read the resume`, icon: <ReadCvLogoIcon /> };
 		}
@@ -27,6 +27,9 @@ function toolDisplay(part: ToolPartFields): { label: string; icon: React.ReactNo
 		case "tool-web_search": {
 			// State-neutral: this label sits next to a live Running…/Done/Failed badge.
 			return { label: t`Web search`, icon: <GlobeIcon /> };
+		}
+		case "tool-web_fetch": {
+			return { label: t`Read a web page`, icon: <GlobeIcon /> };
 		}
 		default: {
 			return { label: part.toolName ?? part.type, icon: <WrenchIcon /> };
@@ -47,7 +50,7 @@ function payloadPreview(value: unknown) {
 }
 
 // Generic collapsed card for tool activity that previously rendered as nothing:
-// read_resume / read_attachment / web_search plus the dynamic-tool fallback.
+// resume reads, web research and the dynamic-tool fallback.
 export function ToolPartCard({ part }: ToolPartCardProps) {
 	const fields = part as ToolPartFields;
 	const { label, icon } = toolDisplay(fields);

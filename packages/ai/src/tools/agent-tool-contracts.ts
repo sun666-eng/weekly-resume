@@ -73,8 +73,9 @@ export type AgentTools = {
 	read_resume: { input: Record<string, never>; output: unknown };
 	read_attachment: { input: { attachmentId: string }; output: unknown };
 	apply_resume_patch: { input: ApplyResumePatchInput; output: ApplyResumePatchOutput };
-	// Provider-native web search (OpenAI Responses); input/output shapes are provider-owned.
+	// OpenAI native search and the DeepSeek search API have different result shapes.
 	web_search: { input: unknown; output: unknown };
+	web_fetch: { input: { url: string }; output: { url: string; title: string; content: string; truncated: boolean } };
 };
 
 export type AgentUIMessage = UIMessage<AgentMessageMetadata, UIDataTypes, AgentTools>;

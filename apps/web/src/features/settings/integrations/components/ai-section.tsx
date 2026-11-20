@@ -107,7 +107,7 @@ const providerOptions: AIProviderOption[] = [
 		label: "DeepSeek",
 		keywords: ["deepseek"],
 		defaultBaseURL: AI_PROVIDER_DEFAULT_BASE_URLS.deepseek,
-		defaultModel: "deepseek-chat",
+		defaultModel: "deepseek-flash",
 	},
 	{
 		value: "togetherai",

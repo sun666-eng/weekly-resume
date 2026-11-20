@@ -1,3 +1,4 @@
+import type { buildDeepSeekWebTools } from "./deepseek-web-tools";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/client";
 
@@ -242,7 +243,12 @@ describe("system provider threads", () => {
 			vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
 			const primary = { provider: "openai", model: "gpt-5", apiKey: "synthetic-primary", baseURL: "" };
 			const endpoints =
-				stage === "step" ? [primary] : [primary, { provider: "deepseek", model: "official", apiKey: "synthetic-last" }];
+				stage === "step"
+					? [primary]
+					: [
+							primary,
+							{ provider: "deepseek", model: "relay", baseURL: "https://relay.example/v1", apiKey: "synthetic-last" },
+						];
 			const systemConfig = {
 				...primary,
 				endpoints,
@@ -381,6 +387,101 @@ describe("system provider threads", () => {
 			expect(dbMock.insert).not.toHaveBeenCalled();
 		},
 	);
+});
+
+describe("Agent web research configuration", () => {
+	const official = {
+		provider: "deepseek",
+		model: "deepseek-flash",
+		apiKey: "synthetic-official",
+		baseURL: "https://api.deepseek.com/v1/",
+	};
+	const relay = { ...official, baseURL: "https://relay.example/v1", apiKey: "synthetic-relay" };
+	const native = { provider: "openai", model: "gpt-5", apiKey: "synthetic-openai", baseURL: "" };
+	it.each([
+		{ name: "personal", endpoints: undefined, primary: official, research: true },
+		{ name: "official system node", endpoints: [official], primary: official, research: true },
+		{
+			name: "relay with official fallback",
+			endpoints: [relay, official, { ...official, apiKey: "synthetic-later" }],
+			primary: relay,
+			research: true,
+		},
+		{
+			name: "multi-node OpenAI without official DeepSeek",
+			endpoints: [native, relay],
+			primary: native,
+			research: false,
+		},
+	])("selects tools and forced-first-read options for $name", async ({ endpoints, primary, research }) => {
+		const [{ agentService }, { convertToModelMessages, ToolLoopAgent }, toolModule] = await Promise.all([
+			import("./service"),
+			import("ai"),
+			import("./tools"),
+		]);
+		const realTools = await vi.importActual<typeof toolModule>("./tools");
+		vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
+		const thread = buildActiveThread({ aiProviderId: endpoints ? null : "personal" });
+		const message = {
+			id: "research",
+			role: "user" as const,
+			parts: [{ type: "text" as const, text: "Research this role" }],
+		};
+		const row = { id: "row", role: message.role, sequence: 0, uiMessage: message };
+		dbMock.select
+			.mockReturnValueOnce(selectLimitResult([thread]))
+			.mockReturnValueOnce(selectWhereResult([{ total: 2 }]))
+			.mockReturnValueOnce(selectOrderByResult([row]));
+		dbMock.insert.mockReturnValue({ values: () => ({ returning: async () => [row] }) });
+		claimActiveAgentRunMock.mockResolvedValue(true);
+		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
+			id: endpoints ? "__system_default__" : "personal",
+			...primary,
+			...(endpoints ? { systemConfig: { endpoints } } : {}),
+		});
+		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: "Research this role" }]);
+		// Stop at construction, before model streaming. The normal send path still resolves and builds the real tools.
+		vi.mocked(ToolLoopAgent).mockImplementationOnce(
+			class {
+				constructor() {
+					throw new Error("Captured agent configuration");
+				}
+			} as never,
+		);
+		await expect(agentService.messages.send({ userId: thread.userId, threadId: thread.id, message })).rejects.toThrow(
+			"Captured agent configuration",
+		);
+		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
+		const tools = settings?.tools;
+		expect(Boolean(tools?.web_search)).toBe(research);
+		expect(Boolean(tools?.web_fetch)).toBe(research);
+		expect(toolModule.buildAgentInstructions).toHaveBeenLastCalledWith({
+			hasWebSearch: research,
+			hasWebFetch: research,
+		});
+		expect(await settings?.prepareStep?.({ stepNumber: 0, messages: [] } as never)).toEqual({
+			toolChoice: { type: "tool", toolName: "read_resume" },
+			...(research ? { providerOptions: { deepseek: { thinking: { type: "disabled" } } } } : {}),
+		});
+		expect(await settings?.prepareStep?.({ stepNumber: 1, messages: [] } as never)).toEqual({});
+		if (research) {
+			const web = tools as ReturnType<typeof buildDeepSeekWebTools>;
+			const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ results: [] }));
+			try {
+				const execution = { toolCallId: "tool-call", messages: [], context: {} };
+				for (let i = 0; i < 3; i++) await web.web_search.execute({ query: "role" }, execution);
+				const fetchPage = web.web_fetch.execute({ url: "https://careers.example" }, execution);
+				if (endpoints) await expect(fetchPage).rejects.toThrow("limit for this turn");
+				else await expect(fetchPage).resolves.toMatchObject({ url: "https://careers.example" });
+				expect(transport).toHaveBeenCalledTimes(endpoints ? 3 : 4);
+				for (const [, init] of transport.mock.calls) {
+					expect(new Headers(init?.headers).get("Authorization")).toBe(`Bearer ${official.apiKey}`);
+				}
+			} finally {
+				transport.mockRestore();
+			}
+		}
+	});
 });
 
 function buildAttachment(overrides: Record<string, unknown> = {}) {
@@ -1161,8 +1262,8 @@ describe("agentService.messages.send", () => {
 		claimActiveAgentRunMock.mockResolvedValue(true);
 		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
 			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
+			provider: "deepseek",
+			model: "deepseek-flash",
 			apiKey: "secret",
 			baseURL: null,
 		});
@@ -1199,6 +1300,8 @@ describe("agentService.messages.send", () => {
 			message: answeredAssistantMessage.uiMessage as any,
 		});
 
+		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
+		expect(await settings?.prepareStep?.({ stepNumber: 0, messages: [] } as never)).toEqual({});
 		const onFinish = uiStreamOptions?.onFinish as (event: Record<string, unknown>) => Promise<void>;
 		const continuedMessage = {
 			...answeredAssistantMessage.uiMessage,
@@ -1220,7 +1323,7 @@ describe("agentService.messages.send", () => {
 		const messageMetadata = uiStreamOptions?.messageMetadata as (options: { part: Record<string, unknown> }) => unknown;
 		expect(messageMetadata({ part: { type: "finish", totalUsage: { totalTokens: 42 } } })).toEqual({
 			usage: { totalTokens: 42 },
-			model: "gpt-5",
+			model: "deepseek-flash",
 		});
 		expect(messageMetadata({ part: { type: "text-delta" } })).toBeUndefined();
 	});

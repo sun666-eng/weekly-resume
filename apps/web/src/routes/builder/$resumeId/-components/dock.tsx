@@ -80,13 +80,16 @@ export function BuilderDock({ pageLayout, onTogglePageLayout, onFitToView, onAct
 		session?.user.username && resumeSlug ? `${window.location.origin}/${session.user.username}/${resumeSlug}` : "";
 
 	return (
-		<div className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center">
+		<m.div
+			initial={{ opacity: 0, y: -18 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.2, ease: "easeOut" }}
+			className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center px-2"
+		>
 			<m.div
-				initial={{ opacity: 0, y: -18 }}
-				animate={{ opacity: 0.6, y: 0 }}
-				whileHover={{ opacity: 1, y: -2, scale: 1.01 }}
+				whileHover={{ y: -2, scale: 1.01 }}
 				transition={{ duration: 0.2, ease: "easeOut" }}
-				className="flex max-w-full items-center overflow-x-auto rounded-full bg-popover px-2 shadow-xl will-change-[transform,opacity]"
+				className="flex max-w-full touch-manipulation items-center overflow-x-auto rounded-full bg-popover px-2 opacity-95 shadow-xl transition-opacity will-change-transform md:opacity-75 md:hover:opacity-100 md:focus-within:opacity-100"
 			>
 				<FitOnePageButton dock />
 				<DockIcon icon={ArrowUUpLeftIcon} title={t`Undo`} disabled={!canUndo} onClick={() => undo()} />
@@ -126,7 +129,7 @@ export function BuilderDock({ pageLayout, onTogglePageLayout, onFitToView, onAct
 					}}
 				/>
 			</m.div>
-		</div>
+		</m.div>
 	);
 }
 
