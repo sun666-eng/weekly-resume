@@ -14,6 +14,7 @@ import { mergeResumeVersions } from "@reactive-resume/resume/merge";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc, streamClient } from "@/libs/orpc/client";
 import { clearRecoverableDraft, loadRecoverableDraft, saveRecoverableDraft } from "./draft-recovery";
+import { useFitState } from "./fit-state";
 
 export type Resume = {
 	persistence?: "local";
@@ -55,7 +56,10 @@ type ResumeStoreActions = {
 	reset: () => void;
 	replaceResumeDraft: (resume: Resume) => void;
 	replaceResumeFromServer: (resume: Resume) => void;
-	updateResumeData: (fn: (draft: WritableDraft<ResumeData>) => void) => void;
+	updateResumeData: (
+		fn: (draft: WritableDraft<ResumeData>) => void,
+		options?: { separateHistoryStep?: boolean },
+	) => void;
 	patchResume: (fn: (draft: WritableDraft<Resume>) => void) => void;
 	mergeResumeMetadata: (resume: Resume) => void;
 	setSaveStatus: (status: SaveStatus) => void;
@@ -110,7 +114,8 @@ export function bindLocalResumeSink(sink: ((resume: Resume) => void) | undefined
 let historyLastEditAt = 0;
 let historyCanCoalesce = false;
 
-function resetHistoryRuntime() {
+function resetHistoryRuntime(discardFit = false) {
+	if (discardFit) useFitState.setState({ restore: null, pending: null });
 	historyLastEditAt = 0;
 	historyCanCoalesce = false;
 }
@@ -604,7 +609,7 @@ export const useResumeStore = create<ResumeStore>()(
 				setRuntimeBaseline(resume);
 				markRuntimeSynced(resume.id, resume);
 			}
-			resetHistoryRuntime();
+			resetHistoryRuntime(true);
 
 			set((state) => {
 				state.resume = resume;
@@ -623,7 +628,7 @@ export const useResumeStore = create<ResumeStore>()(
 		reset: () => {
 			const id = get().resume?.id;
 			if (id) cleanupRuntime(id);
-			resetHistoryRuntime();
+			resetHistoryRuntime(true);
 
 			set((state) => {
 				state.resume = null;
@@ -640,7 +645,7 @@ export const useResumeStore = create<ResumeStore>()(
 		},
 
 		replaceResumeDraft: (resume) => {
-			resetHistoryRuntime();
+			resetHistoryRuntime(true);
 
 			set((state) => {
 				state.resume = resume;
@@ -668,7 +673,7 @@ export const useResumeStore = create<ResumeStore>()(
 			// external/cross-tab/AI rebases (different data → local undo history no longer applies).
 			const current = get().resume;
 			const isRebase = !current || !isEqual(current.data, resume.data);
-			if (isRebase) resetHistoryRuntime();
+			if (isRebase) resetHistoryRuntime(true);
 
 			set((state) => {
 				state.resume = resume;
@@ -715,7 +720,7 @@ export const useResumeStore = create<ResumeStore>()(
 			});
 		},
 
-		updateResumeData: (fn) => {
+		updateResumeData: (fn, options) => {
 			const currentResume = get().resume;
 			if (!currentResume) return;
 
@@ -731,10 +736,11 @@ export const useResumeStore = create<ResumeStore>()(
 			// Coalesce bursts: only the first edit of a burst opens a new undo step by snapshotting the
 			// pre-edit state. Edits within HISTORY_COALESCE_MS of the previous one fold into that step.
 			const now = Date.now();
-			const coalesce = historyCanCoalesce && now - historyLastEditAt < HISTORY_COALESCE_MS;
+			const coalesce =
+				!options?.separateHistoryStep && historyCanCoalesce && now - historyLastEditAt < HISTORY_COALESCE_MS;
 			const snapshotBefore = coalesce ? undefined : cloneResumeData(currentResume.data);
 			historyLastEditAt = now;
-			historyCanCoalesce = true;
+			historyCanCoalesce = !options?.separateHistoryStep;
 
 			set((state) => {
 				if (!state.resume) return;
@@ -872,10 +878,10 @@ export function useUpdateResumeData() {
 	const updateResumeData = useResumeStore((state) => state.updateResumeData);
 
 	return useCallback(
-		(fn: (draft: WritableDraft<ResumeData>) => void) => {
-			if (!resumeId) return;
+		(fn: (draft: WritableDraft<ResumeData>) => void, options?: { separateHistoryStep?: boolean }) => {
+			if (!resumeId || useResumeStore.getState().resume?.id !== resumeId) return;
 			if (useResumeStore.getState().resume?.persistence !== "local") bindRuntimeQueryClient(resumeId, queryClient);
-			updateResumeData(fn);
+			updateResumeData(fn, options);
 		},
 		[queryClient, resumeId, updateResumeData],
 	);

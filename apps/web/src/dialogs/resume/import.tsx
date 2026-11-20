@@ -24,6 +24,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/
 import { Input } from "@reactive-resume/ui/components/input";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
 import { ResumeImportError } from "@/features/resume/import/errors";
@@ -39,7 +40,10 @@ import { useDialogStore } from "../store";
 import { detectJsonImportType } from "./import.utils";
 import { parseResumeJson } from "./parse-json";
 
+const initialImportValues: { type: ImportType; file?: File | undefined } = { type: "", file: undefined };
+
 const formSchema = z.discriminatedUnion("type", [
+	z.object({ type: z.literal("paste"), file: z.instanceof(File).optional() }),
 	z.object({
 		type: z.literal(""),
 		file: z.undefined(),
@@ -184,6 +188,11 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 	const [isImporting, setIsImporting] = useState<boolean>(false);
 	const [useAiForWord, setUseAiForWord] = useState(false);
 	const wordAiSwitchId = useId();
+	const textInputId = useId();
+	const textAiSwitchId = useId();
+	const [pastedText, setPastedText] = useState("");
+	const [useAiForText, setUseAiForText] = useState(false);
+	const lastFileType = useRef<ImportType>("");
 	const selectionSequence = useRef(0);
 	const pendingNamedImport = useRef<{ file: File; id: string } | null>(null);
 
@@ -191,19 +200,19 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 	const { hasUsableProvider, isLoading: isLoadingAiProviders } = useHasUsableAiProvider(!dialogData?.onPrepared);
 
 	const form = useAppForm({
-		defaultValues: {
-			type: "" as ImportType,
-			file: undefined as File | undefined,
-		},
+		defaultValues: initialImportValues,
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			if (value.type === "" || !value.file) return;
+			const paste = value.type === "paste";
+			const textAi = paste && useAiForText && hasUsableProvider && !dialogData?.onPrepared;
+			if (value.type === "" || (paste ? !pastedText.trim() : !value.file)) return;
 			if (value.type === "doc") return;
 
 			setIsImporting(true);
 
 			// A PDF parsed in the browser never touches a provider, so promising one would be a lie.
-			const isLocalImport = (value.type === "pdf" && !hasUsableProvider) || (value.type === "docx" && !useAiForWord);
+			const isLocalImport =
+				(paste && !textAi) || (value.type === "pdf" && !hasUsableProvider) || (value.type === "docx" && !useAiForWord);
 
 			const toastId = toast.add({
 				type: "loading",
@@ -217,21 +226,33 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 				let data: ResumeData | undefined;
 				let importedName: string | undefined;
 
-				if (value.type === "weekly-resume-local-backup") {
+				if (paste) {
+					const text = pastedText.trim();
+					if (textAi && text.length > 40000)
+						throw new ResumeImportError(
+							t`AI recognition supports up to 40,000 characters. Shorten the text or use basic import.`,
+						);
+					data = textAi
+						? await client.ai.parseText({ text })
+						: (await import("@reactive-resume/import/plain-text")).parseResumeText(text);
+				}
+
+				if (value.file && value.type === "weekly-resume-local-backup") {
 					const restored = unwrapLocalBackupJson(await value.file.text());
 					data = restored.data;
 					importedName = restored.name;
 				}
 
 				if (
-					value.type === "json-resume-json" ||
-					value.type === "reactive-resume-json" ||
-					value.type === "reactive-resume-v4-json"
+					value.file &&
+					(value.type === "json-resume-json" ||
+						value.type === "reactive-resume-json" ||
+						value.type === "reactive-resume-v4-json")
 				) {
 					data = parseResumeJson(await value.file.text(), value.type as ResumeJsonFormat);
 				}
 
-				if (value.type === "pdf") {
+				if (value.file && value.type === "pdf") {
 					if (isLoadingAiProviders) throw new ResumeImportError(t`Loading AI providers. Please try again in a moment.`);
 
 					if (hasUsableProvider) {
@@ -260,7 +281,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 					}
 				}
 
-				if (value.type === "docx") {
+				if (value.file && value.type === "docx") {
 					if (useAiForWord) {
 						if (isLoadingAiProviders)
 							throw new ResumeImportError(t`Loading AI providers. Please try again in a moment.`);
@@ -297,7 +318,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 
 				// PDF/Word recognition is inherently ambiguous. Warn before creating the new resume;
 				// JSON round-trips retain deliberate user-authored titles without an extra prompt.
-				const issues = value.type === "pdf" || value.type === "docx" ? getImportReviewIssues(data) : [];
+				const issues = paste || value.type === "pdf" || value.type === "docx" ? getImportReviewIssues(data) : [];
 				if (issues.length > 0) {
 					toast.close(toastId);
 					const details = issues.slice(0, 5).map((issue) => {
@@ -328,8 +349,8 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 					return;
 				}
 				const pending = pendingNamedImport.current;
-				const id = pending?.file === value.file ? pending.id : await importResume({ data });
-				if (importedName) {
+				const id = !paste && pending && pending.file === value.file ? pending.id : await importResume({ data });
+				if (importedName && value.file) {
 					if (pending?.file !== value.file) pendingNamedImport.current = { file: value.file, id };
 					await orpc.resume.update.call({ id, name: importedName });
 				}
@@ -361,7 +382,13 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 
 	const type = useStore(form.store, (s) => s.values.type);
 	const file = useStore(form.store, (s) => s.values.file);
-	const aiRequired = type === "docx" && useAiForWord;
+	const paste = type === "paste";
+	const aiRequired = (type === "docx" && useAiForWord) || (paste && useAiForText && hasUsableProvider);
+	const chooseSource = (text: boolean) => {
+		if (text === paste) return;
+		if (text) lastFileType.current = type;
+		form.setFieldValue("type", text ? "paste" : lastFileType.current);
+	};
 	const pdfWithoutAi = type === "pdf" && !isLoadingAiProviders && !hasUsableProvider;
 
 	const onSelectFile = () => {
@@ -379,11 +406,13 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 		form.setFieldValue("type", "");
 		// #7: pre-select the source format from the file's content; the user can still override below.
 		const detected = await detectImportType(selected);
-		if (sequence === selectionSequence.current) form.setFieldValue("type", detected);
+		if (sequence !== selectionSequence.current) return;
+		lastFileType.current = detected;
+		if (form.getFieldValue("type") !== "paste") form.setFieldValue("type", detected);
 	};
 
 	// #6: only warn about unsaved changes once a file has actually been chosen — not on a bare type selection.
-	useFormBlocker(form, { shouldBlock: () => Boolean(file) });
+	useFormBlocker(form, { shouldBlock: () => Boolean(file || pastedText.trim()) });
 
 	// The provider link navigates away while this dialog stays mounted over the new page, so the
 	// unsaved-changes guard (which only runs on a close attempt) fires far too late. Confirm first,
@@ -418,7 +447,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 					<Trans>Import an existing resume</Trans>
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Continue where you left off by importing a resume from PDF, Microsoft Word, or JSON.</Trans>
+					<Trans>Import a file or paste your resume text.</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
@@ -430,40 +459,85 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 					void form.handleSubmit();
 				}}
 			>
-				<form.Field name="file">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans>File</Trans>
-							</FormLabel>
-							<FormControl>
-								<Input type="file" className="hidden" ref={inputRef} onChange={onUploadFile} />
-
-								<Button
+				<fieldset className="flex gap-2" aria-label={t`Import source`}>
+					<Button
+						type="button"
+						variant={paste ? "outline" : "secondary"}
+						aria-pressed={!paste}
+						disabled={isImporting}
+						onClick={() => chooseSource(false)}
+					>{t`File`}</Button>
+					<Button
+						type="button"
+						variant={paste ? "secondary" : "outline"}
+						aria-pressed={paste}
+						disabled={isImporting}
+						onClick={() => chooseSource(true)}
+					>{t`Paste Resume Text`}</Button>
+				</fieldset>
+				{paste ? (
+					<div className="grid gap-3">
+						<label htmlFor={textInputId} className="font-medium text-sm">{t`Resume text`}</label>
+						<Textarea
+							id={textInputId}
+							rows={8}
+							disabled={isImporting}
+							value={pastedText}
+							onChange={(event) => setPastedText(event.target.value)}
+						/>
+						{!dialogData?.onPrepared && hasUsableProvider && (
+							<label htmlFor={textAiSwitchId} className="flex items-center gap-2 text-sm">
+								<Switch
+									id={textAiSwitchId}
+									checked={useAiForText}
 									disabled={isImporting}
-									variant="outline"
-									className="h-auto w-full flex-col border-dashed py-8 font-normal"
-									onClick={onSelectFile}
-								>
-									{field.state.value ? (
-										<>
-											<FileIcon weight="thin" size={32} />
-											<p>{field.state.value.name}</p>
-										</>
-									) : (
-										<>
-											<UploadSimpleIcon weight="thin" size={32} />
-											<Trans>Click here to select a file to import</Trans>
-										</>
-									)}
-								</Button>
-							</FormControl>
-							<FormMessage errors={field.state.meta.errors} />
-						</FormItem>
-					)}
-				</form.Field>
+									onCheckedChange={setUseAiForText}
+								/>
+								{t`AI-enhanced recognition`}
+							</label>
+						)}
+						<p className="text-muted-foreground text-xs">
+							{useAiForText && hasUsableProvider
+								? t`The pasted text will be sent to your AI provider when you import.`
+								: t`Basic recognition runs in your browser.`}
+						</p>
+					</div>
+				) : (
+					<form.Field name="file">
+						{(field) => (
+							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+								<FormLabel>
+									<Trans>File</Trans>
+								</FormLabel>
+								<FormControl>
+									<Input type="file" className="hidden" ref={inputRef} onChange={onUploadFile} />
 
-				{file && (
+									<Button
+										disabled={isImporting}
+										variant="outline"
+										className="h-auto w-full flex-col border-dashed py-8 font-normal"
+										onClick={onSelectFile}
+									>
+										{field.state.value ? (
+											<>
+												<FileIcon weight="thin" size={32} />
+												<p>{field.state.value.name}</p>
+											</>
+										) : (
+											<>
+												<UploadSimpleIcon weight="thin" size={32} />
+												<Trans>Click here to select a file to import</Trans>
+											</>
+										)}
+									</Button>
+								</FormControl>
+								<FormMessage errors={field.state.meta.errors} />
+							</FormItem>
+						)}
+					</form.Field>
+				)}
+
+				{!paste && file && (
 					<form.Field name="type">
 						{(field) => (
 							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
@@ -476,7 +550,10 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 											showClear={false}
 											disabled={isImporting || type === "doc"}
 											value={field.state.value}
-											onValueChange={(value) => field.handleChange(value as ImportType)}
+											onValueChange={(value) => {
+												++selectionSequence.current;
+												field.handleChange(value as ImportType);
+											}}
 											options={[
 												{
 													value: "weekly-resume-local-backup",
@@ -605,7 +682,7 @@ export function ImportResumeDialog({ data: dialogData }: { data?: DialogProps<"r
 						type="submit"
 						disabled={
 							!type ||
-							!file ||
+							(paste ? !pastedText.trim() : !file) ||
 							type === "doc" ||
 							isImporting ||
 							(aiRequired && (!hasUsableProvider || isLoadingAiProviders))

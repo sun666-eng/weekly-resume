@@ -5,6 +5,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { GuestRecord } from "./storage";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import {
 	fingerprintGuestSnapshot,
@@ -18,6 +19,7 @@ import { GuestEditor } from "./editor";
 
 const fixture = vi.hoisted(() => ({
 	accountId: "fictional-account-a",
+	freeAiDailyLimit: null as number | null,
 	operations: new Map<string, GuestOperation>(),
 	record: null as GuestRecord | null,
 	claim: vi.fn(),
@@ -41,7 +43,9 @@ const fixture = vi.hoisted(() => ({
 vi.mock("@lingui/react", () => ({ useLingui: () => ({ i18n: { locale: "zh-CN" } }) }));
 vi.mock("usehooks-ts", () => ({ useMediaQuery: () => false }));
 vi.mock("@tanstack/react-query", () => ({
-	useQuery: () => ({ data: { enabled: true, origin: window.location.origin } }),
+	useQuery: () => ({
+		data: { enabled: true, origin: window.location.origin, freeAiDailyLimit: fixture.freeAiDailyLimit },
+	}),
 	useQueryClient: () => ({ setQueryData: vi.fn() }),
 }));
 vi.mock("@tanstack/react-router", () => ({
@@ -102,6 +106,9 @@ function Shell() {
 	const resume = useResumeStore((value) => value.resume);
 	return (
 		<section aria-label="测试编辑器">
+			<button type="button" onClick={() => guest?.showHelp("AI")}>
+				AI
+			</button>
 			<section aria-label="保存状态">{guest?.status}</section>
 			<p>{resume?.data.basics.name}</p>
 			<input
@@ -189,6 +196,7 @@ function deferred<T>() {
 
 beforeEach(async () => {
 	vi.resetAllMocks();
+	fixture.freeAiDailyLimit = null;
 	fixture.block.mockReturnValue(() => undefined);
 	fixture.accountId = "fictional-account-a";
 	fixture.operations.clear();
@@ -259,6 +267,16 @@ function leave(action = "BACK", targetIndex = 0) {
 }
 
 describe("guest navigation transaction barrier (component tests, not browser evidence)", () => {
+	it("offers a guest the configured daily allowance before account sign-in", async () => {
+		i18n.loadAndActivate({ locale: "en-US", messages: {} });
+		fixture.freeAiDailyLimit = 17;
+		fixture.accountId = "";
+		render(<GuestEditor resumeId={draftId} />);
+		fireEvent.click(await screen.findByRole("button", { name: "AI" }));
+		expect(await screen.findByText("Sign up or sign in for 17 free AI uses per day. No API key needed.")).toBeVisible();
+		expect(screen.getByRole("button", { name: "Save to an account to use AI" })).toBeVisible();
+		expect(fixture.claim).not.toHaveBeenCalled();
+	});
 	it.each(["zh-CN", "fr-FR"])(
 		"claims the confirmed %s snapshot without rewriting language or content",
 		async (locale) => {

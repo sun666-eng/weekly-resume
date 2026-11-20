@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const SYSTEM_AI_PROVIDER_ID = "__system_default__";
+
 const AI_PROVIDERS = [
 	"openai",
 	"anthropic",

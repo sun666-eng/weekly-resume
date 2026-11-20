@@ -108,6 +108,34 @@ function makeResume(id: string): Resume {
 	};
 }
 
+it("undoes and redoes a fit in one step separately from rapid edits on both sides", () => {
+	const store = useResumeStore.getState();
+	const resume = makeResume("synthetic-fit");
+	resume.persistence = "local";
+	store.initialize(resume);
+	const previous = structuredClone(resume.data.metadata.page);
+	store.updateResumeData((draft) => {
+		draft.basics.name = "Before";
+	});
+	store.updateResumeData(
+		(draft) => {
+			Object.assign(draft.metadata.page, { gapY: 4, marginY: 10, marginX: 12 });
+		},
+		{ separateHistoryStep: true },
+	);
+	store.updateResumeData((draft) => {
+		draft.basics.headline = "After";
+	});
+	const current = () => useResumeStore.getState().resume?.data;
+	store.undo();
+	expect(current()?.basics.headline).toBe("");
+	expect(current()?.metadata.page.marginY).toBe(10);
+	store.undo();
+	expect(current()?.metadata.page).toEqual(previous);
+	expect(current()?.basics.name).toBe("Before");
+	store.redo();
+	expect(current()?.metadata.page.marginY).toBe(10);
+});
 function withBasicsName(resume: Resume, name: string): Resume {
 	return {
 		...resume,

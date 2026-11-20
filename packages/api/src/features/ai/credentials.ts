@@ -87,13 +87,13 @@ export function redactEncryptedCredential(fields: StoredCredentialFields): Redac
 // Domain-separated from the AES key. Deterministic derivation (no new env var) means an approval
 // signature minted when a run halts still verifies at continuation, even across a server restart.
 export function getAgentToolApprovalSecret() {
-	const secret = getEncryptionSecret();
+	const secret = getEncryptionSecret() || env.AUTH_SECRET?.trim();
 	if (!secret) throw new Error("AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE");
 
 	return createHash("sha256").update(`${secret}:agent-tool-approval`).digest("hex");
 }
 
-function isCredentialEncryptionConfigured() {
+export function isCredentialEncryptionConfigured() {
 	return !!getEncryptionSecret();
 }
 
@@ -102,7 +102,7 @@ function isAgentStreamingConfigured() {
 }
 
 export function isAgentEnvironmentConfigured() {
-	return isCredentialEncryptionConfigured() && isAgentStreamingConfigured();
+	return Boolean(isCredentialEncryptionConfigured() || env.AUTH_SECRET?.trim()) && isAgentStreamingConfigured();
 }
 
 export function assertCredentialEncryptionConfigured() {

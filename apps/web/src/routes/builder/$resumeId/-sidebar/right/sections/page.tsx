@@ -13,6 +13,7 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { Combobox } from "@/components/ui/combobox";
 import { getLocaleOptions } from "@/features/locale/locale-options";
 import { useResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { FitOnePageButton } from "@/features/resume/builder/fit-button";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -85,6 +86,7 @@ function PageSectionForm() {
 				void form.handleSubmit();
 			}}
 		>
+			<FitOnePageButton />
 			<form.Field name="locale">
 				{(field) => (
 					<FormItem

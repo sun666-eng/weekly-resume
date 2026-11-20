@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const proxyConfig = vi.hoisted(() => ({ TRUST_PROXY: false }));
+vi.mock("@reactive-resume/env/server", () => ({ env: proxyConfig }));
+vi.mock("@reactive-resume/api/features/resume/guest-claim", () => ({ readGuestPhoto: vi.fn() }));
+
 const mocks = vi.hoisted(() => ({
 	handleAuth: vi.fn(),
 	handleOAuth: vi.fn(),
@@ -81,6 +85,7 @@ const transportEnv = (remoteAddress: string) =>
 
 beforeEach(() => {
 	vi.clearAllMocks();
+	proxyConfig.TRUST_PROXY = false;
 	mocks.handleAuth.mockResolvedValue(new Response("auth"));
 	mocks.handleOAuth.mockResolvedValue(new Response("oauth"));
 	mocks.handleRpc.mockResolvedValue(new Response("rpc"));
@@ -150,6 +155,24 @@ describe("createApp", () => {
 		expect(mocks.handleWebApp).not.toHaveBeenCalled();
 	});
 
+	it.each([false, true])(
+		"passes the effective opt-in client identity to both API transports (trusted=%s)",
+		async (trusted) => {
+			proxyConfig.TRUST_PROXY = trusted;
+			const { createApp } = await import("./app");
+			const app = createApp();
+			const peer = transportEnv("10.20.30.40");
+			const headers = { "x-forwarded-for": "192.0.2.19, 127.0.0.1" };
+			for (const [path, handler] of [
+				["/api/rpc", mocks.handleRpc],
+				["/api/openapi", mocks.handleOpenApi],
+			] as const) {
+				const req = new Request(new URL(path, "http://test.invalid"), { headers });
+				await app.fetch(req, peer);
+				expect(handler).toHaveBeenCalledWith(req, trusted ? "192.0.2.19" : "10.20.30.40");
+			}
+		},
+	);
 	it("passes the transport address to RPC and OpenAPI and fails closed when it is unavailable", async () => {
 		const { createApp } = await import("./app");
 		const app = createApp();

@@ -100,7 +100,7 @@ export function SiteFooter({ startPath = "/dashboard" }: SiteFooterProps) {
 			<div className={cn(wrap, "@container mt-10 max-[540px]:mt-7")}>
 				<m.p
 					aria-hidden="true"
-					className="select-none bg-gradient-to-b from-(--home-ink) from-45% to-[rgb(241_240_235/7%)] bg-clip-text font-[Manrope_Variable,sans-serif] font-bold text-[14.4cqw] text-transparent leading-[0.78] tracking-[-0.07em]"
+					className="select-none bg-gradient-to-b from-(--home-ink) from-45% to-[rgb(241_240_235/7%)] bg-clip-text pb-1.5 font-[Manrope_Variable,sans-serif] font-bold text-[clamp(28px,6.5cqw,72px)] text-transparent leading-[1.12] tracking-[-0.03em]"
 					initial={{ opacity: 0, y: 24 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true, amount: 0.3 }}

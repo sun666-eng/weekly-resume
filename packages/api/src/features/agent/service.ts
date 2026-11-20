@@ -2,7 +2,8 @@ import type { ApplyResumePatchInput } from "@reactive-resume/ai/tools/agent-tool
 import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import type { Locale } from "@reactive-resume/utils/locale";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage } from "ai";
-import type { getModel } from "../ai/service";
+import type { SystemQuotaReservation } from "../ai/quota";
+import type { GetModelInput } from "../ai/service";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
@@ -15,13 +16,17 @@ import {
 	wrapLanguageModel,
 } from "ai";
 import { and, asc, count, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { SYSTEM_AI_PROVIDER_ID } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { planAgentRollback } from "@reactive-resume/resume/agent-rollback";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { assertAgentEnvironment, getAgentToolApprovalSecret } from "../ai/credentials";
+import { reserveSystemQuota } from "../ai/quota";
 import { getAgentModel } from "../ai/service";
+import { getSystemAiConfig, publicSystemAiText } from "../ai/system-config";
+import { isSystemAiOutput } from "../ai/system-scheduler";
 import { aiProvidersService } from "../ai-providers/service";
 import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { resumeService } from "../resume/service";
@@ -87,6 +92,7 @@ type CreateThreadInput = {
 
 type SendMessageInput = {
 	userId: string;
+	trustedClient?: string | undefined;
 	threadId: string;
 	message: UIMessage;
 	attachmentIds?: unknown;
@@ -115,7 +121,7 @@ function toThreadSummary(row: AgentThreadRecord & { resumeName?: string | null; 
 		workingResumeId: row.workingResumeId,
 		aiProviderId: row.aiProviderId,
 		resumeName: row.resumeName ?? null,
-		providerLabel: row.providerLabel ?? null,
+		providerLabel: row.providerLabel ?? (row.aiProviderId ? null : (getSystemAiConfig()?.label ?? null)),
 		activeRunId: row.activeRunId,
 		lastMessageAt: row.lastMessageAt,
 		archivedAt: row.archivedAt,
@@ -761,13 +767,10 @@ function createAgent(input: {
 	forceFreshRead?: boolean;
 	draftRowId?: string;
 	requirePatchApproval?: boolean;
-	provider: {
-		provider: Parameters<typeof getModel>[0]["provider"];
-		model: string;
-		apiKey: string;
-		baseURL?: string;
-	};
-	model: ReturnType<typeof getModel>;
+	provider: GetModelInput & { baseURL: string };
+	model: ReturnType<typeof getAgentModel>;
+	systemEndpointCount: number;
+	onSystemStreamError: () => Promise<void> | undefined;
 }) {
 	// One greppable JSON line per tool execution.
 	const timedToolHandler =
@@ -839,6 +842,7 @@ function createAgent(input: {
 		},
 	});
 
+	if (input.systemEndpointCount > 1) delete tools.web_search;
 	const instructionsText = `${buildAgentInstructions({ hasProviderNativeSearch: "web_search" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
 
 	return new ToolLoopAgent({
@@ -856,7 +860,9 @@ function createAgent(input: {
 		repairToolCall: repairAgentToolCall,
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
-		maxRetries: MAX_AGENT_MODEL_RETRIES,
+		maxRetries: input.systemEndpointCount > 1 ? 0 : MAX_AGENT_MODEL_RETRIES,
+		// streamText defaults to printing raw provider errors. The scheduler logs only classified failures.
+		...(input.systemEndpointCount ? { onError: input.onSystemStreamError } : {}),
 		timeout: { stepMs: AGENT_STEP_TIMEOUT_MS },
 		// HMAC-signs approval requests at issuance and verifies them when replayed on the
 		// continuation run, so a client cannot forge or alter an approval payload. The agent
@@ -949,7 +955,7 @@ export const agentService = {
 				.insert(schema.agentThread)
 				.values({
 					userId: input.userId,
-					aiProviderId: selectedProvider.id,
+					aiProviderId: selectedProvider.id === SYSTEM_AI_PROVIDER_ID ? null : selectedProvider.id,
 					sourceResumeId: input.sourceResumeId ?? null,
 					workingResumeId: working.id,
 					title: "New thread",
@@ -987,7 +993,7 @@ export const agentService = {
 				.insert(schema.agentThread)
 				.values({
 					userId: input.userId,
-					aiProviderId: selectedProvider.id,
+					aiProviderId: selectedProvider.id === SYSTEM_AI_PROVIDER_ID ? null : selectedProvider.id,
 					sourceResumeId: input.resumeId,
 					workingResumeId: input.resumeId,
 					title: "Resume assistant",
@@ -1050,7 +1056,7 @@ export const agentService = {
 				isReadOnly:
 					thread.status === "archived" ||
 					!thread.workingResumeId ||
-					!thread.aiProviderId ||
+					(!thread.aiProviderId && !getSystemAiConfig()) ||
 					!resume ||
 					!!resume.isLocked,
 			};
@@ -1150,7 +1156,7 @@ export const agentService = {
 					streamId: thread.activeStreamId,
 				});
 			}
-			if (!thread.workingResumeId || !thread.aiProviderId) {
+			if (!thread.workingResumeId || (!thread.aiProviderId && !getSystemAiConfig())) {
 				throw new ORPCError("AGENT_THREAD_READ_ONLY", { status: 400 });
 			}
 			if (input.message.role !== "user" && input.message.role !== "assistant") {
@@ -1165,7 +1171,7 @@ export const agentService = {
 
 			const [runnableProvider, attachments] = await Promise.all([
 				aiProvidersService.getRunnableById({
-					id: thread.aiProviderId,
+					id: thread.aiProviderId ?? SYSTEM_AI_PROVIDER_ID,
 					userId: input.userId,
 				}),
 				getUnlinkedMessageAttachments({
@@ -1197,15 +1203,21 @@ export const agentService = {
 			let insertedDraft = false;
 			const responseMessageId = generateId();
 			let draftUiMessage: UIMessage = { id: responseMessageId, role: "assistant", parts: [] };
+			let reservation: SystemQuotaReservation | null = null;
+			let producedOutput = false;
+			let refund: Promise<void> | undefined;
+			const refundIfEmpty = () => {
+				if (!producedOutput && reservation) refund ??= reservation.refund().catch(() => undefined);
+				return refund;
+			};
 
 			try {
+				if (input.message.role === "assistant" && attachments.length > 0)
+					throw new ORPCError("BAD_REQUEST", { message: "Tool result messages cannot include attachments." });
+				reservation = await reserveSystemQuota(runnableProvider.id, input.userId, input.trustedClient);
 				let attachmentsForModel: AgentAttachmentRecord[] = [];
 
 				if (input.message.role === "assistant") {
-					if (attachments.length > 0) {
-						throw new ORPCError("BAD_REQUEST", { message: "Tool result messages cannot include attachments." });
-					}
-
 					// Merge AFTER the exclusive claim: concurrent approve/deny requests serialize on
 					// the claim instead of both persisting, and a merge that is rejected (or any later
 					// setup failure) releases the claim via the catch below. A response persisted by a
@@ -1270,6 +1282,16 @@ export const agentService = {
 					insertedDraft = true;
 				}
 
+				const systemConfig = runnableProvider.systemConfig;
+				const displayedModel = systemConfig
+					? publicSystemAiText(runnableProvider.model, systemConfig.endpoints)
+					: runnableProvider.model;
+				const provider = {
+					provider: runnableProvider.provider,
+					model: runnableProvider.model,
+					apiKey: runnableProvider.apiKey,
+					baseURL: runnableProvider.baseURL ?? "",
+				};
 				const agent = createAgent({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1277,18 +1299,10 @@ export const agentService = {
 					forceFreshRead: input.message.role === "user",
 					...(draftRowId ? { draftRowId } : {}),
 					requirePatchApproval: thread.reviewPatches,
-					provider: {
-						provider: runnableProvider.provider,
-						model: runnableProvider.model,
-						apiKey: runnableProvider.apiKey,
-						baseURL: runnableProvider.baseURL ?? "",
-					},
-					model: getAgentModel({
-						provider: runnableProvider.provider,
-						model: runnableProvider.model,
-						apiKey: runnableProvider.apiKey,
-						baseURL: runnableProvider.baseURL ?? "",
-					}),
+					provider,
+					model: getAgentModel(provider, systemConfig),
+					systemEndpointCount: systemConfig?.endpoints.length ?? 0,
+					onSystemStreamError: refundIfEmpty,
 				});
 
 				const result = await agent.stream({
@@ -1298,6 +1312,7 @@ export const agentService = {
 					// Crash-safety: fold each finished step into the draft row so a process death
 					// mid-run loses at most the current step, never the whole transcript.
 					onStepEnd: async (step) => {
+						producedOutput = true;
 						console.info(
 							JSON.stringify({
 								evt: "agent.step",
@@ -1332,9 +1347,12 @@ export const agentService = {
 							generateMessageId: () => responseMessageId,
 							sendSources: true,
 							// Round-trips inside the persisted uiMessage jsonb — no migration needed.
-							messageMetadata: ({ part }) =>
-								part.type === "finish" ? { usage: part.totalUsage, model: runnableProvider.model } : undefined,
+							messageMetadata: ({ part }) => {
+								if (part.type !== "finish" && isSystemAiOutput(part)) producedOutput = true;
+								return part.type === "finish" ? { usage: part.totalUsage, model: displayedModel } : undefined;
+							},
 							onFinish: async ({ responseMessage, isAborted }) => {
+								await refund;
 								let persistError: unknown;
 								try {
 									await upsertAssistantUiMessage({
@@ -1360,11 +1378,20 @@ export const agentService = {
 									});
 								}
 							},
-							onError: (error) => (error instanceof Error ? error.message : "Agent run failed."),
+							onError: (error) => {
+								void refundIfEmpty();
+								return runnableProvider.id === SYSTEM_AI_PROVIDER_ID
+									? "Agent run failed."
+									: error instanceof Error
+										? error.message
+										: "Agent run failed.";
+							},
 						}),
 					),
 				);
 			} catch (error) {
+				controller.abort(abortReason("RUN_START_FAILED"));
+				await refundIfEmpty();
 				if (insertedDraft && draftRowId) {
 					await deleteDraftIfEmpty({ rowId: draftRowId, threadId: input.threadId, userId: input.userId }).catch(
 						(cleanupError: unknown) => console.error("[agent] Failed to delete empty draft", cleanupError),

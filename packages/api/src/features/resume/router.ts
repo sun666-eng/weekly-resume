@@ -1,5 +1,6 @@
 import { env } from "@reactive-resume/env/server";
 import { publicProcedure } from "../../context";
+import { getSystemAiConfig } from "../ai/system-config";
 import { crudRouter } from "./crud";
 import { updatesRouter } from "./event-router";
 import { guestClaimRouter } from "./guest-claim";
@@ -13,6 +14,7 @@ export const resumeRouter = {
 	...guestClaimRouter,
 	guestConfig: publicProcedure.handler(() => ({
 		enabled: env.FLAG_ENABLE_GUEST_BUILDER,
+		freeAiDailyLimit: getSystemAiConfig()?.dailyLimit ?? null,
 		origin: new URL(env.APP_URL).origin,
 	})),
 	getRoot: publicProcedure.handler(({ context }) =>

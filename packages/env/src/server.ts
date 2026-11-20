@@ -24,6 +24,7 @@ export const env = createEnv({
 			.trim()
 			.transform((value) => value || undefined)
 			.optional(),
+		TRUST_PROXY: z.stringbool().default(false),
 		SERVER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
 
 		// Database
@@ -80,6 +81,37 @@ export const env = createEnv({
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
 		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
 
+		// Keep the accepted names aligned with aiProviderSchema without a server-to-domain dependency.
+		SYSTEM_AI_PROVIDER: z
+			.enum([
+				"openai",
+				"anthropic",
+				"gemini",
+				"vercel-ai-gateway",
+				"openrouter",
+				"mistral",
+				"cohere",
+				"xai",
+				"groq",
+				"deepseek",
+				"togetherai",
+				"fireworks",
+				"cerebras",
+				"perplexity",
+				"ollama",
+				"openai-compatible",
+			])
+			.optional(),
+		SYSTEM_AI_MODEL: z.string().trim().min(1).optional(),
+		SYSTEM_AI_API_KEY: z.string().trim().min(1).optional(),
+		SYSTEM_AI_BASE_URL: z.url({ protocol: /^https?$/ }).optional(),
+		SYSTEM_AI_LABEL: z.string().trim().min(1).optional(),
+		SYSTEM_AI_DAILY_LIMIT: z.coerce.number().int().positive().default(15),
+		SYSTEM_AI_ENDPOINTS_FILE: z.string().refine(isAbsolute, "Expected an absolute path").optional(),
+		SYSTEM_AI_ENDPOINTS_JSON: z.string().optional(),
+		SYSTEM_AI_COOLDOWN_SECONDS: z.coerce.number().int().min(10).max(3600).default(180),
+		SYSTEM_AI_RELAY_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120000).default(12000),
+
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),
 		FLAG_ENABLE_GUEST_BUILDER: z.stringbool().default(false),
@@ -90,5 +122,10 @@ export const env = createEnv({
 		FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI: z.stringbool().default(false),
 	},
 	runtimeEnv: process.env,
+	onValidationError: (issues) => {
+		// A validator's issue or message can contain the offending URL, path or secret.
+		const fields = issues.map((issue) => issue.path?.[0]).filter((field) => typeof field === "string");
+		throw new Error(`Invalid environment variables: ${[...new Set(fields)].join(", ")}`);
+	},
 	emptyStringAsUndefined: true,
 });

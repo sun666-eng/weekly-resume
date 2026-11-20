@@ -8578,3 +8578,87 @@ msgstr "正在用我的内容预览，保留已有布局、颜色和字体。"
 #. js-lingui-explicit-id
 msgid "template.gallery.samplePreview"
 msgstr "示例内容与示例排版。使用此样式会保留你的已有布局、颜色和字体。"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Fit to 1 Page"
+msgstr "智能压缩为一页"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Restore previous spacing"
+msgstr "恢复原排版"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Measuring PDF…"
+msgstr "正在测量 PDF 页数…"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "Could not measure the PDF. Try again."
+msgstr "暂时无法测量 PDF 页数，请重试。"
+
+#: src/features/resume/builder/fit-button.tsx
+msgid "This resume still needs more than one page. Trim a few lines and try again."
+msgstr "按可读字号排版后，简历仍超过一页。请精简几行内容后重试。"
+
+#: src/dialogs/resume/import.tsx
+msgid "Paste Resume Text"
+msgstr "粘贴简历文本"
+
+#: src/dialogs/resume/import.tsx
+msgid "Resume text"
+msgstr "简历文本"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import a file or paste your resume text."
+msgstr "导入文件，或直接粘贴简历文本。"
+
+#: src/dialogs/resume/import.tsx
+msgid "Import source"
+msgstr "导入方式"
+
+#: src/dialogs/resume/import.tsx
+msgid "Basic recognition runs in your browser."
+msgstr "基础识别在你的浏览器中完成。"
+
+#: src/dialogs/resume/import.tsx
+msgid "The pasted text will be sent to your AI provider when you import."
+msgstr "导入时会将粘贴的文本发送给所选 AI 服务。"
+
+#: src/dialogs/resume/import.tsx
+msgid "AI recognition supports up to 40,000 characters. Shorten the text or use basic import."
+msgstr "AI 识别最多支持 40,000 个字符。请缩短文本，或使用基础识别。"
+
+#: src/dialogs/resume/import.tsx
+msgid "Weekly Resume local backup (JSON)"
+msgstr "Weekly Resume 本地备份（JSON）"
+
+#: src/dialogs/resume/import.tsx
+msgid "This file is not a valid Weekly Resume local backup."
+msgstr "这个文件不是有效的 Weekly Resume 本地备份。"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Built-in free AI"
+msgstr "内置免费 AI"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "{0} of {1} free uses remaining today."
+msgstr "今日免费额度还剩 {0} 次，共 {1} 次。"
+
+#: src/features/resume/guest/editor.tsx
+msgid "Sign up or sign in for {freeAiLimit} free AI uses per day. No API key needed."
+msgstr "注册或登录后，每天可免费使用 AI {freeAiLimit} 次，无需设置 API 密钥。"
+
+#: src/features/resume/guest/editor.tsx
+msgid "Save to an account to use AI"
+msgstr "保存到账号并使用 AI"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Sign in to use AI"
+msgstr "登录以使用 AI"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Remove attachment {filename}"
+msgstr "移除附件“{filename}”"
+
+#: src/libs/error-message.ts
+msgid "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
+msgstr "今日免费 AI 额度已用完。你可以明天再试，也可以在设置中接入自己的 API 密钥继续使用。"

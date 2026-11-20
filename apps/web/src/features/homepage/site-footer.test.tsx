@@ -37,8 +37,9 @@ describe("SiteFooter", () => {
 
 	it("uses a valid container-query font size for the wordmark", () => {
 		const { container } = renderFooter();
-		expect(container.innerHTML).toContain("text-[14.4cqw]");
-		expect(container.innerHTML).not.toContain("text-[14_4cqw]");
+		const wordmark = container.querySelector('p[aria-hidden="true"]');
+		expect(wordmark).toHaveTextContent(APP_NAME);
+		expect(wordmark).toHaveClass("text-[clamp(28px,6.5cqw,72px)]", "leading-[1.12]", "tracking-[-0.03em]", "pb-1.5");
 		expect(screen.getAllByText(APP_NAME).length).toBeGreaterThan(0);
 	});
 });

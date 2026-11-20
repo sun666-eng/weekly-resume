@@ -1,9 +1,9 @@
 import type { Http2Bindings, HttpBindings } from "@hono/node-server";
 import type { Context } from "hono";
-import { isIP } from "node:net";
 import { getConnInfo } from "@hono/node-server/conninfo";
 import { Hono } from "hono";
 import { readGuestPhoto } from "@reactive-resume/api/features/resume/guest-claim";
+import { env } from "@reactive-resume/env/server";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi } from "../openapi/handler";
 import {
@@ -22,13 +22,13 @@ import { handleAuth, handleOAuth } from "./auth";
 import { handleHealth } from "./health";
 import { handlePublicResumePdf } from "./public-resume-pdf";
 import { handleResumePdfDownload } from "./resume-pdf";
+import { resolveTrustedClient } from "./trusted-client";
 
 type ServerEnvironment = { Bindings: HttpBindings | Http2Bindings };
 
 const getTrustedClient = (context: Context<ServerEnvironment>): string => {
 	try {
-		const address = getConnInfo(context).remote.address?.trim();
-		return address && isIP(address) ? address : "unknown";
+		return resolveTrustedClient(getConnInfo(context).remote.address, context.req.raw.headers, env.TRUST_PROXY);
 	} catch {
 		return "unknown";
 	}

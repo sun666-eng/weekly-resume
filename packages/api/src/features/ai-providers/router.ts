@@ -29,7 +29,9 @@ export const aiProvidersRouter = {
 		.errors({
 			AGENT_ENVIRONMENT_UNAVAILABLE: { message: "AI agent workspace is not configured.", status: 412 },
 		})
-		.handler(({ context }) => aiProvidersService.list({ userId: context.user.id })),
+		.handler(({ context }) =>
+			aiProvidersService.list({ userId: context.user.id, trustedClient: context.trustedClient }),
+		),
 
 	create: protectedProcedure
 		.route({

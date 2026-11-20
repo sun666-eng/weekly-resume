@@ -22,11 +22,13 @@ export const messagesRouter = {
 			}),
 		)
 		.use(aiRequestRateLimit)
+		.errors({ AI_FREE_QUOTA_EXCEEDED: { status: 429, message: "Daily free AI quota exhausted." } })
 		.use(mapAgentEnvironmentError)
 		.handler(({ context, input }) =>
 			agentService.messages.send({
 				userId: context.user.id,
 				threadId: input.threadId,
+				trustedClient: context.trustedClient,
 				message: input.message,
 				...(input.attachmentIds ? { attachmentIds: input.attachmentIds } : {}),
 			}),

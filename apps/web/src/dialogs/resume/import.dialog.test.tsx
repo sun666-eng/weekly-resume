@@ -23,6 +23,7 @@ const updateResume = vi.hoisted(() => vi.fn());
 const parsedPdf = vi.hoisted(() => ({ value: null as typeof sampleResumeData | null }));
 const provider = vi.hoisted(() => ({ hasUsableProvider: false, isLoading: false }));
 const providerEnabled = vi.hoisted(() => vi.fn());
+const parseTextAi = vi.hoisted(() => vi.fn());
 const parseDocxAi = vi.hoisted(() => vi.fn());
 const extractWord = vi.hoisted(() => vi.fn(async () => "Word local fixture"));
 // Stands in for the navigation TanStack Router performs from inside <Link>. Keeping it separate
@@ -75,7 +76,7 @@ vi.mock("@reactive-resume/import/plain-text", () => ({
 }));
 
 vi.mock("@/libs/orpc/client", () => ({
-	client: { ai: { parseDocx: parseDocxAi } },
+	client: { ai: { parseDocx: parseDocxAi, parseText: parseTextAi } },
 	orpc: {
 		resume: {
 			import: { mutationOptions: () => ({ mutationFn: importResume }) },
@@ -97,6 +98,7 @@ afterEach(() => {
 	provider.isLoading = false;
 	extractWord.mockReset().mockResolvedValue("Word local fixture");
 	parseDocxAi.mockReset();
+	parseTextAi.mockReset();
 	navigate.mockReset();
 	importResume.mockReset();
 	updateResume.mockReset();
@@ -128,6 +130,30 @@ const renderDialog = (onPrepared?: (data: ResumeData, name?: string) => Promise<
 		</I18nProvider>,
 	);
 };
+
+describe("pasted text recognition", () => {
+	it.each([false, true])("only calls the AI endpoint when explicitly selected (%s)", async (optIn) => {
+		provider.hasUsableProvider = true;
+		parseTextAi.mockResolvedValue(structuredClone(sampleResumeData));
+		importResume.mockResolvedValue("text-resume");
+		renderDialog();
+		fireEvent.click(screen.getByRole("button", { name: "Paste Resume Text" }));
+		fireEvent.change(screen.getByRole("textbox", { name: "Resume text" }), {
+			target: { value: "  Synthetic English resume  " },
+		});
+		const toggle = screen.getByRole("switch", { name: "AI-enhanced recognition" });
+		expect(toggle).not.toBeChecked();
+		if (optIn) {
+			await userEvent.click(toggle);
+			expect(toggle).toBeChecked();
+			expect(screen.getByText("The pasted text will be sent to your AI provider when you import.")).toBeVisible();
+		}
+		fireEvent.click(screen.getByRole("button", { name: /^Import$/ }));
+		await waitFor(() => expect(importResume).toHaveBeenCalledOnce());
+		if (optIn) expect(parseTextAi).toHaveBeenCalledWith({ text: "Synthetic English resume" });
+		else expect(parseTextAi).not.toHaveBeenCalled();
+	});
+});
 
 // Word defaults to local recognition; explicitly opting into AI surfaces the provider notice.
 const createWordFile = () =>

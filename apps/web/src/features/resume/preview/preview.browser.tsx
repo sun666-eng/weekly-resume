@@ -1,3 +1,4 @@
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Template } from "@reactive-resume/schema/templates";
 import type { CSSProperties } from "react";
 import type { ResolvedResumePreviewProps } from "./preview.shared";
@@ -10,12 +11,14 @@ import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { usePreviewPausedStore, useResumeData } from "../builder/draft";
+import { useFitState } from "../builder/fit-state";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
 import { ResumeAccessibleText } from "./resume-accessible-text";
 
 type PreviewPdf = {
+	data: ResumeData;
 	file: Blob;
 	id: number;
 	numPages: number;
@@ -28,14 +31,15 @@ type PreviewPdf = {
 const UPDATE_DEBOUNCE_MS = 100;
 const CROSSFADE_DURATION_MS = 180;
 
-const createPreviewPdf = (file: Blob, id: number, hasExistingPreview: boolean, template: Template): PreviewPdf => ({
+const createPreviewPdf = (file: Blob, id: number, hasExistingPreview: boolean, data: ResumeData): PreviewPdf => ({
+	data,
 	file,
 	id,
 	numPages: 0,
 	pageSizes: {},
 	phase: hasExistingPreview ? "staged" : "active",
 	renderedPages: [],
-	template,
+	template: data.metadata.template,
 });
 
 const addPreviewLayer = (layers: PreviewPdf[], nextPdf: PreviewPdf) => {
@@ -124,12 +128,7 @@ export function ResumePreviewClient({
 				const blob = await createResumePdfBlob(resumeData);
 
 				if (!cancelled && requestId === requestIdRef.current) {
-					const nextPdf = createPreviewPdf(
-						blob,
-						pdfIdRef.current++,
-						hasPreviewRef.current,
-						resumeData.metadata.template,
-					);
+					const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, hasPreviewRef.current, resumeData);
 
 					hasPreviewRef.current = true;
 					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
@@ -154,9 +153,19 @@ export function ResumePreviewClient({
 		};
 	}, [paused, resumeData]);
 
-	if (!resumeData) return null;
-
 	const visiblePdf = getActivePreviewLayer(previewLayers);
+	const shownData = visiblePdf?.data;
+	const count = visiblePdf?.numPages;
+	useEffect(() => {
+		if (data || !shownData || !count) return;
+		const preview = { data: shownData, count };
+		useFitState.setState({ preview });
+		return () => {
+			if (useFitState.getState().preview === preview) useFitState.setState({ preview: null });
+		};
+	}, [data, shownData, count]);
+
+	if (!resumeData) return null;
 	const resolvedPageGap = getResumePreviewGapValue(pageGap);
 
 	if (!visiblePdf) {

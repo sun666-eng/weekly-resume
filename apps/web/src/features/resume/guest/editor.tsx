@@ -3,6 +3,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { RouterHistory } from "@tanstack/react-router";
 import type { Resume } from "../builder/draft";
 import type { GuestRecord } from "./storage";
+import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
@@ -55,6 +56,10 @@ export function GuestEditor({ resumeId, operationId }: GuestEditorProps) {
 	const [ready, setReady] = useState(false);
 	const [status, setStatus] = useState("恢复中");
 	const [message, setMessage] = useState("");
+	const freeAiLimit = config?.freeAiDailyLimit;
+	const freeAiInvitation = freeAiLimit
+		? t`Sign up or sign in for ${freeAiLimit} free AI uses per day. No API key needed.`
+		: null;
 	const [operation, setOperation] = useState<GuestOperation | null>(null);
 	const [savedResume, setSavedResume] = useState<Resume>();
 	// A changed cloud version is only a viewing target, never an export/retirement success.
@@ -647,7 +652,11 @@ export function GuestEditor({ resumeId, operationId }: GuestEditorProps) {
 				replaceData,
 				clear,
 				showHelp: (feature) =>
-					setMessage(`${feature}需登录并主动选择。登录不会自动调用模型或公开简历，请先保存到账号。`),
+					setMessage(
+						feature === "AI" && freeAiInvitation
+							? freeAiInvitation
+							: `${feature}需登录并主动选择。登录不会自动调用模型或公开简历，请先保存到账号。`,
+					),
 				photoBusy: (value) => {
 					const local = state.current;
 					local.photoBusyHolds = Math.max(0, local.photoBusyHolds + (value ? 1 : -1));
@@ -664,6 +673,9 @@ export function GuestEditor({ resumeId, operationId }: GuestEditorProps) {
 					aria-label="草稿保存与接续"
 				>
 					{message && <p role="status">{message}</p>}
+					{message && message === freeAiInvitation && (
+						<Button onClick={() => void requestAction("save")}>{t`Save to an account to use AI`}</Button>
+					)}
 					{operation && (
 						<Button variant="outline" disabled={busy} onClick={() => void requestAction(operation.action, true)}>
 							核对当前内容并另存一份
