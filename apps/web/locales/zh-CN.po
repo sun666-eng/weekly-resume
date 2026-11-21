@@ -7677,7 +7677,7 @@ msgstr "我们已向你的邮箱地址发送了新的验证链接。打开它以
 
 #: src/routes/agent/-components/tool-part-card.tsx
 msgid "Web search"
-msgstr "网络搜索"
+msgstr "联网搜索"
 
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
@@ -8662,3 +8662,19 @@ msgstr "移除附件“{filename}”"
 #: src/libs/error-message.ts
 msgid "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
 msgstr "今日免费 AI 额度已用完。你可以明天再试，也可以在设置中接入自己的 API 密钥继续使用。"
+
+#: src/routes/agent/-components/tool-part-card.tsx
+msgid "Read a web page"
+msgstr "读取网页"
+
+#: src/dialogs/resume/template/browser.tsx
+msgid "Popular in China"
+msgstr "国内常用"
+
+#: src/features/resume/public/public-resume.tsx
+msgid "To download the PDF in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+msgstr "在微信中下载 PDF，请点击右上角「···」，选择「在浏览器打开」。"
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+msgstr "在微信中保存文件，请点击右上角「···」，选择「在浏览器打开」。"

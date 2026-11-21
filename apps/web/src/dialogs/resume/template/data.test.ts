@@ -1,6 +1,14 @@
+// @vitest-environment happy-dom
+
+import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { i18n } from "@lingui/core";
+import { I18nProvider } from "@lingui/react";
+import { createElement } from "react";
+import { loadLocale } from "@/libs/locale";
+import { TemplateBrowser } from "./browser";
 import { templates } from "./data";
-import { getHomepageTemplateOrder, getTemplateOrder } from "./labels";
+import { getHomepageTemplateOrder, getTemplateOrder, isChineseRecommendedTemplate } from "./labels";
 
 describe("templates metadata", () => {
 	const entries = Object.entries(templates);
@@ -57,23 +65,50 @@ describe("templates metadata", () => {
 		}
 	});
 
-	it("features four styles on the homepage and eleven references in the gallery", () => {
-		const order = getTemplateOrder("zh-CN");
-		expect(order.slice(0, 11)).toEqual([
-			"ditgar",
-			"meowth",
+	it.each(["zh-CN", "zh-TW", "zh"])("ranks and recommends four domestic templates in %s", (locale) => {
+		const order = getTemplateOrder(locale);
+		expect(order).toEqual([
 			"scizor",
-			"rhyhorn",
-			"azurill",
-			"pikachu",
 			"onyx",
-			"gengar",
-			"lapras",
+			"meowth",
+			"azurill",
 			"kakuna",
+			"pikachu",
+			"lapras",
+			"rhyhorn",
+			"ditgar",
+			"bronzor",
+			"ditto",
+			"gengar",
 			"chikorita",
+			"glalie",
+			"leafish",
 		]);
+		expect(order.filter(isChineseRecommendedTemplate)).toEqual(["scizor", "onyx", "meowth", "azurill"]);
 		expect(new Set(order)).toEqual(new Set(Object.keys(templates)));
-		expect(getHomepageTemplateOrder("zh-CN")).toEqual(["scizor", "onyx", "meowth", "kakuna"]);
+		expect(getHomepageTemplateOrder(locale)).toEqual(["scizor", "onyx", "meowth", "kakuna"]);
 		expect(getHomepageTemplateOrder("en")).toHaveLength(4);
 	});
+
+	it.each(["zh-CN", "zh-TW", "en-US"])(
+		"badges only the four recommended cards in the Chinese gallery (%s)",
+		async (locale) => {
+			await loadLocale(locale);
+			const { container, queryAllByText } = render(
+				createElement(
+					I18nProvider,
+					{ i18n },
+					createElement(TemplateBrowser, { selected: "scizor", onPreview: () => {} }),
+				),
+			);
+			const grid = container.querySelector<HTMLElement>(".grid-cols-2");
+			expect(grid).toHaveClass("gap-3", "sm:gap-5", "md:grid-cols-3", "lg:grid-cols-4");
+			expect(queryAllByText("国内常用")).toHaveLength(locale.startsWith("zh") ? 4 : 0);
+			expect(queryAllByText("Popular in China")).toHaveLength(0);
+			if (grid && locale.startsWith("zh")) {
+				for (const card of Array.from(grid.children).slice(0, 4))
+					expect(within(card as HTMLElement).getByText("国内常用")).toBeVisible();
+			}
+		},
+	);
 });

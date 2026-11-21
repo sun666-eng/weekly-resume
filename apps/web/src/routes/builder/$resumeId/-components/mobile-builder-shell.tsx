@@ -24,10 +24,9 @@ type MobileSidebarPanelProps = {
 };
 
 function MobileSidebarPanel({ children }: MobileSidebarPanelProps) {
-	// Sits below the header (top-14) and above the tab bar (bottom-16). The sidebar's ScrollArea hardcodes
-	// `h-[calc(100svh-3.5rem)]`; override it to fill this panel so its last item isn't hidden under the tab bar.
+	// Fit the sidebar ScrollArea between the header and the full tab bar, including the device safe area.
 	return (
-		<div className="fixed inset-x-0 top-14 bottom-16 z-40 bg-background [&_[data-slot=scroll-area]]:h-full">
+		<div className="fixed inset-x-0 top-14 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 bg-background [&_[data-slot=scroll-area]]:h-full">
 			{children}
 		</div>
 	);
@@ -42,7 +41,7 @@ function MobileBuilderTabBar({ activeTab, onTabChange }: MobileBuilderTabBarProp
 	const labels: Record<MobileBuilderTab, string> = { edit: t`Edit`, preview: t`Preview`, design: t`Design` };
 
 	return (
-		<nav className="fixed inset-x-0 bottom-0 z-50 flex border-t bg-popover pb-[env(safe-area-inset-bottom)]">
+		<nav className="fixed inset-x-0 bottom-0 z-50 flex bg-popover pb-[env(safe-area-inset-bottom)]">
 			{MOBILE_BUILDER_TABS.map(({ value, icon: Icon }) => {
 				const isActive = value === activeTab;
 
@@ -53,8 +52,10 @@ function MobileBuilderTabBar({ activeTab, onTabChange }: MobileBuilderTabBarProp
 						aria-current={isActive ? "page" : undefined}
 						onClick={() => onTabChange(value)}
 						className={cn(
-							"flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
-							isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
+							"flex min-h-16 flex-1 touch-manipulation flex-col items-center justify-center gap-1 border-t-2 text-xs transition-colors",
+							isActive
+								? "border-primary text-primary"
+								: "border-transparent text-muted-foreground hover:text-foreground",
 						)}
 					>
 						<Icon className="size-5" weight={isActive ? "fill" : "regular"} />
@@ -89,7 +90,7 @@ export function MobileBuilderShell() {
 			<BuilderHeader />
 
 			{/* Keep preview mounted inside its usable area so zoom/pan survives tab switches. */}
-			<main id="main-content" className="fixed inset-x-0 top-14 bottom-16">
+			<main id="main-content" className="fixed inset-x-0 top-14 bottom-[calc(4rem+env(safe-area-inset-bottom))]">
 				<Outlet />
 			</main>
 
