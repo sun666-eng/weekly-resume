@@ -8584,3 +8584,125 @@ msgstr "Remove attachment {filename}"
 #: src/libs/error-message.ts
 msgid "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
 msgstr "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
+
+#: src/features/auth/pages/register.tsx
+msgid "Account created"
+msgstr "Account created"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Could not reset your password. Check your connection and try again."
+msgstr "Could not reset your password. Check your connection and try again."
+
+#. Fallback toast shown when password reset fails
+#: src/features/auth/pages/reset-password.tsx
+msgid "Could not reset your password. Please try again."
+msgstr "Could not reset your password. Please try again."
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Could not submit your password reset request. Check your connection and try again."
+msgstr "Could not submit your password reset request. Check your connection and try again."
+
+#. Fallback toast when requesting a password reset fails without backend message
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Could not submit your password reset request. Please try again."
+msgstr "Could not submit your password reset request. Please try again."
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Edit email"
+msgstr "Edit email"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Email service is not configured"
+msgstr "Email service is not configured"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account exists for {email}, we'll send a password reset link to this address. Check your inbox and spam folder. The link is valid for 1 hour."
+msgstr "If an account exists for {email}, we'll send a password reset link to this address. Check your inbox and spam folder. The link is valid for 1 hour."
+
+#: src/libs/error-message.ts
+msgid "Please wait {0} before submitting another request."
+msgstr "Please wait {0} before submitting another request."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Request a new password reset"
+msgstr "Request a new password reset"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Reset link unavailable"
+msgstr "Reset link unavailable"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Reset request submitted"
+msgstr "Reset request submitted"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Resubmit request"
+msgstr "Resubmit request"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Resubmit request in {0}"
+msgstr "Resubmit request in {0}"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Submitting password reset request..."
+msgstr "Submitting password reset request..."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "The link may have expired after 1 hour or already been used. Request a new password reset link to continue."
+msgstr "The link may have expired after 1 hour or already been used. Request a new password reset link to continue."
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This instance cannot send password reset emails. Contact the administrator for help."
+msgstr "This instance cannot send password reset emails. Contact the administrator for help."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This password reset link is invalid or has expired."
+msgstr "This password reset link is invalid or has expired."
+
+#: src/libs/error-message.ts
+msgid "Too many requests. Please try again in {0}."
+msgstr "Too many requests. Please try again in {0}."
+
+#: src/libs/error-message.ts
+msgid "Too many requests. Please try again later."
+msgstr "Too many requests. Please try again later."
+
+#: src/libs/error-message.ts
+msgid "Try again in {0}"
+msgstr "Try again in {0}"
+
+#: src/libs/error-message.ts
+msgid "{minuteText} {secondText}"
+msgstr "{minuteText} {secondText}"
+
+#: src/libs/error-message.ts
+msgid "{minutes} minutes"
+msgstr "{minutes} minutes"
+
+#: src/libs/error-message.ts
+msgid "{remainingSeconds} seconds"
+msgstr "{remainingSeconds} seconds"
+
+#: src/libs/error-message.ts
+msgid "{seconds} seconds"
+msgstr "{seconds} seconds"
+
+#: src/libs/error-message.ts
+msgid "1 minute"
+msgstr "1 minute"
+
+#: src/libs/error-message.ts
+msgid "1 second"
+msgstr "1 second"
+
+#: src/features/auth/pages/register.tsx
+msgid "Verifying your email helps protect your account and confirms your contact address."
+msgstr "Verifying your email helps protect your account and confirms your contact address."
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready. Continue to your workspace."
+msgstr "Your account is ready. Continue to your workspace."
+
+#: src/features/auth/pages/register.tsx
+msgid "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."
+msgstr "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."

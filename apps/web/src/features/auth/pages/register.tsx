@@ -48,9 +48,10 @@ export const registerFormSchema = z.object({
 
 type Props = {
 	disableEmailAuth: boolean;
+	smtpEnabled: boolean;
 };
 
-export function RegisterPage({ disableEmailAuth }: Props) {
+export function RegisterPage({ disableEmailAuth, smtpEnabled }: Props) {
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const [submitted, setSubmitted] = useState(false);
 	const [showPassword, toggleShowPassword] = useToggle(false);
@@ -112,7 +113,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 		},
 	});
 
-	if (submitted) return <PostSignupScreen />;
+	if (submitted) return <PostSignupScreen smtpEnabled={smtpEnabled} />;
 
 	return (
 		<>
@@ -287,27 +288,42 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 	);
 }
 
-function PostSignupScreen() {
+type PostSignupScreenProps = {
+	smtpEnabled: boolean;
+};
+
+function PostSignupScreen({ smtpEnabled }: PostSignupScreenProps) {
 	const { callbackURL } = useSearch({ from: "/auth" });
 	return (
 		<>
 			<div className="space-y-1 text-center">
 				<h1 className="font-semibold text-2xl tracking-tight">
-					<Trans>You've got mail!</Trans>
+					<Trans>Account created</Trans>
 				</h1>
-				<p className="text-muted-foreground">
-					<Trans>Check your email for a link to verify your account.</Trans>
-				</p>
+				{smtpEnabled ? (
+					<p className="text-muted-foreground">
+						<Trans>
+							Your verification email request has been submitted. Check your inbox and spam folder for a link to verify
+							your account.
+						</Trans>
+					</p>
+				) : (
+					<p className="text-muted-foreground">
+						<Trans>Your account is ready. Continue to your workspace.</Trans>
+					</p>
+				)}
 			</div>
 
-			<Alert>
-				<AlertTitle>
-					<Trans>This step is optional, but recommended.</Trans>
-				</AlertTitle>
-				<AlertDescription>
-					<Trans>Verifying your email is required when resetting your password.</Trans>
-				</AlertDescription>
-			</Alert>
+			{smtpEnabled && (
+				<Alert>
+					<AlertTitle>
+						<Trans>This step is optional, but recommended.</Trans>
+					</AlertTitle>
+					<AlertDescription>
+						<Trans>Verifying your email helps protect your account and confirms your contact address.</Trans>
+					</AlertDescription>
+				</Alert>
+			)}
 
 			<Button
 				nativeButton={false}
