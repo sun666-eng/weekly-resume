@@ -1,56 +1,150 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowRightIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, WarningCircleIcon } from "@phosphor-icons/react";
+import { useStore } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
+import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { authClient } from "@/libs/auth/client";
+import { authClient, getRetryAfterSecondsFromAuthContext } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
-import { getAuthErrorMessage } from "../error-message";
+import { formatRetryAfterDuration, getAuthErrorMessage, isAuthRateLimitError } from "../error-message";
 
 const formSchema = z.object({
-	email: z.email(),
+	email: z
+		.string()
+		.trim()
+		.toLowerCase()
+		.pipe(z.email({ error: () => t`Enter a valid email address.` })),
 });
 
-export function ForgotPasswordPage() {
+const DEFAULT_COOLDOWN_SECONDS = 60;
+
+type Props = {
+	smtpEnabled: boolean;
+};
+
+export function ForgotPasswordPage({ smtpEnabled }: Props) {
+	const [submittedEmail, setSubmittedEmail] = useState("");
 	const [submitted, setSubmitted] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [submissionCooldownSeconds, setSubmissionCooldownSeconds] = useState(0);
+	const [rateLimitCooldownSeconds, setRateLimitCooldownSeconds] = useState(0);
+	const isCoolingDown = submissionCooldownSeconds > 0 || rateLimitCooldownSeconds > 0;
+	const getCooldownSeconds = (normalizedEmail: string) =>
+		Math.max(rateLimitCooldownSeconds, normalizedEmail === submittedEmail ? submissionCooldownSeconds : 0);
 
-	const form = useAppForm({
-		defaultValues: { email: "" },
-		validators: { onSubmit: formSchema },
-		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Sending password reset email...` });
+	useEffect(() => {
+		if (!isCoolingDown) return;
+		const timer = window.setInterval(() => {
+			setSubmissionCooldownSeconds((remaining) => Math.max(remaining - 1, 0));
+			setRateLimitCooldownSeconds((remaining) => Math.max(remaining - 1, 0));
+		}, 1000);
+		return () => window.clearInterval(timer);
+	}, [isCoolingDown]);
 
+	const submitResetRequest = async (email: string) => {
+		const normalizedEmail = email.trim().toLowerCase();
+		if (isSubmitting || getCooldownSeconds(normalizedEmail) > 0) return;
+
+		const toastId = toast.add({ type: "loading", description: t`Submitting password reset request...` });
+		let retryAfterSeconds: number | undefined;
+		setIsSubmitting(true);
+
+		try {
 			const { error } = await authClient.requestPasswordReset({
-				email: value.email,
+				email: normalizedEmail,
 				redirectTo: "/auth/reset-password",
+				fetchOptions: {
+					onError: (context) => {
+						retryAfterSeconds = getRetryAfterSecondsFromAuthContext(context);
+					},
+				},
 			});
 
 			if (error) {
+				const rateLimited = isAuthRateLimitError(error);
+				if (rateLimited) setRateLimitCooldownSeconds(retryAfterSeconds ?? DEFAULT_COOLDOWN_SECONDS);
 				toast.add({
 					type: "error",
 					description: getAuthErrorMessage(
 						error,
 						t({
-							comment: "Fallback toast when requesting password reset email fails without backend message",
-							message: "Failed to send password reset email. Please try again.",
+							comment: "Fallback toast when requesting a password reset fails without backend message",
+							message: "Could not submit your password reset request. Please try again.",
 						}),
+						retryAfterSeconds,
 					),
 					id: toastId,
 				});
 				return;
 			}
 
+			setSubmittedEmail(normalizedEmail);
 			setSubmitted(true);
+			setSubmissionCooldownSeconds(DEFAULT_COOLDOWN_SECONDS);
 			toast.close(toastId);
-		},
-	});
+		} catch {
+			toast.add({
+				type: "error",
+				description: t`Could not submit your password reset request. Check your connection and try again.`,
+				id: toastId,
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
-	if (submitted) return <PostForgotPasswordScreen />;
+	const form = useAppForm({
+		defaultValues: { email: "" },
+		validators: { onSubmit: formSchema },
+		onSubmit: async ({ value }) => submitResetRequest(value.email),
+	});
+	const normalizedEmail = useStore(form.store, (state) => state.values.email.trim().toLowerCase());
+	const cooldownSeconds = getCooldownSeconds(normalizedEmail);
+
+	if (!smtpEnabled) {
+		return (
+			<>
+				<div className="space-y-1 text-center">
+					<h1 className="font-semibold text-2xl tracking-tight">
+						<Trans>Forgot your password?</Trans>
+					</h1>
+				</div>
+				<Alert>
+					<WarningCircleIcon />
+					<AlertTitle>
+						<Trans>Email service is not configured</Trans>
+					</AlertTitle>
+					<AlertDescription>
+						<Trans>This instance cannot send password reset emails. Contact the administrator for help.</Trans>
+					</AlertDescription>
+				</Alert>
+				<Link to="/auth/login" className={buttonVariants({ variant: "secondary" })}>
+					<Trans>Back to sign in</Trans>
+				</Link>
+			</>
+		);
+	}
+
+	if (submitted) {
+		return (
+			<PostForgotPasswordScreen
+				email={submittedEmail}
+				cooldownSeconds={getCooldownSeconds(submittedEmail)}
+				isSubmitting={isSubmitting}
+				onEditEmail={() => {
+					form.setFieldValue("email", submittedEmail);
+					setSubmitted(false);
+				}}
+				onResubmit={() => submitResetRequest(submittedEmail)}
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -79,6 +173,7 @@ export function ForgotPasswordPage() {
 
 			<form
 				className="space-y-6"
+				noValidate
 				onSubmit={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -109,34 +204,77 @@ export function ForgotPasswordPage() {
 					)}
 				</form.Field>
 
-				<Button type="submit" className="w-full">
-					<Trans comment="Primary action button label on forgot-password form">Send Password Reset Email</Trans>
+				{cooldownSeconds > 0 && (
+					<p className="text-center text-muted-foreground text-sm" role="status">
+						<Trans>Please wait {formatRetryAfterDuration(cooldownSeconds)} before submitting another request.</Trans>
+					</p>
+				)}
+
+				<Button type="submit" className="w-full" disabled={isSubmitting || cooldownSeconds > 0}>
+					{cooldownSeconds > 0 ? (
+						<Trans>Try again in {formatRetryAfterDuration(cooldownSeconds)}</Trans>
+					) : (
+						<Trans comment="Primary action button label on forgot-password form">Send Password Reset Email</Trans>
+					)}
 				</Button>
 			</form>
 		</>
 	);
 }
 
-function PostForgotPasswordScreen() {
+type PostForgotPasswordScreenProps = {
+	email: string;
+	cooldownSeconds: number;
+	isSubmitting: boolean;
+	onEditEmail: () => void;
+	onResubmit: () => void;
+};
+
+function PostForgotPasswordScreen({
+	email,
+	cooldownSeconds,
+	isSubmitting,
+	onEditEmail,
+	onResubmit,
+}: PostForgotPasswordScreenProps) {
 	return (
 		<>
 			<div className="space-y-1 text-center">
 				<h1 className="font-semibold text-2xl tracking-tight">
-					<Trans>You've got mail!</Trans>
+					<Trans>Reset request submitted</Trans>
 				</h1>
 				<p className="text-muted-foreground">
-					<Trans>Check your email for a link to reset your password.</Trans>
+					<Trans>
+						If an account exists for {email}, we'll send a password reset link to this address. Check your inbox and
+						spam folder. The link is valid for 1 hour.
+					</Trans>
 				</p>
 			</div>
 
-			<Button
-				nativeButton={false}
-				render={
-					<a href="mailto:">
-						<Trans comment="Button label to open the user's default email app">Open Email Client</Trans>
-					</a>
-				}
-			/>
+			<div className="grid gap-3">
+				<Button type="button" variant="outline" onClick={onEditEmail} disabled={isSubmitting}>
+					<Trans>Edit email</Trans>
+				</Button>
+				<Button type="button" onClick={onResubmit} disabled={isSubmitting || cooldownSeconds > 0}>
+					{cooldownSeconds > 0 ? (
+						<Trans>Resubmit request in {formatRetryAfterDuration(cooldownSeconds)}</Trans>
+					) : (
+						<Trans>Resubmit request</Trans>
+					)}
+				</Button>
+				<Button
+					variant="secondary"
+					nativeButton={false}
+					render={
+						<a href="mailto:">
+							<Trans comment="Button label to open the user's default email app">Open Email Client</Trans>
+						</a>
+					}
+				/>
+				<Link to="/auth/login" className={buttonVariants({ variant: "link" })}>
+					<Trans>Back to sign in</Trans>
+				</Link>
+			</div>
 		</>
 	);
 }

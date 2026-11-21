@@ -2,11 +2,79 @@ import { describe, expect, it, vi } from "vitest";
 import { msg } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import {
+	getAuthErrorMessage,
 	getLocalizedErrorMessage,
 	getOrpcErrorMessage,
 	getReadableErrorMessage,
 	getResumeErrorMessage,
+	getRetryAfterSeconds,
+	isInvalidResetTokenError,
+	parseRetryAfter,
+	resolveAuthErrorMessage,
 } from "./error-message";
+
+describe("Retry-After parsing", () => {
+	it.each([
+		["12", 12],
+		[" 120 ", 120],
+		["0", undefined],
+		["-1", undefined],
+		["invalid", undefined],
+		["9007199254740992", undefined],
+	])("parses %s as %s", (value, expected) => {
+		expect(parseRetryAfter(value)).toBe(expected);
+	});
+
+	it("parses HTTP dates and prefers X-Retry-After", () => {
+		const now = Date.UTC(2026, 10, 20, 12, 0, 0);
+		expect(parseRetryAfter(new Date(now + 61_000).toUTCString(), now)).toBe(61);
+		expect(
+			getRetryAfterSeconds(
+				new Headers({
+					"X-Retry-After": "15",
+					"Retry-After": "120",
+				}),
+			),
+		).toBe(15);
+	});
+
+	it("falls back to Retry-After when X-Retry-After is invalid", () => {
+		expect(getRetryAfterSeconds(new Headers({ "X-Retry-After": "invalid", "Retry-After": "20" }))).toBe(20);
+	});
+});
+
+describe("Better Auth error messages", () => {
+	it.each([
+		[1, "Too many requests. Please try again in 1 second."],
+		[45, "Too many requests. Please try again in 45 seconds."],
+		[60, "Too many requests. Please try again in 1 minute."],
+		[125, "Too many requests. Please try again in 2 minutes 5 seconds."],
+	])("formats a %i second rate limit", (retryAfterSeconds, expected) => {
+		expect(getAuthErrorMessage({ status: 429 }, "fallback", retryAfterSeconds)).toBe(expected);
+	});
+
+	it("uses the localized generic message when no retry duration is available", () => {
+		expect(resolveAuthErrorMessage({ message: "Too many requests. Please try again later." })).toBe(
+			"Too many requests. Please try again later.",
+		);
+	});
+
+	it.each([
+		[{ code: "INVALID_TOKEN" }],
+		[{ code: "TOKEN_EXPIRED" }],
+		[{ message: "Invalid token" }],
+		[{ message: "Token expired" }],
+	])("recognizes an invalid or expired reset credential", (error) => {
+		expect(isInvalidResetTokenError(error)).toBe(true);
+	});
+
+	it.each([
+		[{ code: "INVALID_TOKEN" }, "This link is invalid. Please request a new one."],
+		[{ code: "TOKEN_EXPIRED" }, "This link has expired. Please request a new one."],
+	])("maps reset token error %j", (error, expected) => {
+		expect(resolveAuthErrorMessage(error)).toBe(expected);
+	});
+});
 
 describe("getReadableErrorMessage", () => {
 	it("shows the upload size validation message instead of the generic oRPC error", () => {
