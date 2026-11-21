@@ -97,6 +97,82 @@ describe("system endpoint scheduling", () => {
 		expect(invoke).toHaveBeenCalledOnce();
 	});
 
+	it("applies the relay deadline and zero retries to both relays after an official first node", async () => {
+		vi.useFakeTimers();
+		const chain = config(official, relay, second);
+		const invoke = vi.fn((ep: SystemAiEndpoint, _opts: AiCallOptions) => {
+			if (ep === official) return Promise.reject(upstreamError);
+			return new Promise<never>(() => {});
+		});
+		const result = runWithSystemAiFailover(chain, "agent.stream", undefined, invoke);
+		const timedOut = expect(result).rejects.toMatchObject({ name: "TimeoutError" });
+		await vi.advanceTimersByTimeAsync(0);
+		expect(invoke).toHaveBeenNthCalledWith(1, official, {}, expect.any(Function));
+		for (const [index, endpoint] of [relay, second].entries()) {
+			const signal = invoke.mock.calls[index + 1]?.[1].abortSignal;
+			expect(invoke).toHaveBeenNthCalledWith(
+				index + 2,
+				endpoint,
+				{ abortSignal: expect.any(AbortSignal), maxRetries: 0 },
+				expect.any(Function),
+			);
+			await vi.advanceTimersByTimeAsync(chain.defaultRelayTimeoutMs - 1);
+			expect(signal?.aborted).toBe(false);
+			await vi.advanceTimersByTimeAsync(1);
+			expect(signal?.aborted).toBe(true);
+		}
+		await timedOut;
+		expect(vi.getTimerCount()).toBe(0);
+		await expect(runWithSystemAiFailover(chain, "agent.stream", undefined, async (ep) => ep)).resolves.toBe(official);
+	});
+
+	it("probes all official nodes in order before any relay when every circuit is cooling", async () => {
+		const laterOfficial = { ...official, model: "later-official" };
+		const chain = config(relay, official, second, laterOfficial);
+		const invoke = vi.fn((_ep: SystemAiEndpoint) => Promise.reject(upstreamError));
+		const call = () => runWithSystemAiFailover(chain, "parseText", undefined, invoke);
+		await expect(call()).rejects.toBe(upstreamError);
+		expect(invoke.mock.calls.map(([ep]) => ep)).toEqual([relay, official, second, laterOfficial]);
+		invoke.mockClear();
+		await expect(call()).rejects.toBe(upstreamError);
+		expect(invoke.mock.calls.map(([ep]) => ep)).toEqual([official, laterOfficial, relay, second]);
+	});
+
+	it("keeps the last endpoint policy for chains without a direct DeepSeek node", async () => {
+		const last = { ...official, baseURL: relay.baseURL };
+		const chain = config(relay, second, last);
+		const invoke = vi.fn((_ep: SystemAiEndpoint, _opts: AiCallOptions) => Promise.reject(upstreamError));
+		const call = () => runWithSystemAiFailover(chain, "atsReview", undefined, invoke);
+		const attempts = () => invoke.mock.calls.map(([ep, opts]) => [ep, opts]);
+		await expect(call()).rejects.toBe(upstreamError);
+		const relayOptions = { abortSignal: expect.any(AbortSignal), maxRetries: 0 };
+		expect(attempts()).toEqual([
+			[relay, relayOptions],
+			[second, relayOptions],
+			[last, {}],
+		]);
+		invoke.mockClear();
+		await expect(call()).rejects.toBe(upstreamError);
+		expect(attempts()).toEqual([
+			[last, {}],
+			[relay, relayOptions],
+			[second, relayOptions],
+		]);
+	});
+
+	it("shares a failed official circuit between Agent and the original import ordering", async () => {
+		const invoke = vi.fn(async (ep: SystemAiEndpoint) => ep.model);
+		invoke.mockRejectedValueOnce(upstreamError);
+		await expect(
+			runWithSystemAiFailover(config(official, relay, second), "agent.stream", undefined, invoke),
+		).resolves.toBe(relay.model);
+		invoke.mockClear().mockRejectedValueOnce(upstreamError);
+		await expect(runWithSystemAiFailover(config(relay, official, second), "parsePdf", undefined, invoke)).resolves.toBe(
+			second.model,
+		);
+		expect(invoke.mock.calls.map(([ep]) => ep)).toEqual([relay, second]);
+	});
+
 	it.each([1000, undefined])("aborts a hanging relay on its explicit or default timeout (%s)", async (timeoutMs) => {
 		vi.useFakeTimers();
 		const chain = config({ ...relay, timeoutMs }, official);

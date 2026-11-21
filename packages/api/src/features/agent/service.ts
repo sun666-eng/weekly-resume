@@ -4,7 +4,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage } from "ai";
 import type { SystemQuotaReservation } from "../ai/quota";
 import type { GetModelInput } from "../ai/service";
-import type { SystemAiEndpoint } from "../ai/system-config";
+import type { SystemAiConfig, SystemAiEndpoint } from "../ai/system-config";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
@@ -762,6 +762,21 @@ async function applyResumePatch(input: {
 	};
 }
 
+function prioritizeAgentSystemConfig(config: SystemAiConfig): SystemAiConfig {
+	const directEndpoints = config.endpoints.filter(isDirectDeepSeekProvider);
+	const first = directEndpoints[0];
+	if (!first || directEndpoints.length === config.endpoints.length) return config;
+
+	return {
+		...config,
+		provider: first.provider,
+		model: first.model,
+		apiKey: first.apiKey,
+		baseURL: first.baseURL ?? "",
+		endpoints: [...directEndpoints, ...config.endpoints.filter((endpoint) => !isDirectDeepSeekProvider(endpoint))],
+	};
+}
+
 function buildAgentStepOptions(stepNumber: number, forceFreshRead: boolean, hasDirectDeepSeek: boolean) {
 	if (!forceFreshRead || stepNumber !== 0) return {};
 	return {
@@ -1307,16 +1322,11 @@ export const agentService = {
 					insertedDraft = true;
 				}
 
-				const systemConfig = runnableProvider.systemConfig;
-				const displayedModel = systemConfig
-					? publicSystemAiText(runnableProvider.model, systemConfig.endpoints)
-					: runnableProvider.model;
-				const provider = {
-					provider: runnableProvider.provider,
-					model: runnableProvider.model,
-					apiKey: runnableProvider.apiKey,
-					baseURL: runnableProvider.baseURL ?? "",
-				};
+				const agentSystemConfig =
+					runnableProvider.systemConfig && prioritizeAgentSystemConfig(runnableProvider.systemConfig);
+				const { provider: providerId, model, apiKey, baseURL } = agentSystemConfig ?? runnableProvider;
+				const provider = { provider: providerId, model, apiKey, baseURL: baseURL ?? "" };
+				const displayedModel = agentSystemConfig ? publicSystemAiText(model, agentSystemConfig.endpoints) : model;
 				const agent = createAgent({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1325,8 +1335,8 @@ export const agentService = {
 					...(draftRowId ? { draftRowId } : {}),
 					requirePatchApproval: thread.reviewPatches,
 					provider,
-					model: getAgentModel(provider, systemConfig),
-					systemEndpoints: systemConfig?.endpoints,
+					model: getAgentModel(provider, agentSystemConfig),
+					systemEndpoints: agentSystemConfig?.endpoints,
 					onSystemStreamError: refundIfEmpty,
 				});
 

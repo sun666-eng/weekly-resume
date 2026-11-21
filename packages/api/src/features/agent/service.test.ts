@@ -1,3 +1,4 @@
+import type { UIMessage } from "ai";
 import type { buildDeepSeekWebTools } from "./deepseek-web-tools";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/client";
@@ -396,14 +397,38 @@ describe("Agent web research configuration", () => {
 		apiKey: "synthetic-official",
 		baseURL: "https://api.deepseek.com/v1/",
 	};
-	const relay = { ...official, baseURL: "https://relay.example/v1", apiKey: "synthetic-relay" };
+	const relay = {
+		provider: "openai-compatible",
+		model: "relay",
+		baseURL: "https://relay.example/v1",
+		apiKey: "synthetic-relay",
+	};
+	const laterOfficial = { ...official, model: "later-official", apiKey: "synthetic-later" };
+	const sensitiveOfficial = { ...official, model: `model-${relay.apiKey}`, baseURL: undefined };
 	const native = { provider: "openai", model: "gpt-5", apiKey: "synthetic-openai", baseURL: "" };
 	it.each([
 		{ name: "personal", endpoints: undefined, primary: official, research: true, nativeSearch: false },
 		{ name: "official system node", endpoints: [official], primary: official, research: true, nativeSearch: false },
 		{
-			name: "relay with official fallback",
-			endpoints: [relay, official, { ...official, apiKey: "synthetic-later" }],
+			name: "official-only system chain",
+			endpoints: [official, laterOfficial],
+			primary: official,
+			research: true,
+			nativeSearch: false,
+		},
+		{
+			name: "official nodes ahead of the configured relay",
+			endpoints: [relay, official, laterOfficial],
+			prioritized: [official, laterOfficial, relay],
+			primary: relay,
+			research: true,
+			nativeSearch: false,
+		},
+		{
+			name: "official model containing another endpoint's credential",
+			endpoints: [relay, sensitiveOfficial, native],
+			prioritized: [sensitiveOfficial, relay, native],
+			displayedModel: "[redacted]",
 			primary: relay,
 			research: true,
 			nativeSearch: false,
@@ -416,11 +441,20 @@ describe("Agent web research configuration", () => {
 			nativeSearch: false,
 		},
 		{ name: "personal native OpenAI", endpoints: undefined, primary: native, research: false, nativeSearch: true },
-	])("configures tools and first read for $name", async ({ endpoints, primary, research, nativeSearch }) => {
-		const [{ agentService }, { convertToModelMessages, ToolLoopAgent }, toolModule] = await Promise.all([
+	])("configures the model, tools and first read for $name", async (fixture) => {
+		const { endpoints, prioritized, displayedModel, primary, research, nativeSearch } = fixture;
+		const [
+			{ agentService },
+			{ convertToModelMessages, ToolLoopAgent },
+			toolModule,
+			{ getAgentModel },
+			{ agentStreamLifecycle },
+		] = await Promise.all([
 			import("./service"),
 			import("ai"),
 			import("./tools"),
+			import("../ai/service"),
+			import("./streams"),
 		]);
 		const realTools = await vi.importActual<typeof toolModule>("./tools");
 		vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
@@ -438,23 +472,56 @@ describe("Agent web research configuration", () => {
 			.mockReturnValueOnce(selectOrderByResult([row]));
 		dbMock.insert.mockReturnValue({ values: () => ({ returning: async () => [row] }) });
 		claimActiveAgentRunMock.mockResolvedValue(true);
+		const systemConfig =
+			endpoints &&
+			Object.freeze({
+				...primary,
+				endpoints: Object.freeze(endpoints),
+				label: "Free",
+				dailyLimit: 15,
+				cooldownMs: 180000,
+				defaultRelayTimeoutMs: 12000,
+			});
 		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
 			id: endpoints ? "__system_default__" : "personal",
 			...primary,
-			...(endpoints ? { systemConfig: { endpoints } } : {}),
+			systemConfig,
 		});
 		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: "Research this role" }]);
-		// Stop at construction, before model streaming. The normal send path still resolves and builds the real tools.
+		const usage = { totalTokens: 7 };
+		type StreamHooks = {
+			messageMetadata(input: { part: { type: "finish"; totalUsage: typeof usage } }): unknown;
+			onFinish(input: { responseMessage: UIMessage; isAborted: boolean }): Promise<void>;
+		};
+		const toUIMessageStream = vi.fn((_hooks: StreamHooks) => new ReadableStream());
 		vi.mocked(ToolLoopAgent).mockImplementationOnce(
 			class {
-				constructor() {
-					throw new Error("Captured agent configuration");
+				stream() {
+					return Promise.resolve({ toUIMessageStream });
 				}
 			} as never,
 		);
-		await expect(agentService.messages.send({ userId: thread.userId, threadId: thread.id, message })).rejects.toThrow(
-			"Captured agent configuration",
+		vi.mocked(agentStreamLifecycle.create).mockImplementationOnce((_id, makeStream) => {
+			makeStream();
+			return Promise.resolve(new ReadableStream());
+		});
+		await agentService.messages.send({ userId: thread.userId, threadId: thread.id, message });
+		const hooks = toUIMessageStream.mock.lastCall?.[0];
+		if (!hooks) throw new Error("Missing UI message stream callbacks");
+		const metadata = hooks.messageMetadata({ part: { type: "finish", totalUsage: usage } });
+		await hooks.onFinish({
+			responseMessage: { id: "reply", role: "assistant", parts: [], metadata },
+			isAborted: false,
+		});
+
+		const first = prioritized?.[0] ?? primary;
+		const expectedProvider = { ...first, baseURL: first.baseURL ?? "" };
+		expect(getAgentModel).toHaveBeenLastCalledWith(
+			expectedProvider,
+			systemConfig && { ...systemConfig, ...expectedProvider, endpoints: prioritized ?? endpoints },
 		);
+		if (!prioritized) expect(vi.mocked(getAgentModel).mock.lastCall?.[1]).toBe(systemConfig);
+		expect(metadata).toEqual({ model: displayedModel ?? first.model, usage });
 		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
 		const tools = settings?.tools;
 		expect(Boolean(tools?.lookup_online_sources)).toBe(research);
