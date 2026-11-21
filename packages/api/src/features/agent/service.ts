@@ -860,8 +860,17 @@ function createAgent(input: {
 		},
 	});
 
-	const hasWebFetch = "web_fetch" in tools;
-	const instructionsText = `${buildAgentInstructions({ hasWebSearch: "web_search" in tools, hasWebFetch })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
+	for (const toolName of ["lookup_online_sources", "read_public_url"] as const) {
+		const webTool = tools[toolName];
+		if (webTool?.execute) {
+			const execute = webTool.execute;
+			webTool.execute = timedToolHandler(toolName, async (...args: Parameters<typeof execute>) => execute(...args));
+		}
+	}
+
+	const webSearchTool =
+		"lookup_online_sources" in tools ? "lookup_online_sources" : "web_search" in tools ? "web_search" : undefined;
+	const instructionsText = `${buildAgentInstructions({ webSearchTool, hasPublicUrlReader: "read_public_url" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
 
 	return new ToolLoopAgent({
 		// Providers without native inputExamples support get them appended to the tool description.

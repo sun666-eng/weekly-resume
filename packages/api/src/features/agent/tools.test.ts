@@ -42,12 +42,16 @@ function buildTools(
 describe("agent tools", () => {
 	it("mounts both executable research tools for personal direct DeepSeek accounts only", () => {
 		const tools = buildTools("deepseek");
-		expect(tools.web_search?.execute).toBeTypeOf("function");
-		expect(tools.web_fetch?.execute).toBeTypeOf("function");
+		expect(tools.lookup_online_sources?.execute).toBeTypeOf("function");
+		expect(tools.read_public_url?.execute).toBeTypeOf("function");
+		expect(tools).not.toHaveProperty("web_search");
+		expect(tools).not.toHaveProperty("web_fetch");
 		for (const relay of [
 			buildTools("deepseek", { baseURL: "https://relay.example/v1" }),
 			buildTools("openai-compatible", { baseURL: "https://api.deepseek.com/v1" }),
 		]) {
+			expect(relay).not.toHaveProperty("lookup_online_sources");
+			expect(relay).not.toHaveProperty("read_public_url");
 			expect(relay).not.toHaveProperty("web_search");
 			expect(relay).not.toHaveProperty("web_fetch");
 		}
@@ -57,6 +61,8 @@ describe("agent tools", () => {
 		const tools = buildTools("openai");
 
 		expect(tools).toHaveProperty("web_search");
+		expect(tools).not.toHaveProperty("lookup_online_sources");
+		expect(tools).not.toHaveProperty("read_public_url");
 	});
 
 	it("adds provider-native web search for OpenAI providers using the explicit default base URL", () => {
@@ -104,12 +110,17 @@ describe("agent tools", () => {
 	});
 
 	it("explains the available web tools, sources, privacy and untrusted content", () => {
-		const search = buildAgentInstructions({ hasWebSearch: true });
+		const search = buildAgentInstructions({ webSearchTool: "web_search" });
 		expect(search).toContain("Use web_search");
 		expect(search).toContain("user-provided public URLs");
+		expect(search).not.toContain("lookup_online_sources");
+		expect(search).not.toContain("read_public_url");
 		expect(search).not.toContain("web_fetch");
-		const both = buildAgentInstructions({ hasWebSearch: true, hasWebFetch: true });
-		expect(both).toContain("Use web_fetch");
+		const both = buildAgentInstructions({ webSearchTool: "lookup_online_sources", hasPublicUrlReader: true });
+		expect(both).toContain("Use lookup_online_sources for current job descriptions, company pages");
+		expect(both).toContain("Use read_public_url to read user-provided public URLs");
+		expect(both).toContain("a source returned by lookup_online_sources");
+		expect(both).not.toMatch(/web_search|web_fetch/);
 		for (const instructions of [search, both]) {
 			expect(instructions).toContain("Cite source links");
 			expect(instructions).toContain("untrusted reference material");
@@ -118,8 +129,8 @@ describe("agent tools", () => {
 	});
 
 	it("continues editing from local context when research is unavailable", () => {
-		const instructions = buildAgentInstructions({ hasWebSearch: false });
-		expect(instructions).not.toContain("Use web_search");
+		const instructions = buildAgentInstructions({ webSearchTool: undefined });
+		expect(instructions).not.toMatch(/lookup_online_sources|read_public_url|web_search|web_fetch/);
 		expect(instructions).toContain("Live web research is unavailable");
 		expect(instructions).toContain("paste or attach the relevant content");
 		expect(instructions).toContain("Batch related JSON Patch operations");

@@ -73,9 +73,17 @@ export type AgentTools = {
 	read_resume: { input: Record<string, never>; output: unknown };
 	read_attachment: { input: { attachmentId: string }; output: unknown };
 	apply_resume_patch: { input: ApplyResumePatchInput; output: ApplyResumePatchOutput };
-	// OpenAI native search and the DeepSeek search API have different result shapes.
+	lookup_online_sources: {
+		input: { query: string; count?: number };
+		output: { results: Array<{ url: string; title: string; summary: string; truncated: boolean }> };
+	};
+	read_public_url: {
+		input: { url: string };
+		output: { url: string; title: string; content: string; truncated: boolean };
+	};
+	// Keep native OpenAI search and legacy persisted research parts compatible.
 	web_search: { input: unknown; output: unknown };
-	web_fetch: { input: { url: string }; output: { url: string; title: string; content: string; truncated: boolean } };
+	web_fetch: AgentTools["read_public_url"];
 };
 
 export type AgentUIMessage = UIMessage<AgentMessageMetadata, UIDataTypes, AgentTools>;

@@ -399,21 +399,24 @@ describe("Agent web research configuration", () => {
 	const relay = { ...official, baseURL: "https://relay.example/v1", apiKey: "synthetic-relay" };
 	const native = { provider: "openai", model: "gpt-5", apiKey: "synthetic-openai", baseURL: "" };
 	it.each([
-		{ name: "personal", endpoints: undefined, primary: official, research: true },
-		{ name: "official system node", endpoints: [official], primary: official, research: true },
+		{ name: "personal", endpoints: undefined, primary: official, research: true, nativeSearch: false },
+		{ name: "official system node", endpoints: [official], primary: official, research: true, nativeSearch: false },
 		{
 			name: "relay with official fallback",
 			endpoints: [relay, official, { ...official, apiKey: "synthetic-later" }],
 			primary: relay,
 			research: true,
+			nativeSearch: false,
 		},
 		{
 			name: "multi-node OpenAI without official DeepSeek",
 			endpoints: [native, relay],
 			primary: native,
 			research: false,
+			nativeSearch: false,
 		},
-	])("selects tools and forced-first-read options for $name", async ({ endpoints, primary, research }) => {
+		{ name: "personal native OpenAI", endpoints: undefined, primary: native, research: false, nativeSearch: true },
+	])("configures tools and first read for $name", async ({ endpoints, primary, research, nativeSearch }) => {
 		const [{ agentService }, { convertToModelMessages, ToolLoopAgent }, toolModule] = await Promise.all([
 			import("./service"),
 			import("ai"),
@@ -421,6 +424,7 @@ describe("Agent web research configuration", () => {
 		]);
 		const realTools = await vi.importActual<typeof toolModule>("./tools");
 		vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
+		vi.mocked(toolModule.buildAgentInstructions).mockImplementationOnce(realTools.buildAgentInstructions);
 		const thread = buildActiveThread({ aiProviderId: endpoints ? null : "personal" });
 		const message = {
 			id: "research",
@@ -453,12 +457,22 @@ describe("Agent web research configuration", () => {
 		);
 		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
 		const tools = settings?.tools;
-		expect(Boolean(tools?.web_search)).toBe(research);
-		expect(Boolean(tools?.web_fetch)).toBe(research);
+		expect(Boolean(tools?.lookup_online_sources)).toBe(research);
+		expect(Boolean(tools?.read_public_url)).toBe(research);
+		expect(Boolean(tools?.web_search)).toBe(nativeSearch);
+		expect(tools).not.toHaveProperty("web_fetch");
 		expect(toolModule.buildAgentInstructions).toHaveBeenLastCalledWith({
-			hasWebSearch: research,
-			hasWebFetch: research,
+			webSearchTool: research ? "lookup_online_sources" : nativeSearch ? "web_search" : undefined,
+			hasPublicUrlReader: research,
 		});
+		if (research) {
+			expect(settings?.instructions).toContain("Use lookup_online_sources");
+			expect(settings?.instructions).toContain("Use read_public_url");
+			expect(settings?.instructions).not.toMatch(/web_search|web_fetch/);
+		} else if (nativeSearch) {
+			expect(settings?.instructions).toContain("Use web_search");
+			expect(settings?.instructions).not.toMatch(/lookup_online_sources|read_public_url|web_fetch/);
+		} else expect(settings?.instructions).toContain("Live web research is unavailable");
 		expect(await settings?.prepareStep?.({ stepNumber: 0, messages: [] } as never)).toEqual({
 			toolChoice: { type: "tool", toolName: "read_resume" },
 			...(research ? { providerOptions: { deepseek: { thinking: { type: "disabled" } } } } : {}),
@@ -467,18 +481,55 @@ describe("Agent web research configuration", () => {
 		if (research) {
 			const web = tools as ReturnType<typeof buildDeepSeekWebTools>;
 			const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ results: [] }));
+			const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
 			try {
 				const execution = { toolCallId: "tool-call", messages: [], context: {} };
-				for (let i = 0; i < 3; i++) await web.web_search.execute({ query: "role" }, execution);
-				const fetchPage = web.web_fetch.execute({ url: "https://careers.example" }, execution);
+				const query = "synthetic-sensitive-query";
+				const url = "https://careers.example/synthetic-private-path";
+				await web.lookup_online_sources.execute({ query }, execution);
+				await web.read_public_url.execute({ url }, execution);
+				await web.lookup_online_sources.execute({ query }, execution);
+				const fetchPage = web.read_public_url.execute({ url }, execution);
 				if (endpoints) await expect(fetchPage).rejects.toThrow("limit for this turn");
-				else await expect(fetchPage).resolves.toMatchObject({ url: "https://careers.example" });
-				expect(transport).toHaveBeenCalledTimes(endpoints ? 3 : 4);
+				else await expect(fetchPage).resolves.toMatchObject({ url });
+				transport.mockResolvedValueOnce(new Response(`Sensitive upstream error: ${official.apiKey}`, { status: 403 }));
+				await expect(web.lookup_online_sources.execute({ query }, execution)).rejects.toThrow(
+					endpoints ? "limit for this turn" : "does not have permission",
+				);
+				expect(transport).toHaveBeenCalledTimes(endpoints ? 3 : 5);
 				for (const [, init] of transport.mock.calls) {
 					expect(new Headers(init?.headers).get("Authorization")).toBe(`Bearer ${official.apiKey}`);
 				}
+				const expectedLogs = [
+					{ tool: "lookup_online_sources", ok: true },
+					{ tool: "read_public_url", ok: true },
+					{ tool: "lookup_online_sources", ok: true },
+					{ tool: "read_public_url", ok: !endpoints },
+					{ tool: "lookup_online_sources", ok: false },
+				];
+				expect(info).toHaveBeenCalledTimes(expectedLogs.length);
+				for (const [index, args] of info.mock.calls.entries()) {
+					expect(args).toHaveLength(1);
+					expect(JSON.parse(String(args[0]))).toEqual({
+						evt: "agent.tool",
+						threadId: thread.id,
+						...expectedLogs[index],
+						durationMs: expect.any(Number),
+					});
+				}
+				const logs = JSON.stringify(info.mock.calls);
+				for (const sensitive of [
+					query,
+					url,
+					official.apiKey,
+					relay.apiKey,
+					"synthetic-later",
+					"Sensitive upstream error",
+				])
+					expect(logs).not.toContain(sensitive);
 			} finally {
 				transport.mockRestore();
+				info.mockRestore();
 			}
 		}
 	});
