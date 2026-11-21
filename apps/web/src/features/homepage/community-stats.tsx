@@ -10,12 +10,13 @@ import { wrap } from "./classes";
 
 // The statistics service caches these totals for six hours.
 const refreshInterval = 6 * 60 * 60 * 1000;
+export const MIN_COMMUNITY_TOTAL_TO_DISPLAY = 100;
 
 export function CommunityStats() {
 	const { i18n } = useLingui();
-	const ref = useRef<HTMLElement>(null);
+	const ref = useRef<HTMLDivElement>(null);
 	const entered = useInView(ref, { once: true, amount: 0.2 });
-	const { data, isError } = useQuery(
+	const { data } = useQuery(
 		orpc.statistics.getTotals.queryOptions({
 			enabled: entered,
 			staleTime: refreshInterval,
@@ -24,10 +25,22 @@ export function CommunityStats() {
 	);
 	const labels = [t`Users`, t`Resumes`];
 	const ids = ["users", "resumes"] as const;
-	const totals = data;
-	const cachedAt = totals?.cachedAt;
+	const userCount = data?.users ?? null;
+	const resumeCount = data?.resumes ?? null;
+	const cachedAt = data?.cachedAt;
 	const cachedDate = cachedAt == null ? null : new Date(cachedAt);
 	const formattedDate = cachedDate ? i18n.date(cachedDate, { dateStyle: "medium", timeStyle: "short" }) : "";
+
+	if (
+		userCount === null ||
+		resumeCount === null ||
+		userCount < MIN_COMMUNITY_TOTAL_TO_DISPLAY ||
+		resumeCount < MIN_COMMUNITY_TOTAL_TO_DISPLAY
+	) {
+		return <div ref={ref} className="h-0 overflow-hidden" aria-hidden="true" data-community-stats-hidden="" />;
+	}
+
+	const displayTotals = { users: userCount, resumes: resumeCount };
 
 	return (
 		<section
@@ -55,14 +68,7 @@ export function CommunityStats() {
 							{labels[index]}
 						</dt>
 						<dd className="mt-[18px] font-[Manrope_Variable,sans-serif] font-extrabold text-[clamp(44px,6.4vw,92px)] leading-[1.1] tracking-[-0.09em] max-[600px]:mt-[11px] max-[600px]:text-[clamp(40px,14cqw,64px)]">
-							{totals?.[id] != null ? (
-								<RollingTotal value={totals[id]} entered={entered} />
-							) : (
-								<span className="text-[#636367]">
-									<span aria-hidden="true">···</span>
-									<span className="sr-only">{isError ? t`Total unavailable` : t`Loading total`}</span>
-								</span>
-							)}
+							<RollingTotal value={displayTotals[id]} entered={entered} />
 						</dd>
 					</div>
 				))}
@@ -72,8 +78,6 @@ export function CommunityStats() {
 					<Trans>
 						As of <time dateTime={cachedDate.toISOString()}>{formattedDate}</time>.
 					</Trans>
-				) : isError && !totals ? (
-					t`Some totals are unavailable right now.`
 				) : (
 					t`Totals are refreshed periodically.`
 				)}

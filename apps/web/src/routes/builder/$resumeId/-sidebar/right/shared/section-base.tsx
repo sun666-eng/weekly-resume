@@ -5,14 +5,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@r
 import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
 import { getSectionIcon, getSectionTitle } from "@/libs/resume/section";
-import { useSectionStore } from "../../../-store/section";
+import { isSectionCollapsed, useSectionStore } from "../../../-store/section";
 
 type Props = React.ComponentProps<typeof AccordionContent> & {
 	type: RightSidebarSection;
 };
 
 export function SectionBase({ type, className, ...props }: Props) {
-	const collapsed = useSectionStore((state) => state.sections[type]?.collapsed ?? false);
+	const collapsed = useSectionStore((state) => isSectionCollapsed(state.sections, type));
 	const toggleCollapsed = useSectionStore((state) => state.toggleCollapsed);
 	const sectionTitle = getSectionTitle(type);
 

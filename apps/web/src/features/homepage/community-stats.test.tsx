@@ -26,7 +26,7 @@ vi.mock("motion/react", async (importOriginal) => ({
 }));
 
 beforeEach(() => {
-	getTotals.mockReset().mockResolvedValue({ users: 0, resumes: 999, cachedAt });
+	getTotals.mockReset().mockResolvedValue({ users: 120, resumes: 999, cachedAt });
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 
@@ -47,10 +47,10 @@ function renderStats() {
 it("uses the server cache time and keeps the last counts and timestamp when a refresh fails", async () => {
 	const { client, getByText, container } = renderStats();
 	await waitFor(() => expect(getByText("999", { selector: ".sr-only" })).toBeInTheDocument());
-	expect(getByText("0", { selector: ".sr-only" })).toBeInTheDocument();
+	expect(getByText("120", { selector: ".sr-only" })).toBeInTheDocument();
 	expect(container.querySelector("time")).toHaveAttribute("datetime", new Date(cachedAt).toISOString());
 	const refreshedAt = cachedAt + 6 * 60 * 60 * 1000;
-	getTotals.mockResolvedValue({ users: 0, resumes: 1_000, cachedAt: refreshedAt });
+	getTotals.mockResolvedValue({ users: 150, resumes: 1_000, cachedAt: refreshedAt });
 	await act(() => client.invalidateQueries({ queryKey: ["totals"] }));
 	expect(getTotals).toHaveBeenCalledTimes(2);
 	await waitFor(() => expect(getByText("1,000", { selector: ".sr-only" })).toBeInTheDocument());
@@ -62,12 +62,18 @@ it("uses the server cache time and keeps the last counts and timestamp when a re
 	client.clear();
 });
 
-it("does not substitute an invented total when the first request fails", async () => {
-	getTotals.mockRejectedValue(new Error("Offline"));
-	const { client, getAllByText, getByText, queryByText, container } = renderStats();
-	await waitFor(() => expect(getAllByText("Total unavailable")).toHaveLength(2));
-	expect(getByText("Some totals are unavailable right now.")).toBeVisible();
-	expect(queryByText("0", { selector: ".sr-only" })).toBeNull();
-	expect(container.querySelector("time")).toBeNull();
-	client.clear();
+it("hides the vanity section on small self-hosted instances or when the first request fails", async () => {
+	getTotals.mockResolvedValueOnce({ users: 1, resumes: 2, cachedAt });
+	const first = renderStats();
+	await waitFor(() => expect(getTotals).toHaveBeenCalledTimes(1));
+	expect(first.container.querySelector("#community")).toBeNull();
+	first.client.clear();
+	first.unmount();
+
+	getTotals.mockRejectedValueOnce(new Error("Offline"));
+	const second = renderStats();
+	await waitFor(() => expect(getTotals).toHaveBeenCalledTimes(2));
+	expect(second.container.querySelector("#community")).toBeNull();
+	expect(second.queryByText("0", { selector: ".sr-only" })).toBeNull();
+	second.client.clear();
 });

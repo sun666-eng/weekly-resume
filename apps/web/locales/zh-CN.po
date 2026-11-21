@@ -3524,14 +3524,14 @@ msgstr "工作机会"
 #: src/features/auth/pages/register.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "John Doe"
-msgstr "无名氏"
+msgstr "林志远"
 
 #. Example username placeholder on profile settings form
 #. Example username placeholder on registration form
 #: src/features/auth/pages/register.tsx
 #: src/features/settings/pages/profile.tsx
 msgid "john.doe"
-msgstr "john.doe"
+msgstr "linzhiyuan"
 
 #. Import source option for standard JSON Resume format
 #: src/dialogs/resume/import.tsx
@@ -8489,7 +8489,7 @@ msgstr "备份未完成，尚未完成保护。当前内容仍保留在本页，
 
 #. js-lingui-explicit-id
 msgid "guest.backup"
-msgstr "取回本机备份"
+msgstr "导出本地备份"
 
 #. js-lingui-explicit-id
 msgid "guest.retry"
@@ -8521,7 +8521,7 @@ msgstr "保存到账号"
 
 #. js-lingui-explicit-id
 msgid "guest.formalExport"
-msgstr "正式导出"
+msgstr "导出简历"
 
 #. js-lingui-explicit-id
 msgid "guest.more"
@@ -8678,3 +8678,55 @@ msgstr "在微信中下载 PDF，请点击右上角「···」，选择「在�
 #: src/features/resume/export/use-resume-export.ts
 msgid "To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
 msgstr "在微信中保存文件，请点击右上角「···」，选择「在浏览器打开」。"
+
+#. js-lingui-explicit-id
+msgid "picture.preUploadOptions"
+msgstr "裁剪与比例选项"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.sampleActive"
+msgstr "正在预览示例排版（不写入草稿，输入后自动切换）"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.emptyHint"
+msgstr "当前为空白草稿"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.hideSample"
+msgstr "恢复空白"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.showSample"
+msgstr "预览示例排版"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/template.tsx
+msgid "Change template ({totalTemplates})"
+msgstr "更换模板（{totalTemplates} 款）"
+
+#. js-lingui-explicit-id
+msgid "guest.accountFeatures.title"
+msgstr "账号专属功能"
+
+#. js-lingui-explicit-id
+msgid "guest.accountFeatures.description"
+msgstr "保存到账号后可使用在线分享链接、访问统计与编辑器内 ATS 检查。"
+
+#. js-lingui-explicit-id
+msgid "home.hero.subtitle"
+msgstr "把你的经历稳稳落到纸上，不必再和排版较劲。"
+
+#. js-lingui-explicit-id
+msgid "subpage.nav.home"
+msgstr "首页"
+
+#. js-lingui-explicit-id
+msgid "auth.backToDraft"
+msgstr "返回本机草稿继续编辑"
+
+#. js-lingui-explicit-id
+msgid "auth.backToHome"
+msgstr "返回首页"
+
+#. js-lingui-explicit-id
+msgid "auth.placeholder.email"
+msgstr "lin.zhiyuan@example.com"

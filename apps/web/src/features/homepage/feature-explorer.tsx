@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import {
 	ArrowRightIcon,
@@ -14,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useRef, useState } from "react";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { cn } from "@reactive-resume/utils/style";
 
 const demoClass =
@@ -30,6 +32,12 @@ const toolLabelClass = "text-[11px] max-[540px]:text-[10px]";
 const stageDotColors = ["bg-[#8898b7]", "bg-[#d9b67b]", "bg-[#9cbd9e]"];
 
 export function FeatureExplorer() {
+	const { i18n } = useLingui();
+	const chinese = isChineseResumeLocale(i18n.locale);
+	const sampleAuthor = chinese ? "林志远" : "Alex Morgan";
+	const sampleInitials = chinese ? "林" : "AM";
+	const sampleCompany = chinese ? "星澜科技" : "Northstar Studio";
+	const sampleCompanyBadge = chinese ? "星" : "n.";
 	const [feature, setFeature] = useState("writing");
 	const [accepted, setAccepted] = useState(false);
 	const [sharing, setSharing] = useState("public");
@@ -95,7 +103,7 @@ export function FeatureExplorer() {
 							<span>
 								<Trans>Example edit</Trans>
 							</span>
-							<span>Alex Morgan</span>
+							<span>{sampleAuthor}</span>
 						</div>
 						<div className="transform-[perspective(1000px)_rotateX(3deg)_rotateY(-3deg)] mx-auto mt-[25px] min-h-[224px] max-w-[430px] rounded-[2px] border border-[#d9d6d0] bg-[#efeee9] px-[30px] pt-7 pb-[38px] text-[#343239] shadow-[0_10px_18px_#0002] max-[540px]:px-6 max-[540px]:pt-[23px] max-[540px]:pb-8">
 							<span className="text-[#735c9a] text-[11px]">
@@ -204,9 +212,9 @@ export function FeatureExplorer() {
 										{id === "public" ? (
 											<>
 												<div className="grid size-11 place-items-center rounded-full bg-[#45382e] text-[#decfbf] text-[12px]">
-													AM
+													{sampleInitials}
 												</div>
-												<h3 className="mt-3 font-medium text-[19px] tracking-[-0.03em]">Alex Morgan</h3>
+												<h3 className="mt-3 font-medium text-[19px] tracking-[-0.03em]">{sampleAuthor}</h3>
 												<p className="mt-1.5 text-(--home-muted) text-[12px]">
 													<Trans>Product designer</Trans>
 												</p>
@@ -283,12 +291,12 @@ export function FeatureExplorer() {
 									className={`${jobCardClass} transform-[translateX(calc(var(--stage)_*_(100%_+_var(--home-board-gap))))_rotate(calc(var(--stage)_*_3deg_-_2deg))] absolute top-0 left-0 w-[calc((100%_-_2_*_var(--home-board-gap))_/_3)] border-[#4b4b51] bg-[#2a2a2e] text-(--home-ink) shadow-[0_5px_12px_#0002] [transition:transform_460ms_cubic-bezier(0.23,1,0.32,1)] group-data-[instant=true]/explorer:transition-none`}
 								>
 									<div className="mb-4 grid size-[30px] place-items-center rounded-[4px] bg-[#d8c4ac] font-[Georgia,serif] font-semibold text-[#34302a] text-[19px] leading-none">
-										n.
+										{sampleCompanyBadge}
 									</div>
 									<strong className="block font-medium text-[12px] max-[540px]:text-[10px]">
 										<Trans>Product designer</Trans>
 									</strong>
-									<p className="mt-[5px] text-(--home-muted) text-[10px] max-[540px]:text-[9px]">Northstar Studio</p>
+									<p className="mt-[5px] text-(--home-muted) text-[10px] max-[540px]:text-[9px]">{sampleCompany}</p>
 									<span className="mt-[18px] block text-[#bab4c7] text-[9px] max-[540px]:text-[8px]">
 										<Trans>Resume attached</Trans>
 									</span>

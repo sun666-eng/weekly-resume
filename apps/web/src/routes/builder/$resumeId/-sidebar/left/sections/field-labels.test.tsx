@@ -91,6 +91,8 @@ describe("builder field labels", () => {
 		const user = userEvent.setup();
 		renderSection(<PictureSectionBuilder />);
 
+		expect(screen.queryByRole("group", { name: "Fit" })).not.toBeInTheDocument();
+		await user.click(screen.getByRole("button", { name: "Crop & ratio options" }));
 		expect(screen.getByRole("group", { name: "Fit" })).toBeInTheDocument();
 		await user.click(screen.getByRole("button", { name: "Contain" }));
 		await waitFor(() => expect(state.data.picture.fit).toBe("contain"));
@@ -144,6 +146,7 @@ describe("builder field labels", () => {
 		const user = userEvent.setup();
 		renderSection(<PictureSectionBuilder />);
 
+		await user.click(screen.getByRole("button", { name: "Crop & ratio options" }));
 		await user.click(screen.getByRole("button", { name: "Contain" }));
 		const file = new File(["full-image"], "full.png", { type: "image/png" });
 		const input = screen.getAllByLabelText("Upload picture")[0] as HTMLInputElement;
@@ -168,6 +171,7 @@ describe("builder field labels", () => {
 		expect(screen.getByRole("textbox", { name: "Job intention" })).toBeInTheDocument();
 		expect(screen.getByRole("textbox", { name: "Personal blog" })).toBeInTheDocument();
 		expect(screen.getByRole("textbox", { name: "Website" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: /photo is optional/i })).not.toBeInTheDocument();
 
 		await user.type(screen.getByRole("textbox", { name: "Age" }), "25");
 		await waitFor(() => expect(state.data.basics.age).toBe("25"));
@@ -177,6 +181,7 @@ describe("builder field labels", () => {
 	});
 
 	it("disables fit and upload controls inside the builder lock fieldset", () => {
+		state.data.picture.url = "/uploads/picture.png";
 		renderSection(
 			<fieldset disabled>
 				<PictureSectionBuilder />
@@ -184,6 +189,6 @@ describe("builder field labels", () => {
 		);
 
 		expect(screen.getByRole("button", { name: "Contain" })).toBeDisabled();
-		expect(screen.getAllByLabelText("Upload picture")[0]).toBeDisabled();
+		expect(screen.getAllByLabelText("Replace picture")[0]).toBeDisabled();
 	});
 });

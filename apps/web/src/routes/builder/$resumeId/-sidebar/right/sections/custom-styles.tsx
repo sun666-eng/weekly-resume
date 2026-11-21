@@ -1,11 +1,11 @@
 import { lazy, Suspense } from "react";
-import { useSectionStore } from "../../../-store/section";
+import { isSectionCollapsed, useSectionStore } from "../../../-store/section";
 import { SectionBase } from "../shared/section-base";
 
 const StylesheetEditorShell = lazy(() => import("@/features/resume/stylesheet/editor"));
 
 export function CustomStylesSectionBuilder() {
-	const collapsed = useSectionStore((state) => state.sections.styles?.collapsed ?? false);
+	const collapsed = useSectionStore((state) => isSectionCollapsed(state.sections, "styles"));
 
 	return (
 		<SectionBase type="styles" className="space-y-4">

@@ -1,11 +1,12 @@
 import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, TranslateIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { m, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef } from "react";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
-import { GithubStarsButton } from "@/components/input/github-stars-button";
+import { APP_NAME } from "@reactive-resume/utils/brand";
 import { LocaleCombobox } from "@/features/locale/combobox";
 import { ThemeToggleButton } from "@/features/theme/toggle-button";
 
@@ -49,8 +50,13 @@ export function Header() {
 			transition={{ duration: 0.35, ease: "easeOut" }}
 		>
 			<nav aria-label={t`Main navigation`} className="container mx-auto flex items-center gap-x-4 p-3 lg:px-12">
-				<Link to="/" className="transition-opacity hover:opacity-80" aria-label={t`Go to homepage`}>
-					<BrandIcon className="size-10" />
+				<Link
+					to="/"
+					className="inline-flex items-center gap-x-2.5 transition-opacity hover:opacity-80"
+					aria-label={t`Go to homepage`}
+				>
+					<BrandIcon className="size-9" />
+					<span className="hidden font-semibold text-sm tracking-tight sm:inline">{APP_NAME}</span>
 				</Link>
 
 				<div className="ml-auto flex items-center gap-x-2">
@@ -64,20 +70,29 @@ export function Header() {
 
 					<ThemeToggleButton />
 
-					<div className="hidden items-center gap-x-4 sm:flex">
-						<GithubStarsButton />
+					<Button
+						size="sm"
+						variant="ghost"
+						nativeButton={false}
+						className="hidden sm:inline-flex"
+						aria-label={t`Go to dashboard`}
+						render={
+							<Link to="/dashboard">
+								<Trans>Dashboard</Trans>
+							</Link>
+						}
+					/>
 
-						<Button
-							size="icon"
-							nativeButton={false}
-							aria-label={t`Go to dashboard`}
-							render={
-								<Link to="/dashboard">
-									<ArrowRightIcon aria-hidden="true" />
-								</Link>
-							}
-						/>
-					</div>
+					<Button
+						size="sm"
+						nativeButton={false}
+						render={
+							<Link to="/local-draft">
+								<Trans id="guest.start">Create a resume now</Trans>
+								<ArrowRightIcon aria-hidden="true" />
+							</Link>
+						}
+					/>
 				</div>
 			</nav>
 		</m.header>

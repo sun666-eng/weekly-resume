@@ -93,4 +93,18 @@ describe("Typography hyphenation", () => {
 		expect(state.data.metadata.typography.hyphenation).toBe(true);
 		expect(state.data.metadata.page.locale).toBe("en-US");
 	});
+
+	it("hides German hyphenation for Chinese resumes unless already enabled", () => {
+		state.data.metadata.page.locale = "zh-CN";
+		state.data.metadata.typography.hyphenation = undefined;
+		const view = render(<Typography />);
+
+		expect(screen.queryByRole("switch", { name: "Hyphenation" })).toBeNull();
+
+		state.data = structuredClone(state.data);
+		state.data.metadata.typography.hyphenation = true;
+		view.rerender(<Typography />);
+
+		expect(screen.getByRole("switch", { name: "Hyphenation" })).toBeChecked();
+	});
 });

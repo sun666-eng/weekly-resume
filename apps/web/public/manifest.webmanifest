@@ -1,7 +1,7 @@
 {
 	"name": "Weekly Resume",
 	"short_name": "Weekly Resume",
-	"description": "免费开源的简历制作工具",
+	"description": "专业在线简历制作工具",
 	"id": "/?source=pwa",
 	"start_url": "/?source=pwa",
 	"scope": "/",

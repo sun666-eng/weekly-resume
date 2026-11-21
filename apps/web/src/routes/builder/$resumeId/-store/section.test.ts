@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { afterEach, describe, expect, it } from "vitest";
-import { useSectionStore } from "./section";
+import { isSectionCollapsed, useSectionStore } from "./section";
 
 afterEach(() => {
 	useSectionStore.setState({ sections: {} });
@@ -58,5 +58,14 @@ describe("useSectionStore", () => {
 		const sections = useSectionStore.getState().sections;
 		expect(sections.skills?.collapsed).toBe(false);
 		expect(sections.experience?.collapsed).toBe(true);
+	});
+
+	it("defaults custom styles to collapsed and expands on the first toggle", () => {
+		expect(isSectionCollapsed(useSectionStore.getState().sections, "styles")).toBe(true);
+		expect(isSectionCollapsed(useSectionStore.getState().sections, "template")).toBe(false);
+
+		useSectionStore.getState().toggleCollapsed("styles");
+		expect(useSectionStore.getState().sections.styles?.collapsed).toBe(false);
+		expect(isSectionCollapsed(useSectionStore.getState().sections, "styles")).toBe(false);
 	});
 });

@@ -3,6 +3,7 @@ import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { useStore } from "@tanstack/react-form";
 import { resolveOfflineFontFamily } from "@reactive-resume/fonts";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { typographySchema } from "@reactive-resume/schema/resume/data";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import {
@@ -51,6 +52,8 @@ type TypographyForm = ReturnType<typeof useTypographyForm>;
 function TypographySectionForm() {
 	const resume = useResume();
 	const typography = resume?.data.metadata.typography;
+	const pageLocale = resume?.data.metadata.page.locale ?? "";
+	const showHyphenation = !isChineseResumeLocale(pageLocale) || typography?.hyphenation === true;
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {
@@ -80,31 +83,33 @@ function TypographySectionForm() {
 			<TypographyGroupFields form={form} prefix="body" handleAutoSave={handleAutoSave} />
 			<TypographyFieldGroup label={<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">Heading</Trans>} />
 			<TypographyGroupFields form={form} prefix="heading" handleAutoSave={handleAutoSave} />
-			<form.Field name="hyphenation">
-				{(field) => (
-					<FormItem className="col-span-full mt-2">
-						<div className="flex items-center gap-x-3">
-							<FormControl
-								render={
-									<Switch
-										checked={field.state.value === true}
-										onCheckedChange={(checked) => {
-											field.handleChange(checked);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-							<FormLabel>
-								<Trans>Hyphenation</Trans>
-							</FormLabel>
-						</div>
-						<FormDescription>
-							<Trans>Currently available for German resumes. Uses the language set in Page.</Trans>
-						</FormDescription>
-					</FormItem>
-				)}
-			</form.Field>
+			{showHyphenation && (
+				<form.Field name="hyphenation">
+					{(field) => (
+						<FormItem className="col-span-full mt-2">
+							<div className="flex items-center gap-x-3">
+								<FormControl
+									render={
+										<Switch
+											checked={field.state.value === true}
+											onCheckedChange={(checked) => {
+												field.handleChange(checked);
+												handleAutoSave();
+											}}
+										/>
+									}
+								/>
+								<FormLabel>
+									<Trans>Hyphenation</Trans>
+								</FormLabel>
+							</div>
+							<FormDescription>
+								<Trans>Currently available for German resumes. Uses the language set in Page.</Trans>
+							</FormDescription>
+						</FormItem>
+					)}
+				</form.Field>
+			)}
 		</form>
 	);
 }

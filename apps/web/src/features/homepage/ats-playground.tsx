@@ -4,6 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, ArrowUpRightIcon, FilePdfIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { isChineseResumeLocale } from "@reactive-resume/schema/resume/cn-fields";
 import { templatePreviewImage, templatePreviewPdf } from "@/libs/template-assets";
 import "./ats-playground.css";
 
@@ -16,6 +17,8 @@ type AtsPlaygroundProps = {
 
 export default function AtsPlayground({ onTemporaryInputChange }: AtsPlaygroundProps) {
 	const { i18n } = useLingui();
+	const chinese = isChineseResumeLocale(i18n.locale);
+	const sampleFileLabel = chinese ? "林志远-Java后端开发.pdf" : "rhyhorn.pdf";
 	const inputId = useId();
 	const controllerRef = useRef<AbortController | null>(null);
 	const [file, setFile] = useState<File | null>(null);
@@ -103,7 +106,7 @@ export default function AtsPlayground({ onTemporaryInputChange }: AtsPlaygroundP
 						/>
 					)}
 				</div>
-				<p className="wrap-anywhere text-[14px]">{file?.name ?? "rhyhorn.pdf"}</p>
+				<p className="wrap-anywhere text-[14px]">{file?.name ?? sampleFileLabel}</p>
 				<span className="mt-[5px] block text-(--home-muted) text-[12px]">
 					{file ? t`Stays in your browser` : t`A real sample PDF`}
 				</span>

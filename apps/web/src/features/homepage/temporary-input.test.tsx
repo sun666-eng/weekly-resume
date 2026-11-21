@@ -24,11 +24,9 @@ vi.mock("motion/react", async (original) => ({
 	...(await original<typeof import("motion/react")>()),
 	useInView: () => true,
 }));
-vi.mock("@/components/input/github-stars-button", () => ({ GithubStarsButton: () => null }));
 vi.mock("@/features/home-motion/decorations", () => ({ HeroMotion: () => null }));
 vi.mock("./community-stats", () => ({ CommunityStats: () => null }));
 vi.mock("./feature-explorer", () => ({ FeatureExplorer: () => null }));
-vi.mock("./languages-showcase", () => ({ default: () => null }));
 vi.mock("./site-footer", () => ({ SiteFooter: () => null }));
 vi.mock("./page-background", () => ({ PageBackground: () => null }));
 vi.mock("./export-playground", () => ({ default: () => <button type="button">Sample export</button> }));

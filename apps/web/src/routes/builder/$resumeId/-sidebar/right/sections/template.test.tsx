@@ -53,13 +53,20 @@ describe("TemplateSectionBuilder", () => {
 		expect(screen.getByText("ATS friendly")).toBeInTheDocument();
 	});
 
-	it("opens the template gallery dialog when the preview is clicked", () => {
+	it("opens the template gallery dialog when the preview or switch button is clicked", () => {
 		renderTemplate();
 
 		const preview = screen.getByRole("img").closest("button") as HTMLButtonElement;
 		fireEvent.click(preview);
 
-		const state = useDialogStore.getState();
+		let state = useDialogStore.getState();
+		expect(state.open).toBe(true);
+		expect(state.activeDialog?.type).toBe("resume.template.gallery");
+
+		useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });
+
+		fireEvent.click(screen.getByRole("button", { name: /Change template \(15\)/ }));
+		state = useDialogStore.getState();
 		expect(state.open).toBe(true);
 		expect(state.activeDialog?.type).toBe("resume.template.gallery");
 	});

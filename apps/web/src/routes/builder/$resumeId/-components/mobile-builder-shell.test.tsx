@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import type { PropsWithChildren } from "react";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -72,7 +72,7 @@ describe("mobile builder controls", () => {
 		expect(toggle).toHaveBeenCalledOnce();
 	});
 
-	it("keeps guest actions enabled alongside a truncatable local status", () => {
+	it("keeps guest actions enabled alongside a truncatable local status", async () => {
 		const guest = {
 			status: "已暂存到此浏览器",
 			requestAction: vi.fn(),
@@ -90,16 +90,41 @@ describe("mobile builder controls", () => {
 		);
 		const header = screen.getByRole("banner");
 		expect(header).toHaveClass("px-2", "gap-1.5");
-		expect(within(header).getAllByRole("button")).toHaveLength(5);
+		expect(within(header).getAllByRole("button")).toHaveLength(4);
 		expect(screen.getByRole("status")).toHaveClass("truncate");
 		const save = screen.getByRole("button", { name: "Save to account" });
-		const download = screen.getByRole("button", { name: "Formal export" });
+		const download = screen.getByRole("button", { name: "Export resume" });
+		expect(save).toHaveClass("border-input");
+		expect(download).toHaveClass("bg-primary");
 		for (const button of [save, download]) expect(button).toHaveClass("shrink-0", "whitespace-nowrap", "text-xs");
 		fireEvent.click(save);
 		expect(guest.requestAction).toHaveBeenCalledWith("save");
-		fireEvent.click(screen.getByRole("button", { name: "Retrieve local backup" }));
-		expect(guest.backup).toHaveBeenCalledOnce();
+		fireEvent.click(screen.getByRole("button", { name: "More draft actions" }));
+		fireEvent.click(await screen.findByRole("button", { name: "Export local backup" }));
+		await waitFor(() => expect(guest.backup).toHaveBeenCalledOnce());
 		fireEvent.click(download);
 		expect(screen.getByRole("dialog")).toBeVisible();
+	});
+
+	it("surfaces local backup directly in the header when browser storage fails", () => {
+		const guest = {
+			status: "暂存失败：可以取回本机备份",
+			requestAction: vi.fn(),
+			backup: vi.fn(),
+			replaceData: vi.fn(),
+			clear: vi.fn(),
+			showHelp: vi.fn(),
+			photoBusy: vi.fn(),
+		};
+		render(
+			<GuestContext.Provider value={guest}>
+				<GuestHeader />
+			</GuestContext.Provider>,
+			{ wrapper },
+		);
+		const header = screen.getByRole("banner");
+		expect(within(header).getAllByRole("button")).toHaveLength(5);
+		fireEvent.click(within(header).getByRole("button", { name: "Export local backup" }));
+		expect(guest.backup).toHaveBeenCalledOnce();
 	});
 });

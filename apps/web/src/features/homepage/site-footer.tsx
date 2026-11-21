@@ -1,10 +1,14 @@
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
+import { TranslateIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
 import { CrowdMotion } from "@/features/home-motion/decorations";
+import { LocaleCombobox } from "@/features/locale/combobox";
+import { localeMap, resolveLocale } from "@/libs/locale";
 import { wrap } from "./classes";
 
 type FooterPath = "/dashboard" | "/ats-checker" | "/local-draft";
@@ -44,6 +48,9 @@ function FooterColumnLink({ link }: { link: FooterLink }) {
 }
 
 export function SiteFooter({ startPath = "/dashboard" }: SiteFooterProps) {
+	const { i18n } = useLingui();
+	const currentLocaleLabel = i18n._(localeMap[resolveLocale(i18n.locale)]);
+
 	return (
 		<footer id="footer" className="relative isolate z-1 overflow-clip border-(--home-line) border-t">
 			<div
@@ -92,15 +99,29 @@ export function SiteFooter({ startPath = "/dashboard" }: SiteFooterProps) {
 				<p>
 					<Trans>Licensed under MIT.</Trans>
 				</p>
-				<p>
-					<bdi className="tabular-nums">v{__APP_VERSION__}</bdi>
-				</p>
+				<div className="flex flex-wrap items-center gap-4">
+					<LocaleCombobox
+						render={
+							<button
+								type="button"
+								aria-label={t`Change language`}
+								className="inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded border border-(--home-line) bg-transparent px-2.5 py-1 text-[#a5a5ab] text-[12px] transition-colors hover:border-(--home-muted) hover:text-(--home-ink)"
+							>
+								<TranslateIcon size={14} aria-hidden="true" />
+								<span>{currentLocaleLabel}</span>
+							</button>
+						}
+					/>
+					<p>
+						<bdi className="tabular-nums">v{__APP_VERSION__}</bdi>
+					</p>
+				</div>
 			</div>
 
 			<div className={cn(wrap, "@container mt-10 max-[540px]:mt-7")}>
 				<m.p
 					aria-hidden="true"
-					className="select-none bg-gradient-to-b from-(--home-ink) from-45% to-[rgb(241_240_235/7%)] bg-clip-text pb-1.5 font-[Manrope_Variable,sans-serif] font-bold text-[clamp(28px,6.5cqw,72px)] text-transparent leading-[1.12] tracking-[-0.03em]"
+					className="select-none bg-gradient-to-b from-(--home-ink) from-55% to-[rgb(241_240_235/30%)] bg-clip-text pb-3.5 font-[Manrope_Variable,sans-serif] font-bold text-[clamp(28px,6.5cqw,72px)] text-transparent leading-[1.2] tracking-[-0.03em]"
 					initial={{ opacity: 0, y: 24 }}
 					whileInView={{ opacity: 1, y: 0 }}
 					viewport={{ once: true, amount: 0.3 }}
