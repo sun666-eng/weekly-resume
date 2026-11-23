@@ -1,3 +1,5 @@
+import type { UIMessage } from "ai";
+import type { buildDeepSeekWebTools } from "./deepseek-web-tools";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ORPCError } from "@orpc/client";
 
@@ -242,7 +244,12 @@ describe("system provider threads", () => {
 			vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
 			const primary = { provider: "openai", model: "gpt-5", apiKey: "synthetic-primary", baseURL: "" };
 			const endpoints =
-				stage === "step" ? [primary] : [primary, { provider: "deepseek", model: "official", apiKey: "synthetic-last" }];
+				stage === "step"
+					? [primary]
+					: [
+							primary,
+							{ provider: "deepseek", model: "relay", baseURL: "https://relay.example/v1", apiKey: "synthetic-last" },
+						];
 			const systemConfig = {
 				...primary,
 				endpoints,
@@ -381,6 +388,218 @@ describe("system provider threads", () => {
 			expect(dbMock.insert).not.toHaveBeenCalled();
 		},
 	);
+});
+
+describe("Agent web research configuration", () => {
+	const official = {
+		provider: "deepseek",
+		model: "deepseek-flash",
+		apiKey: "synthetic-official",
+		baseURL: "https://api.deepseek.com/v1/",
+	};
+	const relay = {
+		provider: "openai-compatible",
+		model: "relay",
+		baseURL: "https://relay.example/v1",
+		apiKey: "synthetic-relay",
+	};
+	const laterOfficial = { ...official, model: "later-official", apiKey: "synthetic-later" };
+	const sensitiveOfficial = { ...official, model: `model-${relay.apiKey}`, baseURL: undefined };
+	const native = { provider: "openai", model: "gpt-5", apiKey: "synthetic-openai", baseURL: "" };
+	it.each([
+		{ name: "personal", endpoints: undefined, primary: official, research: true, nativeSearch: false },
+		{ name: "official system node", endpoints: [official], primary: official, research: true, nativeSearch: false },
+		{
+			name: "official-only system chain",
+			endpoints: [official, laterOfficial],
+			primary: official,
+			research: true,
+			nativeSearch: false,
+		},
+		{
+			name: "official nodes ahead of the configured relay",
+			endpoints: [relay, official, laterOfficial],
+			prioritized: [official, laterOfficial, relay],
+			primary: relay,
+			research: true,
+			nativeSearch: false,
+		},
+		{
+			name: "official model containing another endpoint's credential",
+			endpoints: [relay, sensitiveOfficial, native],
+			prioritized: [sensitiveOfficial, relay, native],
+			displayedModel: "[redacted]",
+			primary: relay,
+			research: true,
+			nativeSearch: false,
+		},
+		{
+			name: "multi-node OpenAI without official DeepSeek",
+			endpoints: [native, relay],
+			primary: native,
+			research: false,
+			nativeSearch: false,
+		},
+		{ name: "personal native OpenAI", endpoints: undefined, primary: native, research: false, nativeSearch: true },
+	])("configures the model, tools and first read for $name", async (fixture) => {
+		const { endpoints, prioritized, displayedModel, primary, research, nativeSearch } = fixture;
+		const [
+			{ agentService },
+			{ convertToModelMessages, ToolLoopAgent },
+			toolModule,
+			{ getAgentModel },
+			{ agentStreamLifecycle },
+		] = await Promise.all([
+			import("./service"),
+			import("ai"),
+			import("./tools"),
+			import("../ai/service"),
+			import("./streams"),
+		]);
+		const realTools = await vi.importActual<typeof toolModule>("./tools");
+		vi.mocked(toolModule.buildAgentTools).mockImplementationOnce(realTools.buildAgentTools);
+		vi.mocked(toolModule.buildAgentInstructions).mockImplementationOnce(realTools.buildAgentInstructions);
+		const thread = buildActiveThread({ aiProviderId: endpoints ? null : "personal" });
+		const message = {
+			id: "research",
+			role: "user" as const,
+			parts: [{ type: "text" as const, text: "Research this role" }],
+		};
+		const row = { id: "row", role: message.role, sequence: 0, uiMessage: message };
+		dbMock.select
+			.mockReturnValueOnce(selectLimitResult([thread]))
+			.mockReturnValueOnce(selectWhereResult([{ total: 2 }]))
+			.mockReturnValueOnce(selectOrderByResult([row]));
+		dbMock.insert.mockReturnValue({ values: () => ({ returning: async () => [row] }) });
+		claimActiveAgentRunMock.mockResolvedValue(true);
+		const systemConfig =
+			endpoints &&
+			Object.freeze({
+				...primary,
+				endpoints: Object.freeze(endpoints),
+				label: "Free",
+				dailyLimit: 15,
+				cooldownMs: 180000,
+				defaultRelayTimeoutMs: 12000,
+			});
+		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
+			id: endpoints ? "__system_default__" : "personal",
+			...primary,
+			systemConfig,
+		});
+		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: "Research this role" }]);
+		const usage = { totalTokens: 7 };
+		type StreamHooks = {
+			messageMetadata(input: { part: { type: "finish"; totalUsage: typeof usage } }): unknown;
+			onFinish(input: { responseMessage: UIMessage; isAborted: boolean }): Promise<void>;
+		};
+		const toUIMessageStream = vi.fn((_hooks: StreamHooks) => new ReadableStream());
+		vi.mocked(ToolLoopAgent).mockImplementationOnce(
+			class {
+				stream() {
+					return Promise.resolve({ toUIMessageStream });
+				}
+			} as never,
+		);
+		vi.mocked(agentStreamLifecycle.create).mockImplementationOnce((_id, makeStream) => {
+			makeStream();
+			return Promise.resolve(new ReadableStream());
+		});
+		await agentService.messages.send({ userId: thread.userId, threadId: thread.id, message });
+		const hooks = toUIMessageStream.mock.lastCall?.[0];
+		if (!hooks) throw new Error("Missing UI message stream callbacks");
+		const metadata = hooks.messageMetadata({ part: { type: "finish", totalUsage: usage } });
+		await hooks.onFinish({
+			responseMessage: { id: "reply", role: "assistant", parts: [], metadata },
+			isAborted: false,
+		});
+
+		const first = prioritized?.[0] ?? primary;
+		const expectedProvider = { ...first, baseURL: first.baseURL ?? "" };
+		expect(getAgentModel).toHaveBeenLastCalledWith(
+			expectedProvider,
+			systemConfig && { ...systemConfig, ...expectedProvider, endpoints: prioritized ?? endpoints },
+		);
+		if (!prioritized) expect(vi.mocked(getAgentModel).mock.lastCall?.[1]).toBe(systemConfig);
+		expect(metadata).toEqual({ model: displayedModel ?? first.model, usage });
+		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
+		const tools = settings?.tools;
+		expect(Boolean(tools?.lookup_online_sources)).toBe(research);
+		expect(Boolean(tools?.read_public_url)).toBe(research);
+		expect(Boolean(tools?.web_search)).toBe(nativeSearch);
+		expect(tools).not.toHaveProperty("web_fetch");
+		expect(toolModule.buildAgentInstructions).toHaveBeenLastCalledWith({
+			webSearchTool: research ? "lookup_online_sources" : nativeSearch ? "web_search" : undefined,
+			hasPublicUrlReader: research,
+		});
+		if (research) {
+			expect(settings?.instructions).toContain("Use lookup_online_sources");
+			expect(settings?.instructions).toContain("Use read_public_url");
+			expect(settings?.instructions).not.toMatch(/web_search|web_fetch/);
+		} else if (nativeSearch) {
+			expect(settings?.instructions).toContain("Use web_search");
+			expect(settings?.instructions).not.toMatch(/lookup_online_sources|read_public_url|web_fetch/);
+		} else expect(settings?.instructions).toContain("Live web research is unavailable");
+		expect(await settings?.prepareStep?.({ stepNumber: 0, messages: [] } as never)).toEqual({
+			toolChoice: { type: "tool", toolName: "read_resume" },
+			...(research ? { providerOptions: { deepseek: { thinking: { type: "disabled" } } } } : {}),
+		});
+		expect(await settings?.prepareStep?.({ stepNumber: 1, messages: [] } as never)).toEqual({});
+		if (research) {
+			const web = tools as ReturnType<typeof buildDeepSeekWebTools>;
+			const transport = vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ results: [] }));
+			const info = vi.spyOn(console, "info").mockImplementation(() => undefined);
+			try {
+				const execution = { toolCallId: "tool-call", messages: [], context: {} };
+				const query = "synthetic-sensitive-query";
+				const url = "https://careers.example/synthetic-private-path";
+				await web.lookup_online_sources.execute({ query }, execution);
+				await web.read_public_url.execute({ url }, execution);
+				await web.lookup_online_sources.execute({ query }, execution);
+				const fetchPage = web.read_public_url.execute({ url }, execution);
+				if (endpoints) await expect(fetchPage).rejects.toThrow("limit for this turn");
+				else await expect(fetchPage).resolves.toMatchObject({ url });
+				transport.mockResolvedValueOnce(new Response(`Sensitive upstream error: ${official.apiKey}`, { status: 403 }));
+				await expect(web.lookup_online_sources.execute({ query }, execution)).rejects.toThrow(
+					endpoints ? "limit for this turn" : "does not have permission",
+				);
+				expect(transport).toHaveBeenCalledTimes(endpoints ? 3 : 5);
+				for (const [, init] of transport.mock.calls) {
+					expect(new Headers(init?.headers).get("Authorization")).toBe(`Bearer ${official.apiKey}`);
+				}
+				const expectedLogs = [
+					{ tool: "lookup_online_sources", ok: true },
+					{ tool: "read_public_url", ok: true },
+					{ tool: "lookup_online_sources", ok: true },
+					{ tool: "read_public_url", ok: !endpoints },
+					{ tool: "lookup_online_sources", ok: false },
+				];
+				expect(info).toHaveBeenCalledTimes(expectedLogs.length);
+				for (const [index, args] of info.mock.calls.entries()) {
+					expect(args).toHaveLength(1);
+					expect(JSON.parse(String(args[0]))).toEqual({
+						evt: "agent.tool",
+						threadId: thread.id,
+						...expectedLogs[index],
+						durationMs: expect.any(Number),
+					});
+				}
+				const logs = JSON.stringify(info.mock.calls);
+				for (const sensitive of [
+					query,
+					url,
+					official.apiKey,
+					relay.apiKey,
+					"synthetic-later",
+					"Sensitive upstream error",
+				])
+					expect(logs).not.toContain(sensitive);
+			} finally {
+				transport.mockRestore();
+				info.mockRestore();
+			}
+		}
+	});
 });
 
 function buildAttachment(overrides: Record<string, unknown> = {}) {
@@ -1161,8 +1380,8 @@ describe("agentService.messages.send", () => {
 		claimActiveAgentRunMock.mockResolvedValue(true);
 		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
 			id: "provider-1",
-			provider: "openai",
-			model: "gpt-5",
+			provider: "deepseek",
+			model: "deepseek-flash",
 			apiKey: "secret",
 			baseURL: null,
 		});
@@ -1199,6 +1418,8 @@ describe("agentService.messages.send", () => {
 			message: answeredAssistantMessage.uiMessage as any,
 		});
 
+		const settings = vi.mocked(ToolLoopAgent).mock.lastCall?.[0];
+		expect(await settings?.prepareStep?.({ stepNumber: 0, messages: [] } as never)).toEqual({});
 		const onFinish = uiStreamOptions?.onFinish as (event: Record<string, unknown>) => Promise<void>;
 		const continuedMessage = {
 			...answeredAssistantMessage.uiMessage,
@@ -1220,7 +1441,7 @@ describe("agentService.messages.send", () => {
 		const messageMetadata = uiStreamOptions?.messageMetadata as (options: { part: Record<string, unknown> }) => unknown;
 		expect(messageMetadata({ part: { type: "finish", totalUsage: { totalTokens: 42 } } })).toEqual({
 			usage: { totalTokens: 42 },
-			model: "gpt-5",
+			model: "deepseek-flash",
 		});
 		expect(messageMetadata({ part: { type: "text-delta" } })).toBeUndefined();
 	});

@@ -4,6 +4,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage } from "ai";
 import type { SystemQuotaReservation } from "../ai/quota";
 import type { GetModelInput } from "../ai/service";
+import type { SystemAiConfig, SystemAiEndpoint } from "../ai/system-config";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
@@ -22,6 +23,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { planAgentRollback } from "@reactive-resume/resume/agent-rollback";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
+import { isDirectDeepSeekProvider } from "../ai/capabilities";
 import { assertAgentEnvironment, getAgentToolApprovalSecret } from "../ai/credentials";
 import { reserveSystemQuota } from "../ai/quota";
 import { getAgentModel } from "../ai/service";
@@ -760,16 +762,40 @@ async function applyResumePatch(input: {
 	};
 }
 
+function prioritizeAgentSystemConfig(config: SystemAiConfig): SystemAiConfig {
+	const directEndpoints = config.endpoints.filter(isDirectDeepSeekProvider);
+	const first = directEndpoints[0];
+	if (!first || directEndpoints.length === config.endpoints.length) return config;
+
+	return {
+		...config,
+		provider: first.provider,
+		model: first.model,
+		apiKey: first.apiKey,
+		baseURL: first.baseURL ?? "",
+		endpoints: [...directEndpoints, ...config.endpoints.filter((endpoint) => !isDirectDeepSeekProvider(endpoint))],
+	};
+}
+
+function buildAgentStepOptions(stepNumber: number, forceFreshRead: boolean, hasDirectDeepSeek: boolean) {
+	if (!forceFreshRead || stepNumber !== 0) return {};
+	return {
+		toolChoice: { type: "tool", toolName: "read_resume" } as const,
+		// DeepSeek thinking mode rejects a named tool choice, including on a fallback node.
+		...(hasDirectDeepSeek ? { providerOptions: { deepseek: { thinking: { type: "disabled" } } } } : {}),
+	};
+}
+
 function createAgent(input: {
 	userId: string;
 	threadId: string;
 	resumeId: string;
-	forceFreshRead?: boolean;
+	forceFreshRead: boolean;
 	draftRowId?: string;
 	requirePatchApproval?: boolean;
 	provider: GetModelInput & { baseURL: string };
 	model: ReturnType<typeof getAgentModel>;
-	systemEndpointCount: number;
+	systemEndpoints: SystemAiEndpoint[] | undefined;
 	onSystemStreamError: () => Promise<void> | undefined;
 }) {
 	// One greppable JSON line per tool execution.
@@ -796,8 +822,15 @@ function createAgent(input: {
 			}
 		};
 
+	const systemEndpointCount = input.systemEndpoints?.length ?? 0;
+	const officialEndpoint = input.systemEndpoints?.find(isDirectDeepSeekProvider);
+	const hasDirectDeepSeek = input.systemEndpoints ? !!officialEndpoint : isDirectDeepSeekProvider(input.provider);
 	const tools = buildAgentTools({
 		provider: input.provider,
+		systemEndpointCount,
+		...(officialEndpoint
+			? { deepSeekWebTools: { apiKey: officialEndpoint.apiKey, maxCallsPerTurn: 3, isSystem: true } }
+			: {}),
 		options: { requirePatchApproval: !!input.requirePatchApproval },
 		handlers: {
 			readResume: timedToolHandler("read_resume", async () => {
@@ -842,8 +875,17 @@ function createAgent(input: {
 		},
 	});
 
-	if (input.systemEndpointCount > 1) delete tools.web_search;
-	const instructionsText = `${buildAgentInstructions({ hasProviderNativeSearch: "web_search" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
+	for (const toolName of ["lookup_online_sources", "read_public_url"] as const) {
+		const webTool = tools[toolName];
+		if (webTool?.execute) {
+			const execute = webTool.execute;
+			webTool.execute = timedToolHandler(toolName, async (...args: Parameters<typeof execute>) => execute(...args));
+		}
+	}
+
+	const webSearchTool =
+		"lookup_online_sources" in tools ? "lookup_online_sources" : "web_search" in tools ? "web_search" : undefined;
+	const instructionsText = `${buildAgentInstructions({ webSearchTool, hasPublicUrlReader: "read_public_url" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
 
 	return new ToolLoopAgent({
 		// Providers without native inputExamples support get them appended to the tool description.
@@ -860,9 +902,9 @@ function createAgent(input: {
 		repairToolCall: repairAgentToolCall,
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
-		maxRetries: input.systemEndpointCount > 1 ? 0 : MAX_AGENT_MODEL_RETRIES,
+		maxRetries: systemEndpointCount > 1 ? 0 : MAX_AGENT_MODEL_RETRIES,
 		// streamText defaults to printing raw provider errors. The scheduler logs only classified failures.
-		...(input.systemEndpointCount ? { onError: input.onSystemStreamError } : {}),
+		...(systemEndpointCount ? { onError: input.onSystemStreamError } : {}),
 		timeout: { stepMs: AGENT_STEP_TIMEOUT_MS },
 		// HMAC-signs approval requests at issuance and verifies them when replayed on the
 		// continuation run, so a client cannot forge or alter an approval payload. The agent
@@ -874,9 +916,7 @@ function createAgent(input: {
 			const pruned = pruneAgentModelContext(messages);
 			return {
 				...(pruned === messages ? {} : { messages: pruned }),
-				...(input.forceFreshRead && stepNumber === 0
-					? { toolChoice: { type: "tool" as const, toolName: "read_resume" as const } }
-					: {}),
+				...buildAgentStepOptions(stepNumber, input.forceFreshRead, hasDirectDeepSeek),
 			};
 		},
 		tools,
@@ -1282,16 +1322,11 @@ export const agentService = {
 					insertedDraft = true;
 				}
 
-				const systemConfig = runnableProvider.systemConfig;
-				const displayedModel = systemConfig
-					? publicSystemAiText(runnableProvider.model, systemConfig.endpoints)
-					: runnableProvider.model;
-				const provider = {
-					provider: runnableProvider.provider,
-					model: runnableProvider.model,
-					apiKey: runnableProvider.apiKey,
-					baseURL: runnableProvider.baseURL ?? "",
-				};
+				const agentSystemConfig =
+					runnableProvider.systemConfig && prioritizeAgentSystemConfig(runnableProvider.systemConfig);
+				const { provider: providerId, model, apiKey, baseURL } = agentSystemConfig ?? runnableProvider;
+				const provider = { provider: providerId, model, apiKey, baseURL: baseURL ?? "" };
+				const displayedModel = agentSystemConfig ? publicSystemAiText(model, agentSystemConfig.endpoints) : model;
 				const agent = createAgent({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1300,8 +1335,8 @@ export const agentService = {
 					...(draftRowId ? { draftRowId } : {}),
 					requirePatchApproval: thread.reviewPatches,
 					provider,
-					model: getAgentModel(provider, systemConfig),
-					systemEndpointCount: systemConfig?.endpoints.length ?? 0,
+					model: getAgentModel(provider, agentSystemConfig),
+					systemEndpoints: agentSystemConfig?.endpoints,
 					onSystemStreamError: refundIfEmpty,
 				});
 

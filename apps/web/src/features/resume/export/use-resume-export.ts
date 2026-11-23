@@ -9,6 +9,7 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
 import { resolvePublicResumePdfBlob } from "@/features/resume/public/public-pdf";
+import { isWeChatBrowser } from "@/libs/browser-env";
 import { client } from "@/libs/orpc/client";
 import { createSectionTitleResolverForLocale } from "@/libs/resume/section-title-locale";
 import { useGuestEditor } from "../guest/context";
@@ -47,6 +48,16 @@ type DownloadPdfOptions = {
 	includeCoverLetterHeader?: boolean;
 };
 
+function downloadExport(blob: Blob, filename: string) {
+	downloadWithAnchor(blob, filename);
+	if (isWeChatBrowser()) {
+		toast.add({
+			type: "info",
+			description: t`To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”.`,
+		});
+	}
+}
+
 /**
  * Single source of truth for resume export (PDF / DOCX / JSON / Print). Previously duplicated verbatim
  * between the builder dock and the right-panel Export section (#17).
@@ -64,7 +75,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 		}
 		if (!resume || resume.persistence === "local") return;
 		const blob = new Blob([JSON.stringify(resume.data, null, 2)], { type: "application/json" });
-		downloadWithAnchor(blob, generateFilename(getExportName(resume), "json"));
+		downloadExport(blob, generateFilename(getExportName(resume), "json"));
 	}, [resume, guest]);
 
 	const onDownloadMarkdown = useCallback(
@@ -78,7 +89,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 			const data = getResumeExportData(resume.data, target);
 			const resolveTitle = await createSectionTitleResolver(data);
 			const blob = new Blob([buildMarkdown(data, resolveTitle)], { type: "text/markdown" });
-			downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "md"));
+			downloadExport(blob, generateFilename(getTargetExportName(resume, target), "md"));
 		},
 		[resume, guest],
 	);
@@ -96,7 +107,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 				const data = getResumeExportData(resume.data, target);
 				const resolveTitle = await createSectionTitleResolver(data);
 				const blob = await buildDocx(data, resolveTitle, await prepareDocxPhoto(data));
-				downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "docx"));
+				downloadExport(blob, generateFilename(getTargetExportName(resume, target), "docx"));
 			} catch {
 				toast.add({ type: "error", description: t`Could not generate the DOCX. Please try again.` });
 			}
@@ -128,7 +139,7 @@ export function useResumeExport(resume: ExportableResume | undefined, exportOpti
 								? { includeCoverLetterHeader: downloadOptions?.includeCoverLetterHeader }
 								: undefined,
 						);
-				downloadWithAnchor(blob, generateFilename(getTargetExportName(resume, target), "pdf"));
+				downloadExport(blob, generateFilename(getTargetExportName(resume, target), "pdf"));
 				if (exportOptions.publicResumePdf) {
 					// Statistics are best effort and must not delay or fail a completed browser download.
 					void client.resume.statistics

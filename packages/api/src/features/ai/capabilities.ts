@@ -27,6 +27,16 @@ export function isDirectOpenAIProvider(input: Pick<AiProviderCapabilityInput, "p
 	return baseURL === normalizeDirectOpenAIBaseUrl(AI_PROVIDER_DEFAULT_BASE_URLS.openai);
 }
 
+export function isDirectDeepSeekProvider(input: { provider: AIProvider; baseURL?: string | null | undefined }) {
+	if (input.provider !== "deepseek") return false;
+	const baseURL = input.baseURL?.trim();
+	if (!baseURL) return true;
+
+	// Match the literal official paths before URL parsing could fold dot segments or discard empty delimiters.
+	const origin = baseURL.replace(/\/+$/, "").replace(/\/v1$/, "");
+	return origin.toLowerCase() === "https://api.deepseek.com";
+}
+
 const OPENAI_WEB_SEARCH_RESPONSES_MODEL_IDS = new Set([
 	// Snapshot from official OpenAI model docs on 2026-05-13. These model pages list Responses
 	// API support and Responses web search support. Most are also explicit in installed
