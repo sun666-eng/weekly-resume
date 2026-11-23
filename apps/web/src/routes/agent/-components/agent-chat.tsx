@@ -660,12 +660,14 @@ function MessagePart({
 		return <FileAttachment filename={part.filename ?? part.url} mediaType={part.mediaType} />;
 	}
 
-	// Previously-invisible tool activity: read_resume, read_attachment, provider-native web_search,
-	// and dynamic tools echoed back after a provider switch.
+	// Keep research and read activity visible, including historical parts replayed after a provider switch.
 	if (
 		part.type === "tool-read_resume" ||
 		part.type === "tool-read_attachment" ||
+		part.type === "tool-lookup_online_sources" ||
+		part.type === "tool-read_public_url" ||
 		part.type === "tool-web_search" ||
+		part.type === "tool-web_fetch" ||
 		part.type === "dynamic-tool"
 	) {
 		return (

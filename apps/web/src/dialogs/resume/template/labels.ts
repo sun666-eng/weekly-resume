@@ -3,21 +3,31 @@ import { templateSchema } from "@reactive-resume/schema/templates";
 import { homepageTemplates, templateCatalog } from "./catalog";
 
 const chineseReferenceTemplates: Template[] = [
-	"ditgar",
-	"meowth",
 	"scizor",
-	"rhyhorn",
-	"azurill",
-	"pikachu",
 	"onyx",
-	"gengar",
-	"lapras",
+	"meowth",
+	"azurill",
 	"kakuna",
+	"pikachu",
+	"lapras",
+	"rhyhorn",
+	"ditgar",
+	"bronzor",
+	"ditto",
+	"gengar",
 	"chikorita",
+	"glalie",
+	"leafish",
 ];
 
+const recommendedTemplates = new Set(chineseReferenceTemplates.slice(0, 4));
+
+export function isChineseRecommendedTemplate(template: Template) {
+	return recommendedTemplates.has(template);
+}
+
 export function getTemplateOrder(locale: string): Template[] {
-	if (locale !== "zh-CN") return [...templateSchema.options];
+	if (!locale.startsWith("zh")) return [...templateSchema.options];
 	return [
 		...chineseReferenceTemplates,
 		...templateSchema.options.filter((template) => !chineseReferenceTemplates.includes(template)),
@@ -43,7 +53,7 @@ const chineseReferenceTags: Partial<Record<Template, string[]>> = {
 };
 
 export function getTemplateTags(template: Template, locale: string, fallback: readonly string[]): string[] {
-	return locale === "zh-CN" ? (chineseReferenceTags[template] ?? [...fallback]) : [...fallback];
+	return locale.startsWith("zh") ? (chineseReferenceTags[template] ?? [...fallback]) : [...fallback];
 }
 
 const chineseTemplateTags: Record<string, string> = {
@@ -110,11 +120,11 @@ const chineseTemplateTags: Record<string, string> = {
 };
 
 export function getTemplateDisplayName(template: Template, locale: string, fallback?: string): string {
-	if (locale === "zh-CN") return templateCatalog[template].name;
+	if (locale.startsWith("zh")) return templateCatalog[template].name;
 	return fallback ?? template[0].toUpperCase() + template.slice(1);
 }
 
 export function getTemplateTagLabel(tag: string, locale: string): string {
-	if (locale === "zh-CN") return chineseTemplateTags[tag] ?? tag;
+	if (locale.startsWith("zh")) return chineseTemplateTags[tag] ?? tag;
 	return tag;
 }

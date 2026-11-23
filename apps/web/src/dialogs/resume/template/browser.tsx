@@ -1,12 +1,13 @@
 import type { Template } from "@reactive-resume/schema/templates";
 import type { TemplateCategory } from "./catalog";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { useState } from "react";
+import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { templatePreviewImage } from "@/libs/template-assets";
 import { categoryLabel, categoryLabels, filterTemplates, templateCatalog } from "./catalog";
-import { getTemplateDisplayName, getTemplateOrder } from "./labels";
+import { getTemplateDisplayName, getTemplateOrder, isChineseRecommendedTemplate } from "./labels";
 
 type TemplateBrowserProps = {
 	selected: Template;
@@ -14,7 +15,7 @@ type TemplateBrowserProps = {
 	onPreview: (id: Template) => void;
 };
 export function TemplateBrowser({ selected, initialCategory = "all", onPreview }: TemplateBrowserProps) {
-	const { i18n } = useLingui();
+	const { i18n, t } = useLingui();
 	const zh = i18n.locale.startsWith("zh");
 	const [category, setCategory] = useState<TemplateCategory | "all">(initialCategory);
 	const [search, setSearch] = useState("");
@@ -95,7 +96,7 @@ export function TemplateBrowser({ selected, initialCategory = "all", onPreview }
 					</Button>
 				</div>
 			)}
-			<div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+			<div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
 				{filtered.map((id) => (
 					<div key={id} className="space-y-2">
 						<button
@@ -112,8 +113,13 @@ export function TemplateBrowser({ selected, initialCategory = "all", onPreview }
 								className="aspect-page w-full object-cover"
 							/>
 						</button>
-						<p className="font-medium text-sm">
-							{name(id)} {id === selected && <span className="text-muted-foreground">✓</span>}
+						<p className="flex flex-wrap items-center gap-1.5 font-medium text-sm">
+							<span>
+								{name(id)} {id === selected && <span className="text-muted-foreground">✓</span>}
+							</span>
+							{zh && isChineseRecommendedTemplate(id) && (
+								<Badge variant="secondary">{i18n.locale === "zh-CN" ? t`Popular in China` : "国内常用"}</Badge>
+							)}
 						</p>
 						<p className="text-muted-foreground text-xs">
 							{categoryLabel(templateCatalog[id].category, i18n.locale)} ·{" "}

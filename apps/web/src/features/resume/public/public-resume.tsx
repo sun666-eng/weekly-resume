@@ -1,15 +1,16 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { CircleNotchIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
+import { CircleNotchIcon, DownloadSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listBasicsContactEntries } from "@reactive-resume/schema/resume/cn-fields";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { useResumeExport } from "@/features/resume/export/use-resume-export";
+import { isWeChatBrowser } from "@/libs/browser-env";
 import { orpc } from "@/libs/orpc/client";
 import { PdfViewer } from "./pdf-viewer";
 
@@ -32,6 +33,8 @@ type PublicResumePageProps = {
 };
 
 export function PublicResumePage({ resume, username, slug, flags, isRoot = false }: PublicResumePageProps) {
+	const [showWeChatHint, setShowWeChatHint] = useState(false);
+	useEffect(() => setShowWeChatHint(isWeChatBrowser()), []);
 	const publicResume = useMemo(() => ({ username, slug }), [slug, username]);
 	const { onDownloadPDF, isExporting } = useResumeExport(resume, {
 		...(resume ? { publicResumePdf: { publicResume } } : {}),
@@ -46,6 +49,18 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 	return (
 		<>
 			<div className="mx-auto flex w-full flex-col items-center gap-6 px-4 py-6 print:m-0 print:block print:max-w-full print:p-0">
+				{showDownloadButtons && showWeChatHint && (
+					<aside className="flex w-full max-w-5xl items-center justify-between gap-2 rounded-md bg-muted py-1 ps-3 pe-1 text-sm print:hidden">
+						<p>
+							<Trans>
+								To download the PDF in WeChat, tap “···” in the top-right corner and choose “Open in Browser”.
+							</Trans>
+						</p>
+						<Button size="icon-sm" variant="ghost" aria-label={t`Close`} onClick={() => setShowWeChatHint(false)}>
+							<XIcon />
+						</Button>
+					</aside>
+				)}
 				<header className="flex w-full max-w-5xl flex-col items-center gap-4 text-center print:hidden">
 					{picture.url && !picture.hidden && (
 						<img src={picture.url} alt={basics.name} className="size-20 rounded-full object-cover shadow-sm" />
@@ -106,7 +121,7 @@ export function PublicResumePage({ resume, username, slug, flags, isRoot = false
 					onClick={() => void onDownloadPDF()}
 					aria-label={t`Download PDF`}
 					title={t`Download PDF`}
-					className="fixed right-6 bottom-6 z-50 rounded-full bg-background/95 opacity-70 shadow-lg backdrop-blur transition-opacity hover:opacity-100 print:hidden"
+					className="fixed right-4 bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-50 touch-manipulation rounded-full bg-background/95 opacity-95 shadow-lg backdrop-blur transition-opacity sm:right-6 sm:bottom-6 md:opacity-75 md:hover:opacity-100 print:hidden"
 				>
 					{isExporting ? (
 						<CircleNotchIcon className="size-5 animate-spin" />

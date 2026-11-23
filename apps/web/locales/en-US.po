@@ -8585,6 +8585,22 @@ msgstr "Remove attachment {filename}"
 msgid "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
 msgstr "Your free AI quota is used up for today. Try again tomorrow or connect your own API key in Settings."
 
+#: src/routes/agent/-components/tool-part-card.tsx
+msgid "Read a web page"
+msgstr "Read a web page"
+
+#: src/dialogs/resume/template/browser.tsx
+msgid "Popular in China"
+msgstr "Popular in China"
+
+#: src/features/resume/public/public-resume.tsx
+msgid "To download the PDF in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+msgstr "To download the PDF in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+msgstr "To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
+
 #: src/features/auth/pages/register.tsx
 msgid "Account created"
 msgstr "Account created"

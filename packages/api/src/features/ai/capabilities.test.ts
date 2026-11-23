@@ -1,7 +1,42 @@
 import { describe, expect, it } from "vitest";
-import { isDirectOpenAIProvider, supportsOpenAIWebSearch } from "./capabilities";
+import { isDirectDeepSeekProvider, isDirectOpenAIProvider, supportsOpenAIWebSearch } from "./capabilities";
 
 describe("AI provider capabilities", () => {
+	it.each([
+		undefined,
+		null,
+		"",
+		"https://api.deepseek.com",
+		"https://API.DeepSeek.com/",
+		"https://api.deepseek.com/v1///",
+	])("recognizes an official DeepSeek endpoint (%s)", (baseURL) =>
+		expect(isDirectDeepSeekProvider({ provider: "deepseek", baseURL })).toBe(true),
+	);
+
+	it.each([
+		"http://api.deepseek.com/v1",
+		"https://relay.example/v1",
+		"https://api.deepseek.com.example/v1",
+		"https://example@api.deepseek.com/v1",
+		"https://api.deepseek.com/v1?",
+		"https://api.deepseek.com/#",
+		"https://api.deepseek.com/v1?proxy=1",
+		"https://api.deepseek.com/v1#fragment",
+		"https://api.deepseek.com/v2",
+		"https://api.deepseek.com/V1",
+		"https://api.deepseek.com:8443",
+		"https://api.deepseek.com/other/../v1",
+		"/",
+	])("rejects a non-official DeepSeek configuration (%s)", (baseURL) => {
+		expect(isDirectDeepSeekProvider({ provider: "deepseek", baseURL })).toBe(false);
+	});
+
+	it("requires the DeepSeek provider even at the official base URL", () => {
+		expect(isDirectDeepSeekProvider({ provider: "openai-compatible", baseURL: "https://api.deepseek.com/v1" })).toBe(
+			false,
+		);
+	});
+
 	it("identifies direct OpenAI base URL configs", () => {
 		expect(isDirectOpenAIProvider({ provider: "openai", baseURL: "" })).toBe(true);
 		expect(isDirectOpenAIProvider({ provider: "openai", baseURL: "https://api.openai.com/v1/" })).toBe(true);

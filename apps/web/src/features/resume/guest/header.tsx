@@ -24,20 +24,20 @@ export function GuestHeader() {
 	if (!guest) return null;
 	const status = guestStatuses[guest.status as keyof typeof guestStatuses];
 	return (
-		<header className="absolute inset-x-0 top-0 z-50 flex h-14 items-center gap-2 border-b bg-popover px-3 text-sm">
+		<header className="absolute inset-x-0 top-0 z-50 flex h-14 items-center gap-1.5 border-b bg-popover px-2 text-xs sm:gap-2 sm:px-3 sm:text-sm">
 			<Popover>
 				<PopoverTrigger
 					render={
 						<Button
 							variant="ghost"
-							className="min-w-0 flex-1 justify-start px-1 sm:flex-none"
+							className="min-w-0 flex-1 justify-start px-1 text-xs sm:flex-none sm:text-sm"
 							aria-label={t({ id: "guest.help", message: "About local drafts" })}
 						/>
 					}
 				>
 					<FileTextIcon className="hidden shrink-0 sm:block" />
 					<span className="min-w-0 text-start">
-						<span className="block font-medium">{t({ id: "guest.local", message: "Local draft" })}</span>
+						<span className="block truncate font-medium">{t({ id: "guest.local", message: "Local draft" })}</span>
 						<span role="status" title={guest.status} className="block truncate text-muted-foreground text-xs">
 							{status ? i18n._(status) : guest.status}
 						</span>
@@ -51,13 +51,21 @@ export function GuestHeader() {
 				</PopoverContent>
 			</Popover>
 			<div className="hidden sm:block sm:flex-1" />
-			<Button size="sm" onClick={() => void guest.requestAction("save")}>
+			<Button
+				size="sm"
+				className="shrink-0 whitespace-nowrap px-2 text-xs sm:px-2.5 sm:text-sm"
+				onClick={() => void guest.requestAction("save")}
+			>
 				{t({ id: "guest.saveAccount", message: "Save to account" })}
 			</Button>
 			<ResumeDownloadDialog
 				resume={resume ?? undefined}
 				trigger={(disabled) => (
-					<Button size="sm" disabled={disabled}>
+					<Button
+						size="sm"
+						className="shrink-0 whitespace-nowrap px-2 text-xs sm:px-2.5 sm:text-sm"
+						disabled={disabled}
+					>
 						{t({ id: "guest.formalExport", message: "Formal export" })}
 					</Button>
 				)}
