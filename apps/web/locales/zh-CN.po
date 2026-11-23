@@ -8784,3 +8784,83 @@ msgstr "账号已准备就绪，继续进入工作台即可。"
 #: src/features/auth/pages/register.tsx
 msgid "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."
 msgstr "验证邮件请求已提交。请检查收件箱和垃圾邮件文件夹，找到验证账号的链接。"
+
+#: src/features/auth/pages/login.tsx
+msgid "Email code sign-in"
+msgstr "邮箱验证码登录"
+
+#: src/features/auth/pages/login.tsx
+msgid "Password sign-in"
+msgstr "密码登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "请输入邮件中的 6 位数字验证码。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Requesting your code..."
+msgstr "正在申请验证码…"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "The request could not be completed. Please try again."
+msgstr "请求未能完成，请重试。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Check your email"
+msgstr "请查收验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "If an account exists for {email}, we'll send a 6-digit code to this address. Check your inbox and spam folder. The code expires in 10 minutes."
+msgstr "如果本站已存在与 {email} 对应的账号，我们会向该邮箱发送 6 位数字验证码。请检查收件箱和垃圾邮件文件夹，验证码 10 分钟内有效。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Your code request was submitted. Check the inbox and spam folder for {email}. The code expires in 10 minutes."
+msgstr "验证码请求已提交。请查收 {email} 的收件箱及垃圾邮件文件夹，验证码 10 分钟内有效。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verification code"
+msgstr "验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Only existing accounts can sign in with a code."
+msgstr "仅限已有账号使用验证码登录。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "New email addresses get an account after verification."
+msgstr "未注册的邮箱将在验证后自动创建账号。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Please wait {duration} before submitting another request."
+msgstr "请等待 {duration} 后再提交请求。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verify and sign in"
+msgstr "验证并登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Try again in {duration}"
+msgstr "{duration} 后重试"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get verification code"
+msgstr "获取验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Continue with password"
+msgstr "改用密码登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code in {duration}"
+msgstr "{duration} 后可重新获取验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code"
+msgstr "重新获取验证码"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "The link may have expired after 1 hour or already been used. Request a new password reset code to continue."
+msgstr "该链接可能已超过 1 小时有效期或已被使用。请重新获取验证码以继续重置密码。"
+
+#: src/libs/error-message.ts
+msgid "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
+msgstr "该账号已开启两步验证，请使用密码登录并完成两步验证。"

@@ -4,7 +4,13 @@ import nodemailer from "nodemailer";
 import { render } from "react-email";
 import { env } from "@reactive-resume/env/server";
 
-export type EmailPurpose = "password_reset" | "email_verification" | "change_email" | "generic";
+export type EmailPurpose =
+	| "password_reset"
+	| "email_verification"
+	| "change_email"
+	| "generic"
+	| "sign_in_otp"
+	| "password_reset_otp";
 
 export type SendEmailResult =
 	| {
@@ -148,10 +154,27 @@ function logBaseFields(options: SendEmailOptions, purpose: EmailPurpose) {
 	};
 }
 
+export function isSmtpResponseCode(value: unknown): value is number {
+	return typeof value === "number" && Number.isInteger(value) && value >= 100 && value <= 599;
+}
+
 function logEmail(level: "info" | "warn" | "error", data: Record<string, unknown>) {
-	if (level === "info") console.info("[Email]", data);
-	if (level === "warn") console.warn("[Email]", data);
-	if (level === "error") console.error("[Email]", data);
+	// Even SMTP IDs and commands can echo message content. Allow only delivery metadata for OTPs.
+	if (data.purpose === "sign_in_otp" || data.purpose === "password_reset_otp") {
+		const { purpose, status, reason, recipientCount, acceptedCount, rejectedCount, latencyMs } = data;
+		console[level]("[Email]", {
+			purpose,
+			status,
+			reason,
+			recipientCount,
+			acceptedCount,
+			rejectedCount,
+			latencyMs,
+			...(status === "failed" && isSmtpResponseCode(data.responseCode) ? { responseCode: data.responseCode } : {}),
+		});
+		return;
+	}
+	console[level]("[Email]", data);
 }
 
 export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {

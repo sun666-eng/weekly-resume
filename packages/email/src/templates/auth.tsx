@@ -177,3 +177,13 @@ export function VerifyEmailChange({ url, previousEmail, newEmail }: VerifyEmailC
 		/>
 	);
 }
+
+export function createOtpEmail(purpose: "sign_in_otp" | "password_reset_otp", otp: string) {
+	const subject =
+		purpose === "sign_in_otp" ? "Your Weekly Resume sign-in code" : "Your Weekly Resume password reset code";
+	return {
+		purpose,
+		subject,
+		text: `${subject}:\n\n${otp}\n\nThis code expires in 10 minutes. If you did not request it, ignore this email.`,
+	};
+}

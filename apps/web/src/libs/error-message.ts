@@ -31,6 +31,10 @@ const authErrorMessages: Record<string, MessageDescriptor> = {
 	INVALID_TOKEN: msg`This link is invalid. Please request a new one.`,
 	TOKEN_EXPIRED: msg`This link has expired. Please request a new one.`,
 	SESSION_EXPIRED: msg`Your session has expired. Please sign in again.`,
+	INVALID_OTP: msg`Incorrect verification code. Please try again.`,
+	OTP_EXPIRED: msg`This verification code has expired. Please request a new one.`,
+	TOO_MANY_ATTEMPTS: msg`Too many attempts. Please request a new code.`,
+	TWO_FACTOR_REQUIRED_FOR_EMAIL_OTP: msg`This account uses two-factor authentication. Sign in with your password and complete two-factor verification.`,
 	INVALID_CODE: msg`Incorrect verification code. Please try again.`,
 	INVALID_BACKUP_CODE: msg`Incorrect backup code. Please try again.`,
 	OTP_HAS_EXPIRED: msg`This verification code has expired. Please request a new one.`,
@@ -56,6 +60,11 @@ const authMessageCodes: Record<string, string> = {
 	"Email not verified": "EMAIL_NOT_VERIFIED",
 	"Password too short": "PASSWORD_TOO_SHORT",
 	"Password too long": "PASSWORD_TOO_LONG",
+	"Invalid OTP": "INVALID_OTP",
+	"OTP expired": "OTP_EXPIRED",
+	"Too many attempts": "TOO_MANY_ATTEMPTS",
+	"Two-factor authentication is enabled on this account. Please sign in with your password.":
+		"TWO_FACTOR_REQUIRED_FOR_EMAIL_OTP",
 	"Invalid token": "INVALID_TOKEN",
 	"Token expired": "TOKEN_EXPIRED",
 };

@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { env } from "@reactive-resume/env/server";
 import { auth } from "./config";
+import { createAuthEmailCallbacks } from "./email-callbacks";
+import { createEmailOtpPlugin } from "./email-otp";
 
 const sendEmailMock = vi.hoisted(() => vi.fn());
-vi.mock("@reactive-resume/email/transport", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@reactive-resume/email/transport", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@reactive-resume/email/transport")>()),
+	sendEmail: sendEmailMock,
+}));
 
 // These tests inspect configuration only. Initializing Better Auth would seed
 // OAuth resources and require a database, which belongs in integration tests.
@@ -38,7 +43,37 @@ const callbacks = auth.options as unknown as {
 	user: { changeEmail: { sendChangeEmailConfirmation: (input: unknown) => Promise<void> } };
 };
 
+const installed = auth.options.plugins.find((plugin) => plugin.id === "email-otp");
+if (!installed || !("options" in installed)) throw new Error("email-otp is missing");
+const otpOptions = installed.options as ReturnType<typeof createEmailOtpPlugin>["options"];
+
+it.each([
+	[false, false],
+	[true, false],
+	[false, true],
+	[true, true],
+])("configures hashed codes and gates signup for flags %s/%s", (disableEmail, disableSignups) => {
+	const plugin = createEmailOtpPlugin(
+		{ FLAG_DISABLE_EMAIL_AUTH: disableEmail, FLAG_DISABLE_SIGNUPS: disableSignups },
+		createAuthEmailCallbacks(),
+	);
+	expect(plugin.options).toMatchObject({
+		disableSignUp: disableEmail || disableSignups,
+		otpLength: 6,
+		expiresIn: 600,
+		allowedAttempts: 5,
+		storeOTP: "hashed",
+		overrideDefaultEmailVerification: false,
+		sendVerificationOnSignUp: false,
+	});
+	expect(otpOptions.storeOTP).toBe("hashed");
+});
+
 const callbackCases = [
+	...(["sign-in", "forget-password"] as const).map((type) => ({
+		purpose: type === "sign-in" ? "sign_in_otp" : "password_reset_otp",
+		invoke: () => otpOptions.sendVerificationOTP({ type, email: "person@example.com", otp: "031628" }),
+	})),
 	{
 		purpose: "password_reset",
 		invoke: () =>
@@ -95,6 +130,7 @@ describe("authentication email callbacks", () => {
 		});
 		expect(JSON.stringify(warn.mock.calls)).not.toContain("example.com");
 		expect(JSON.stringify(warn.mock.calls)).not.toContain("secret");
+		expect(JSON.stringify(warn.mock.calls)).not.toContain("031628");
 		warn.mockRestore();
 	});
 
@@ -118,14 +154,38 @@ describe("authentication email callbacks", () => {
 				purpose,
 				status: "failed",
 				reason: "transport_error",
-				errorCode: "EAUTH",
 				responseCode: 535,
+				...(!purpose.endsWith("_otp") && { errorCode: "EAUTH" }),
 			});
+			expect(JSON.stringify(error.mock.calls)).not.toContain("031628");
 			expect(JSON.stringify(error.mock.calls)).not.toContain("example.com");
 			expect(JSON.stringify(error.mock.calls)).not.toContain("secret");
 			error.mockRestore();
 		},
 	);
+
+	it.each([99, 600, 535.5, 123456, "535"])("omits an invalid OTP delivery responseCode (%s)", async (responseCode) => {
+		const error = vi.spyOn(console, "error").mockImplementation(() => {});
+		try {
+			sendEmailMock.mockResolvedValueOnce({
+				status: "failed",
+				purpose: "sign_in_otp",
+				reason: "transport_error",
+				message: "person@example.com 123456",
+				errorCode: "E123456",
+				command: "AUTH LOGIN",
+				responseCode,
+			});
+			await otpOptions.sendVerificationOTP({ type: "sign-in", email: "person@example.com", otp: "123456" });
+			expect(error).toHaveBeenCalledExactlyOnceWith("[AuthEmail] delivery failed", {
+				purpose: "sign_in_otp",
+				status: "failed",
+				reason: "transport_error",
+			});
+		} finally {
+			error.mockRestore();
+		}
+	});
 
 	it("contains unexpected callback errors to preserve unauthenticated response consistency", async () => {
 		const error = vi.spyOn(console, "error").mockImplementation(() => {});

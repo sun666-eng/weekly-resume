@@ -92,7 +92,7 @@ export function ResetPasswordPage({ token, error }: Props) {
 					</AlertTitle>
 					<AlertDescription>
 						<Trans>
-							The link may have expired after 1 hour or already been used. Request a new password reset link to
+							The link may have expired after 1 hour or already been used. Request a new password reset code to
 							continue.
 						</Trans>
 					</AlertDescription>

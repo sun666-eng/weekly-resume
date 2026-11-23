@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
 
 const envMock = vi.hoisted(() => ({
+	APP_URL: "http://localhost",
 	SMTP_HOST: undefined as string | undefined,
 	SMTP_PORT: 587,
 	SMTP_USER: undefined as string | undefined,
@@ -23,6 +24,83 @@ vi.mock("nodemailer", () => ({
 vi.mock("react-email", () => ({ render }));
 
 const { isSmtpEnabled, resetTransportCacheForTests, sendEmail, verifySmtpConnection } = await import("./transport");
+
+const { createOtpEmail } = await import("./templates/auth");
+
+it.each(["sign_in_otp", "password_reset_otp"] as const)(
+	"keeps %s codes in the message body only in every delivery outcome",
+	async (purpose) => {
+		resetEnv();
+		const otp = "041628";
+		const to = "recipient@example.test";
+		const options = { to, ...createOtpEmail(purpose, otp) };
+		expect(options.subject).not.toMatch(/\d{6}/);
+		expect(options.text).toContain(`\n\n${otp}\n\n`);
+		expect(options.text).toMatch(/10 minutes.*ignore this email/);
+		const logs = (["info", "warn", "error"] as const).map((level) =>
+			vi.spyOn(console, level).mockImplementation(() => {}),
+		);
+		try {
+			expect((await sendEmail(options)).status).toBe("skipped");
+			configureSmtp();
+			sendMail.mockResolvedValueOnce({ accepted: [to], responseCode: 250, messageId: `<${otp}@example.test>` });
+			expect((await sendEmail(options)).status).toBe("accepted");
+			expect(sendMail).toHaveBeenCalledWith(expect.objectContaining({ text: options.text, subject: options.subject }));
+			sendMail.mockRejectedValueOnce(
+				Object.assign(new Error(options.text), { code: `E${otp}`, responseCode: 535, command: "AUTH LOGIN" }),
+			);
+			expect((await sendEmail(options)).status).toBe("failed");
+			expect(logs[0]?.mock.calls[0]?.[1]).not.toHaveProperty("responseCode");
+			expect(logs[2]).toHaveBeenCalledWith("[Email]", expect.objectContaining({ responseCode: 535 }));
+			for (const log of logs) {
+				expect(log).toHaveBeenCalledTimes(1);
+				const output = JSON.stringify(log.mock.calls);
+				for (const value of [
+					otp,
+					to,
+					options.text,
+					options.subject,
+					"messageId",
+					"subject",
+					"errorCode",
+					"command",
+					"AUTH LOGIN",
+				])
+					expect(output).not.toContain(value);
+			}
+		} finally {
+			for (const log of logs) log.mockRestore();
+		}
+	},
+);
+
+it.each([
+	[100, true],
+	[550, true],
+	[599, true],
+	[99, false],
+	[600, false],
+	[535.5, false],
+	[123456, false],
+	["535", false],
+] as const)("filters the SMTP reply code %s for rejected OTP deliveries", async (responseCode, shouldLog) => {
+	resetEnv();
+	configureSmtp();
+	const otp = "123456";
+	const to = "member@example.test";
+	const log = vi.spyOn(console, "error").mockImplementation(() => {});
+	try {
+		sendMail.mockResolvedValueOnce({ rejected: [to], responseCode, messageId: `<${otp}@example.test>` });
+		expect((await sendEmail({ to, ...createOtpEmail("password_reset_otp", otp) })).status).toBe("failed");
+		const details = log.mock.calls[0]?.[1];
+		if (shouldLog) expect(details).toHaveProperty("responseCode", responseCode);
+		else expect(details).not.toHaveProperty("responseCode");
+		expect(JSON.stringify(log.mock.calls)).not.toContain(otp);
+		expect(JSON.stringify(log.mock.calls)).not.toContain(to);
+	} finally {
+		log.mockRestore();
+	}
+});
 
 function resetEnv() {
 	envMock.SMTP_HOST = undefined;

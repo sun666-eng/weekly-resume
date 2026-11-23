@@ -1,7 +1,7 @@
 import type { SendEmailOptions, SendEmailResult } from "@reactive-resume/email/transport";
 import { createElement } from "react";
-import { VerifyEmailChange } from "@reactive-resume/email/templates/auth";
-import { sendEmail } from "@reactive-resume/email/transport";
+import { createOtpEmail, VerifyEmailChange } from "@reactive-resume/email/templates/auth";
+import { isSmtpResponseCode, sendEmail } from "@reactive-resume/email/transport";
 
 type EmailSender = (options: SendEmailOptions) => Promise<SendEmailResult>;
 
@@ -16,12 +16,15 @@ async function deliverAuthEmail(options: SendEmailOptions, sender: EmailSender):
 		const result = await sender(options);
 		if (result.status === "accepted") return;
 
+		const isOtp = purpose === "sign_in_otp" || purpose === "password_reset_otp";
 		const details = {
 			purpose,
 			status: result.status,
 			...("reason" in result ? { reason: result.reason } : {}),
-			...("errorCode" in result ? { errorCode: result.errorCode } : {}),
-			...("responseCode" in result ? { responseCode: result.responseCode } : {}),
+			...(!isOtp && "errorCode" in result ? { errorCode: result.errorCode } : {}),
+			...(result.status === "failed" && "responseCode" in result && (!isOtp || isSmtpResponseCode(result.responseCode))
+				? { responseCode: result.responseCode }
+				: {}),
 		};
 		if (result.status === "failed") console.error("[AuthEmail] delivery failed", details);
 		else console.warn("[AuthEmail] delivery skipped", details);
@@ -32,6 +35,13 @@ async function deliverAuthEmail(options: SendEmailOptions, sender: EmailSender):
 
 export function createAuthEmailCallbacks(sender: EmailSender = sendEmail) {
 	return {
+		sendVerificationOTP: async ({ email, otp, type }: { email: string; otp: string; type: string }) => {
+			if (type !== "sign-in" && type !== "forget-password") return;
+			await deliverAuthEmail(
+				{ to: email, ...createOtpEmail(type === "sign-in" ? "sign_in_otp" : "password_reset_otp", otp) },
+				sender,
+			);
+		},
 		sendResetPassword: async ({ user, url }: UserEmailInput) => {
 			await deliverAuthEmail(
 				{

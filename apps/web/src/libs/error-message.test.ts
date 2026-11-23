@@ -45,6 +45,19 @@ describe("Retry-After parsing", () => {
 
 describe("Better Auth error messages", () => {
 	it.each([
+		["INVALID_OTP", "Invalid OTP", "Incorrect verification code. Please try again."],
+		["OTP_EXPIRED", "OTP expired", "This verification code has expired. Please request a new one."],
+		["TOO_MANY_ATTEMPTS", "Too many attempts", "Too many attempts. Please request a new code."],
+		[
+			"TWO_FACTOR_REQUIRED_FOR_EMAIL_OTP",
+			"Two-factor authentication is enabled on this account. Please sign in with your password.",
+			"This account uses two-factor authentication. Sign in with your password and complete two-factor verification.",
+		],
+	])("maps %s by code and by upstream message", (code, message, expected) => {
+		expect(resolveAuthErrorMessage({ code })).toBe(expected);
+		expect(resolveAuthErrorMessage({ message })).toBe(expected);
+	});
+	it.each([
 		[1, "Too many requests. Please try again in 1 second."],
 		[45, "Too many requests. Please try again in 45 seconds."],
 		[60, "Too many requests. Please try again in 1 minute."],

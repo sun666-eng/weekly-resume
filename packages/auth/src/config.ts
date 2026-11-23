@@ -20,6 +20,12 @@ import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 import { createAuthEmailCallbacks } from "./email-callbacks";
+import {
+	createEmailOtpPlugin,
+	enforceEmailOtpTwoFactor,
+	prepareEmailOtpRequest,
+	protectTwoFactorCredentials,
+} from "./email-otp";
 import { createGithubProfileMapper, createProfileMapper } from "./oauth-profile";
 import { getTrustedOrigins } from "./trusted-origins";
 
@@ -154,10 +160,13 @@ const getAuthConfig = () => {
 			enabled: isRateLimitEnabled,
 		},
 
+		databaseHooks: { account: { delete: { before: protectTwoFactorCredentials } } },
 		hooks: {
-			// biome-ignore lint/suspicious/useAwait: Better Auth requires middleware callbacks to return a Promise.
 			before: createAuthMiddleware(async (ctx) => {
-				if (!ctx.path.includes("/oauth2/register")) return;
+				if (!ctx.path.includes("/oauth2/register")) {
+					await prepareEmailOtpRequest(ctx, env.FLAG_DISABLE_EMAIL_AUTH, env.FLAG_DISABLE_SIGNUPS);
+					return;
+				}
 
 				const body = ctx.body as { redirect_uris?: unknown } | undefined;
 				const redirectUris = Array.isArray(body?.redirect_uris) ? body.redirect_uris : [];
@@ -177,6 +186,7 @@ const getAuthConfig = () => {
 					}
 				}
 			}),
+			after: createAuthMiddleware(enforceEmailOtpTwoFactor),
 		},
 
 		// Without this, OAuth callback failures land on Better Auth's built-in `/api/auth/error`
@@ -271,6 +281,7 @@ const getAuthConfig = () => {
 		},
 
 		plugins: [
+			createEmailOtpPlugin(env, authEmailCallbacks),
 			jwt(),
 			admin(),
 			passkey(),

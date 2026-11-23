@@ -15,6 +15,10 @@ export const rateLimitConfig = {
 			customRules: {
 				"/sign-in/email": { window: 60, max: 5 },
 				"/sign-up/email": { window: 60, max: 3 },
+				"/email-otp/send-verification-otp": { window: 600, max: 5 },
+				"/email-otp/request-password-reset": { window: 600, max: 5 },
+				"/sign-in/email-otp": { window: 600, max: 10 },
+				"/email-otp/reset-password": { window: 600, max: 10 },
 				"/request-password-reset": { window: 600, max: 3 },
 				"/send-verification-email": { window: 600, max: 3 },
 				"/two-factor/verify-otp": { window: 600, max: 5 },

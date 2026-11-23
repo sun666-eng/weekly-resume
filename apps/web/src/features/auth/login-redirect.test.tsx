@@ -70,7 +70,7 @@ afterEach(cleanup);
 function renderLogin() {
 	return render(
 		<I18nProvider i18n={i18n}>
-			<LoginPage disableEmailAuth={false} disableSignups={false} />
+			<LoginPage smtpEnabled={false} disableEmailAuth={false} disableSignups={false} />
 		</I18nProvider>,
 	);
 }

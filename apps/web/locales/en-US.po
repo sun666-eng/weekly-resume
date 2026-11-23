@@ -8706,3 +8706,83 @@ msgstr "Your account is ready. Continue to your workspace."
 #: src/features/auth/pages/register.tsx
 msgid "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."
 msgstr "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."
+
+#: src/features/auth/pages/login.tsx
+msgid "Email code sign-in"
+msgstr "Email code sign-in"
+
+#: src/features/auth/pages/login.tsx
+msgid "Password sign-in"
+msgstr "Password sign-in"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "Enter the 6-digit code from your email."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Requesting your code..."
+msgstr "Requesting your code..."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "The request could not be completed. Please try again."
+msgstr "The request could not be completed. Please try again."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Check your email"
+msgstr "Check your email"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "If an account exists for {email}, we'll send a 6-digit code to this address. Check your inbox and spam folder. The code expires in 10 minutes."
+msgstr "If an account exists for {email}, we'll send a 6-digit code to this address. Check your inbox and spam folder. The code expires in 10 minutes."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Your code request was submitted. Check the inbox and spam folder for {email}. The code expires in 10 minutes."
+msgstr "Your code request was submitted. Check the inbox and spam folder for {email}. The code expires in 10 minutes."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verification code"
+msgstr "Verification code"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Only existing accounts can sign in with a code."
+msgstr "Only existing accounts can sign in with a code."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "New email addresses get an account after verification."
+msgstr "New email addresses get an account after verification."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Please wait {duration} before submitting another request."
+msgstr "Please wait {duration} before submitting another request."
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verify and sign in"
+msgstr "Verify and sign in"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Try again in {duration}"
+msgstr "Try again in {duration}"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get verification code"
+msgstr "Get verification code"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Continue with password"
+msgstr "Continue with password"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code in {duration}"
+msgstr "Get a new code in {duration}"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code"
+msgstr "Get a new code"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "The link may have expired after 1 hour or already been used. Request a new password reset code to continue."
+msgstr "The link may have expired after 1 hour or already been used. Request a new password reset code to continue."
+
+#: src/libs/error-message.ts
+msgid "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
+msgstr "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
