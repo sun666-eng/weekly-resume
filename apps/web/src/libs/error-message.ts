@@ -10,6 +10,8 @@ import { ORPCError } from "@orpc/client";
 type AuthError = {
 	code?: unknown;
 	message?: unknown;
+	status?: unknown;
+	retryAfterSeconds?: unknown;
 };
 
 // Descriptors resolve through i18n at call time, so this module-scope map still follows the
@@ -29,11 +31,16 @@ const authErrorMessages: Record<string, MessageDescriptor> = {
 	INVALID_TOKEN: msg`This link is invalid. Please request a new one.`,
 	TOKEN_EXPIRED: msg`This link has expired. Please request a new one.`,
 	SESSION_EXPIRED: msg`Your session has expired. Please sign in again.`,
+	INVALID_OTP: msg`Incorrect verification code. Please try again.`,
+	OTP_EXPIRED: msg`This verification code has expired. Please request a new one.`,
+	TOO_MANY_ATTEMPTS: msg`Too many attempts. Please request a new code.`,
+	TWO_FACTOR_REQUIRED_FOR_EMAIL_OTP: msg`This account uses two-factor authentication. Sign in with your password and complete two-factor verification.`,
 	INVALID_CODE: msg`Incorrect verification code. Please try again.`,
 	INVALID_BACKUP_CODE: msg`Incorrect backup code. Please try again.`,
 	OTP_HAS_EXPIRED: msg`This verification code has expired. Please request a new one.`,
 	TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE: msg`Too many attempts. Please request a new code.`,
 	ACCOUNT_TEMPORARILY_LOCKED: msg`Too many failed attempts. Your account is temporarily locked. Please try again later.`,
+	TOO_MANY_REQUESTS: msg`Too many requests. Please try again later.`,
 	USERNAME_IS_ALREADY_TAKEN: msg`This username is already taken.`,
 	CREDENTIAL_ACCOUNT_NOT_FOUND: msg`Account not found, or it has no password set.`,
 	FAILED_TO_CREATE_USER: msg`Failed to create your account. Please try again.`,
@@ -53,14 +60,76 @@ const authMessageCodes: Record<string, string> = {
 	"Email not verified": "EMAIL_NOT_VERIFIED",
 	"Password too short": "PASSWORD_TOO_SHORT",
 	"Password too long": "PASSWORD_TOO_LONG",
+	"Invalid OTP": "INVALID_OTP",
+	"OTP expired": "OTP_EXPIRED",
+	"Too many attempts": "TOO_MANY_ATTEMPTS",
+	"Two-factor authentication is enabled on this account. Please sign in with your password.":
+		"TWO_FACTOR_REQUIRED_FOR_EMAIL_OTP",
 	"Invalid token": "INVALID_TOKEN",
 	"Token expired": "TOKEN_EXPIRED",
 };
 
-function resolveAuthErrorMessage(error: unknown): string | null {
+export function parseRetryAfter(value: string | null | undefined, now = Date.now()): number | undefined {
+	if (!value) return;
+	const trimmed = value.trim();
+	if (/^\d+$/.test(trimmed)) {
+		const seconds = Number(trimmed);
+		return Number.isSafeInteger(seconds) && seconds > 0 ? seconds : undefined;
+	}
+
+	const timestamp = Date.parse(trimmed);
+	if (!Number.isFinite(timestamp)) return;
+	const seconds = Math.ceil((timestamp - now) / 1000);
+	return seconds > 0 ? seconds : undefined;
+}
+
+export function getRetryAfterSeconds(headers: { get(name: string): string | null } | undefined): number | undefined {
+	if (!headers) return;
+	return parseRetryAfter(headers.get("X-Retry-After")) ?? parseRetryAfter(headers.get("Retry-After"));
+}
+
+function getAuthErrorStatus(error: AuthError): number | undefined {
+	if (typeof error.status === "number") return error.status;
+	if (typeof error.status === "string" && /^\d+$/.test(error.status)) return Number(error.status);
+	return undefined;
+}
+
+function getRetryAfterFromError(error: AuthError, explicit?: number): number | undefined {
+	if (explicit !== undefined && Number.isSafeInteger(explicit) && explicit > 0) return explicit;
+	if (
+		typeof error.retryAfterSeconds === "number" &&
+		Number.isSafeInteger(error.retryAfterSeconds) &&
+		error.retryAfterSeconds > 0
+	) {
+		return error.retryAfterSeconds;
+	}
+	return undefined;
+}
+
+export function formatRetryAfterDuration(seconds: number): string {
+	if (seconds < 60) return seconds === 1 ? t`1 second` : t`${seconds} seconds`;
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+	if (remainingSeconds === 0) return minutes === 1 ? t`1 minute` : t`${minutes} minutes`;
+	const minuteText = minutes === 1 ? t`1 minute` : t`${minutes} minutes`;
+	const secondText = remainingSeconds === 1 ? t`1 second` : t`${remainingSeconds} seconds`;
+	return t`${minuteText} ${secondText}`;
+}
+
+function getRateLimitMessage(seconds: number | undefined): string {
+	if (seconds === undefined) return i18n._(authErrorMessages.TOO_MANY_REQUESTS);
+	return t`Too many requests. Please try again in ${formatRetryAfterDuration(seconds)}.`;
+}
+
+export function resolveAuthErrorMessage(error: unknown, retryAfterSeconds?: number): string | null {
 	if (typeof error !== "object" || error === null) return null;
 
-	const { code, message } = error as AuthError;
+	const authError = error as AuthError;
+	const { code, message } = authError;
+	const status = getAuthErrorStatus(authError);
+	if (status === 429 || code === "TOO_MANY_REQUESTS" || message === "Too many requests. Please try again later.") {
+		return getRateLimitMessage(getRetryAfterFromError(authError, retryAfterSeconds));
+	}
 	if (typeof code === "string" && authErrorMessages[code]) return i18n._(authErrorMessages[code]);
 
 	if (typeof message === "string") {
@@ -71,8 +140,26 @@ function resolveAuthErrorMessage(error: unknown): string | null {
 	return null;
 }
 
-export function getAuthErrorMessage(error: unknown, fallback: string): string {
-	return resolveAuthErrorMessage(error) ?? fallback;
+export function isAuthRateLimitError(error: unknown): boolean {
+	if (typeof error !== "object" || error === null) return false;
+	const authError = error as AuthError;
+	return (
+		getAuthErrorStatus(authError) === 429 ||
+		authError.code === "TOO_MANY_REQUESTS" ||
+		authError.message === "Too many requests. Please try again later."
+	);
+}
+
+export function isInvalidResetTokenError(error: unknown): boolean {
+	if (typeof error !== "object" || error === null) return false;
+	const { code, message } = error as AuthError;
+	return (
+		code === "INVALID_TOKEN" || code === "TOKEN_EXPIRED" || message === "Invalid token" || message === "Token expired"
+	);
+}
+
+export function getAuthErrorMessage(error: unknown, fallback: string, retryAfterSeconds?: number): string {
+	return resolveAuthErrorMessage(error, retryAfterSeconds) ?? fallback;
 }
 
 /* ------------------------------------------------------------------ */

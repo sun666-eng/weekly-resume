@@ -20,7 +20,10 @@ export async function registerViaUi(page: Page, account: E2EAccount) {
 
 export async function loginViaUi(page: Page, account: E2EAccount) {
 	await page.goto("/auth/login");
-	await page.getByLabel("Email Address", { exact: true }).fill(account.email);
+	await page.getByRole("heading", { name: "Sign in to your account", exact: true }).waitFor({ state: "visible" });
+	const passwordMode = page.getByRole("button", { name: "Password sign-in", exact: true });
+	if (await passwordMode.isVisible()) await passwordMode.click();
+	await page.getByRole("textbox", { name: "Email Address", exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
 	await page.getByRole("button", { name: "Sign in" }).click();
 	await page.waitForURL(/\/dashboard/);

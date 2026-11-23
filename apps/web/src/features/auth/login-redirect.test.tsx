@@ -70,7 +70,7 @@ afterEach(cleanup);
 function renderLogin() {
 	return render(
 		<I18nProvider i18n={i18n}>
-			<LoginPage disableEmailAuth={false} disableSignups={false} />
+			<LoginPage smtpEnabled={false} disableEmailAuth={false} disableSignups={false} />
 		</I18nProvider>,
 	);
 }
@@ -185,7 +185,7 @@ describe("OAuth account creation", () => {
 		});
 		const { container } = render(
 			<I18nProvider i18n={i18n}>
-				<RegisterPage disableEmailAuth={false} />
+				<RegisterPage disableEmailAuth={false} smtpEnabled={true} />
 			</I18nProvider>,
 		);
 		for (const [name, value] of Object.entries({

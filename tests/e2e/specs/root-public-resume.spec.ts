@@ -15,7 +15,7 @@ test("unset root mode retains marketing and ordinary app entry points", async ({
 	await expect(page.locator('script[type="application/ld+json"]')).not.toHaveCount(0);
 	expect((await request.get("/api/health")).ok()).toBe(true);
 	await page.goto("/auth/login");
-	await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+	await expect(page.getByRole("heading", { name: "Sign in to your account", exact: true })).toBeVisible();
 });
 
 test("configured root preserves access, canonical, identity, statistics and app routes", async ({
@@ -212,7 +212,7 @@ test("configured root preserves access, canonical, identity, statistics and app 
 		await page.goto("/ats-checker");
 		await expect(page.getByRole("navigation", { name: "Main navigation" })).toBeVisible();
 		await page.goto("/auth/login");
-		await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+		await expect(page.getByRole("heading", { name: "Sign in to your account", exact: true })).toBeVisible();
 		await owner.goto("/dashboard/resumes");
 		await expect(owner.getByText("Root Fixture", { exact: true }).first()).toBeVisible();
 		expect(failures).toEqual([]);
