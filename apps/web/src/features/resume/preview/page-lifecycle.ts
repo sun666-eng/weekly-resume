@@ -9,32 +9,25 @@ function setUnloading(value: boolean) {
 	for (const notify of listeners) notify();
 }
 
-const onPageHide = () => setUnloading(true);
-const onPageShow = () => setUnloading(false);
+if (typeof window !== "undefined") {
+	// Layers can unmount and remount between beforeunload and pagehide.
+	// Keep the signal for the lifetime of the document, including that gap.
+	window.addEventListener("beforeunload", () => setUnloading(true));
+	window.addEventListener("pagehide", () => setUnloading(true));
+	window.addEventListener("pageshow", () => setUnloading(false));
 
-function onBeforeUnload(event: BeforeUnloadEvent) {
-	setUnloading(true);
-	// A draft navigation prompt may keep this document alive without a pageshow.
-	window.setTimeout(() => {
-		if (event.defaultPrevented && document.visibilityState === "visible") setUnloading(false);
-	}, 0);
+	const resumeAfterInput = (event: Event) => {
+		if (event.isTrusted && document.visibilityState === "visible") setUnloading(false);
+	};
+	// Cancelling a native navigation prompt keeps the current page without a pageshow.
+	window.addEventListener("pointerdown", resumeAfterInput, true);
+	window.addEventListener("keydown", resumeAfterInput, true);
 }
 
 function subscribe(notify: () => void) {
 	listeners.add(notify);
-	if (listeners.size === 1) {
-		window.addEventListener("beforeunload", onBeforeUnload);
-		window.addEventListener("pagehide", onPageHide);
-		window.addEventListener("pageshow", onPageShow);
-	}
-
 	return () => {
 		listeners.delete(notify);
-		if (listeners.size > 0) return;
-		window.removeEventListener("beforeunload", onBeforeUnload);
-		window.removeEventListener("pagehide", onPageHide);
-		window.removeEventListener("pageshow", onPageShow);
-		unloading = false;
 	};
 }
 

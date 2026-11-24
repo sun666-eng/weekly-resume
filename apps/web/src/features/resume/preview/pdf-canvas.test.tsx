@@ -17,6 +17,7 @@ vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
 
 afterEach(() => {
 	cleanup();
+	window.dispatchEvent(new Event("pageshow"));
 	getDocument.mockReset();
 	vi.restoreAllMocks();
 });
@@ -73,6 +74,23 @@ it("resumes on pageshow and reports a read error in the active document", async 
 	});
 	expect(arrayBuffer).toHaveBeenCalledTimes(2);
 	await waitFor(() => expect(log).toHaveBeenCalledExactlyOnceWith("Failed to load PDF document", error));
+});
+
+it("keeps late preview layers from reading a Blob while the document is leaving", async () => {
+	const beforeUnload = new Event("beforeunload", { cancelable: true });
+	beforeUnload.preventDefault();
+	window.dispatchEvent(beforeUnload);
+	await new Promise((resolve) => setTimeout(resolve, 0));
+
+	const file = new Blob(["%PDF"]);
+	const read = vi.spyOn(file, "arrayBuffer");
+	render(
+		<PdfCanvasDocument file={file} onLoadSuccess={vi.fn()}>
+			{() => null}
+		</PdfCanvasDocument>,
+	);
+	expect(read).not.toHaveBeenCalled();
+	expect(getDocument).not.toHaveBeenCalled();
 });
 
 it("handles rejection from destroying a pending PDF worker on unmount", async () => {
