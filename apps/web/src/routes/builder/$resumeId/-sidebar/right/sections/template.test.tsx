@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { readFileSync } from "node:fs";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -29,6 +29,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
+	cleanup();
 	current.template = "ditto";
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 	useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });

@@ -14,8 +14,8 @@ export const MIN_COMMUNITY_TOTAL_TO_DISPLAY = 100;
 
 export function CommunityStats() {
 	const { i18n } = useLingui();
-	const ref = useRef<HTMLDivElement>(null);
-	const entered = useInView(ref, { once: true, amount: 0.2 });
+	const ref = useRef<HTMLElement>(null);
+	const entered = useInView(ref, { once: true });
 	const { data } = useQuery(
 		orpc.statistics.getTotals.queryOptions({
 			enabled: entered,
@@ -37,7 +37,14 @@ export function CommunityStats() {
 		userCount < MIN_COMMUNITY_TOTAL_TO_DISPLAY ||
 		resumeCount < MIN_COMMUNITY_TOTAL_TO_DISPLAY
 	) {
-		return <div ref={ref} className="h-0 overflow-hidden" aria-hidden="true" data-community-stats-hidden="" />;
+		return (
+			<section
+				ref={ref}
+				className="pointer-events-none -mb-px h-px opacity-0"
+				aria-hidden="true"
+				data-community-stats-hidden=""
+			/>
+		);
 	}
 
 	const displayTotals = { users: userCount, resumes: resumeCount };

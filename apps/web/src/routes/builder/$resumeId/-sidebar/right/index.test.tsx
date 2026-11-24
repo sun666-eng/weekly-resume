@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
-import type { PropsWithChildren } from "react";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import type { PropsWithChildren, ReactElement } from "react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -46,6 +46,12 @@ const wrapper = ({ children }: PropsWithChildren) => (
 	</I18nProvider>
 );
 
+async function renderSidebar(ui: ReactElement) {
+	render(ui, { wrapper });
+	// Base UI measures the scroll viewport in a microtask after mounting.
+	await act(() => Promise.resolve());
+}
+
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 	toggleSidebar.mockReset();
@@ -57,7 +63,7 @@ afterEach(() => {
 });
 
 describe("BuilderSidebarRight", () => {
-	it("consolidates guest account-only features into one card and omits dead rail icons", () => {
+	it("consolidates guest account-only features into one card and omits dead rail icons", async () => {
 		const showHelp = vi.fn();
 		const guest = {
 			status: "已暂存到此浏览器",
@@ -69,11 +75,10 @@ describe("BuilderSidebarRight", () => {
 			photoBusy: vi.fn(),
 		};
 
-		render(
+		await renderSidebar(
 			<GuestContext.Provider value={guest}>
 				<BuilderSidebarRight />
 			</GuestContext.Provider>,
-			{ wrapper },
 		);
 
 		const rail = screen.getByLabelText("Right rail");
@@ -88,8 +93,8 @@ describe("BuilderSidebarRight", () => {
 		expect(showHelp).toHaveBeenCalledWith("Sharing");
 	});
 
-	it("auto-expands default-collapsed Custom Styles when clicked in the right rail", () => {
-		render(<BuilderSidebarRight />, { wrapper });
+	it("auto-expands default-collapsed Custom Styles when clicked in the right rail", async () => {
+		await renderSidebar(<BuilderSidebarRight />);
 
 		expect(isSectionCollapsed(useSectionStore.getState().sections, "styles")).toBe(true);
 		const rail = screen.getByLabelText("Right rail");

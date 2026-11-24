@@ -8227,6 +8227,10 @@ msgid "Retry saving"
 msgstr "重试保存"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded."
+msgstr "照片加载失败。"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
 msgstr "照片加载失败。请更换照片，或在高级设置中检查照片 URL。"
 

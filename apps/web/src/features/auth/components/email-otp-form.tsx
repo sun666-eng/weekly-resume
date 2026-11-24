@@ -207,6 +207,7 @@ export function EmailOtpForm(props: Props) {
 							type="email"
 							name="email"
 							autoComplete="email"
+							placeholder={t({ id: "auth.placeholder.email", message: "john.doe@example.com" })}
 							disabled={busy}
 							value={address}
 							onChange={(event) => {

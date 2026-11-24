@@ -8149,6 +8149,10 @@ msgid "Retry saving"
 msgstr "Retry saving"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded."
+msgstr "Picture could not be loaded."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
 msgstr "Picture could not be loaded. Replace it or check its URL in advanced settings."
 
