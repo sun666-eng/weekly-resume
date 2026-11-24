@@ -13,15 +13,19 @@ import { admin, jwt } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
-import { createElement } from "react";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { VerifyEmailChange } from "@reactive-resume/email/templates/auth";
-import { sendEmail } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
 import { rateLimitConfig, TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
+import { createAuthEmailCallbacks } from "./email-callbacks";
+import {
+	createEmailOtpPlugin,
+	enforceEmailOtpTwoFactor,
+	prepareEmailOtpRequest,
+	protectTwoFactorCredentials,
+} from "./email-otp";
 import { createGithubProfileMapper, createProfileMapper } from "./oauth-profile";
 import { getTrustedOrigins } from "./trusted-origins";
 
@@ -116,6 +120,7 @@ type WithoutEndpointMetadata<TPlugin> = TPlugin extends { endpoints: infer TEndp
 
 const getAuthConfig = () => {
 	const authConfigs: GenericOAuthConfig[] = [];
+	const authEmailCallbacks = createAuthEmailCallbacks();
 
 	if (isCustomOAuthProviderEnabled()) {
 		authConfigs.push({
@@ -155,10 +160,13 @@ const getAuthConfig = () => {
 			enabled: isRateLimitEnabled,
 		},
 
+		databaseHooks: { account: { delete: { before: protectTwoFactorCredentials } } },
 		hooks: {
-			// biome-ignore lint/suspicious/useAwait: Better Auth requires middleware callbacks to return a Promise.
 			before: createAuthMiddleware(async (ctx) => {
-				if (!ctx.path.includes("/oauth2/register")) return;
+				if (!ctx.path.includes("/oauth2/register")) {
+					await prepareEmailOtpRequest(ctx, env.FLAG_DISABLE_EMAIL_AUTH, env.FLAG_DISABLE_SIGNUPS);
+					return;
+				}
 
 				const body = ctx.body as { redirect_uris?: unknown } | undefined;
 				const redirectUris = Array.isArray(body?.redirect_uris) ? body.redirect_uris : [];
@@ -178,6 +186,7 @@ const getAuthConfig = () => {
 					}
 				}
 			}),
+			after: createAuthMiddleware(enforceEmailOtpTwoFactor),
 		},
 
 		// Without this, OAuth callback failures land on Better Auth's built-in `/api/auth/error`
@@ -198,13 +207,7 @@ const getAuthConfig = () => {
 			maxPasswordLength: 64,
 			requireEmailVerification: false,
 			disableSignUp: env.FLAG_DISABLE_SIGNUPS || env.FLAG_DISABLE_EMAIL_AUTH,
-			sendResetPassword: async ({ user, url }) => {
-				await sendEmail({
-					to: user.email,
-					subject: "Weekly Resume password reset",
-					text: `Open this link to reset your Weekly Resume password: ${url}`,
-				});
-			},
+			sendResetPassword: authEmailCallbacks.sendResetPassword,
 			password: {
 				hash: (password) => hash(password, 10),
 				verify: ({ password, hash }) => compare(password, hash),
@@ -214,25 +217,13 @@ const getAuthConfig = () => {
 		emailVerification: {
 			sendOnSignUp: true,
 			autoSignInAfterVerification: true,
-			sendVerificationEmail: async ({ user, url }) => {
-				await sendEmail({
-					to: user.email,
-					subject: "Weekly Resume email verification",
-					text: `Open this link to verify your Weekly Resume email: ${url}`,
-				});
-			},
+			sendVerificationEmail: authEmailCallbacks.sendVerificationEmail,
 		},
 
 		user: {
 			changeEmail: {
 				enabled: true,
-				sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-					await sendEmail({
-						to: newEmail,
-						subject: "Verify your new email",
-						react: createElement(VerifyEmailChange, { url, previousEmail: user.email, newEmail }),
-					});
-				},
+				sendChangeEmailConfirmation: authEmailCallbacks.sendChangeEmailConfirmation,
 			},
 			additionalFields: {
 				username: {
@@ -290,6 +281,7 @@ const getAuthConfig = () => {
 		},
 
 		plugins: [
+			createEmailOtpPlugin(env, authEmailCallbacks),
 			jwt(),
 			admin(),
 			passkey(),

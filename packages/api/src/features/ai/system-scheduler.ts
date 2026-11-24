@@ -3,6 +3,7 @@ import type { SystemAiConfig, SystemAiEndpoint } from "./system-config";
 import { ORPCError } from "@orpc/client";
 import { APICallError, RetryError } from "ai";
 import { ZodError } from "zod";
+import { isDirectDeepSeekProvider } from "./capabilities";
 import { publicSystemAiText } from "./system-config";
 
 export type AiCallOptions = { abortSignal?: AbortSignal; maxRetries?: number };
@@ -17,14 +18,23 @@ function candidates(config: SystemAiConfig, now: number) {
 	for (const [key, until] of cooldowns) {
 		if (until <= now) cooldowns.delete(key);
 	}
-	const all = config.endpoints.map((endpoint, index) => ({
-		index,
-		endpoint,
-		key: `${index}:${endpoint.provider}:${endpoint.baseURL ?? ""}:${endpoint.model}`,
-	}));
+	const directCount = config.endpoints.filter(isDirectDeepSeekProvider).length;
+	let directIndex = 0;
+	let relayIndex = directCount;
+	const all = config.endpoints.map((endpoint, index) => {
+		const direct = isDirectDeepSeekProvider(endpoint);
+		// Number circuits in Agent order so imports share the same cooldowns in their original order.
+		const circuitIndex = direct ? directIndex++ : relayIndex++;
+		return {
+			endpoint,
+			key: `${circuitIndex}:${endpoint.provider}:${endpoint.baseURL ?? ""}:${endpoint.model}`,
+			relay: directCount > 0 ? !direct : index < config.endpoints.length - 1,
+		};
+	});
 	const ready = all.filter(({ key }) => !cooldowns.has(key));
-	// If all circuits are open, probe the official (last) route before the relays.
-	return ready.length ? ready : [...all.slice(-1), ...all.slice(0, -1)];
+	if (ready.length) return ready;
+	if (directCount === 0) return [...all.slice(-1), ...all.slice(0, -1)];
+	return [...all.filter(({ relay }) => !relay), ...all.filter(({ relay }) => relay)];
 }
 
 // Some provider operations ignore abort until they have opened a connection. Bound the wait as well as the I/O.
@@ -72,9 +82,8 @@ export async function runWithSystemAiFailover<T>(
 	abortSignal?.throwIfAborted();
 	const routes = candidates(config, now());
 	let lastError: unknown;
-	for (const [attempt, { endpoint, index, key }] of routes.entries()) {
+	for (const [attempt, { endpoint, key, relay }] of routes.entries()) {
 		abortSignal?.throwIfAborted();
-		const relay = index < config.endpoints.length - 1;
 		const timeoutMs = endpoint.timeoutMs ?? (relay ? config.defaultRelayTimeoutMs : undefined);
 		const timeout = timeoutMs === undefined ? undefined : new AbortController();
 		const timer =

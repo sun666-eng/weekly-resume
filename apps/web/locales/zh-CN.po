@@ -8679,6 +8679,208 @@ msgstr "在微信中下载 PDF，请点击右上角「···」，选择「在�
 msgid "To save this file in WeChat, tap “···” in the top-right corner and choose “Open in Browser”."
 msgstr "在微信中保存文件，请点击右上角「···」，选择「在浏览器打开」。"
 
+#: src/features/auth/pages/register.tsx
+msgid "Account created"
+msgstr "账号已创建"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Could not reset your password. Check your connection and try again."
+msgstr "无法重置密码，请检查网络连接后重试。"
+
+#. Fallback toast shown when password reset fails
+#: src/features/auth/pages/reset-password.tsx
+msgid "Could not reset your password. Please try again."
+msgstr "无法重置密码，请重试。"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Could not submit your password reset request. Check your connection and try again."
+msgstr "无法提交密码重置请求，请检查网络连接后重试。"
+
+#. Fallback toast when requesting a password reset fails without backend message
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Could not submit your password reset request. Please try again."
+msgstr "无法提交密码重置请求，请重试。"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Edit email"
+msgstr "修改邮箱"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Email service is not configured"
+msgstr "邮件服务未配置"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account exists for {email}, we'll send a password reset link to this address. Check your inbox and spam folder. The link is valid for 1 hour."
+msgstr "如果本站已存在与 {email} 对应的账号，我们会向该邮箱发送密码重置链接。请检查收件箱和垃圾邮件文件夹，链接有效期为 1 小时。"
+
+#: src/libs/error-message.ts
+msgid "Please wait {0} before submitting another request."
+msgstr "请等待 {0} 后再提交请求。"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Request a new password reset"
+msgstr "重新申请重置密码"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "Reset link unavailable"
+msgstr "重置链接不可用"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Reset request submitted"
+msgstr "请求已提交"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Resubmit request"
+msgstr "重新提交请求"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Resubmit request in {0}"
+msgstr "{0} 后重新提交请求"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Submitting password reset request..."
+msgstr "正在提交密码重置请求..."
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "The link may have expired after 1 hour or already been used. Request a new password reset link to continue."
+msgstr "该链接可能已超过 1 小时有效期或已被使用。请重新申请密码重置链接以继续。"
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This instance cannot send password reset emails. Contact the administrator for help."
+msgstr "当前实例未配置邮件服务，无法发送密码重置邮件，请联系管理员。"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "This password reset link is invalid or has expired."
+msgstr "此密码重置链接无效或已过期。"
+
+#: src/libs/error-message.ts
+msgid "Too many requests. Please try again in {0}."
+msgstr "请求过于频繁，请在 {0} 后重试。"
+
+#: src/libs/error-message.ts
+msgid "Too many requests. Please try again later."
+msgstr "请求过于频繁，请稍后再试。"
+
+#: src/libs/error-message.ts
+msgid "Try again in {0}"
+msgstr "{0} 后重试"
+
+#: src/libs/error-message.ts
+msgid "{minuteText} {secondText}"
+msgstr "{minuteText} {secondText}"
+
+#: src/libs/error-message.ts
+msgid "{minutes} minutes"
+msgstr "{minutes} 分钟"
+
+#: src/libs/error-message.ts
+msgid "{remainingSeconds} seconds"
+msgstr "{remainingSeconds} 秒"
+
+#: src/libs/error-message.ts
+msgid "{seconds} seconds"
+msgstr "{seconds} 秒"
+
+#: src/libs/error-message.ts
+msgid "1 minute"
+msgstr "1 分钟"
+
+#: src/libs/error-message.ts
+msgid "1 second"
+msgstr "1 秒"
+
+#: src/features/auth/pages/register.tsx
+msgid "Verifying your email helps protect your account and confirms your contact address."
+msgstr "验证邮箱有助于保护账号安全，并确认你的联系邮箱。"
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready. Continue to your workspace."
+msgstr "账号已准备就绪，继续进入工作台即可。"
+
+#: src/features/auth/pages/register.tsx
+msgid "Your verification email request has been submitted. Check your inbox and spam folder for a link to verify your account."
+msgstr "验证邮件请求已提交。请检查收件箱和垃圾邮件文件夹，找到验证账号的链接。"
+
+#: src/features/auth/pages/login.tsx
+msgid "Email code sign-in"
+msgstr "邮箱验证码登录"
+
+#: src/features/auth/pages/login.tsx
+msgid "Password sign-in"
+msgstr "密码登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "请输入邮件中的 6 位数字验证码。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Requesting your code..."
+msgstr "正在申请验证码…"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "The request could not be completed. Please try again."
+msgstr "请求未能完成，请重试。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Check your email"
+msgstr "请查收验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "If an account exists for {email}, we'll send a 6-digit code to this address. Check your inbox and spam folder. The code expires in 10 minutes."
+msgstr "如果本站已存在与 {email} 对应的账号，我们会向该邮箱发送 6 位数字验证码。请检查收件箱和垃圾邮件文件夹，验证码 10 分钟内有效。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Your code request was submitted. Check the inbox and spam folder for {email}. The code expires in 10 minutes."
+msgstr "验证码请求已提交。请查收 {email} 的收件箱及垃圾邮件文件夹，验证码 10 分钟内有效。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verification code"
+msgstr "验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Only existing accounts can sign in with a code."
+msgstr "仅限已有账号使用验证码登录。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "New email addresses get an account after verification."
+msgstr "未注册的邮箱将在验证后自动创建账号。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Please wait {duration} before submitting another request."
+msgstr "请等待 {duration} 后再提交请求。"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Verify and sign in"
+msgstr "验证并登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Try again in {duration}"
+msgstr "{duration} 后重试"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get verification code"
+msgstr "获取验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Continue with password"
+msgstr "改用密码登录"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code in {duration}"
+msgstr "{duration} 后可重新获取验证码"
+
+#: src/features/auth/components/email-otp-form.tsx
+msgid "Get a new code"
+msgstr "重新获取验证码"
+
+#: src/features/auth/pages/reset-password.tsx
+msgid "The link may have expired after 1 hour or already been used. Request a new password reset code to continue."
+msgstr "该链接可能已超过 1 小时有效期或已被使用。请重新获取验证码以继续重置密码。"
+
+#: src/libs/error-message.ts
+msgid "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
+msgstr "该账号已开启两步验证，请使用密码登录并完成两步验证。"
+
 #. js-lingui-explicit-id
 msgid "picture.preUploadOptions"
 msgstr "裁剪与比例选项"

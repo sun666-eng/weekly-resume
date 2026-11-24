@@ -4,7 +4,7 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage } from "ai";
 import type { SystemQuotaReservation } from "../ai/quota";
 import type { GetModelInput } from "../ai/service";
-import type { SystemAiEndpoint } from "../ai/system-config";
+import type { SystemAiConfig, SystemAiEndpoint } from "../ai/system-config";
 import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
@@ -762,6 +762,21 @@ async function applyResumePatch(input: {
 	};
 }
 
+function prioritizeAgentSystemConfig(config: SystemAiConfig): SystemAiConfig {
+	const directEndpoints = config.endpoints.filter(isDirectDeepSeekProvider);
+	const first = directEndpoints[0];
+	if (!first || directEndpoints.length === config.endpoints.length) return config;
+
+	return {
+		...config,
+		provider: first.provider,
+		model: first.model,
+		apiKey: first.apiKey,
+		baseURL: first.baseURL ?? "",
+		endpoints: [...directEndpoints, ...config.endpoints.filter((endpoint) => !isDirectDeepSeekProvider(endpoint))],
+	};
+}
+
 function buildAgentStepOptions(stepNumber: number, forceFreshRead: boolean, hasDirectDeepSeek: boolean) {
 	if (!forceFreshRead || stepNumber !== 0) return {};
 	return {
@@ -860,8 +875,17 @@ function createAgent(input: {
 		},
 	});
 
-	const hasWebFetch = "web_fetch" in tools;
-	const instructionsText = `${buildAgentInstructions({ hasWebSearch: "web_search" in tools, hasWebFetch })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
+	for (const toolName of ["lookup_online_sources", "read_public_url"] as const) {
+		const webTool = tools[toolName];
+		if (webTool?.execute) {
+			const execute = webTool.execute;
+			webTool.execute = timedToolHandler(toolName, async (...args: Parameters<typeof execute>) => execute(...args));
+		}
+	}
+
+	const webSearchTool =
+		"lookup_online_sources" in tools ? "lookup_online_sources" : "web_search" in tools ? "web_search" : undefined;
+	const instructionsText = `${buildAgentInstructions({ webSearchTool, hasPublicUrlReader: "read_public_url" in tools })} The user can undo edits outside this conversation. Earlier tool results and assistant claims may describe changes that were undone. On each new user request, read_resume again before evaluating or editing the resume; treat that fresh result as authoritative. Do not reapply earlier edits merely because they appear in history.`;
 
 	return new ToolLoopAgent({
 		// Providers without native inputExamples support get them appended to the tool description.
@@ -1298,16 +1322,11 @@ export const agentService = {
 					insertedDraft = true;
 				}
 
-				const systemConfig = runnableProvider.systemConfig;
-				const displayedModel = systemConfig
-					? publicSystemAiText(runnableProvider.model, systemConfig.endpoints)
-					: runnableProvider.model;
-				const provider = {
-					provider: runnableProvider.provider,
-					model: runnableProvider.model,
-					apiKey: runnableProvider.apiKey,
-					baseURL: runnableProvider.baseURL ?? "",
-				};
+				const agentSystemConfig =
+					runnableProvider.systemConfig && prioritizeAgentSystemConfig(runnableProvider.systemConfig);
+				const { provider: providerId, model, apiKey, baseURL } = agentSystemConfig ?? runnableProvider;
+				const provider = { provider: providerId, model, apiKey, baseURL: baseURL ?? "" };
+				const displayedModel = agentSystemConfig ? publicSystemAiText(model, agentSystemConfig.endpoints) : model;
 				const agent = createAgent({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1316,8 +1335,8 @@ export const agentService = {
 					...(draftRowId ? { draftRowId } : {}),
 					requirePatchApproval: thread.reviewPatches,
 					provider,
-					model: getAgentModel(provider, systemConfig),
-					systemEndpoints: systemConfig?.endpoints,
+					model: getAgentModel(provider, agentSystemConfig),
+					systemEndpoints: agentSystemConfig?.endpoints,
 					onSystemStreamError: refundIfEmpty,
 				});
 

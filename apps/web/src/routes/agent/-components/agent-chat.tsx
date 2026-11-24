@@ -664,6 +664,8 @@ function MessagePart({
 	if (
 		part.type === "tool-read_resume" ||
 		part.type === "tool-read_attachment" ||
+		part.type === "tool-lookup_online_sources" ||
+		part.type === "tool-read_public_url" ||
 		part.type === "tool-web_search" ||
 		part.type === "tool-web_fetch" ||
 		part.type === "dynamic-tool"

@@ -3,7 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -13,6 +13,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
+import { EmailOtpForm } from "../components/email-otp-form";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthErrorMessage } from "../error-message";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
@@ -25,9 +26,12 @@ const formSchema = z.object({
 type Props = {
 	disableEmailAuth: boolean;
 	disableSignups: boolean;
+	smtpEnabled?: boolean;
 };
 
-export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
+export function LoginPage({ disableEmailAuth, disableSignups, smtpEnabled = false }: Props) {
+	const [usePassword, setUsePassword] = useState(false);
+	const otpEnabled = smtpEnabled && !disableEmailAuth;
 	const router = useRouter();
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const navigate = useNavigate();
@@ -147,7 +151,45 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 				)}
 			</div>
 
-			{!disableEmailAuth && (
+			{otpEnabled && (
+				<>
+					<div className="grid grid-cols-2 gap-2">
+						<Button
+							type="button"
+							aria-pressed={!usePassword}
+							variant={usePassword ? "outline" : "default"}
+							onClick={() => setUsePassword(false)}
+						>
+							<Trans>Email code sign-in</Trans>
+						</Button>
+						<Button
+							type="button"
+							aria-pressed={usePassword}
+							variant={usePassword ? "default" : "outline"}
+							onClick={() => setUsePassword(true)}
+						>
+							<Trans>Password sign-in</Trans>
+						</Button>
+					</div>
+					<div hidden={usePassword}>
+						<EmailOtpForm
+							mode="sign-in"
+							disableSignups={disableSignups}
+							callbackURL={callbackURL}
+							onPassword={(email) => {
+								form.setFieldValue("identifier", email);
+								setUsePassword(true);
+							}}
+							onSuccess={async (data) => {
+								if (isOAuthRedirect(data)) return;
+								await router.invalidate();
+								void navigate(getAuthRedirectOptions(callbackURL));
+							}}
+						/>
+					</div>
+				</>
+			)}
+			{!disableEmailAuth && (!otpEnabled || usePassword) && (
 				<form
 					className="space-y-6"
 					onSubmit={(event) => {

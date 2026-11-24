@@ -18,6 +18,15 @@ afterEach(() => {
 });
 
 describe("DeepSeek web search", () => {
+	it("exposes ordinary function names and descriptions for relay compatibility", () => {
+		const tools = buildDeepSeekWebTools(key);
+		expect(Object.keys(tools)).toEqual(["lookup_online_sources", "read_public_url"]);
+		for (const candidate of Object.values(tools)) {
+			expect(candidate.execute).toBeTypeOf("function");
+			expect(candidate.description).not.toMatch(/web_search|web_fetch/);
+		}
+	});
+
 	it("uses the official endpoint, a Unicode query and default count, and only returns bounded public references", async () => {
 		const title = "岗".repeat(301);
 		const summary = "文".repeat(1601);
@@ -40,7 +49,7 @@ describe("DeepSeek web search", () => {
 		);
 		const term = "🧑".repeat(128);
 		const tools = buildDeepSeekWebTools(key);
-		const result = await tools.web_search.execute({ query: term }, execution);
+		const result = await tools.lookup_online_sources.execute({ query: term }, execution);
 		expect(transport).toHaveBeenCalledExactlyOnceWith(
 			"https://api.deepseek.com/v1/tools/search",
 			expect.objectContaining({
@@ -65,7 +74,7 @@ describe("DeepSeek web search", () => {
 		transport.mockResolvedValue(
 			Response.json({ results: Array.from({ length: 12 }, (_, i) => ({ url: `https://jobs.example/${i}` })) }),
 		);
-		const result = await buildDeepSeekWebTools(key).web_search.execute({ query: "岗", count }, execution);
+		const result = await buildDeepSeekWebTools(key).lookup_online_sources.execute({ query: "岗", count }, execution);
 		expect(transport.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ query: "岗", count, need_content: false }));
 		expect(result).toMatchObject({
 			results: expect.arrayContaining([{ url: "https://jobs.example/0", title: "", summary: "", truncated: false }]),
@@ -80,7 +89,7 @@ describe("DeepSeek web search", () => {
 		{ ...query, count: 11 },
 		{ ...query, count: 1.5 },
 	])("rejects an out-of-range search without dispatching", async (input) => {
-		await expect(buildDeepSeekWebTools(key).web_search.execute(input, execution)).rejects.toThrow();
+		await expect(buildDeepSeekWebTools(key).lookup_online_sources.execute(input, execution)).rejects.toThrow();
 		expect(transport).not.toHaveBeenCalled();
 	});
 });
@@ -103,7 +112,7 @@ describe("DeepSeek web fetch", () => {
 		"http://printer.home.arpa",
 		"http://host.internal..",
 	])("rejects a non-public URL without sending it (%s)", async (url) => {
-		await expect(buildDeepSeekWebTools(key).web_fetch.execute({ url }, execution)).rejects.toThrow("public HTTP");
+		await expect(buildDeepSeekWebTools(key).read_public_url.execute({ url }, execution)).rejects.toThrow("public HTTP");
 		expect(transport).not.toHaveBeenCalled();
 	});
 
@@ -112,7 +121,7 @@ describe("DeepSeek web fetch", () => {
 		transport.mockResolvedValue(
 			Response.json({ url: "http://untrusted.internal", title: "a".repeat(301), content: "📄".repeat(24_001) }),
 		);
-		const result = await buildDeepSeekWebTools(key).web_fetch.execute({ url }, execution);
+		const result = await buildDeepSeekWebTools(key).read_public_url.execute({ url }, execution);
 		expect(transport).toHaveBeenCalledExactlyOnceWith(
 			"https://api.deepseek.com/v1/tools/fetch",
 			expect.objectContaining({
@@ -127,7 +136,7 @@ describe("DeepSeek web fetch", () => {
 
 	it.each([{}, { title: null, content: null }])("accepts missing or null fields", async (data) => {
 		transport.mockResolvedValue(Response.json(data));
-		await expect(buildDeepSeekWebTools(key).web_fetch.execute(page, execution)).resolves.toEqual({
+		await expect(buildDeepSeekWebTools(key).read_public_url.execute(page, execution)).resolves.toEqual({
 			...page,
 			title: "",
 			content: "",
@@ -149,7 +158,7 @@ describe("bounded research requests", () => {
 		transport.mockResolvedValue(
 			new Response(stream, { headers: { "Content-Length": mode === "declared" ? "1048577" : "10" } }),
 		);
-		await expect(buildDeepSeekWebTools(key).web_fetch.execute(page, execution)).rejects.toThrow(neutral);
+		await expect(buildDeepSeekWebTools(key).read_public_url.execute(page, execution)).rejects.toThrow(neutral);
 		expect(cancel).toHaveBeenCalledOnce();
 	});
 
@@ -168,7 +177,7 @@ describe("bounded research requests", () => {
 				}),
 			),
 		);
-		await expect(buildDeepSeekWebTools(key).web_fetch.execute(page, execution)).resolves.toMatchObject({
+		await expect(buildDeepSeekWebTools(key).read_public_url.execute(page, execution)).resolves.toMatchObject({
 			content: "中",
 		});
 	});
@@ -186,7 +195,10 @@ describe("bounded research requests", () => {
 						signal?.addEventListener("abort", () => reject(signal.reason), { once: true });
 					}),
 			);
-			const pending = buildDeepSeekWebTools(key).web_fetch.execute(page, { ...execution, abortSignal: caller.signal });
+			const pending = buildDeepSeekWebTools(key).read_public_url.execute(page, {
+				...execution,
+				abortSignal: caller.signal,
+			});
 			expect(timer).toHaveBeenCalledWith(30_000);
 			(source === "caller" ? caller : deadline).abort(new Error(key));
 			await expect(pending).rejects.toMatchObject(
@@ -202,22 +214,22 @@ describe("bounded research requests", () => {
 		const options = { maxCallsPerTurn: 3, isSystem: true };
 		const tools = buildDeepSeekWebTools(key, options);
 		const results = await Promise.allSettled([
-			tools.web_search.execute(query, execution),
-			tools.web_fetch.execute(page, execution),
-			tools.web_fetch.execute(page, execution),
-			tools.web_search.execute(query, execution),
+			tools.lookup_online_sources.execute(query, execution),
+			tools.read_public_url.execute(page, execution),
+			tools.read_public_url.execute(page, execution),
+			tools.lookup_online_sources.execute(query, execution),
 		]);
 		expect(results.map((r) => r.status)).toEqual(["rejected", "fulfilled", "fulfilled", "rejected"]);
 		expect(results[3]).toMatchObject({ reason: { message: expect.stringContaining("information already available") } });
 		expect(transport).toHaveBeenCalledTimes(3);
-		await buildDeepSeekWebTools(key, options).web_search.execute(query, execution);
+		await buildDeepSeekWebTools(key, options).lookup_online_sources.execute(query, execution);
 		expect(transport).toHaveBeenCalledTimes(4);
 	});
 
 	it("allows four personal requests in one turn", async () => {
 		transport.mockImplementation(async () => Response.json({ results: [] }));
 		const tools = buildDeepSeekWebTools(key);
-		for (let attempt = 0; attempt < 4; attempt++) await tools.web_search.execute(query, execution);
+		for (let attempt = 0; attempt < 4; attempt++) await tools.lookup_online_sources.execute(query, execution);
 		expect(transport).toHaveBeenCalledTimes(4);
 	});
 });
@@ -233,11 +245,11 @@ describe("sanitized tool failures", () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const sensitive = `${page.url}?token=${key}`;
 		transport.mockImplementation(async () => new Response(sensitive, { status }));
-		const personal = buildDeepSeekWebTools(key).web_search.execute(query, execution);
+		const personal = buildDeepSeekWebTools(key).lookup_online_sources.execute(query, execution);
 		await expect(personal).rejects.toThrow(hint);
 		await expect(personal).rejects.not.toThrow(sensitive);
 		expect(warn).not.toHaveBeenCalled();
-		const system = buildDeepSeekWebTools(key, { isSystem: true }).web_fetch.execute(page, execution);
+		const system = buildDeepSeekWebTools(key, { isSystem: true }).read_public_url.execute(page, execution);
 		await expect(system).rejects.toMatchObject({ message: neutral });
 		expect(warn).toHaveBeenCalledExactlyOnceWith(
 			JSON.stringify({ evt: "system_ai.web_tool_error", operation: "fetch", statusCode: status }),
@@ -252,7 +264,7 @@ describe("sanitized tool failures", () => {
 			.mockResolvedValueOnce(Response.json({ results: key }));
 		const tools = buildDeepSeekWebTools(key, { isSystem: true });
 		for (const statusCode of [null, 200, 200]) {
-			await expect(tools.web_search.execute(query, execution)).rejects.toMatchObject({ message: neutral });
+			await expect(tools.lookup_online_sources.execute(query, execution)).rejects.toMatchObject({ message: neutral });
 			expect(warn).toHaveBeenLastCalledWith(
 				JSON.stringify({ evt: "system_ai.web_tool_error", operation: "search", statusCode }),
 			);

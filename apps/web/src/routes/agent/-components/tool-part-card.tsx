@@ -24,10 +24,12 @@ function toolDisplay(part: ToolPartFields): { label: string; icon: React.ReactNo
 		case "tool-read_attachment": {
 			return { label: t`Read an attachment`, icon: <FileTextIcon /> };
 		}
+		case "tool-lookup_online_sources":
 		case "tool-web_search": {
 			// State-neutral: this label sits next to a live Running…/Done/Failed badge.
 			return { label: t`Web search`, icon: <GlobeIcon /> };
 		}
+		case "tool-read_public_url":
 		case "tool-web_fetch": {
 			return { label: t`Read a web page`, icon: <GlobeIcon /> };
 		}

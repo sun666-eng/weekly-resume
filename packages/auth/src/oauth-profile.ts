@@ -4,7 +4,8 @@ import { BetterAuthError } from "better-auth";
 import { and, eq, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { generateId, toUsername } from "@reactive-resume/utils/string";
+import { toUsername } from "@reactive-resume/utils/string";
+import { allocateUniqueUsername } from "./username-allocation";
 
 interface ExistingOAuthUser {
 	id: string;
@@ -91,11 +92,6 @@ function getEmailLocalPart(email: string): string {
 	return email.split("@", 1)[0] ?? "";
 }
 
-function appendUsernameSuffix(base: string, suffix: string): string {
-	const maxBaseLength = 64 - suffix.length;
-	return `${base.slice(0, maxBaseLength)}${suffix}`;
-}
-
 async function isUsernameTaken(candidate: string): Promise<boolean> {
 	const normalizedCandidate = candidate.trim().toLowerCase();
 
@@ -111,29 +107,6 @@ async function isUsernameTaken(candidate: string): Promise<boolean> {
 		.limit(1);
 
 	return Boolean(existingUser);
-}
-
-async function allocateUniqueUsername(email: string, preferredUsername?: string | null): Promise<string> {
-	const emailLocalPart = getEmailLocalPart(email);
-	const preferred = preferredUsername ? toUsername(preferredUsername) : "";
-	const normalizedEmailLocalPart = toUsername(emailLocalPart);
-	const baseUsername = preferred || normalizedEmailLocalPart || "user";
-
-	if (!(await isUsernameTaken(baseUsername))) return baseUsername;
-
-	const suffixedUsername = await findAvailableUsernameSuffix(baseUsername);
-	if (suffixedUsername) return suffixedUsername;
-
-	return appendUsernameSuffix(baseUsername, `-${generateId().slice(0, 8).toLowerCase()}`);
-}
-
-async function findAvailableUsernameSuffix(baseUsername: string, index = 1): Promise<string | null> {
-	if (index > 999) return null;
-
-	const candidate = appendUsernameSuffix(baseUsername, `-${index}`);
-	if (!(await isUsernameTaken(candidate))) return candidate;
-
-	return findAvailableUsernameSuffix(baseUsername, index + 1);
 }
 
 interface OAuthProfile {
@@ -200,7 +173,7 @@ export function createProfileMapper<TProfile extends OAuthProfile>({
 		}
 
 		const preferredUsername = getPreferredUsername?.(profile, context);
-		const username = await allocateUniqueUsername(email, preferredUsername);
+		const username = await allocateUniqueUsername(email, isUsernameTaken, preferredUsername);
 		const mappedName = getName?.(profile, context)?.trim();
 
 		return {
