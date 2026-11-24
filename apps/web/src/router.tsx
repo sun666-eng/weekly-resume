@@ -21,7 +21,8 @@ export const getRouter = async () => {
 	const router = createRouter({
 		routeTree,
 		scrollRestoration: true,
-		defaultViewTransition: true,
+		// WebKit can crash when startViewTransition snapshots a scrollable page on mount.
+		defaultViewTransition: false,
 		defaultStructuralSharing: true,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,

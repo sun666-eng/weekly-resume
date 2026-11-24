@@ -205,7 +205,6 @@ export function Homepage() {
 						onTypefaceChange={setTypeface}
 					/>
 				</section>
-				<CommunityStats />
 				<section className={cn(section, "bg-[rgb(23_23_24/55%)]")} id="templates" aria-labelledby="templates-title">
 					<div className={wrap}>
 						<div className={sectionHeading}>
@@ -284,6 +283,7 @@ export function Homepage() {
 					</div>
 					<FeatureExplorer />
 				</section>
+				<CommunityStats />
 				<div
 					className={cn(
 						wrap,

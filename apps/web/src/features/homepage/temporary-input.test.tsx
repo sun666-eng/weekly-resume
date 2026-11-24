@@ -25,7 +25,7 @@ vi.mock("motion/react", async (original) => ({
 	useInView: () => true,
 }));
 vi.mock("@/features/home-motion/decorations", () => ({ HeroMotion: () => null }));
-vi.mock("./community-stats", () => ({ CommunityStats: () => null }));
+vi.mock("./community-stats", () => ({ CommunityStats: () => <section data-testid="community-stats" /> }));
 vi.mock("./feature-explorer", () => ({ FeatureExplorer: () => null }));
 vi.mock("./site-footer", () => ({ SiteFooter: () => null }));
 vi.mock("./page-background", () => ({ PageBackground: () => null }));
@@ -70,6 +70,14 @@ afterEach(() => {
 	cleanup();
 	queryClient.clear();
 	vi.unstubAllGlobals();
+});
+
+it("places community statistics after templates and features and before the closing call to action", async () => {
+	await setup();
+	const stats = screen.getByTestId("community-stats");
+	expect(document.getElementById("templates")).toAppearBefore(stats);
+	expect(document.getElementById("features")).toAppearBefore(stats);
+	expect(stats).toAppearBefore(screen.getByText("Ready to put your name on it?"));
 });
 
 it("tracks name, IME input and each sample style against initial values, not motion controls", async () => {
