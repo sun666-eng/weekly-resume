@@ -32,7 +32,7 @@ const pdfjsMock = vi.hoisted(() => {
 		getMarkInfo: vi.fn(async () => ({ Marked: true })),
 	};
 
-	const loadingTask = { destroy: vi.fn(), promise: Promise.resolve(document) };
+	const loadingTask = { destroy: vi.fn(() => Promise.resolve()), promise: Promise.resolve(document) };
 
 	return {
 		document,
@@ -100,7 +100,8 @@ describe("extractPdf", () => {
 		);
 	});
 
-	it("destroys the loading task once it is done", async () => {
+	it("preserves the extraction result when worker teardown rejects", async () => {
+		pdfjsMock.loadingTask.destroy.mockRejectedValueOnce(new Error("Worker was destroyed"));
 		await extractPdf(pdfFile(PDF_HEADER));
 
 		expect(pdfjsMock.loadingTask.destroy).toHaveBeenCalledTimes(1);

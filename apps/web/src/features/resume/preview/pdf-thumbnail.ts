@@ -25,7 +25,7 @@ export const createPdfFirstPageImageUrl = async (file: Blob, targetSize: ResumeT
 	let pdfDocument: Awaited<typeof loadingTask.promise> | undefined;
 	let renderTask: { cancel: () => void } | undefined;
 	let destruction: Promise<void> | undefined;
-	const destroy = () => (destruction ??= loadingTask.destroy());
+	const destroy = () => (destruction ??= loadingTask.destroy().catch(() => undefined));
 	const abort = () => {
 		renderTask?.cancel();
 		void destroy();

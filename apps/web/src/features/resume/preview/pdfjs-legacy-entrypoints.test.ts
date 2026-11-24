@@ -114,6 +114,7 @@ describe("PDF.js browser entrypoints", () => {
 		const { createPdfFirstPageImageUrl } = await import("./pdf-thumbnail");
 		const pending = createPdfFirstPageImageUrl(new Blob(["%PDF"]), { width: 600, height: 900 }, controller.signal);
 		const rejected = expect(pending).rejects.toMatchObject({ name: "AbortError" });
+		pdfjsMock.loadingTask.destroy.mockRejectedValueOnce(new Error("Worker was destroyed"));
 		await vi.waitFor(() => expect(pdfjsMock.page.render).toHaveBeenCalledTimes(1));
 		try {
 			controller.abort();

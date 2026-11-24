@@ -92,6 +92,6 @@ export async function extractPdf(file: File, options: ExtractOptions = {}): Prom
 		if (isPasswordException(error)) throw new PdfPasswordRequiredError();
 		throw error;
 	} finally {
-		void loadingTask.destroy();
+		void loadingTask.destroy().catch(() => undefined);
 	}
 }
