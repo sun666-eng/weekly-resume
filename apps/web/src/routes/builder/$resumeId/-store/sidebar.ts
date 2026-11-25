@@ -129,8 +129,9 @@ export function useBuilderSidebar(): UseBuilderSidebarReturn {
 
 			const shouldExpand = forceState === undefined ? sidebar.isCollapsed() : forceState;
 
-			if (shouldExpand) sidebar.resize(expandSize);
-			else sidebar.collapse();
+			if (shouldExpand) {
+				if (sidebar.isCollapsed()) sidebar.resize(expandSize);
+			} else sidebar.collapse();
 		},
 		[expandSize],
 	);

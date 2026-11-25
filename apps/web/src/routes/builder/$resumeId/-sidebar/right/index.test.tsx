@@ -10,10 +10,10 @@ import { GuestContext } from "@/features/resume/guest/context";
 import { isSectionCollapsed, useSectionStore } from "../../-store/section";
 import { BuilderSidebarRight } from "./index";
 
-const toggleSidebar = vi.hoisted(() => vi.fn());
+const { isCollapsed, toggleSidebar } = vi.hoisted(() => ({ isCollapsed: vi.fn(), toggleSidebar: vi.fn() }));
 
 vi.mock("../../-store/sidebar", () => ({
-	useBuilderSidebar: () => ({ toggleSidebar }),
+	useBuilderSidebar: () => ({ isCollapsed, toggleSidebar }),
 }));
 vi.mock("../../-components/edge", () => ({
 	BuilderSidebarEdge: ({ children }: PropsWithChildren) => <aside aria-label="Right rail">{children}</aside>,
@@ -47,20 +47,46 @@ const wrapper = ({ children }: PropsWithChildren) => (
 );
 
 async function renderSidebar(ui: ReactElement) {
-	render(ui, { wrapper });
+	const result = render(ui, { wrapper });
 	// Base UI measures the scroll viewport in a microtask after mounting.
 	await act(() => Promise.resolve());
+	return result;
 }
 
 beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	isCollapsed.mockReset().mockReturnValue(false);
 	toggleSidebar.mockReset();
 	useSectionStore.setState({ sections: {} });
 });
 
 afterEach(() => {
+	vi.restoreAllMocks();
 	useSectionStore.setState({ sections: {} });
 });
+
+function controlAnimationFrames() {
+	const callbacks = new Map<number, FrameRequestCallback>();
+	let nextId = 1;
+	vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+		const id = nextId++;
+		callbacks.set(id, callback);
+		return id;
+	});
+	const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => {
+		callbacks.delete(id);
+	});
+	return {
+		cancel,
+		flush() {
+			const pending = [...callbacks.values()];
+			callbacks.clear();
+			act(() => {
+				for (const callback of pending) callback(0);
+			});
+		},
+	};
+}
 
 describe("BuilderSidebarRight", () => {
 	it("consolidates guest account-only features into one card and omits dead rail icons", async () => {
@@ -95,6 +121,8 @@ describe("BuilderSidebarRight", () => {
 
 	it("auto-expands default-collapsed Custom Styles when clicked in the right rail", async () => {
 		await renderSidebar(<BuilderSidebarRight />);
+		const frames = controlAnimationFrames();
+		const scroll = vi.spyOn(document.getElementById("sidebar-styles") as HTMLElement, "scrollIntoView");
 
 		expect(isSectionCollapsed(useSectionStore.getState().sections, "styles")).toBe(true);
 		const rail = screen.getByLabelText("Right rail");
@@ -103,5 +131,53 @@ describe("BuilderSidebarRight", () => {
 		fireEvent.click(within(rail).getByRole("button", { name: "Custom Styles" }));
 		expect(isSectionCollapsed(useSectionStore.getState().sections, "styles")).toBe(false);
 		expect(toggleSidebar).toHaveBeenCalledWith("right", true);
+		expect(isCollapsed).toHaveBeenCalledWith("right");
+		expect(scroll).not.toHaveBeenCalled();
+
+		frames.flush();
+		expect(scroll).toHaveBeenCalledExactlyOnceWith({ block: "start", inline: "nearest", behavior: "smooth" });
+	});
+
+	it("waits two animation frames when the right panel starts collapsed", async () => {
+		await renderSidebar(<BuilderSidebarRight />);
+		isCollapsed.mockReturnValue(true);
+		const frames = controlAnimationFrames();
+		const scroll = vi.spyOn(document.getElementById("sidebar-styles") as HTMLElement, "scrollIntoView");
+
+		fireEvent.click(within(screen.getByLabelText("Right rail")).getByRole("button", { name: "Custom Styles" }));
+		expect(scroll).not.toHaveBeenCalled();
+		frames.flush();
+		expect(scroll).not.toHaveBeenCalled();
+		frames.flush();
+		expect(scroll).toHaveBeenCalledOnce();
+	});
+
+	it("cancels the previous pending scroll when another rail item is clicked", async () => {
+		await renderSidebar(<BuilderSidebarRight />);
+		const frames = controlAnimationFrames();
+		const stylesScroll = vi.spyOn(document.getElementById("sidebar-styles") as HTMLElement, "scrollIntoView");
+		const pageScroll = vi.spyOn(document.getElementById("sidebar-page") as HTMLElement, "scrollIntoView");
+		const rail = within(screen.getByLabelText("Right rail"));
+
+		fireEvent.click(rail.getByRole("button", { name: "Custom Styles" }));
+		fireEvent.click(rail.getByRole("button", { name: "Page" }));
+		expect(frames.cancel).toHaveBeenCalled();
+		frames.flush();
+		expect(stylesScroll).not.toHaveBeenCalled();
+		expect(pageScroll).toHaveBeenCalledOnce();
+	});
+
+	it.each([false, true])("cancels a pending scroll on unmount with collapsed=%s", async (collapsed) => {
+		const { unmount } = await renderSidebar(<BuilderSidebarRight />);
+		isCollapsed.mockReturnValue(collapsed);
+		const frames = controlAnimationFrames();
+		const scroll = vi.spyOn(document.getElementById("sidebar-styles") as HTMLElement, "scrollIntoView");
+
+		fireEvent.click(within(screen.getByLabelText("Right rail")).getByRole("button", { name: "Custom Styles" }));
+		if (collapsed) frames.flush();
+		unmount();
+		expect(frames.cancel).toHaveBeenCalled();
+		frames.flush();
+		expect(scroll).not.toHaveBeenCalled();
 	});
 });

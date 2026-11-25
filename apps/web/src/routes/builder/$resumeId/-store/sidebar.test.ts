@@ -1,4 +1,7 @@
-import { afterEach, describe, expect, it } from "vitest";
+// @vitest-environment happy-dom
+
+import { renderHook } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	DEFAULT_BUILDER_LAYOUT,
 	DESKTOP_BUILDER_SIDEBAR_COLLAPSED_SIZE,
@@ -6,8 +9,14 @@ import {
 	getBuilderSidebarResizeConfig,
 	mapPanelLayoutToBuilderLayout,
 	parseBuilderLayoutCookie,
+	useBuilderSidebar,
 	useBuilderSidebarStore,
 } from "./sidebar";
+
+vi.mock("usehooks-ts", () => ({
+	useMediaQuery: () => false,
+	useWindowSize: () => ({ width: 1440, height: 900 }),
+}));
 
 afterEach(() => {
 	useBuilderSidebarStore.setState({
@@ -114,5 +123,57 @@ describe("useBuilderSidebarStore", () => {
 		useBuilderSidebarStore.getState().setLeftSidebar({ foo: "x" } as never);
 		useBuilderSidebarStore.getState().setLeftSidebar(null);
 		expect(useBuilderSidebarStore.getState().leftSidebar).toBeNull();
+	});
+});
+
+describe("toggleSidebar", () => {
+	it.each(["left", "right"] as const)("preserves an expanded %s panel's current width", (side) => {
+		const panel = { isCollapsed: vi.fn(() => false), resize: vi.fn(), collapse: vi.fn() };
+		useBuilderSidebarStore.setState({ [`${side}Sidebar`]: { current: panel } });
+		const { result } = renderHook(useBuilderSidebar);
+
+		result.current.toggleSidebar(side, true);
+
+		expect(panel.resize).not.toHaveBeenCalled();
+		expect(panel.collapse).not.toHaveBeenCalled();
+	});
+
+	it("expands a collapsed panel to the configured size", () => {
+		const panel = { isCollapsed: vi.fn(() => true), resize: vi.fn(), collapse: vi.fn() };
+		useBuilderSidebarStore.setState({ rightSidebar: { current: panel } as never });
+		const { result } = renderHook(useBuilderSidebar);
+
+		result.current.toggleSidebar("right", true);
+
+		expect(panel.resize).toHaveBeenCalledWith(
+			getBuilderSidebarResizeConfig({ isMobile: false, width: 1440 }).expandSize,
+		);
+		expect(panel.collapse).not.toHaveBeenCalled();
+	});
+
+	it("collapses a panel when explicitly requested", () => {
+		const panel = { isCollapsed: vi.fn(() => false), resize: vi.fn(), collapse: vi.fn() };
+		useBuilderSidebarStore.setState({ rightSidebar: { current: panel } as never });
+		const { result } = renderHook(useBuilderSidebar);
+
+		result.current.toggleSidebar("right", false);
+
+		expect(panel.collapse).toHaveBeenCalledOnce();
+		expect(panel.resize).not.toHaveBeenCalled();
+	});
+
+	it("toggles between collapsed and expanded when no state is forced", () => {
+		const panel = { isCollapsed: vi.fn(() => true), resize: vi.fn(), collapse: vi.fn() };
+		useBuilderSidebarStore.setState({ rightSidebar: { current: panel } as never });
+		const { result } = renderHook(useBuilderSidebar);
+
+		result.current.toggleSidebar("right");
+		expect(panel.resize).toHaveBeenCalledOnce();
+		expect(panel.collapse).not.toHaveBeenCalled();
+
+		panel.isCollapsed.mockReturnValue(false);
+		result.current.toggleSidebar("right");
+		expect(panel.collapse).toHaveBeenCalledOnce();
+		expect(panel.resize).toHaveBeenCalledOnce();
 	});
 });

@@ -1,6 +1,6 @@
 import type { RightSidebarSection } from "@/libs/resume/section";
 import { useLingui } from "@lingui/react/macro";
-import { Fragment, useCallback, useRef } from "react";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import { match } from "ts-pattern";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
@@ -116,21 +116,37 @@ export function BuilderSidebarRight() {
 
 function SidebarEdge() {
 	const guest = useGuestEditor();
-	const { toggleSidebar } = useBuilderSidebar();
+	const { isCollapsed, toggleSidebar } = useBuilderSidebar();
+	const scrollFrameRef = useRef<number | null>(null);
 	const railSections = guest
 		? rightSidebarSections.filter((section) => !guestAccountOnlySet.has(section))
 		: rightSidebarSections;
 
+	useEffect(() => {
+		return () => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+		};
+	}, []);
+
 	const scrollToSection = useCallback(
 		(section: RightSidebarSection) => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+			const wasCollapsed = isCollapsed("right");
 			useSectionStore.getState().setCollapsed(section, false);
 			toggleSidebar("right", true);
-			// Section ids are globally unique; document.getElementById reliably resolves the scroll target.
-			document
-				.getElementById(`sidebar-${section}`)
-				?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			const scroll = () => {
+				scrollFrameRef.current = null;
+				document
+					.getElementById(`sidebar-${section}`)
+					?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			};
+			// Allow section state to commit, and a collapsed panel to finish its layout pass.
+			scrollFrameRef.current = requestAnimationFrame(() => {
+				if (wasCollapsed) scrollFrameRef.current = requestAnimationFrame(scroll);
+				else scroll();
+			});
 		},
-		[toggleSidebar],
+		[isCollapsed, toggleSidebar],
 	);
 
 	return (
