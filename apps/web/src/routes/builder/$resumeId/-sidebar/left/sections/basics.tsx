@@ -9,7 +9,6 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { URLInput } from "@/components/input/url-input";
 import { Combobox } from "@/components/ui/combobox";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
-import { focusLeftSidebarSection } from "@/features/resume/builder/section-recovery";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -84,13 +83,10 @@ function BasicsSectionForm() {
 				void form.handleSubmit();
 			}}
 		>
-			<div className="space-y-2" style={order(0, 0)} hidden={!chinese}>
+			<div style={order(0, 0)} hidden={!chinese}>
 				<p className="text-muted-foreground text-xs">
 					<Trans>Name, phone, and email are the main contact details. Empty fields can still be saved.</Trans>
 				</p>
-				<button type="button" className="text-xs underline" onClick={() => focusLeftSidebarSection("picture")}>
-					<Trans>Photo is optional. Edit it in the picture section.</Trans>
-				</button>
 			</div>
 
 			<div style={order(10, 10)}>

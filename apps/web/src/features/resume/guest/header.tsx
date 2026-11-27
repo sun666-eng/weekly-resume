@@ -23,6 +23,8 @@ export function GuestHeader() {
 	const [moreOpen, setMoreOpen] = useState(false);
 	if (!guest) return null;
 	const status = guestStatuses[guest.status as keyof typeof guestStatuses];
+	const isSaveFailure = guest.status.startsWith("暂存失败");
+	const backupLabel = t({ id: "guest.backup", message: "Export local backup" });
 	return (
 		<header className="absolute inset-x-0 top-0 z-50 flex h-14 items-center gap-1.5 border-b bg-popover px-2 text-xs sm:gap-2 sm:px-3 sm:text-sm">
 			<Popover>
@@ -53,6 +55,7 @@ export function GuestHeader() {
 			<div className="hidden sm:block sm:flex-1" />
 			<Button
 				size="sm"
+				variant="outline"
 				className="shrink-0 whitespace-nowrap px-2 text-xs sm:px-2.5 sm:text-sm"
 				onClick={() => void guest.requestAction("save")}
 			>
@@ -66,19 +69,17 @@ export function GuestHeader() {
 						className="shrink-0 whitespace-nowrap px-2 text-xs sm:px-2.5 sm:text-sm"
 						disabled={disabled}
 					>
-						{t({ id: "guest.formalExport", message: "Formal export" })}
+						<DownloadSimpleIcon className="hidden sm:inline" />
+						{t({ id: "guest.formalExport", message: "Export resume" })}
 					</Button>
 				)}
 			/>
-			<Button
-				size="sm"
-				variant="outline"
-				aria-label={t({ id: "guest.backup", message: "Retrieve local backup" })}
-				onClick={() => void guest.backup()}
-			>
-				<DownloadSimpleIcon />
-				<span className="hidden md:inline">{t({ id: "guest.backup", message: "Retrieve local backup" })}</span>
-			</Button>
+			{isSaveFailure && (
+				<Button size="sm" variant="outline" aria-label={backupLabel} onClick={() => void guest.backup()}>
+					<DownloadSimpleIcon />
+					<span className="hidden md:inline">{backupLabel}</span>
+				</Button>
+			)}
 			<Popover open={moreOpen} onOpenChange={setMoreOpen}>
 				<PopoverTrigger
 					render={
@@ -92,6 +93,19 @@ export function GuestHeader() {
 					<DotsThreeIcon className="size-5" />
 				</PopoverTrigger>
 				<PopoverContent align="end" className="gap-1 p-2">
+					{!isSaveFailure && (
+						<Button
+							size="sm"
+							variant="ghost"
+							className="justify-start"
+							onClick={() => {
+								setMoreOpen(false);
+								setTimeout(() => void guest.backup(), 0);
+							}}
+						>
+							{backupLabel}
+						</Button>
+					)}
 					<Button
 						size="sm"
 						variant="ghost"

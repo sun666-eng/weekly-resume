@@ -12,6 +12,9 @@ vi.mock("@tanstack/react-router", () => ({
 	Link: ({ to, ...props }: ComponentProps<"a"> & { to: string }) => <a href={to} {...props} />,
 }));
 vi.mock("@/features/home-motion/decorations", () => ({ CrowdMotion: () => null }));
+vi.mock("@/features/locale/combobox", () => ({
+	LocaleCombobox: ({ render: renderProp }: { render: React.ReactElement }) => renderProp,
+}));
 
 i18n.loadAndActivate({ locale: "en-US", messages: {} });
 
@@ -35,11 +38,12 @@ describe("SiteFooter", () => {
 		expect(screen.getByRole("link", { name: "Get Started" })).toHaveAttribute("href", "/local-draft");
 	});
 
-	it("uses a valid container-query font size for the wordmark", () => {
+	it("uses a valid container-query font size for the wordmark and renders the footer language switcher", () => {
 		const { container } = renderFooter();
 		const wordmark = container.querySelector('p[aria-hidden="true"]');
 		expect(wordmark).toHaveTextContent(APP_NAME);
-		expect(wordmark).toHaveClass("text-[clamp(28px,6.5cqw,72px)]", "leading-[1.12]", "tracking-[-0.03em]", "pb-1.5");
+		expect(wordmark).toHaveClass("text-[clamp(28px,6.5cqw,72px)]", "leading-[1.2]", "tracking-[-0.03em]", "pb-3.5");
+		expect(screen.getByRole("button", { name: "Change language" })).toBeInTheDocument();
 		expect(screen.getAllByText(APP_NAME).length).toBeGreaterThan(0);
 	});
 });

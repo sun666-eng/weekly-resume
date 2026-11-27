@@ -10,7 +10,11 @@ import { routeTree } from "./routeTree.gen";
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
 
-	const { theme, locale, session, flags } = await loadRootContext();
+	// WebKit can lose an in-flight bootstrap request on reload. Retry its read once.
+	const { theme, locale, session, flags } = await loadRootContext().catch((error: unknown) => {
+		if (error instanceof TypeError && error.message === "Load failed") return loadRootContext();
+		throw error;
+	});
 	let initialContext = { theme, locale, session, flags } as Awaited<ReturnType<typeof loadRootContext>> | undefined;
 	const resolveRootContext = () => {
 		const bootstrap = initialContext;
@@ -21,7 +25,8 @@ export const getRouter = async () => {
 	const router = createRouter({
 		routeTree,
 		scrollRestoration: true,
-		defaultViewTransition: true,
+		// WebKit can crash when startViewTransition snapshots a scrollable page on mount.
+		defaultViewTransition: false,
 		defaultStructuralSharing: true,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,

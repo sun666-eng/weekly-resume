@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { LockSimpleIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { match } from "ts-pattern";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -131,7 +131,15 @@ function LockBanner() {
 
 function SidebarEdge() {
 	const guest = useGuestEditor();
-	const { toggleSidebar } = useBuilderSidebar();
+	const { isCollapsed, toggleSidebar } = useBuilderSidebar();
+	const scrollFrameRef = useRef<number | null>(null);
+
+	useEffect(() => {
+		return () => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+		};
+	}, []);
+
 	const coverLetterSectionId = useCurrentBuilderResumeSelector(
 		(resume) => resume.data.customSections.find((section) => section.type === "cover-letter")?.id ?? null,
 	);
@@ -220,11 +228,21 @@ function SidebarEdge() {
 
 	const scrollToSection = useCallback(
 		(section: LeftSidebarSection | "cover-letter", target: string, placed: boolean) => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+			const wasCollapsed = isCollapsed("left");
 			toggleSidebar("left", true);
-			if (placed) focusCustomSidebarSection(target);
-			else focusLeftSidebarSection(section as LeftSidebarSection);
+			const focusSection = () => {
+				scrollFrameRef.current = null;
+				if (placed) focusCustomSidebarSection(target);
+				else focusLeftSidebarSection(section as LeftSidebarSection);
+			};
+			if (wasCollapsed) {
+				scrollFrameRef.current = requestAnimationFrame(() => {
+					scrollFrameRef.current = requestAnimationFrame(focusSection);
+				});
+			} else focusSection();
 		},
-		[toggleSidebar],
+		[isCollapsed, toggleSidebar],
 	);
 
 	return (

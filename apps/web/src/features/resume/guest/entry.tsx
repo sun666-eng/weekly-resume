@@ -128,7 +128,7 @@ export function GuestLanding() {
 									);
 								}}
 							>
-								{t({ id: "guest.backup", message: "Retrieve local backup" })}
+								{t({ id: "guest.backup", message: "Export local backup" })}
 							</Button>
 						</>
 					)}

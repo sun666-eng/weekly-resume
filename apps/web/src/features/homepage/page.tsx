@@ -11,16 +11,13 @@ import { useInView } from "motion/react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { APP_NAME } from "@reactive-resume/utils/brand";
 import { cn } from "@reactive-resume/utils/style";
-import { GithubStarsButton } from "@/components/input/github-stars-button";
 import { HeroMotion } from "@/features/home-motion/decorations";
 import { useTemporaryInputGuard } from "@/features/temporary-input/use-temporary-input-guard";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
-import { guestDisclosure } from "../resume/guest/copy";
 import { section, sectionHeading, sectionText, sectionTitle, textLink, wrap } from "./classes";
 import { CommunityStats } from "./community-stats";
 import { FeatureExplorer } from "./feature-explorer";
-import LanguagesShowcase from "./languages-showcase";
 import { PageBackground } from "./page-background";
 import { ResumeSculpture } from "./resume-sculpture";
 import { SiteFooter } from "./site-footer";
@@ -119,7 +116,7 @@ export function Homepage() {
 			<header
 				className={cn(
 					wrap,
-					"relative z-1 flex h-[104px] items-center justify-between gap-3 max-[540px]:h-20 max-[900px]:h-[88px]",
+					"relative z-1 flex h-[84px] items-center justify-between gap-3 max-[540px]:h-[72px] min-[1500px]:h-[96px]",
 				)}
 			>
 				<Link
@@ -130,13 +127,22 @@ export function Homepage() {
 					<img src="/icon/dark.svg" alt="" width="34" height="34" className="block max-[540px]:size-[29px]" />
 				</Link>
 				<nav
-					className="ml-auto flex items-center gap-[30px] text-(--home-muted) text-[14px] max-[1100px]:gap-5"
+					className="ml-auto flex items-center gap-6 text-(--home-muted) text-[14px] max-[1100px]:gap-4"
 					aria-label={t`Main navigation`}
 				>
-					<GithubStarsButton className="h-[38px] rounded-[4px] border-[#3d444d] bg-[#161b22] px-[11px] text-[#f0f6fc] text-[13px] shadow-[inset_0_1px_0_#ffffff0d,0_3px_0_#09090966] hover:border-[#6e7681] hover:bg-[#21262d] hover:text-[#f0f6fc] max-[540px]:gap-1 max-[540px]:px-2 max-[540px]:text-[11px]" />
+					<Link
+						to="/ats-checker"
+						className="inline-flex min-h-[38px] items-center transition-colors hover:text-(--home-ink) max-[540px]:hidden"
+					>
+						<Trans>ATS Checker</Trans>
+					</Link>
 
-					<Link to={startPath} className="inline-flex min-h-[38px] items-center hover:text-(--home-ink)">
+					<Link
+						to={startPath}
+						className="inline-flex min-h-[38px] items-center gap-1.5 rounded-[4px] border border-[#3d3d42] bg-[#19191b] px-3.5 font-medium text-(--home-ink) text-[13px] transition-colors hover:border-[#686870] hover:bg-[#232326]"
+					>
 						<Trans>Get Started</Trans>
+						<ArrowRightIcon size={14} aria-hidden="true" />
 					</Link>
 				</nav>
 			</header>
@@ -145,7 +151,7 @@ export function Homepage() {
 				<section
 					className={cn(
 						wrap,
-						"grid min-h-[710px] grid-cols-[1fr_1.12fr] items-center gap-[6px] pt-[34px] pb-[62px] max-[1100px]:min-h-[655px] max-[1100px]:grid-cols-[1fr_1.1fr] max-[900px]:grid-cols-1 max-[540px]:gap-[21px] max-[900px]:gap-[30px] max-[540px]:pt-[30px] max-[900px]:pt-10 max-[540px]:pb-8 min-[1500px]:min-h-[750px]",
+						"grid min-h-[660px] grid-cols-[1fr_1.12fr] items-center gap-[6px] pt-5 pb-12 max-[1100px]:min-h-[620px] max-[1100px]:grid-cols-[1fr_1.1fr] max-[900px]:grid-cols-1 max-[540px]:gap-[21px] max-[900px]:gap-[30px] max-[540px]:pt-6 max-[900px]:pt-8 max-[540px]:pb-8 min-[1500px]:min-h-[720px]",
 					)}
 					aria-labelledby="hero-title"
 				>
@@ -161,10 +167,11 @@ export function Homepage() {
 								<span className="text-[#b7b6b8]">on paper.</span>
 							</Trans>
 						</h1>
-						<p className="mt-7 max-w-[356px] text-(--home-muted) text-[17px] leading-[1.65] max-[540px]:mt-6 max-[540px]:max-w-[330px] max-[900px]:max-w-[410px] max-[540px]:text-[15px]">
-							<Trans>
-								A free, open-source resume builder. Put your experience on the page, without fighting the formatting.
-							</Trans>
+						<p className="mt-7 max-w-[380px] text-(--home-muted) text-[17px] leading-[1.65] max-[540px]:mt-6 max-[540px]:max-w-[330px] max-[900px]:max-w-[410px] max-[540px]:text-[15px]">
+							{t({
+								id: "home.hero.subtitle",
+								message: "Put your experience on the page, without fighting the formatting.",
+							})}
 						</p>
 						<div className="mt-[30px] flex flex-wrap items-center gap-9 max-[540px]:mt-[25px] max-[1100px]:gap-7 max-[540px]:gap-7 max-[900px]:gap-9">
 							<Link to={startPath} className={buttonClass}>
@@ -183,23 +190,6 @@ export function Homepage() {
 								<ArrowDownIcon size={16} aria-hidden="true" />
 							</a>
 						</div>
-						<p className="mt-[17px] text-[#a5a5ab] text-[12px] leading-[1.9] max-[540px]:mt-[15px] max-[540px]:text-[11px]">
-							{startPath === "/local-draft" && (
-								<>
-									{i18n._(guestDisclosure)}
-									<br />
-									<Trans id="guest.sampleNotCarried">
-										The sample and PDF trial below will not be carried into your local draft.
-									</Trans>
-									<br />
-								</>
-							)}
-							<Trans>
-								<strong className="font-medium text-[#d4d3cf]">Free forever and open source.</strong>
-								<br />
-								No ads, paywalls, or tracking.
-							</Trans>
-						</p>
 					</div>
 					<ResumeSculpture
 						template={heroTemplate}
@@ -215,7 +205,6 @@ export function Homepage() {
 						onTypefaceChange={setTypeface}
 					/>
 				</section>
-				<CommunityStats />
 				<section className={cn(section, "bg-[rgb(23_23_24/55%)]")} id="templates" aria-labelledby="templates-title">
 					<div className={wrap}>
 						<div className={sectionHeading}>
@@ -294,7 +283,7 @@ export function Homepage() {
 					</div>
 					<FeatureExplorer />
 				</section>
-				<LanguagesShowcase />
+				<CommunityStats />
 				<div
 					className={cn(
 						wrap,

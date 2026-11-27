@@ -10,6 +10,7 @@ import {
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
+import { isPageUnloading, usePageUnloading } from "./page-lifecycle";
 import { DEFAULT_PDF_PAGE_SIZE, getPreviewCanvasScale, getScaledPreviewPageSize } from "./preview.shared.utils";
 
 GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
@@ -48,6 +49,7 @@ const isRenderingCancelledError = (error: unknown) =>
 	(typeof error === "object" && error !== null && "name" in error && error.name === "RenderingCancelledException");
 
 export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDocumentProps) {
+	const unloading = usePageUnloading();
 	const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 
@@ -60,35 +62,31 @@ export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDo
 		let loadingTask: PDFDocumentLoadingTask | undefined;
 
 		const loadDocument = async () => {
+			if (unloading || isCancelled || isPageUnloading()) return;
 			setDocument(null);
-			if (isCancelled) return;
 
 			const arrayBuffer = await file.arrayBuffer();
+			if (isCancelled || isPageUnloading()) return;
 
-			if (!isCancelled) {
-				loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
-				const pdfDocument = await loadingTask.promise;
+			loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
+			const pdfDocument = await loadingTask.promise;
+			if (isCancelled || isPageUnloading()) return;
 
-				if (isCancelled) {
-					void loadingTask.destroy();
-				} else {
-					setDocument(pdfDocument);
-					onLoadSuccessRef.current(pdfDocument);
-				}
-			}
+			setDocument(pdfDocument);
+			onLoadSuccessRef.current(pdfDocument);
 		};
 
 		void loadDocument().catch((error: unknown) => {
-			if (isCancelled) return;
+			if (isCancelled || isPageUnloading()) return;
 
 			console.error("Failed to load PDF document", error);
 		});
 
 		return () => {
 			isCancelled = true;
-			void loadingTask?.destroy();
+			void loadingTask?.destroy().catch(() => undefined);
 		};
-	}, [file]);
+	}, [file, unloading]);
 
 	if (!document) return null;
 
@@ -106,6 +104,7 @@ export function PdfCanvasPage({
 	showPageNumbers,
 	totalPages,
 }: PdfCanvasPageProps) {
+	const unloading = usePageUnloading();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 	const onRenderSuccessRef = useRef(onRenderSuccess);
@@ -122,15 +121,12 @@ export function PdfCanvasPage({
 
 		const renderPage = async () => {
 			const canvas = canvasRef.current;
-			if (!canvas) return;
+			if (!canvas || unloading || isPageUnloading()) return;
 
 			const page = await document.getPage(pageNumber);
 
 			try {
-				if (isCancelled) {
-					page.cleanup();
-					return;
-				}
+				if (isCancelled || isPageUnloading()) return;
 
 				const baseViewport = page.getViewport({ scale: 1 });
 				const pageSize = { height: baseViewport.height, width: baseViewport.width };
@@ -168,14 +164,14 @@ export function PdfCanvasPage({
 				await renderTask.promise;
 				renderTask = undefined;
 
-				if (!isCancelled) onRenderSuccessRef.current?.();
+				if (!isCancelled && !isPageUnloading()) onRenderSuccessRef.current?.();
 			} finally {
 				page.cleanup();
 			}
 		};
 
 		void renderPage().catch((error: unknown) => {
-			if (isRenderingCancelledError(error)) return;
+			if (isCancelled || isPageUnloading() || isRenderingCancelledError(error)) return;
 
 			console.error(`Failed to render PDF page ${pageNumber}`, error);
 		});
@@ -187,7 +183,7 @@ export function PdfCanvasPage({
 				renderTask.cancel();
 			}
 		};
-	}, [document, pageNumber, pageScale]);
+	}, [document, pageNumber, pageScale, unloading]);
 
 	return (
 		<figure className="shrink-0">

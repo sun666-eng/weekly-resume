@@ -13,8 +13,14 @@ import { orpc } from "@/libs/orpc/client";
 import { getAuthErrorMessage } from "../error-message";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 
+const PROVIDER_KEYS = ["custom", "passkey", "google", "github", "linkedin"] as const;
+type ProviderKey = (typeof PROVIDER_KEYS)[number];
+
 export function SocialAuth() {
 	const { data: providers = {}, isLoading } = useQuery(orpc.auth.providers.list.queryOptions());
+	const activeKeys = PROVIDER_KEYS.filter((key) => key in providers);
+
+	if (!isLoading && activeKeys.length === 0) return null;
 
 	return (
 		<>
@@ -28,7 +34,7 @@ export function SocialAuth() {
 				<hr className="flex-1" />
 			</div>
 
-			{isLoading ? <SocialAuthSkeleton /> : <SocialAuthButtons providers={providers} />}
+			{isLoading ? <SocialAuthSkeleton /> : <SocialAuthButtons providers={providers} activeKeys={activeKeys} />}
 		</>
 	);
 }
@@ -46,11 +52,15 @@ function SocialAuthSkeleton() {
 
 type SocialAuthButtonsProps = {
 	providers: RouterOutput["auth"]["providers"]["list"];
+	activeKeys: ProviderKey[];
 };
 
-function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
+function SocialAuthButtons({ providers, activeKeys }: SocialAuthButtonsProps) {
 	const router = useRouter();
 	const { callbackURL } = useSearch({ from: "/auth" });
+	const isOddMultiGrid = activeKeys.length > 1 && activeKeys.length % 2 === 1;
+	const lastActiveKey = activeKeys.at(-1);
+	const spanClass = (key: ProviderKey) => (isOddMultiGrid && lastActiveKey === key ? "col-span-2" : undefined);
 
 	const runSignIn = async (
 		fn: () => Promise<{ data?: unknown; error: { message?: string } | null }>,
@@ -79,7 +89,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 	};
 
 	return (
-		<div className="grid grid-cols-2 gap-4">
+		<div className={cn("grid gap-4", activeKeys.length === 1 ? "grid-cols-1" : "grid-cols-2")}>
 			<Button
 				variant="secondary"
 				onClick={() =>
@@ -91,7 +101,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 						}),
 					)
 				}
-				className={cn("hidden", "custom" in providers && "inline-flex")}
+				className={cn("hidden", "custom" in providers && "inline-flex", spanClass("custom"))}
 			>
 				<VaultIcon />
 				{providers.custom}
@@ -102,7 +112,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				onClick={() =>
 					runSignIn(() => authClient.signIn.passkey({ autoFill: false, ...getOAuthPasskeyOptions(callbackURL) }), true)
 				}
-				className={cn("hidden", "passkey" in providers && "inline-flex")}
+				className={cn("hidden", "passkey" in providers && "inline-flex", spanClass("passkey"))}
 			>
 				<FingerprintIcon />
 				<Trans comment="Label for passkey sign-in button">Passkey</Trans>
@@ -121,6 +131,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#4285F4] text-white hover:bg-[#4285F4]/80",
 					"google" in providers && "inline-flex",
+					spanClass("google"),
 				)}
 			>
 				<GoogleLogoIcon />
@@ -140,6 +151,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#2b3137] text-white hover:bg-[#2b3137]/80",
 					"github" in providers && "inline-flex",
+					spanClass("github"),
 				)}
 			>
 				<GithubLogoIcon />
@@ -159,6 +171,7 @@ function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
 				className={cn(
 					"hidden flex-1 bg-[#0A66C2] text-white hover:bg-[#0A66C2]/80",
 					"linkedin" in providers && "inline-flex",
+					spanClass("linkedin"),
 				)}
 			>
 				<LinkedinLogoIcon />

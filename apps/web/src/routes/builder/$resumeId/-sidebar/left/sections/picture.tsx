@@ -36,6 +36,7 @@ import {
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { normalizePictureUrl } from "@reactive-resume/utils/picture-url";
+import { cn } from "@reactive-resume/utils/style";
 import { useGuestEditor } from "@/features/resume/guest/context";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
@@ -60,6 +61,8 @@ type PicturePreviewControlsProps = {
 	normalizedPictureUrl: string;
 	picture: PictureValues;
 	isUploading: boolean;
+	showEmptyFitOptions: boolean;
+	onToggleEmptyFitOptions: () => void;
 	onToggleHidden: () => void;
 	onDeletePicture: () => void;
 	onSelectPicture: () => void;
@@ -71,14 +74,18 @@ export function PicturePreviewControls({
 	normalizedPictureUrl,
 	picture,
 	isUploading,
+	showEmptyFitOptions,
+	onToggleEmptyFitOptions,
 	onToggleHidden,
 	onDeletePicture,
 	onSelectPicture,
 	onUploadPicture,
 }: PicturePreviewControlsProps) {
 	const [failedUrl, setFailedUrl] = useState<string | null>(null);
+	const hasPicture = Boolean(picture.url.trim());
+
 	return (
-		<div className="flex items-center gap-x-4">
+		<div className="flex items-center gap-x-3">
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -91,8 +98,11 @@ export function PicturePreviewControls({
 			<button
 				type="button"
 				onClick={onSelectPicture}
-				aria-label={picture.url ? t`Replace picture` : t`Upload picture`}
-				className="group/picture relative size-18 shrink-0 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50"
+				aria-label={hasPicture ? t`Replace picture` : t`Upload picture`}
+				className={cn(
+					"group/picture relative shrink-0 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50",
+					hasPicture ? "size-18" : "size-12",
+				)}
 			>
 				{normalizedPictureUrl && (
 					<img
@@ -106,30 +116,39 @@ export function PicturePreviewControls({
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					<UploadSimpleIcon className="size-6" />
+					<UploadSimpleIcon className={hasPicture ? "size-6" : "size-5"} />
 				</div>
 			</button>
 
-			<div className="flex min-w-0 flex-1 flex-wrap gap-2">
+			<div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
 				<Button type="button" variant="outline" size="sm" onClick={onSelectPicture}>
 					<UploadSimpleIcon />
-					{picture.url ? t`Replace picture` : t`Upload picture`}
+					{hasPicture ? t`Replace picture` : t`Upload picture`}
 				</Button>
-				<Button type="button" variant="ghost" size="sm" disabled={!picture.url} onClick={onToggleHidden}>
-					{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
-					{picture.hidden ? t`Show picture` : t`Hide picture`}
-				</Button>
-				<Button
-					type="button"
-					variant="ghost"
-					size="sm"
-					disabled={!picture.url && !isUploading}
-					onClick={onDeletePicture}
-				>
-					<TrashSimpleIcon />
-					<Trans>Delete picture</Trans>
-				</Button>
-				{picture.url && picture.hidden && (
+				{hasPicture && (
+					<Button type="button" variant="ghost" size="sm" onClick={onToggleHidden}>
+						{picture.hidden ? <EyeSlashIcon /> : <EyeIcon />}
+						{picture.hidden ? t`Show picture` : t`Hide picture`}
+					</Button>
+				)}
+				{(hasPicture || isUploading) && (
+					<Button type="button" variant="ghost" size="sm" onClick={onDeletePicture}>
+						<TrashSimpleIcon />
+						<Trans>Delete picture</Trans>
+					</Button>
+				)}
+				{!hasPicture && !isUploading && (
+					<Button
+						type="button"
+						variant="ghost"
+						size="xs"
+						aria-expanded={showEmptyFitOptions}
+						onClick={onToggleEmptyFitOptions}
+					>
+						{t({ id: "picture.preUploadOptions", message: "Crop & ratio options" })}
+					</Button>
+				)}
+				{hasPicture && picture.hidden && (
 					<p className="w-full text-muted-foreground text-xs">
 						<Trans>Your picture is hidden from the resume.</Trans>
 					</p>
@@ -533,6 +552,7 @@ export function PictureSectionForm() {
 	const [crop, setCrop] = useState({ x: 0, y: 0 });
 	const [zoom, setZoom] = useState(1);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+	const [showEmptyFitOptions, setShowEmptyFitOptions] = useState(false);
 	cropStateRef.current = cropState;
 	useEffect(() => {
 		const busy = cropState !== null || activeUploadCount > 0;
@@ -552,6 +572,7 @@ export function PictureSectionForm() {
 	);
 
 	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
+	const hasPicture = Boolean(picture.url.trim());
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
 	const updateResumeData = useUpdateResumeData();
 
@@ -824,7 +845,7 @@ export function PictureSectionForm() {
 			</Dialog>
 
 			<form
-				className="space-y-4"
+				className={hasPicture || showEmptyFitOptions ? "space-y-4" : "space-y-2.5"}
 				onSubmit={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
@@ -835,7 +856,9 @@ export function PictureSectionForm() {
 					fileInputRef={fileInputRef}
 					normalizedPictureUrl={normalizedPictureUrl}
 					picture={picture}
-					isUploading={isUploading}
+					isUploading={isUploading || activeUploadCount > 0}
+					showEmptyFitOptions={showEmptyFitOptions}
+					onToggleEmptyFitOptions={() => setShowEmptyFitOptions((current) => !current)}
 					onToggleHidden={() => {
 						form.setFieldValue("hidden", !picture.hidden);
 						handleAutoSave();
@@ -845,48 +868,57 @@ export function PictureSectionForm() {
 					onUploadPicture={onUploadPicture}
 				/>
 
-				<PictureFitField form={form} onAutoSave={handleAutoSave} />
-				<div className="space-y-2">
-					<p className="font-medium text-sm">
-						<Trans>Picture shape</Trans>
-					</p>
-					<form.Subscribe selector={(state) => state.values.aspectRatio}>
-						{(ratio) => (
-							<div className="flex flex-wrap gap-2">
-								<Button
-									type="button"
-									size="sm"
-									variant="outline"
-									aria-pressed={ratio === 0.75}
-									onClick={() => setPictureRatio(0.75)}
-								>
-									<Trans>Portrait 3:4</Trans>
-								</Button>
-								<Button
-									type="button"
-									size="sm"
-									variant="outline"
-									aria-pressed={ratio === 1}
-									onClick={() => setPictureRatio(1)}
-								>
-									<Trans>Square 1:1</Trans>
-								</Button>
-								<Button type="button" size="sm" variant="outline" disabled={!picture.url} onClick={useOriginalRatio}>
-									<Trans>Original proportions</Trans>
-								</Button>
-							</div>
-						)}
-					</form.Subscribe>
-					<p className="text-muted-foreground text-xs">
-						<Trans>
-							Height follows the selected width and ratio. Re-upload the original to recover content cropped out
-							earlier.
-						</Trans>
-					</p>
-				</div>
+				{(hasPicture || showEmptyFitOptions) && (
+					<>
+						<PictureFitField form={form} onAutoSave={handleAutoSave} />
+						<div className="space-y-2">
+							<p className="font-medium text-sm">
+								<Trans>Picture shape</Trans>
+							</p>
+							<form.Subscribe selector={(state) => state.values.aspectRatio}>
+								{(ratio) => (
+									<div className="flex flex-wrap gap-2">
+										<Button
+											type="button"
+											size="sm"
+											variant="outline"
+											aria-pressed={ratio === 0.75}
+											onClick={() => setPictureRatio(0.75)}
+										>
+											<Trans>Portrait 3:4</Trans>
+										</Button>
+										<Button
+											type="button"
+											size="sm"
+											variant="outline"
+											aria-pressed={ratio === 1}
+											onClick={() => setPictureRatio(1)}
+										>
+											<Trans>Square 1:1</Trans>
+										</Button>
+										<Button type="button" size="sm" variant="outline" disabled={!hasPicture} onClick={useOriginalRatio}>
+											<Trans>Original proportions</Trans>
+										</Button>
+									</div>
+								)}
+							</form.Subscribe>
+							<p className="text-muted-foreground text-xs">
+								<Trans>
+									Height follows the selected width and ratio. Re-upload the original to recover content cropped out
+									earlier.
+								</Trans>
+							</p>
+						</div>
+					</>
+				)}
 
-				<details className="rounded-md border p-3">
-					<summary className="cursor-pointer font-medium text-sm">
+				<details className={cn("rounded-md border", hasPicture ? "p-3" : "px-3 py-2")}>
+					<summary
+						className={cn(
+							"cursor-pointer font-medium",
+							hasPicture ? "text-sm" : "text-muted-foreground text-xs hover:text-foreground",
+						)}
+					>
 						<Trans>Advanced picture settings</Trans>
 					</summary>
 					<div className="mt-4 space-y-4">

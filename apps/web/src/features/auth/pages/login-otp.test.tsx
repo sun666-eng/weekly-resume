@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { loadLocale } from "@/libs/locale";
 
 const mocks = vi.hoisted(() => ({
 	send: vi.fn(),
@@ -74,6 +75,11 @@ it("defaults to code sign-in and supports switching to the password form", () =>
 	expect(screen.getByLabelText("Password", { exact: true })).toBeVisible();
 	fireEvent.click(screen.getByRole("button", { name: "Email code sign-in" }));
 	expect(screen.getByRole("button", { name: "Get verification code" })).toBeVisible();
+});
+it("shows the Chinese email example on the initial code sign-in form", async () => {
+	await loadLocale("zh-CN");
+	page();
+	expect(screen.getByRole("textbox")).toHaveAttribute("placeholder", "lin.zhiyuan@example.com");
 });
 it.each([false, true])("hides OTP when SMTP is unavailable or email auth is disabled (%s)", (disabled) => {
 	page(disabled, false, disabled);

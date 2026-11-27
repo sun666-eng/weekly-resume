@@ -216,7 +216,9 @@ describe("picture actions", () => {
 				}),
 		);
 		renderForm();
-		expect(screen.getByRole("button", { name: "Delete picture" })).toBeDisabled();
+		expect(screen.queryByRole("button", { name: "Delete picture" })).toBeNull();
+		expect(screen.queryByRole("button", { name: "Hide picture" })).toBeNull();
+		expect(screen.queryByRole("group", { name: "Fit" })).toBeNull();
 		selectFile();
 		await waitFor(() => expect(screen.getByRole("button", { name: "Delete picture" })).not.toBeDisabled());
 		fireEvent.click(screen.getByRole("button", { name: "Delete picture" }));
@@ -225,7 +227,7 @@ describe("picture actions", () => {
 			await new Promise((resolve) => setTimeout(resolve, 0));
 		});
 		expect(useResumeStore.getState().resume?.data.picture.url).toBe("");
-		await waitFor(() => expect(screen.getByRole("button", { name: "Delete picture" })).toBeDisabled());
+		await waitFor(() => expect(screen.queryByRole("button", { name: "Delete picture" })).toBeNull());
 	});
 	it("upload A finishing after B preserves the user's latest selection", async () => {
 		const finishers: ((value: { url: string }) => void)[] = [];

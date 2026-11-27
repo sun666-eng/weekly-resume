@@ -1,9 +1,10 @@
 // @vitest-environment happy-dom
 
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
+import { createControlledPromise } from "@tanstack/react-router";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { useFitState } from "../builder/fit-state";
 import { ResumePreviewClient } from "./preview.browser";
@@ -166,6 +167,26 @@ describe("ResumePreviewClient", () => {
 		expect(previewMock.toBlob).toHaveBeenCalledWith(previewMock.builderResumeData);
 
 		expect(previewMock.toBlob).toHaveBeenCalledTimes(1);
+	});
+
+	it("suppresses an interrupted preview while unloading and regenerates it on pageshow", async () => {
+		const pending = createControlledPromise<Blob>();
+		previewMock.toBlob.mockReturnValueOnce(pending);
+		render(<ResumePreviewClient data={sampleResumeData} pageLayout="vertical" pageScale={1} showPageNumbers={false} />);
+		await waitFor(() => expect(previewMock.toBlob).toHaveBeenCalledTimes(1));
+
+		await act(async () => {
+			window.dispatchEvent(new Event("beforeunload"));
+			pending.reject(new DOMException("Preview interrupted", "AbortError"));
+			await pending.catch(() => undefined);
+		});
+		expect(previewMock.toastAdd).not.toHaveBeenCalled();
+
+		act(() => {
+			window.dispatchEvent(new Event("pageshow"));
+		});
+		expect(await screen.findByRole("img", { name: "Resume page 1 of 1" })).toBeTruthy();
+		expect(previewMock.toBlob).toHaveBeenCalledTimes(2);
 	});
 
 	it("keeps the active PDF visible and reports a later renderer failure", async () => {

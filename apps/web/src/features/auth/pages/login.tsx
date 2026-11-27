@@ -208,7 +208,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, smtpEnabled = fals
 									render={
 										<Input
 											autoComplete="section-login username webauthn"
-											placeholder="john.doe@example.com"
+											placeholder={t({ id: "auth.placeholder.email", message: "john.doe@example.com" })}
 											className="lowercase"
 											name={field.name}
 											value={field.state.value}

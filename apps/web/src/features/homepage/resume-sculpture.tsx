@@ -102,8 +102,8 @@ export function ResumeSculpture({
 	}
 
 	return (
-		<div className="@container mx-auto w-full max-w-[620px] text-(--home-ink) max-[960px]:mt-[25px] max-[900px]:max-w-[560px]">
-			<div className="perspective-[1400px] relative aspect-[620/600]">
+		<div className="@container mx-auto w-full max-w-[600px] text-(--home-ink) max-[960px]:mt-[25px] max-[900px]:max-w-[560px]">
+			<div className="perspective-[1400px] relative aspect-[620/510]">
 				<div
 					className="absolute right-[5%] bottom-0 left-[15%] h-[10%] rounded-full bg-black opacity-70 blur-[18px]"
 					aria-hidden="true"
@@ -142,7 +142,7 @@ export function ResumeSculpture({
 					</motion.div>
 				</div>
 			</div>
-			<div className="flex items-center justify-between @max-[450px]:gap-1 gap-3 @max-[450px]:px-0 px-2 pt-[14px] pb-[18px] text-(--home-muted)">
+			<div className="flex items-center justify-between @max-[450px]:gap-1 gap-3 @max-[450px]:px-0 px-2 pt-2.5 pb-3 text-(--home-muted)">
 				<p className="flex items-center gap-[9px] @max-[450px]:text-[11px] text-[12px]">
 					<span aria-hidden="true">↔</span>{" "}
 					<span className="pointer-coarse:hidden motion-reduce:hidden">
@@ -171,7 +171,7 @@ export function ResumeSculpture({
 					</span>
 				</button>
 			</div>
-			<fieldset className="mb-4 flex @max-[300px]:gap-[5px] gap-2" aria-label={t`Choose a resume template`}>
+			<fieldset className="mb-3 flex @max-[300px]:gap-[5px] gap-2" aria-label={t`Choose a resume template`}>
 				{templates.map((option) => (
 					<button
 						key={option}
@@ -204,8 +204,8 @@ export function ResumeSculpture({
 					</button>
 				))}
 			</fieldset>
-			<div className="grid @max-[300px]:grid-cols-1 @max-[450px]:grid-cols-[1fr_auto] grid-cols-[minmax(120px,1fr)_auto_auto] @max-[450px]:gap-[17px] gap-5 rounded-[4px] border border-[#363638] bg-[#1b1b1d] @max-[450px]:p-[17px] px-[21px] py-[19px] shadow-[0_15px_30px_rgb(0_0_0/16%),inset_0_1px_0_rgb(255_255_255/3%)]">
-				<p className="col-span-full text-(--home-muted) text-[13px] leading-relaxed">
+			<div className="grid @max-[300px]:grid-cols-1 @max-[450px]:grid-cols-[1fr_auto] grid-cols-[minmax(120px,1fr)_auto_auto] @max-[450px]:gap-3.5 gap-4 rounded-[4px] border border-[#363638] bg-[#1b1b1d] @max-[450px]:p-3.5 px-4 py-3.5 shadow-[0_15px_30px_rgb(0_0_0/16%),inset_0_1px_0_rgb(255_255_255/3%)]">
+				<p className="col-span-full text-(--home-muted) text-[12px] leading-normal">
 					<Trans>
 						This is a temporary sample preview, not a saved resume. It will not be restored after leaving or refreshing.
 					</Trans>

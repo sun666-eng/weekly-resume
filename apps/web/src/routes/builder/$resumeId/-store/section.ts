@@ -21,6 +21,10 @@ type SectionStoreActions = {
 
 type SectionStore = SectionStoreState & SectionStoreActions;
 
+export function isSectionCollapsed(sections: SectionCollapseState, id: SidebarSection): boolean {
+	return sections[id]?.collapsed ?? id === "styles";
+}
+
 const noopStorage: StateStorage = {
 	getItem: () => null,
 	removeItem: () => {},
@@ -44,14 +48,14 @@ export const useSectionStore = create<SectionStore>()(
 			},
 			toggleCollapsed: (id) => {
 				set((state) => {
-					const current = state.sections[id]?.collapsed ?? false;
+					const current = isSectionCollapsed(state.sections, id);
 					state.sections[id] = { collapsed: !current };
 				});
 			},
 			toggleAll: () => {
 				set((state) => {
 					[...leftSidebarSections, ...rightSidebarSections].forEach((id) => {
-						const current = state.sections[id]?.collapsed ?? false;
+						const current = isSectionCollapsed(state.sections, id);
 						state.sections[id] = { collapsed: !current };
 					});
 				});

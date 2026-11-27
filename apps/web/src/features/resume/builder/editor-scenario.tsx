@@ -20,14 +20,14 @@ export function EditorScenarioPicker() {
 		["academic", zh ? (tw ? "科研學術" : "科研学术") : "Academic"],
 	];
 	return (
-		<fieldset className="space-y-2 rounded-md border p-3">
-			<legend className="px-1 font-medium text-sm">{zh ? (tw ? "求職場景" : "求职场景") : "Career stage"}</legend>
-			<div className="flex flex-wrap gap-2">
+		<fieldset className="space-y-1.5 rounded-md border px-3 py-2">
+			<legend className="px-1 font-medium text-xs">{zh ? (tw ? "求職場景" : "求职场景") : "Career stage"}</legend>
+			<div className="flex flex-wrap gap-1.5">
 				{scenarios.map(([id, label]) => (
 					<Button
 						key={id}
 						type="button"
-						size="sm"
+						size="xs"
 						variant={(data.metadata.editor?.scenario ?? "general") === id ? "secondary" : "ghost"}
 						aria-pressed={(data.metadata.editor?.scenario ?? "general") === id}
 						onClick={() => update((draft) => setEditorScenario(draft, id))}
@@ -36,7 +36,7 @@ export function EditorScenarioPicker() {
 					</Button>
 				))}
 			</div>
-			<p className="text-muted-foreground text-xs">
+			<p className="text-[11px] text-muted-foreground leading-snug">
 				{zh
 					? tw
 						? "可隨時更改，已填內容與隱藏狀態均保留。"

@@ -12,6 +12,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { usePreviewPausedStore, useResumeData } from "../builder/draft";
 import { useFitState } from "../builder/fit-state";
+import { isPageUnloading, usePageUnloading } from "./page-lifecycle";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
@@ -105,6 +106,7 @@ export function ResumePreviewClient({
 }: ResolvedResumePreviewProps) {
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
+	const unloading = usePageUnloading();
 	const paused = usePreviewPausedStore((state) => state.paused);
 
 	const [previewLayers, setPreviewLayers] = useState<PreviewPdf[]>([]);
@@ -116,25 +118,26 @@ export function ResumePreviewClient({
 	useEffect(() => {
 		if (!resumeData) return;
 		// Mobile hides the preview behind the Edit/Design overlay; skip re-rendering and keep the last PDF shown.
-		if (paused) return;
+		if (paused || unloading) return;
 
 		let cancelled = false;
 		const requestId = ++requestIdRef.current;
 		const delay = hasPreviewRef.current ? UPDATE_DEBOUNCE_MS : 0;
 
+		const isObsolete = () => cancelled || isPageUnloading() || requestId !== requestIdRef.current;
+
 		const generatePdfPreview = async () => {
 			try {
-				if (cancelled || requestId !== requestIdRef.current) return;
+				if (isObsolete()) return;
 				const blob = await createResumePdfBlob(resumeData);
 
-				if (!cancelled && requestId === requestIdRef.current) {
-					const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, hasPreviewRef.current, resumeData);
+				if (isObsolete()) return;
+				const nextPdf = createPreviewPdf(blob, pdfIdRef.current++, hasPreviewRef.current, resumeData);
 
-					hasPreviewRef.current = true;
-					setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
-				}
+				hasPreviewRef.current = true;
+				setPreviewLayers((current) => addPreviewLayer(current, nextPdf));
 			} catch {
-				if (cancelled || requestId !== requestIdRef.current) return;
+				if (isObsolete()) return;
 				toast.add({
 					type: "error",
 					description: t`The resume preview could not be updated. The last valid preview is still shown.`,
@@ -151,7 +154,7 @@ export function ResumePreviewClient({
 			cancelled = true;
 			window.clearTimeout(timeoutId);
 		};
-	}, [paused, resumeData]);
+	}, [paused, resumeData, unloading]);
 
 	const visiblePdf = getActivePreviewLayer(previewLayers);
 	const shownData = visiblePdf?.data;

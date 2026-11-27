@@ -8149,6 +8149,10 @@ msgid "Retry saving"
 msgstr "Retry saving"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Picture could not be loaded."
+msgstr "Picture could not be loaded."
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 msgid "Picture could not be loaded. Replace it or check its URL in advanced settings."
 msgstr "Picture could not be loaded. Replace it or check its URL in advanced settings."
 
@@ -8411,7 +8415,7 @@ msgstr "Backup failed. Your content is still on this page and has not been prote
 
 #. js-lingui-explicit-id
 msgid "guest.backup"
-msgstr "Retrieve local backup"
+msgstr "Export local backup"
 
 #. js-lingui-explicit-id
 msgid "guest.retry"
@@ -8443,7 +8447,7 @@ msgstr "Save to account"
 
 #. js-lingui-explicit-id
 msgid "guest.formalExport"
-msgstr "Formal export"
+msgstr "Export resume"
 
 #. js-lingui-explicit-id
 msgid "guest.more"
@@ -8802,3 +8806,55 @@ msgstr "The link may have expired after 1 hour or already been used. Request a n
 #: src/libs/error-message.ts
 msgid "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
 msgstr "This account uses two-factor authentication. Sign in with your password and complete two-factor verification."
+
+#. js-lingui-explicit-id
+msgid "picture.preUploadOptions"
+msgstr "Crop & ratio options"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.sampleActive"
+msgstr "Previewing sample layout — not saved to your draft"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.emptyHint"
+msgstr "Blank draft"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.hideSample"
+msgstr "Back to blank"
+
+#. js-lingui-explicit-id
+msgid "builder.preview.showSample"
+msgstr "Preview sample layout"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/template.tsx
+msgid "Change template ({totalTemplates})"
+msgstr "Change template ({totalTemplates})"
+
+#. js-lingui-explicit-id
+msgid "guest.accountFeatures.title"
+msgstr "Account features"
+
+#. js-lingui-explicit-id
+msgid "guest.accountFeatures.description"
+msgstr "Save to an account to unlock online sharing, view analytics, and in-editor ATS checks."
+
+#. js-lingui-explicit-id
+msgid "home.hero.subtitle"
+msgstr "Put your experience on the page, without fighting the formatting."
+
+#. js-lingui-explicit-id
+msgid "subpage.nav.home"
+msgstr "Homepage"
+
+#. js-lingui-explicit-id
+msgid "auth.backToDraft"
+msgstr "Back to local draft"
+
+#. js-lingui-explicit-id
+msgid "auth.backToHome"
+msgstr "Back to home"
+
+#. js-lingui-explicit-id
+msgid "auth.placeholder.email"
+msgstr "john.doe@example.com"

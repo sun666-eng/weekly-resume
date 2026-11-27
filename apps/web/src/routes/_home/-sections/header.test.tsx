@@ -4,7 +4,6 @@ import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { WEEKLY_RESUME_REPOSITORY_URL } from "@/components/input/github-stars-button";
 
 type LinkProps = React.PropsWithChildren<{
 	to: string;
@@ -47,10 +46,17 @@ describe("Header", () => {
 		expect(home?.getAttribute("aria-label")).toBe("Go to homepage");
 	});
 
-	it("renders a dashboard link with the documented aria-label", () => {
+	it("renders a dashboard link with the documented aria-label and a labeled primary builder CTA", () => {
 		const { container } = renderHeader();
 		const dashboard = Array.from(container.querySelectorAll("a")).find((a) => a.getAttribute("href") === "/dashboard");
 		expect(dashboard).toBeDefined();
+		expect(dashboard?.getAttribute("aria-label")).toBe("Go to dashboard");
+
+		const createResume = Array.from(container.querySelectorAll("a")).find(
+			(a) => a.getAttribute("href") === "/local-draft",
+		);
+		expect(createResume).toBeDefined();
+		expect(createResume?.textContent).toContain("Create a resume now");
 	});
 
 	it("includes ThemeToggleButton in the navigation", () => {
@@ -58,13 +64,12 @@ describe("Header", () => {
 		expect(getByTestId("theme-toggle")).toBeInTheDocument();
 	});
 
-	it("links the Stars button to the Weekly Resume repository", () => {
+	it("keeps top navigation focused on in-app destinations without external repository links", () => {
 		const { container } = renderHeader();
-		const stars = Array.from(container.querySelectorAll("a")).find(
-			(a) => a.getAttribute("href") === WEEKLY_RESUME_REPOSITORY_URL,
+		const externalLinks = Array.from(container.querySelectorAll("a")).filter(
+			(a) => a.getAttribute("target") === "_blank",
 		);
-		expect(stars).toBeDefined();
-		expect(stars?.getAttribute("target")).toBe("_blank");
+		expect(externalLinks).toHaveLength(0);
 	});
 
 	it("labels the navigation landmark", () => {

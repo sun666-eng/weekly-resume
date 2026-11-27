@@ -29,7 +29,7 @@ beforeEach(() => {
 	}));
 });
 
-it("always loads the Semantic CSS shell", async () => {
+it("always loads the Semantic CSS shell when expanded", async () => {
 	render(
 		<I18nProvider i18n={i18n}>
 			<CustomStylesSectionBuilder />
@@ -37,4 +37,16 @@ it("always loads the Semantic CSS shell", async () => {
 	);
 
 	expect(await screen.findByTestId("semantic-css-editor-shell")).toBeInTheDocument();
+});
+
+it("stays collapsed by default until opened", () => {
+	useSectionStore.setState({ sections: {} });
+
+	render(
+		<I18nProvider i18n={i18n}>
+			<CustomStylesSectionBuilder />
+		</I18nProvider>,
+	);
+
+	expect(screen.queryByTestId("semantic-css-editor-shell")).toBeNull();
 });

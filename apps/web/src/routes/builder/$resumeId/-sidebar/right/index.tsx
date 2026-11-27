@@ -1,5 +1,6 @@
 import type { RightSidebarSection } from "@/libs/resume/section";
-import { Fragment, useCallback, useRef } from "react";
+import { useLingui } from "@lingui/react/macro";
+import { Fragment, useCallback, useEffect, useRef } from "react";
 import { match } from "ts-pattern";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
@@ -9,6 +10,7 @@ import { Copyright } from "@/components/ui/copyright";
 import { useGuestEditor } from "@/features/resume/guest/context";
 import { getSectionIcon, getSectionTitle, rightSidebarSections } from "@/libs/resume/section";
 import { BuilderSidebarEdge } from "../../-components/edge";
+import { useSectionStore } from "../../-store/section";
 import { useBuilderSidebar } from "../../-store/sidebar";
 import { AtsCheckSectionBuilder } from "./sections/ats-check";
 import { CustomStylesSectionBuilder } from "./sections/custom-styles";
@@ -40,9 +42,48 @@ function getSectionComponent(type: RightSidebarSection) {
 		.exhaustive();
 }
 
+const GUEST_ACCOUNT_ONLY_SECTIONS = ["sharing", "statistics", "ats"] as const satisfies readonly RightSidebarSection[];
+const guestAccountOnlySet = new Set<RightSidebarSection>(GUEST_ACCOUNT_ONLY_SECTIONS);
+
+type GuestAccountFeaturesCardProps = {
+	onShowHelp: (feature: string) => void;
+};
+
+function GuestAccountFeaturesCard({ onShowHelp }: GuestAccountFeaturesCardProps) {
+	const { t } = useLingui();
+
+	return (
+		<section id="sidebar-guest-account-features" className="space-y-2.5 rounded-md border bg-muted/30 p-3">
+			<div className="space-y-1">
+				<h3 className="font-medium text-sm">{t({ id: "guest.accountFeatures.title", message: "Account features" })}</h3>
+				<p className="text-muted-foreground text-xs leading-relaxed">
+					{t({
+						id: "guest.accountFeatures.description",
+						message: "Save to an account to unlock online sharing, view analytics, and in-editor ATS checks.",
+					})}
+				</p>
+			</div>
+			<div className="flex flex-wrap gap-1.5">
+				{GUEST_ACCOUNT_ONLY_SECTIONS.map((section) => {
+					const title = getSectionTitle(section);
+					return (
+						<Button key={section} type="button" size="xs" variant="outline" onClick={() => onShowHelp(title)}>
+							{getSectionIcon(section, { className: "size-3.5" })}
+							{title}
+						</Button>
+					);
+				})}
+			</div>
+		</section>
+	);
+}
+
 export function BuilderSidebarRight() {
 	const guest = useGuestEditor();
 	const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+	const visibleSections = guest
+		? rightSidebarSections.filter((section) => !guestAccountOnlySet.has(section))
+		: rightSidebarSections;
 
 	return (
 		<>
@@ -53,15 +94,15 @@ export function BuilderSidebarRight() {
 				className="@container h-[calc(100svh-3.5rem)] overflow-hidden bg-background sm:me-12"
 			>
 				<div className="space-y-4 p-4">
-					{rightSidebarSections.map((section) => (
+					{visibleSections.map((section) => (
 						<Fragment key={section}>
-							{guest && ["sharing", "statistics", "ats"].includes(section) ? (
-								<Button variant="ghost" onClick={() => guest.showHelp(getSectionTitle(section))}>
-									{getSectionTitle(section)} · 账号功能
-								</Button>
-							) : (
-								getSectionComponent(section)
+							{guest && section === "export" && (
+								<>
+									<GuestAccountFeaturesCard onShowHelp={guest.showHelp} />
+									<Separator />
+								</>
 							)}
+							{getSectionComponent(section)}
 							<Separator />
 						</Fragment>
 					))}
@@ -74,24 +115,45 @@ export function BuilderSidebarRight() {
 }
 
 function SidebarEdge() {
-	const { toggleSidebar } = useBuilderSidebar();
+	const guest = useGuestEditor();
+	const { isCollapsed, toggleSidebar } = useBuilderSidebar();
+	const scrollFrameRef = useRef<number | null>(null);
+	const railSections = guest
+		? rightSidebarSections.filter((section) => !guestAccountOnlySet.has(section))
+		: rightSidebarSections;
+
+	useEffect(() => {
+		return () => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+		};
+	}, []);
 
 	const scrollToSection = useCallback(
 		(section: RightSidebarSection) => {
+			if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+			const wasCollapsed = isCollapsed("right");
+			useSectionStore.getState().setCollapsed(section, false);
 			toggleSidebar("right", true);
-			// Section ids are globally unique; document.getElementById reliably resolves the scroll target.
-			document
-				.getElementById(`sidebar-${section}`)
-				?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			const scroll = () => {
+				scrollFrameRef.current = null;
+				document
+					.getElementById(`sidebar-${section}`)
+					?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+			};
+			// Allow section state to commit, and a collapsed panel to finish its layout pass.
+			scrollFrameRef.current = requestAnimationFrame(() => {
+				if (wasCollapsed) scrollFrameRef.current = requestAnimationFrame(scroll);
+				else scroll();
+			});
 		},
-		[toggleSidebar],
+		[isCollapsed, toggleSidebar],
 	);
 
 	return (
 		<BuilderSidebarEdge side="right">
 			<div className="no-scrollbar min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
 				<div className="flex min-h-full flex-col items-center justify-center gap-y-2">
-					{rightSidebarSections.map((section) => (
+					{railSections.map((section) => (
 						<Tooltip key={section}>
 							<TooltipTrigger
 								render={

@@ -7,6 +7,7 @@
 .motion-hero {
 	position: absolute;
 	inset: 0 0 auto;
+	z-index: 0;
 	height: 850px;
 }
 
@@ -108,6 +109,12 @@
 .motion-crowd .motion-toggle {
 	top: 8px;
 	bottom: auto;
+}
+
+@media (width < 900px) {
+	.motion-hero .motion-toggle {
+		display: none;
+	}
 }
 
 @media (width < 600px) {

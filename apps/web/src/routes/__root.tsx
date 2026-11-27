@@ -41,10 +41,10 @@ type RouterContext = {
 };
 
 const appName = APP_NAME;
-const tagline = "免费开源的简历制作工具";
+const tagline = "专业在线简历制作工具";
 const title = `${appName} — ${tagline}`;
 // Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines.
-const description = "免费开源的简历制作工具。轻松创建、编辑和分享专业简历，无广告、无付费墙。";
+const description = "专注内容与一页排版的在线简历制作工具。轻松撰写、优化和导出专业简历。";
 const iconContextValue: IconProps = { size: 16, weight: "regular" };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
